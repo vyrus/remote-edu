@@ -3,7 +3,11 @@
     /* $Id$ */
 
     abstract class Mvc_Model_Abstract {
-        public function __construct() {/*_*/}
+        protected $_db;
+        
+        public function __construct() {
+            $this->_db = Db_Mysql::getInstance();
+        }
     }
 
 ?>
