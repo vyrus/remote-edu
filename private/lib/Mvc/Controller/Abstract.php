@@ -13,7 +13,14 @@
             $this->_request = $request;
         }
         
-        public function render($view, array $params = array(), $layout = 'default') {/*_*/}
+        public function render(
+            $view, array $vars = array(), $layout = 'default'
+        ) {                                          
+            Mvc_View::create($view)
+                ->setLayout($layout)
+                ->setVars($vars)
+                ->render();
+        }
     }
 
 ?>
