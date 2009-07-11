@@ -13,9 +13,11 @@
             $this->_request = $request;
         }
         
-        public function render(
+        public function render
+        (
             $view, array $vars = array(), $layout = 'default'
-        ) {                                          
+        )
+        {                                          
             Mvc_View::create($view)
                 ->setLayout($layout)
                 ->setVars($vars)
