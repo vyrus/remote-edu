@@ -3,7 +3,7 @@
     /* $Id$ */
     
     return array(
-        'mode' => 'production',
+        'mode' => 'debug',
         
         'db' => array
         (
