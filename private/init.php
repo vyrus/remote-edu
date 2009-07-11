@@ -11,17 +11,13 @@
     Init::define('APP',         ROOT . DS . 'app');
     Init::define('LIB',         ROOT . DS . 'lib');
     Init::define('THIRD_PARTY', ROOT . DS . 'third_party');
+    Init::define('TMP',         ROOT . DS . 'tmp');
+    Init::define('LOGS',        TMP . DS . 'logs');
     Init::define('VIEWS',       APP . DS . 'View');
     Init::define('LAYOUTS',     VIEWS . DS . 'layouts');
-          
+    
     Init::setIncludePath( array(APP, LIB, THIRD_PARTY) );
-    Init::setErrorReporting(E_ALL | E_STRICT);
-    /**
-    * @todo Стратегия вывода ошибок: режим отладки вкл/выкл?
-    */
-    Init::setupErrorHandler();
-    Init::enableAssertions();
-
+    
     Init::define('CR',   "\r");
     Init::define('LF',   "\n");   
     Init::define('CRLF', CR . LF);
@@ -33,14 +29,32 @@
     Zend_Loader_Autoloader::getInstance()
         ->setFallbackAutoloader(true)
         ->suppressNotFoundWarnings(false);
-        
-    /**
-    * @todo Как подгружать настройки?
-    * @todo Использовать ли реестр объектов для хранения конфигурации, объекта
-    *       для работы с БД и т.д.?
-    */
     
     $config = require_once 'config.php';
-    Resources::create($config);
+    
+    switch ($config['mode']) {
+        case 'debug':
+            Init::setErrorReporting(E_ALL | E_STRICT);
+            Init::displayErrors(true);
+            Init::logErrors(false);
             
+            Init::setupErrorHandler();
+            Init::enableAssertions();
+            break;
+            
+        case 'production':
+            Init::logErrors(true);
+            Init::setErrorLog(LOGS . DS . 'php_error_log.txt');
+            
+            Init::setErrorReporting(E_ALL ^ E_NOTICE);
+            Init::displayErrors(false);
+            
+            /**
+            * @todo Устанавливать user-friendly перехватчик ошибок?
+            */
+            break;
+    }
+        
+    Resources::create($config);
+    
 ?>

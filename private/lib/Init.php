@@ -13,17 +13,40 @@
             return define($name, $value);
         }
         
+        public static function iniSet($option, $value, $check = true) {
+            $result = ini_set($option, $value);
+            
+            if ($check && false === $result) {
+                $msg = 'Не удалось установить значение "%s" для опции "%s"';
+                throw new Init_Exception( sprintf($msg, $value, $option) );
+            }
+            
+            return $result;
+        }
+        
         public static function setIncludePath($paths = array()) {
             array_unshift($paths, get_include_path());
             
             $paths = implode(PATH_SEPARATOR, $paths);
             $paths .= PATH_SEPARATOR;
             
-            return ini_set('include_path', $paths); 
+            return self::iniSet('include_path', $paths); 
         }
         
         public static function setErrorReporting($level) {
-            return ini_set('error_reporting', $level);
+            return self::iniSet('error_reporting', $level);
+        }
+                              
+        public static function displayErrors($value) {
+            return self::iniSet('display_errors', $value);
+        }
+        
+        public static function logErrors($value) {
+            return self::iniSet('log_errors', $value);
+        }
+        
+        public static function setErrorLog($value) {
+            return self::iniSet('error_log', $value, false);
         }
                               
         public static function setupErrorHandler() {
@@ -48,7 +71,7 @@
         }
         
         public static function setMaxExecutionTime($sec) {
-            ini_set('max_execution_time', $sec);
+            return iniSet('max_execution_time', $sec);
         }
         
         public static function enableAssertions() {

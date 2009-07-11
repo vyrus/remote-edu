@@ -3,6 +3,8 @@
     /* $Id$ */
     
     return array(
+        'mode' => 'production',
+        
         'db' => array
         (
             'dsn'     => 'mysql:host=localhost;dbname=remote-edu',
