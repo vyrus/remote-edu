@@ -26,6 +26,11 @@
             
             return $db;
         }
+        
+        protected function get_view() {
+            $view = Mvc_View::create(VIEWS . DS, LAYOUTS . DS);
+            return $view;
+        }
     }
         
 ?>

@@ -6,25 +6,31 @@
     * Класс для отображения шаблонов.
     */
     class Mvc_View {
-        const TPL_EXT = '.tpl';
+        const DEFAULT_TPL_EXTENSION = 'tpl';
         
-        protected $_tpl_path;
+        protected $_templates_path;
+        protected $_layouts_path;
+        protected $_tpl_extension;
         protected $_layout = false;
+        protected $_template;
         protected $_vars = array();
         
         /**
-        * Проверка на существование файла шаблона
+        * //
         * 
-        * @param string $tpl_name Путь к файлу шаблона без расширения
+        * @param
         */
-        function __construct($tpl_name) {
-            $this->_tpl_path = VIEWS . DS . $tpl_name . self::TPL_EXT;
+        public function __construct
+        (
+            $templates_path, $layouts_path = null,
+            $tpl_extension = self::DEFAULT_TPL_EXTENSION
+        )
+        {
+            $this->setTemplatesPath($templates_path);
+            $this->setTemplatesExtension($tpl_extension);
             
-            if (!file_exists($this->_tpl_path))
-            {
-                throw new Mvc_View_Exception(
-                    sprintf('Не найден шаблон "%s"', $this->_tpl_path)
-                );
+            if (null !== $layouts_path) {
+                $this->setLayoutsPath($layouts_path);
             }
         }
         
@@ -34,12 +40,65 @@
         * @param string $tpl_name Имя файла шаблона без расширения
         * @return object
         */
-        public static function create($tpl_name) {
-            return new self($tpl_name);
+        public static function create
+        (
+            $templates_path, $layouts_path = null,
+            $tpl_extension = self::DEFAULT_TPL_EXTENSION
+        )
+        {
+            return new self($templates_path, $layouts_path, $tpl_extension);
+        }
+        
+        public function setTemplatesPath($path) {
+            if (!file_exists($path))
+            {
+                throw new Mvc_View_Exception(
+                    sprintf('Не найдена директория шаблонов "%s"', $path)
+                );
+            }
+            
+            $this->_templates_path = $path;
+            
+            return $this;
+        }
+        
+        public function setTemplatesExtension($ext) {
+            $this->_tpl_extension = $ext;
+        }
+        
+        public function setLayoutsPath($path) {
+            if (!file_exists($path))
+            {
+                throw new Mvc_View_Exception(
+                    sprintf('Не найдена директория макетов "%s"', $path)
+                );
+            }
+            
+            $this->_layouts_path = $path;
+            
+            return $this;
         }
         
         public function setLayout($layout) {
-            $this->_layout = 'layouts/' . $layout;
+            $this->_layout = $layout;
+            
+            return $this;
+        }
+        
+        public function setTemplate($tpl) {
+            $tpl_path = $this->_templates_path .
+                        $tpl .
+                        '.' . $this->_tpl_extension;
+                        
+            $tpl_path = realpath($tpl_path);
+            if (!file_exists($tpl_path))
+            {
+                throw new Mvc_View_Exception(
+                    sprintf('Не найден файл шаблона "%s"', $tpl_path)
+                );
+            }
+            
+            $this->_template = $tpl_path;
             
             return $this;
         }
@@ -75,13 +134,18 @@
             extract($this->_vars);
             
             ob_start();
-                include $this->_tpl_path;
+                include $this->_template;
             $out = ob_get_clean();
                                      
-            if (false !== $this->_layout) {
-                $out = self::create($this->_layout)
-                           ->set('content', $out)
-                           ->render(false, true);
+            if (false !== $this->_layout)
+            {
+                $layout = self::create(
+                    $this->_layouts_path, null, $this->_tpl_extension
+                );
+                
+                $out = $layout->setTemplate($this->_layout)
+                              ->set('content', $out)
+                              ->render(false, true);
             }
             
             if ($return) {
@@ -90,7 +154,8 @@
                 echo $out;
             }
             
-            if($exit && !ob_get_level()) exit();
+            $exit = $exit && !ob_get_level();
+            if($exit) exit();
         }
     }
   

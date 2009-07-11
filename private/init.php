@@ -9,9 +9,10 @@
     Init::define('DS',          DIRECTORY_SEPARATOR);
     Init::define('ROOT',        dirname(realpath(__FILE__)));
     Init::define('APP',         ROOT . DS . 'app');
-    Init::define('VIEWS',       APP . DS . 'View');
     Init::define('LIB',         ROOT . DS . 'lib');
     Init::define('THIRD_PARTY', ROOT . DS . 'third_party');
+    Init::define('VIEWS',       APP . DS . 'View');
+    Init::define('LAYOUTS',     VIEWS . DS . 'layouts');
           
     Init::setIncludePath( array(APP, LIB, THIRD_PARTY) );
     Init::setErrorReporting(E_ALL | E_STRICT);
