@@ -9,7 +9,7 @@
             array $driver_options = array()
         )
         {
-            $driver_options[PDO::ATTR_STATEMENT_CLASS] = array(
+            $driver_options[self::ATTR_STATEMENT_CLASS] = array(
                 'Db_Pdo_Statement'
             );
             parent::__construct($dsn, $username, $password, $driver_options);

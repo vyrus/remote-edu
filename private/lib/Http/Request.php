@@ -6,6 +6,17 @@
         protected $_storage = array();
         
         public function __construct(array $values = array()) {
+            if (empty($values))
+            {
+                $values = array(
+                    'get'    => $_GET,
+                    'post'   => $_POST,
+                    'cookie' => $_COOKIE,
+                    'files'  => $_FILES,
+                    'server' => $_SERVER
+                );
+            }
+            
             $this->setMulti($values);
         }
         

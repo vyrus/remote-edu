@@ -3,6 +3,17 @@
     /* $Id$ */
     
     return array(
+        'db' => array
+        (
+            'dsn'     => 'mysql:host=localhost;dbname=remote-edu',
+            'user'    => 'root',
+            'passwd'  => '',
+            'options' => array(
+                /* Áóäåò êèäàòü èñêëş÷åíèÿ ïğè îøèáêàõ */
+                Db_Pdo::ATTR_ERRMODE => Db_Pdo::ERRMODE_EXCEPTION
+            )
+        ),
+        
         'routes' => array
         (
             array
