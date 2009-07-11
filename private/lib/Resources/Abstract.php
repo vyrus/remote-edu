@@ -35,7 +35,7 @@
             if (!method_exists($this, $method))
             {
                 throw new InvalidArgumentException(
-                    'Περσπρ νε νΰιδεν: ' . $name
+                    'Π ΠµΡΡƒΡ€Ρ Π½Πµ Π½Π°ΠΉΠ΄ΠµΠ½: ' . $name
                 );
             }
             
