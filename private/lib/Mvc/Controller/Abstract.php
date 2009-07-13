@@ -25,9 +25,16 @@
         
         public function render
         (
-            $template, array $vars = array(), $layout = 'default'
+            $template = null, array $vars = array(), $layout = 'default'
         )
-        {                 
+        {   
+            if (null === $template) {
+                $handler = $this->getRequest()->_router['handler'];
+                $template = sprintf(
+                    '%s/%s', $handler['controller'], $handler['action']
+                );
+            }              
+            
             $view_vars = array_merge($this->_view_vars, $vars);
             
             $view = Resources::getInstance()->view;

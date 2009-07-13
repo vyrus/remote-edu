@@ -7,7 +7,7 @@
             $uri = $this->getRequest()->server['REQUEST_URI'];
             $this->set('uri', $uri);
             
-            $this->render('error/404');
+            $this->render();
         }
     }
 

@@ -13,9 +13,8 @@
         protected $_catch_error_404 = true;
         
         protected $_error_404_handler = array(
-            'controller' => 'Error',
-            'action'     => '404',
-            'params'     => array()
+            'controller' => 'error',
+            'action'     => '404'
         );
         
         public function __construct
@@ -69,14 +68,18 @@
             /**
             * @todo Делать urldecode?
             */
-            $path = $request->server['REQUEST_URI'];
+            $path = strtolower($request->server['REDIRECT_URL']);
             $params = array();
             
             foreach ($this->_routes as $route)
             {
                 if ($this->_match($path, $route, $params))
                 {
-                    $route['handler']['params'] += $params;
+                    if (!isset($route['handler']['params'])) {
+                        $route['handler']['params'] = array();
+                    }
+                    
+                    $route['handler']['params'] += $params;               
                     $this->_call($route['handler'], $request);
                     
                     return;
@@ -162,11 +165,13 @@
             $this->_call($this->_error_404_handler, $request);
         }
         
-        protected function _match($path, array $route, & $params) {
+        protected function _match($path, array $route, array & $params) {
             switch ($route['type'])
             {
                 case self::ROUTE_STATIC:
-                    return $this->_matchStatic($path, $route['pattern']);
+                    return $this->_matchStatic(
+                        $path, $route['pattern'], $params
+                    );
                     break;
                 
                 case self::ROUTE_REGEX:
@@ -184,7 +189,9 @@
             }
         }
         
-        protected function _matchStatic($path, $pattern) {
+        protected function _matchStatic($path, $pattern, array & $params) {
+            $params = array();
+            
             $path = rtrim($path, self::URL_DELIMITER);
             $pattern_len = strlen($pattern);
             $path = substr($path, 0, $pattern_len);
