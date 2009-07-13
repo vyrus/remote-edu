@@ -158,7 +158,7 @@
                 $params[$key] = $param;
             }
             
-            return $params;
+            return true;
         }
     }
 
