@@ -25,11 +25,8 @@
         )
         {
             $this->addRoutes($routes);
-            $this->_catch_error_404 = $catch_error_404;
-            
-            if (null !== $error_404_handler) {
-                $this->_error_404_handler = $error_404_handler;
-            }
+            $this->catchError404($catch_error_404);
+            $this->setError404Handler($error_404_handler);
         }
         
         public static function create
@@ -39,6 +36,18 @@
         )
         {
             return new self($routes, $catch_error_404, $error_404_handler);
+        }
+        
+        public function catchError404($value) {
+            $this->_catch_error_404 = $value;
+        }
+        
+        public function setError404Handler(array $handler = null) {
+            if (null === $handler) {
+                return;
+            }
+            
+            $this->_error_404_handler = $handler;
         }
         
         public function addRoutes(array $routes = array()) {
@@ -126,7 +135,11 @@
             
             $controller = new $class($request);
             $callback = array($controller, $method);
-            $params = array($handler['params']);
+            $params = array();
+            if (!empty($handler['params'])) {
+                $params[] = $handler['params'];
+            }
+            
             call_user_func_array($callback, $params);
         }
         

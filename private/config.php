@@ -25,8 +25,7 @@
                 'handler' => array
                 (
                     'controller' => 'index',
-                    'action'     => 'static',
-                    'params'     => array()
+                    'action'     => 'static'
                 )
             ),
             
