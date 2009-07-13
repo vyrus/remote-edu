@@ -68,7 +68,13 @@
             /**
             * @todo Делать urldecode?
             */
-            $path = strtolower($request->server['REDIRECT_URL']);
+            $server = $request->server;
+            if (isset($server['REDIRECT_URL'])) {
+                $path = strtolower($server['REDIRECT_URL']);
+            } else {
+                $path = '/';
+            }
+            
             $params = array();
             
             foreach ($this->_routes as $route)
