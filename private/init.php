@@ -28,7 +28,7 @@
     require_once 'Zend/Loader/Autoloader.php';
     Zend_Loader_Autoloader::getInstance()
         ->setFallbackAutoloader(true)
-        ->suppressNotFoundWarnings(false);
+        ->suppressNotFoundWarnings(true);
     
     $config = require_once 'config.php';
     

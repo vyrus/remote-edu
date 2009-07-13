@@ -10,12 +10,35 @@
         
         protected $_routes = array();
         
-        public function __construct(array $routes = array()) {
+        protected $_catch_error_404 = true;
+        
+        protected $_error_404_handler = array(
+            'controller' => 'Error',
+            'action'     => '404',
+            'params'     => array()
+        );
+        
+        public function __construct
+        (
+            array $routes = array(), $catch_error_404 = true,
+            array $error_404_handler = null
+        )
+        {
             $this->addRoutes($routes);
+            $this->_catch_error_404 = $catch_error_404;
+            
+            if (null !== $error_404_handler) {
+                $this->_error_404_handler = $error_404_handler;
+            }
         }
         
-        public static function create(array $routes = array()) {
-            return new self($routes);
+        public static function create
+        (
+            array $routes = array(), $catch_error_404 = true,
+            array $error_404_handler = null
+        )
+        {
+            return new self($routes, $catch_error_404, $error_404_handler);
         }
         
         public function addRoutes(array $routes = array()) {
@@ -65,9 +88,8 @@
             
             if (sizeof($path) < 2)
             {
-                throw new Mvc_Router_Exception(
-                    'Контроллер/действие не определены'
-                );
+                $msg = 'Контроллер/действие не определены';
+                $this->_error_404($msg, $request);
             }
             
             $handler = array(
@@ -80,13 +102,17 @@
         }
         
         protected function _call(array $handler, Http_Request $request) {
+            if (!isset($request->_router)) {
+                $request->_router = array();
+            }
+            $request->_router['handler'] = $handler; 
+            
             $class = 'Controller_' . ucfirst($handler['controller']);
             
             if (!class_exists($class /* $autoload = true */))
             {
-                throw new Mvc_Router_Exception(
-                    sprintf('Не найден класс контроллера "%s"', $class)
-                );
+                $msg = sprintf('Не найден класс контроллера "%s"', $class);
+                $this->_error_404($msg, $request);
             }
             
             $method = 'action_' . $handler['action'];
@@ -95,7 +121,7 @@
             {
                 $msg = 'Не найден метод "%s" в контроллере "%s"';
                 $msg = sprintf($msg, $method, $class);
-                throw new Mvc_Router_Exception($msg);
+                $this->_error_404($msg, $request);
             }
             
             $controller = new $class($request);
@@ -106,6 +132,21 @@
         
         protected function _isCallable($class, $method) {
             return in_array($method, get_class_methods($class));
+        }
+        
+        protected function _error_404($reason, Http_Request $request) {
+            if (
+                !$this->_catch_error_404 ||
+                (
+                    isset($request->_router) &&
+                    $this->_error_404_handler === $request->_router['handler']
+                )
+            )
+            {
+                throw new Mvc_Router_Exception($reason);
+            }
+            
+            $this->_call($this->_error_404_handler, $request);
         }
         
         protected function _match($path, array $route, & $params) {
