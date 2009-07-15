@@ -402,6 +402,7 @@
         * @param  string       $reason  Причина возникновения ошибки.
         * @param  Http_Request $request Объект обрабатываемого запроса.
         * @return void
+        * @throws Mvc_Router_Exception Если не найден обработчик.
         */
         protected function _error_404($reason, Http_Request $request) {
             if (

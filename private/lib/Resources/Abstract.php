@@ -45,6 +45,7 @@
         * убедиться, что экземпляр установлен с помощью метода setInstance. 
         * 
         * @see self::setInstance()
+        * 
         * @return Resources_Abstract
         */
         public static function getInstance() {
@@ -66,6 +67,7 @@
         * ресурс ещё не запрашивался.
         * 
         * @link http://www.php.net/manual/en/language.oop5.overloading.php
+        * 
         * @param  string $name Название ресурса.
         * @return mixed
         */
@@ -100,6 +102,7 @@
         * Проверка на наличие ресурса в списке уже инициализированных ресурсов.
         * 
         * @link http://www.php.net/manual/en/language.oop5.overloading.php
+        * 
         * @param  string $resource Название ресурса.
         * @return boolean
         */

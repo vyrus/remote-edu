@@ -164,6 +164,7 @@
         * невыполнении условия.
         * 
         * @see assert_options()
+        * 
         * @return void.
         */
         public static function enableAssertions() {
