@@ -96,7 +96,7 @@
         * @return mixed
         */
         public function & __get($name) {
-            if (!isset($this->$name))
+            if (!$this->__isset($name))
             {
                 $msg = sprintf('Параметр "%s" не определён', $name);
                 throw new InvalidArgumentException($msg);

@@ -316,7 +316,7 @@
         * @return mixed
         */
         public function __get($name) {
-            if (!isset($this->$name))
+            if (!$this->__isset($name))
             {
                 $msg = sprintf('Переменная шаблона "%s" не определена', $name);
                 throw new InvalidArgumentException($msg);
