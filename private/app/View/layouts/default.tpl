@@ -5,7 +5,7 @@
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
     <link href="/css/my_layout.css" rel="stylesheet" type="text/css" />
     <!--[if lte IE 7]>
-    <link href="css/patches/patch_my_layout.css" rel="stylesheet" type="text/css" />
+    <link href="/css/patches/patch_my_layout.css" rel="stylesheet" type="text/css" />
     <![endif]-->
 </head>
 
