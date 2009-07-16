@@ -35,6 +35,13 @@
         protected $_tpl_extension;
         
         /**
+        * Директория с элементами для шаблонов.
+        * 
+        * @var string
+        */
+        protected $_elements_path;
+        
+        /**
         * Установленный макет для вывода шаблона.
         * 
         * @var string
@@ -65,7 +72,7 @@
         */
         public function __construct
         (
-            $templates_path, $layouts_path = null,
+            $templates_path, $layouts_path = null, $elements_path = null,
             $tpl_extension = self::DEFAULT_TPL_EXTENSION
         )
         {
@@ -74,6 +81,10 @@
             
             if (null !== $layouts_path) {
                 $this->setLayoutsPath($layouts_path);
+            }
+            
+            if (null !== $elements_path) {
+                $this->setElementsPath($elements_path);
             }
         }
         
@@ -87,11 +98,13 @@
         */
         public static function create
         (
-            $templates_path, $layouts_path = null,
+            $templates_path, $layouts_path = null, $elements_path = null,
             $tpl_extension = self::DEFAULT_TPL_EXTENSION
         )
         {
-            return new self($templates_path, $layouts_path, $tpl_extension);
+            return new self(
+                $templates_path, $layouts_path, $elements_path, $tpl_extension
+            );
         }
         
         /**
@@ -143,6 +156,25 @@
         }
         
         /**
+        * Установка пути к элементам шаблонов.
+        * 
+        * @param  string $path Путь до директории.  
+        * @return Mvc_View
+        * @throws Mvc_View_Exception Если указанный путь не найден.
+        */
+        public function setElementsPath($path) {
+            if (!file_exists($path))
+            {
+                $msg = sprintf('Не найдена директория элементов "%s"', $path);
+                throw new Mvc_View_Exception($msg);
+            }
+            
+            $this->_elements_path = $path;
+            
+            return $this;
+        }
+        
+        /**
         * Установка макета для отображения шаблона.
         * 
         * @param  string $layout Название файла макета (без расширения).
@@ -168,7 +200,6 @@
                         '.' . $this->_tpl_extension;
             
             /* Проверям наличие такого файла */            
-            $tpl_path = realpath($tpl_path);
             if (!file_exists($tpl_path))
             {
                 $msg = sprintf('Не найден файл шаблона "%s"', $tpl_path); 
@@ -216,9 +247,6 @@
         * @param  boolean $return Не выводить шаблон, вернуть его в результате.
         */
         public function render($exit = true, $return = false) {
-            /* Импортируем переменные из массива в текущую область видимости */
-            extract($this->_vars);
-            
             /* Включаем буферизацию вывода */
             ob_start();
                 /* Выводим шаблон в буфер */
@@ -231,11 +259,13 @@
             {
                 /* создаём объект шаблона для макета и...*/
                 $layout = self::create(
-                    $this->_layouts_path, null, $this->_tpl_extension
+                    $this->_layouts_path, null, $this->_elements_path,
+                    $this->_tpl_extension
                 );
                 
                 /* собираем макет, передав в него содержимое текущего шаблона */
                 $out = $layout->setTemplate($this->_layout)
+                              ->setVars($this->_vars)
                               ->set('content', $out)
                               ->render(false, true);
             }
@@ -256,6 +286,70 @@
             */
             $exit = $exit && !ob_get_level();
             if($exit) exit();
+        }
+        
+        /**
+        * Сборка и отображение элемента шаблона.
+        * 
+        * @param  string $element_name Название элемента.
+        * @return void
+        */
+        public function renderElement($element_name) {
+            /* Создаём объект шаблона для элемента */
+            $element = self::create(
+                $this->_elements_path, null, null, $this->_tpl_extension
+            );
+            
+            /* Настраиваем его, собираем элемент и выводим его */
+            $element->setTemplate($element_name)
+                    ->setVars($this->_vars)
+                    ->render(false);
+        }
+        
+        /**
+        * Получение значения переменной шаблона с использованием перегрузки
+        * атрибутов.
+        * 
+        * @link http://www.php.net/manual/en/language.oop5.overloading.php
+        * 
+        * @param  string $name Имя переменной.
+        * @return mixed
+        */
+        public function __get($name) {
+            if (!isset($this->$name))
+            {
+                $msg = sprintf('Переменная шаблона "%s" не определена', $name);
+                throw new InvalidArgumentException($msg);
+            }
+            
+            return $this->_vars[$name];
+        }
+        
+        /**
+        * Установка значения переменной шаблона с использованием перегрузки
+        * атрибутов.
+        * 
+        * @link http://www.php.net/manual/en/language.oop5.overloading.php
+        * 
+        * @param  string $name  Имя переменой.
+        * @param  mixed  $value Значение переменной.
+        * @return void
+        */
+        public function __set($name, $value) {
+            $this->set($name, $value);
+        }
+        
+        /**
+        * Проверка, установлено ли значение переменной шаблона или нет.
+        * Используется перегрузка атрибутов.
+        * 
+        * @link http://www.php.net/manual/en/language.oop5.overloading.php
+        * 
+        * @param  string $name  Имя переменной.
+        * @return boolean
+        */
+        public function __isset($name) {
+            return isset($this->_vars[$name]);
         }
     }
   

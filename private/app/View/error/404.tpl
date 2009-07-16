@@ -4,6 +4,6 @@
     /**
     * @todo Unsafe!
     */
-    echo htmlentities($uri)
+    echo htmlentities($this->uri)
 
 ?>

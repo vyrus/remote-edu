@@ -18,6 +18,7 @@
     Init::define('LOGS',        TMP . DS . 'logs');
     Init::define('VIEWS',       APP . DS . 'View');
     Init::define('LAYOUTS',     VIEWS . DS . 'layouts');
+    Init::define('ELEMENTS',    VIEWS . DS . 'elements');
     
     /**
     * Включаем загрузку файлов из директорий приложения, библиотеки и сторонних

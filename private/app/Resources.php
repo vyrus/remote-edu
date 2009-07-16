@@ -52,7 +52,7 @@
         * @return Mvc_View
         */
         protected function get_view() {
-            $view = Mvc_View::create(VIEWS . DS, LAYOUTS . DS);
+            $view = Mvc_View::create(VIEWS . DS, LAYOUTS . DS, ELEMENTS . DS);
             return $view;
         }
     }

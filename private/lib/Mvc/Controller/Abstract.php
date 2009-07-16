@@ -94,6 +94,7 @@
             $view = Resources::getInstance()->view;
             $view->setLayout($layout)
                  ->setTemplate($template)
+                 ->set('_request', $this->_request)
                  ->setVars($view_vars)
                  ->render();
         }

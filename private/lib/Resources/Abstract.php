@@ -107,7 +107,7 @@
         * @return boolean
         */
         public function __isset($resource) {
-            return array_key_exists($resource, $this->_resources);
+            return isset($this->_resources[$resource]);
         }
     }
         

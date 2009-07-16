@@ -227,7 +227,7 @@
         * 
         * @param  string $path    Строка запроса.
         * @param  string $pattern Шаблон запроса для маршрута.
-        * @param  array $params Параметры, полученные из строки запроса.
+        * @param  array  $params  Параметры, полученные из строки запроса.
         * @return boolean
         */
         protected function _matchStatic($path, $pattern, array & $params) {

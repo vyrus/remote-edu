@@ -1,1 +1,1 @@
-<?php print_r($users) ?>
+<?php print_r($this->users) ?>
