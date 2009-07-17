@@ -120,7 +120,7 @@
   /*--- Links ----------------------------------------------------------------------------------------- */
 
   a { color: #4D87C7; background:transparent; text-decoration:none; }
-  a:visited  { color: #036; }
+  a:visited  { color: #4D87C7; }
 
   a:focus,
   a:hover,
@@ -197,9 +197,10 @@
   * @section content-forms
   */
   
-  .field { clear: both; text-align: right; line-height: 25px; }
+  .field { clear: both; text-align: right; line-height: 20px; }
   label { float: left; padding-right: 10px; }
   .form { float: left; }
+  .error { color: #dd0000; }
   
  /**
   * ------------------------------------------------------------------------------------------------- #

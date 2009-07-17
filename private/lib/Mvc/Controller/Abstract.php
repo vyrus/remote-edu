@@ -98,6 +98,25 @@
                  ->setVars($view_vars)
                  ->render();
         }
+        
+        /**
+        * Показывает простое сообщения пользователю с переадресацией на указнный
+        * адрес.
+        * 
+        * @param  string $message Сообщение.
+        * @param  string $link    Адрес для перехода.
+        * @param  int    $timeout Задержка перед автоматическим переходом в сек.
+        * @return void
+        */
+        public function flash($message, $link, $timeout = 10) {
+            $vars = array(
+                'message' => $message,
+                'link'    => $link,
+                'timeout' => $timeout
+            );
+            
+            $this->render('common/flash', $vars);
+        }
     }
 
 ?>

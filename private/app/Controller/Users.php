@@ -11,11 +11,39 @@
             $users = Model_User::create()->showAll();
             
             $this->set('users', $users);
-            $this->render('users/show');
+            $this->render();
         }
         
         public function action_register() {
-            $this->render();
+            $request = $this->getRequest();
+            $form = Form_Registration::create();
+            $this->set('form', $form);
+            
+            if (empty($request->{$form->method()})) {
+                $this->render();
+            } 
+            
+            if (!$form->validate($request)) {
+                $this->render();
+            }
+            
+            $user = Model_User::create();
+            
+            if ($user->exists($form->login->value)) {
+                $form->invalidate();
+                $error = 'Указанное имя пользователя уже занято';
+                $form->setValidationError('login', $error);
+                
+                $this->render();
+            }
+            
+            $user->add(
+                $form->login->value,
+                $form->passwd->value,
+                $form->fio->value
+            );
+            
+            $this->flash('Вы успешно зарегистрированы', '/users/index/');
         }
     }
 
