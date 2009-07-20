@@ -101,11 +101,12 @@
         
         /**
         * Показывает простое сообщения пользователю с переадресацией на указнный
-        * адрес.
+        * адрес. Если в $timeout передать значение false, то автоматический
+        * переход не будет осуществляться.
         * 
-        * @param  string $message Сообщение.
-        * @param  string $link    Адрес для перехода.
-        * @param  int    $timeout Задержка перед автоматическим переходом в сек.
+        * @param  string      $message Сообщение.
+        * @param  string      $link    Адрес для перехода.
+        * @param  int|boolean $timeout Задержка перед автоматическим переходом.
         * @return void
         */
         public function flash($message, $link, $timeout = 10) {

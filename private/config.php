@@ -16,6 +16,11 @@
             )
         ),
         
+        'auth' => array
+        (
+            'salt' => 'Ix8i8AQrEfFtgi14XupbT4kxHM511ZDFA'
+        ),
+        
         'routes' => array
         (
             array

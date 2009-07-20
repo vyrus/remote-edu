@@ -47,6 +47,19 @@
         }
         
         /**
+        * Инициализация объекта авторизации.
+        * 
+        * @return Auth
+        */
+        protected function get_auth() {
+            $config = $this->_config['auth'];
+            
+            $auth = Auth::create($config['salt']);
+            
+            return $auth;    
+        }
+        
+        /**
         * Инициализация обработчика шаблонов.
         * 
         * @return Mvc_View

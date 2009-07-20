@@ -239,9 +239,15 @@
             foreach ($this->_fields as $id => $field)
             {
                 $name = $field['name'];
-                $validator = $field['validator'];
-                
                 $value = (isset($values[$name]) ? $values[$name] : '');
+                
+                /* Если не установлен валидатор, просто запоминаем значение */
+                if (!isset($field['validator'])) {
+                    $this->setValue($id, $value);
+                    continue;
+                }
+                
+                $validator = $field['validator'];
                 
                 /* Если значение введено некорректно, то... */
                 if (!$this->_isFieldValid($value, $validator)) {
@@ -249,7 +255,7 @@
                     $this->setValidationError($id, $field['error']);
                 } else {
                     /* Иначе запоминаем значение */
-                    $this->_setValue($id, $value);
+                    $this->setValue($id, $value);
                 }
             }
             
@@ -276,6 +282,19 @@
         */
         public function valid() {
             return $this->_valid;
+        }
+        
+        /**
+        * Установка значения поля с защитой от XSS-атак.
+        * 
+        * @param  string $id    Идентифкатор поля.
+        * @param  mixed  $value Значение.
+        * @return void
+        */
+        public function setValue($id, $value) {
+            $this->_values[$id] = $this->_preventXss($value);
+            /* Не забываем удалить закэшированный объект поля */
+            $this->_deleteFromCache($id); 
         }
         
         /**
@@ -355,17 +374,6 @@
             $result = ($num_matches > 0);
             
             return $result;
-        }
-        
-        /**
-        * Установка значения поля с защитой от XSS-атак.
-        * 
-        * @param  string $id    Идентифкатор поля.
-        * @param  mixed  $value Значение.
-        * @return void
-        */
-        protected function _setValue($id, $value) {
-            $this->_values[$id] = $this->_preventXss($value); 
         }
         
         /**
