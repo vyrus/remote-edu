@@ -15,7 +15,7 @@
         }
         
         /**
-        * Регистрация цользователя.
+        * Регистрация пользователя.
         */
         public function action_register() {
             /* Получаем объект запроса */
@@ -51,10 +51,9 @@
             /* Берём данные из формы */
             $login  = $form->login->value;
             $passwd = $form->passwd->value;
-            $fio    = $form->fio->value;
             
             /* Добавляем в базу */
-            $user->register($login, $passwd, $fio);
+            $user->register($login, $passwd);
             
             /* Выводим сообщение */
             $this->flash('Вы успешно зарегистрированы', '/users/index/');
@@ -101,9 +100,12 @@
                 $this->render();
             }
             
+            if ('admin' == $user_data['role']) {
+                $this->flash('Вы авторизованы как администратор', '/admin/index/', 1);
+            }
             /* Если всё удачно, выводим сообщение об успешной авторизации */
-            $msg = 'Вы авторизованы как пользователь ' . $user_data['fio'];
-            $this->flash($msg, '/users/index/');
+            $msg = 'Вы авторизованы как пользователь ' . $user_data['login'] . ' (' . implode(' ', array($user_data['surname'], $user_data['name'], $user_data['patronymic'])) . ')';
+            $this->flash($msg, '/users/index/');                                         
         }
         
         /**
@@ -113,7 +115,7 @@
             $auth = Resources::getInstance()->auth;
             $user = $auth->init()->getUser();
             
-            $msg = vsprintf('Вы авторизованы как %s, %s', $user);
+            $msg = vsprintf('Вы авторизованы как %s (%s)', $user);
             $this->flash($msg, '/users/index/', false);
         }
     }

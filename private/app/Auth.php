@@ -74,10 +74,14 @@
         * @param  string $fio   Ф.И.О.
         * @return void
         */
-        public function setUser($login, $fio) {
+        public function setUser($login, $role, $email, $surname, $name, $patronymic) {
             $_SESSION['user'] = array(
-                'login' => $login,
-                'fio'   => $fio
+                'login'      => $login,
+                'role'       => $role,
+                'email'      => $email,
+                'surname'    => $surname,
+                'name'       => $name,
+                'patronymic' => $patronymic
             );
         }     
         

@@ -2,10 +2,15 @@
 -- Table structure for table `users`
 -- 
 
-CREATE TABLE `users` (
-  `id` int(10) NOT NULL auto_increment,
-  `login` varchar(50) character set utf8 collate utf8_bin NOT NULL,
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `login` varchar(64) NOT NULL,
   `passwd` varchar(32) NOT NULL,
-  `fio` varchar(256) default NULL,
-  PRIMARY KEY  (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+  `role` enum('student','teacher','admin') NOT NULL,
+  `email` varchar(256) NOT NULL,
+  `surname` varchar(64) NULL,
+  `name` varchar(64) NULL,
+  `patronymic` varchar(64) NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8;

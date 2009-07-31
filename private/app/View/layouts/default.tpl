@@ -30,7 +30,7 @@
                 <div id="col1">
                     <div id="col1_content" class="clearfix">
                         <ul>                             
-                            <?php
+                            <?php  
                                 $ctrl = $this->_request->_router['handler']['controller'];
                                 $element = $ctrl . '-actions';
                                 $this->renderElement($element);
