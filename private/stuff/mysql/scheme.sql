@@ -3,14 +3,15 @@
 -- 
 
 DROP TABLE IF EXISTS `users`;
-CREATE TABLE IF NOT EXISTS `users` (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
-  `login` varchar(64) NOT NULL,
-  `passwd` varchar(32) NOT NULL,
+CREATE TABLE `users` (
+  `user_id` int(10) unsigned NOT NULL auto_increment,
+  `login` varchar(64) character set utf8 collate utf8_bin NOT NULL,
+  `passwd` varchar(32) character set utf8 collate utf8_bin default NULL,
   `role` enum('student','teacher','admin') NOT NULL,
   `email` varchar(256) NOT NULL,
-  `surname` varchar(64) NULL,
-  `name` varchar(64) NULL,
-  `patronymic` varchar(64) NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+  `surname` varchar(64) default NULL,
+  `name` varchar(64) default NULL,
+  `patronymic` varchar(64) default NULL,
+  `status` enum('active','inactive') NOT NULL DEFAULT 'inactive',
+  PRIMARY KEY  (`user_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
