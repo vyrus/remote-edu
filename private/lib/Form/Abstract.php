@@ -386,6 +386,16 @@
         }
         
         /**
+        * Проверяет, установлена ли для поля ошибка.
+        * 
+        * @param  string $id Идентификатор поля.
+        * @return boolean
+        */
+        public function hasError($id) {
+            return isset($this->_errors[$id]);
+        }
+        
+        /**
         * Защита от XSS, заменяет опасные символы на HTML-entities.
         * 
         * @param  mixed $var Значение поля.
