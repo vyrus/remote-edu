@@ -18,7 +18,7 @@
     
     <div class="field">
       <label for="passwd">Пароль:</label>
-      <input name="<?php echo $form->passwd->name ?>" type="text" id="passwd" value="<?php echo $form->passwd->value ?>" />
+      <input name="<?php echo $form->passwd->name ?>" type="password" id="passwd" value="<?php echo $form->passwd->value ?>" />
     </div>
     
     <?php if (isset($form->passwd->error)): ?>

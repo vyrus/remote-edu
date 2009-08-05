@@ -3,53 +3,33 @@
     /* $Id$ */
 
     /**
-    * Класс формы регистрации.
+    * Форма регистрации пользователей.
     */
     class Form_Registration extends Form_Abstract {
         /**
-        * Метод-конструктор класса. Заполняет структуру формы.
+        * Реализует дополнительную проверку на незанятость логина.
         * 
-        * @return void
+        * @param  Http_Request $request Объект запроса.
+        * @param  Model_User   $user    Модель работы с пользователями.
+        * @return
         */
-        public function __construct() {
-            $this
-                /* Устанавливаем параметры формы */
-                ->setAction('/users/register/')
-                ->setMethod(self::METHOD_POST)
+        public function validate(Http_Request $request, Model_User $user) {
+            /* Если базовая проверка нашла ошибки, сразу возвращаем результат */
+            if (false === ($result = parent::validate($request))) {
+                return $result;
+            }
+            
+            /* C помощью модели проверяем наличие пользователя с таким логином */
+            if ($user->exists($this->login->value))
+            {
+                $this->invalidate();
+                $error = 'Указанное имя пользователя уже занято';
+                $this->setValidationError('login', $error);
                 
-                /* Поле "Имя пользователя" */
-                ->addField('login')
-                ->setValidator('/^[a-z0-9_]{3,}$/ixu')
-                ->setError(
-                    'Имя пользователя должно состоять из букв латинского ' . 
-                    'алфавита, цифр и символа подчёркивания (минимальная' .
-                    'длина - 3 символа)'
-                )
-                
-                /* Поле "Пароль" */
-                ->addField('passwd')
-                ->setValidator('/^[a-z0-9_]+$/ixu')
-                ->setError(
-                    'Пароль должен состоять из латинских букв, цифр и ' .
-                    'символа подчёркивания'
-                )
-                                 
-                /* Поле "e-mail" */
-                ->addField('email')
-                ->setValidator('|[0-9a-z-]+@[0-9a-z-^\.]+\.[a-z]{2,6}|i')
-                ->setError(
-                    'Некорректный адрес электронной почты'
-                )
-            ;
-        }
-        
-        /**
-        * Создание экземпляра класса.
-        * 
-        * @return Form_Registration
-        */
-        public static function create() {
-            return new self();
+                return false;
+            }
+            
+            return true;
         }
     }
 

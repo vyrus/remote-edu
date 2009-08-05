@@ -3,8 +3,13 @@
     /* $Id$ */
     
     return array(
+        /* Режим работы (debug/production) */
         'mode' => 'debug',
         
+        /* Базовый адрес */
+        'base_url' => 'http://remote-edu',
+        
+        /* Настройки соединения с БД */
         'db' => array
         (
             'dsn'     => 'mysql:host=localhost;dbname=remote-edu',
@@ -16,39 +21,54 @@
             )
         ),
         
+        /* Настройки авторизации */
         'auth' => array
         (
+            /* Случайная последовательность символов для шифрования */
             'salt' => 'Ix8i8AQrEfFtgi14XupbT4kxHM511ZDFA'
         ),
         
+        /* Маршруты */
         'routes' => array
         (
-            array
-            (
-                'type'    => Mvc_Router::ROUTE_STATIC,
-                'pattern' => '/static-route',
-                'handler' => array
-                (
-                    'controller' => 'index',
-                    'action'     => 'static'
-                )
-            ),
-            
-            array
-            (
+            /* Активация слушателя */
+            array(
                 'type'    => Mvc_Router::ROUTE_REGEX,
                 'pattern' => array
                 (
-                    'regex'  => '/regex-route-([0-9]+).*',
-                    'params' => array('number')
+                    'regex'  => '/activate_student/([0-9]+)/([0-9a-z]{32}).*',
+                    'params' => array('user_id', 'code')
                 ),
                 'handler' => array
                 (
-                    'controller' => 'index',
-                    'action'     => 'regex',
-                    'params'     => array('default-param' => 'default-value')
+                    'controller' => 'users',
+                    'action'     => 'activate_student'
+                )
+            ),
+            
+            /* Активация сотрудника */
+            array(
+                'type'    => Mvc_Router::ROUTE_REGEX,
+                'pattern' => array
+                (
+                    'regex'  => '/activate_employee/([0-9]+)/([0-9a-z]{32}).*',
+                    'params' => array('user_id', 'code')
+                ),
+                'handler' => array
+                (
+                    'controller' => 'users',
+                    'action'     => 'activate_employee'
                 )
             )
+        ),
+        
+        /* Настройка отправки почтовых сообщений */
+        'postman' => array
+        (
+            /* Адрес отправителя писем */
+            'from_email' => 'robot@remote-edu.localhost',
+            /* Имя отправителя */
+            'from_name'  => 'Робот' 
         )
     );
             

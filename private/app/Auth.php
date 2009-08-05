@@ -3,10 +3,6 @@
     /* $Id$ */
 
     /**
-    * @todo Поддержка авторизации через cookie? Если удалить пользователя из БД,
-    *       он некоторое время всё равно сможет работать на сайте.
-    */
-    /**
     * Контейнер для хранения данных авторизации + шифрование паролей.
     */
     class Auth {
@@ -58,6 +54,16 @@
         } 
         
         /**
+        * Вычисление кода активации по идентификатору.
+        * 
+        * @param  int $id Идентификатор пользователя.
+        * @return string
+        */
+        public function getActivationCode($id) {
+            return $this->_hash($id);
+        }
+        
+        /**
         * Инициализация хранилища данных.
         * 
         * @return Auth
@@ -68,30 +74,29 @@
         }
         
         /**
-        * Установка данных пользователя.
+        * Сохранение идентификатора авторизованного пользователя в сессии.
         * 
-        * @param  string $login Логин.
-        * @param  string $fio   Ф.И.О.
+        * @param  int $id  
         * @return void
         */
-        public function setUser($login, $role, $email, $surname, $name, $patronymic) {
-            $_SESSION['user'] = array(
-                'login'      => $login,
-                'role'       => $role,
-                'email'      => $email,
-                'surname'    => $surname,
-                'name'       => $name,
-                'patronymic' => $patronymic
-            );
+        public function setUserId($id) {
+            $_SESSION['user_id'] = $id;
         }     
         
         /**
-        * Получение данных пользователя.
+        * Получение идентификатора авторизованного пользователя.
         * 
-        * @return array
+        * @return int|boolean False, если не данные не найдены, иначе id.
         */
-        public function getUser() {
-            return $_SESSION['user'];
+        public function getUserId() {
+            return (isset($_SESSION['user_id']) ? $_SESSION['user_id'] : false);
+        }
+        
+        /**
+        * Снятие авторизации, удаление идентификатора из сессии.
+        */
+        public function unsetUserId() {
+            unset($_SESSION['user_id']);
         }
         
         /**

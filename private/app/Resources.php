@@ -59,6 +59,17 @@
             return $auth;    
         }
         
+        protected function get_postman() {
+            $config = $this->_config['postman'];
+            
+            $postman = Postman::create(
+                $this->_config['base_url'],
+                $config['from_email'], $config['from_name']
+            );   
+            
+            return $postman; 
+        }
+        
         /**
         * Инициализация обработчика шаблонов.
         * 
