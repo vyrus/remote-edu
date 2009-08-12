@@ -4,9 +4,6 @@
 
     /**
     * Обработка действий, связанных с пользователями.
-    * 
-    * @param
-    * @return
     */
     class Controller_Users extends Mvc_Controller_Abstract {
         /**
@@ -31,9 +28,7 @@
             
             /* Создаём объект формы с полями первичной регистрации */
             $action = '/users/register_student/';
-            $form = Form_Registration_Student::create(
-                $action, Form_Registration_Student::TYPE_MINIMAL
-            );
+            $form = Form_Profile_Student_Registration::create($action);
             $this->set('form', $form);
             
             /* Если данных от формы нет, предлагаем заполнить */
@@ -83,6 +78,10 @@
             /* Проверяем статус пользователя */
             $status = $user->getStatus($id);
 
+            if (false === $status) {
+                $this->flash('Пользователь не найден', '/users/index/');
+            }
+            
             if (Model_User::STATUS_INACTIVE !== $status) {
                 $this->flash('Аккаунт уже активирован', '/users/index/');
             }
@@ -95,9 +94,14 @@
             }
             
             /* Активируем слушателя */
-            $user->activateStudent($id);
+            $result = $user->activateStudent($id);
             
-            $msg = 'Аккаунт успешно активирован';
+            if ($result) {
+                $msg = 'Аккаунт успешно активирован';
+            } else {
+                $msg = 'Не удалось активировать аккаунт';
+            }
+            
             $this->flash($msg, '/users/index/', false);
         }
         
@@ -109,7 +113,7 @@
             
             /* Создаём объект формы с полями первичной регистрации */
             $action = '/users/register_employee/';
-            $form = Form_Registration_Employee::create($action);
+            $form = Form_Profile_Employee_Registration::create($action);
             $this->set('form', $form);
             
             /* Если данных от формы нет, предлагаем заполнить */
@@ -163,6 +167,10 @@
             /* Проверяем текущйи статус */
             $status = $user->getStatus($id);
 
+            if (false === $status) {
+                $this->flash('Пользователь не найден', '/users/index/');
+            }
+            
             if (Model_User::STATUS_INACTIVE !== $status) {
                 $this->flash('Аккаунт уже активирован', '/users/index/');
             }
@@ -176,9 +184,16 @@
             
             /* Генерируем пароль для аккаунта и обновляем данные в БД */
             $passwd = $user->generatePassword();
-            $user->activateEmployee($id, $passwd);
+            $result = $user->activateEmployee($id, $passwd);
             
-            $msg = 'Аккаунт успешно активирован, ваш пароль <strong>' . $passwd . '</strong>';
+            if ($result) {
+                $msg = 'Аккаунт успешно активирован, ваш пароль <strong>' . 
+                        $passwd .
+                        '</strong>';
+            } else {
+                $msg = 'Не удалось активировать аккаунт';
+            }
+            
             $this->flash($msg, '/users/index/', false);
         }
         
@@ -188,8 +203,10 @@
         public function action_login() {
             /* Получаем объект запроса */
             $request = $this->getRequest();
+            
             /* Инициализируем обработчик формы */
-            $form = Form_Login::create();
+            $action = '/users/login/';
+            $form = Form_Profile_Login::create($action);
             $this->set('form', $form);
             
             /* Если данных от формы нет, выводим страничку */

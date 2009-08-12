@@ -219,16 +219,21 @@
             $sql = '
                 UPDATE ' . $this->_table . '
                 SET status = :status
-                WHERE user_id = :id
+                WHERE user_id = :id AND
+                      role = :role
             ';
             
             $values = array(
                 ':id'     => $id,
-                ':status' => self::STATUS_ACTIVE
+                ':status' => self::STATUS_ACTIVE,
+                ':role'   => self::ROLE_STUDENT
             );
             
-            return $this->prepare($sql)
-                        ->execute($values);
+            $stmt = $this->prepare($sql);
+            $stmt->execute($values);
+            
+            $row_count = $stmt->rowCount();
+            return $row_count > 0;
         }
         
         /**
@@ -243,7 +248,8 @@
             $sql = '
                 UPDATE ' . $this->_table . '
                 SET passwd = :passwd, status = :status
-                WHERE user_id = :id
+                WHERE user_id = :id AND
+                      (role = :role_t OR role = :role_a)
             ';
             
             /* Шифруем пароль */
@@ -253,11 +259,16 @@
             $values = array(
                 ':id'     => $id,
                 ':passwd' => $passwd,
-                ':status' => self::STATUS_ACTIVE
+                ':status' => self::STATUS_ACTIVE,
+                ':role_t' => self::ROLE_TEACHER,
+                ':role_a' => self::ROLE_ADMIN
             );
             
-            return $this->prepare($sql)
-                        ->execute($values);
+            $stmt = $this->prepare($sql);
+            $stmt->execute($values);
+            
+            $row_count = $stmt->rowCount();
+            return $row_count > 0;
         }
         
         /**
