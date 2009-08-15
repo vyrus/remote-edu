@@ -243,8 +243,9 @@
             $pattern_len = strlen($pattern);
             $path = substr($path, 0, $pattern_len);
             
-            /* Если начало запроса совпадает с шаблоном, то... */    
-            if ($path == $pattern) {                         
+            /* Если начало запроса совпадает с шаблоном, то... */
+            if ($path == $pattern) {
+
                 /* засчитываем совпадение, игнорируя оставшуюся часть запроса */
                 return true;
             }
@@ -351,8 +352,9 @@
             
             /* Определяем название класса контроллера */
             $class = 'Controller_' . ucfirst($handler['controller']);
-            
+
             /* Если такой класс не найден - ошибка 404 */
+
             if (!class_exists($class /* $autoload = true */))
             {
                 $msg = sprintf('Не найден класс контроллера "%s"', $class);
@@ -369,7 +371,7 @@
                 $msg = sprintf($msg, $method, $class);
                 $this->_error_404($msg, $request);
             }
-            
+
             /* Инициализируем контроллер */
             $controller = new $class($request);
             

@@ -31,6 +31,36 @@
         /* Маршруты */
         'routes' => array
         (
+			array (
+				'type'		=> Mvc_Router::ROUTE_STATIC,
+				'pattern'	=> "/education_programs",
+				'handler'	=> array (
+					'controller'	=> "Education_Programs",
+					'action'		=> 'index',
+				),
+			),
+			
+			array (
+				'type'		=> Mvc_Router::ROUTE_STATIC,
+				'pattern'	=> "/add_speciality",
+				'handler'	=> array (
+					'controller'	=> "Education_Programs",
+					'action'		=> 'add_speciality',
+				),
+			),
+			
+			array (
+				'type'		=> Mvc_Router::ROUTE_REGEX,
+				'pattern'	=> array (
+					'regex'	=> '/add_discipline/([0-9]+)',
+					'params'=> array ('speciality_id'),
+				),
+				'handler'	=> array (
+					'controller'	=> 'Education_Programs',
+					'action'		=> 'add_discipline',
+				)
+			),
+	
             /* Активация слушателя */
             array(
                 'type'    => Mvc_Router::ROUTE_REGEX,

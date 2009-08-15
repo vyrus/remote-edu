@@ -1,5 +1,5 @@
 <?php
-
+    
     /* $Id$ */
     
     require_once '../private/init.php';
@@ -10,5 +10,4 @@
     $router = Resources::getInstance()->router;
     /* Обрабатывем запрос, передаём управление соответствующему контроллеру */
     $router->dispatch($request);
-        
 ?>

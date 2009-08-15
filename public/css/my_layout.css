@@ -20,3 +20,32 @@
 
 /* import print layout | Druck-Layout einbinden */
 @import url(../yaml/print/print_draft.css);
+
+select.educationProgramItems {
+	width					: 150px;
+}
+
+button.addButton,
+button.editButton,
+button.removeButton {
+	background-color 		: #FFFFFF;
+	border-color 			: #999999;
+	border-style 			: solid;
+	font-size 				: 16px;
+	font-family 			: Verdana;
+	padding 				: 0px;
+	cursor 					: pointer;
+}
+
+button.addButton,
+button.removeButton {
+	border-width 			: 1px;
+	width					: 25px;
+	height					: 25px;
+}
+
+button.editButton {
+	border-width 			: 1px 0px;
+	width					: 23px;
+	height 					: 25px;
+}

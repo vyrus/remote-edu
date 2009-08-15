@@ -240,7 +240,7 @@
             {
                 $name = $field['name'];
                 $value = (isset($values[$name]) ? $values[$name] : '');
-                
+
                 /* Если не установлен валидатор, просто запоминаем значение */
                 if (!isset($field['validator'])) {
                     $this->setValue($id, $value);
