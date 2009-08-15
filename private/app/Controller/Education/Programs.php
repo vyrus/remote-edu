@@ -71,5 +71,34 @@
 				3				
 			);
 		}
+		
+		public function action_add_section ($params) {
+			$request = $this->getRequest ();
+			$request->set ('discipline', $params['discipline_id']);
+			
+			$form = Form_Section_Add::create ('/add_section/' . $params['discipline_id']);
+			$this->set ('form', $form);
+			$method = $form->method ();
+			if (empty ($request->$method)) {
+				$this->render ('education_programs/section_form');
+			}
+			
+			$educationPrograms = Model_Education_Programs::create ();
+			
+			if (! $form->validate ($request, $educationPrograms)) {
+                $this->render ("education_programs/section_form");
+            }
+
+			$educationPrograms->createSection (
+				$form->discipline->value,
+				$form->title->value,
+				$form->number->value
+			);			
+			$this->flash (
+				'Раздел успешно добавлен',
+				'/education_programs/index',
+				3				
+			);		
+		}
 	}
 ?>

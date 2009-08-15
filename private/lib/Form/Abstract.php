@@ -289,12 +289,14 @@
         * 
         * @param  string $id    Идентифкатор поля.
         * @param  mixed  $value Значение.
-        * @return void
+        * @return Form_Abstract  Fluent interface.
         */
         public function setValue($id, $value) {
             $this->_values[$id] = $this->_preventXss($value);
             /* Не забываем удалить закэшированный объект поля */
-            $this->_deleteFromCache($id); 
+            $this->_deleteFromCache($id);
+
+			return $this;
         }
         
         /**

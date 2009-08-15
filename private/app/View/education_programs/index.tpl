@@ -12,8 +12,6 @@
 	<?php endforeach; ?>
 
 	function addDiscipline () {
-		var specialitiesSelect = document.getElementById ('specialitiesSelect');
-		
 		if (specialitiesSelect.selectedIndex == -1) {
 			alert ('Необходимо выбрать направление');
 			return;
@@ -22,10 +20,16 @@
 		window.location = '/add_discipline/' + specialitiesSelect.options[specialitiesSelect.selectedIndex].value;
 	}
 	
-	function updateDisciplinesList () {
-		var specialitiesSelect = document.getElementById ('specialitiesSelect');
-		var disciplinesSelect = document.getElementById ('disciplinesSelect');
+	function addSection () {
+		if (disciplinesSelect.selectedIndex == -1) {
+			alert ('Необходимо выбрать дисциплину');
+			return;
+		}
 		
+		window.location = '/add_section/' + disciplinesSelect.options[disciplinesSelect.selectedIndex].value;
+	} 
+	
+	function updateDisciplinesList () {
 		while (disciplinesSelect.firstChild) {
 			disciplinesSelect.removeChild (disciplinesSelect.firstChild);
 		}
@@ -45,11 +49,16 @@
 <?php endforeach; ?>
 </select></td>
 <td><select id="disciplinesSelect" class="educationProgramItems" size="10"></select></td>
-<td><select class="educationProgramItems" size="10"></select></td>
+<td><select id="sectionsSelect" class="educationProgramItems" size="10"></select></td>
 </tr>
 <tr>
 <td><a href="/add_speciality"><button class="addButton">&#x002B;</button></a><button class="editButton">&#x270E;</button><button class="removeButton">&#x2212;</button></td>
 <td><button class="addButton" onclick="addDiscipline ();">&#x002B;</button><button class="editButton">&#x270E;</button><button class="removeButton">&#x2212;</button></td>
-<td><button class="addButton">&#x002B;</button><button class="editButton">&#x270E;</button><button class="removeButton">&#x2212;</button></td>
+<td><button class="addButton" onclick="addSection ();">&#x002B;</button><button class="editButton">&#x270E;</button><button class="removeButton">&#x2212;</button></td>
 </tr>
 </table>
+<script type="text/javascript">
+	var specialitiesSelect 	= document.getElementById ('specialitiesSelect');
+	var disciplinesSelect 	= document.getElementById ('disciplinesSelect');
+	var sectionsSelect 		= document.getElementById ('sectionsSelect');
+</script>

@@ -60,6 +60,18 @@
 					'action'		=> 'add_discipline',
 				)
 			),
+			
+			array (
+				'type'		=> Mvc_Router::ROUTE_REGEX,
+				'pattern'	=> array (
+					'regex'	=> '/add_section/([0-9]+)',
+					'params'=> array ('discipline_id'),
+				),
+				'handler'	=> array (
+					'controller'	=> 'Education_Programs',
+					'action'		=> 'add_section',
+				)
+			),
 	
             /* Активация слушателя */
             array(

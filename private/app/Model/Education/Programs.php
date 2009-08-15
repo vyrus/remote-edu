@@ -34,6 +34,19 @@ QUERY;
 			return ($stmt->fetch () !== FALSE);
 		}
 		
+		public function disciplineIDExists ($id) {
+			$sql =
+<<<QUERY
+SELECT `discipline_id`
+FROM `disciplines`
+WHERE `discipline_id`=?
+QUERY;
+			$stmt = $this->prepare($sql);
+			$stmt->execute(array($id));
+
+			return ($stmt->fetch () !== FALSE);
+		}
+		
 		public function disciplineExists ($specialityID, $title) {
 			$sql =
 <<<QUERY
@@ -52,6 +65,46 @@ QUERY;
 			$disciplineExistsStmt->execute ($params);
 			
 			return ($disciplineExistsStmt->fetch () !== FALSE);
+		}
+		
+		public function sectionExists ($disciplineID, $title) {
+			$sql =
+<<<QUERY
+SELECT `section_id`
+FROM `sections`
+WHERE 
+	`discipline_id`=:discipline_id AND
+	`title`=:title
+QUERY;
+			$params = array (
+				':discipline_id'=> $disciplineID,
+				':title'		=> $title,
+			);
+
+			$sectionExistsStmt = $this->prepare ($sql);
+			$sectionExistsStmt->execute ($params);
+
+			return ($sectionExistsStmt->fetch () !== FALSE);
+		}
+		
+		public function sectionNumberExists  ($disciplineID, $number) {
+			$sql =
+<<<QUERY
+SELECT `section_id`
+FROM `sections`
+WHERE 
+	`discipline_id`=:discipline_id AND
+	`number`=:number
+QUERY;
+			$params = array (
+				':discipline_id'=> $disciplineID,
+				':number'		=> $number,
+			);
+
+			$sectionExistsStmt = $this->prepare ($sql);
+			$sectionExistsStmt->execute ($params);
+
+			return ($sectionExistsStmt->fetch () !== FALSE);
 		}
 				
 		public function createSpeciality ($title, $labourIntensive) {
@@ -86,6 +139,24 @@ QUERY;
 				':labour_intensive'	=> $labourIntensive,				
 			);
 			
+			$this
+				->prepare ($sql)
+				->execute ($params);
+		}
+		
+		public function createSection ($disciplineID, $title, $number) {
+			$sql =
+<<<QUERY
+INSERT INTO `sections` (`discipline_id`,`title`,`number`)
+VALUES (:discipline_id,:title,:number)
+QUERY;
+
+			$params = array (
+				':discipline_id'	=> $disciplineID,
+				':title'			=> $title,
+				':number'			=> $number
+			);
+
 			$this
 				->prepare ($sql)
 				->execute ($params);
