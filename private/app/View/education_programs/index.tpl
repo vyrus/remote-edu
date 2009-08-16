@@ -20,6 +20,15 @@
 	];
 	<?php endforeach; ?>
 
+	function removeSpeciality () {
+		if (specialitiesSelect.selectedIndex == -1) {
+			alert ('Необходимо выбрать направление');
+			return;
+		}
+		
+		window.location = '/remove_speciality/' + specialitiesSelect.options[specialitiesSelect.selectedIndex].value;
+	}
+
 	function addDiscipline () {
 		if (specialitiesSelect.selectedIndex == -1) {
 			alert ('Необходимо выбрать направление');
@@ -29,6 +38,15 @@
 		window.location = '/add_discipline/' + specialitiesSelect.options[specialitiesSelect.selectedIndex].value;
 	}
 	
+	function removeDiscipline () {
+		if (disciplinesSelect.selectedIndex == -1) {
+			alert ('Необходимо выбрать дисциплину');
+			return;
+		}
+		
+		window.location = '/remove_discipline/' + disciplinesSelect.options[disciplinesSelect.selectedIndex].value;
+	}
+	
 	function addSection () {
 		if (disciplinesSelect.selectedIndex == -1) {
 			alert ('Необходимо выбрать дисциплину');
@@ -36,12 +54,32 @@
 		}
 		
 		window.location = '/add_section/' + disciplinesSelect.options[disciplinesSelect.selectedIndex].value;
-	} 
+	}
 	
-	function updateDisciplinesList () {
+	function removeSection () {
+		if (sectionsSelect.selectedIndex == -1) {
+			alert ('Необходимо выбрать раздел');
+			return;
+		}
+		
+		window.location = '/remove_section/' + sectionsSelect.options[sectionsSelect.selectedIndex].value;
+	}
+	
+	function clearDisciplinesList () {
 		while (disciplinesSelect.firstChild) {
 			disciplinesSelect.removeChild (disciplinesSelect.firstChild);
-		}
+		}		
+	}
+	
+	function clearSectionsList () {
+		while (sectionsSelect.firstChild) {
+			sectionsSelect.removeChild (sectionsSelect.firstChild);
+		}		
+	}
+	
+	function updateDisciplinesList () {
+		clearDisciplinesList ();
+		clearSectionsList ();
 		
 		var disciplines = DISCIPLINES[specialitiesSelect.options[specialitiesSelect.selectedIndex].value];
 		for (var i = 0; i < disciplines.length; i++) {
@@ -50,10 +88,8 @@
 	}
 	
 	function updateSectionsList () {
-		while (sectionsSelect.firstChild) {
-			sectionsSelect.removeChild (sectionsSelect.firstChild);
-		}
-		
+		clearSectionsList ();
+				
 		var sections = SECTIONS[disciplinesSelect.options[disciplinesSelect.selectedIndex].value];
 		for (var i = 0; i < sections.length; i++) {
 			sectionsSelect.options[i] = new Option ("Раздел " + sections[i].number + ": " + sections[i].title, sections[i].id);
@@ -72,9 +108,9 @@
 <td><select id="sectionsSelect" class="educationProgramItems" size="10"></select></td>
 </tr>
 <tr>
-<td><a href="/add_speciality"><button class="addButton">&#x002B;</button></a><button class="editButton">&#x270E;</button><button class="removeButton">&#x2212;</button></td>
-<td><button class="addButton" onclick="addDiscipline ();">&#x002B;</button><button class="editButton">&#x270E;</button><button class="removeButton">&#x2212;</button></td>
-<td><button class="addButton" onclick="addSection ();">&#x002B;</button><button class="editButton">&#x270E;</button><button class="removeButton">&#x2212;</button></td>
+<td><a href="/add_speciality"><button class="addButton">&#x002B;</button></a><button class="editButton">&#x270E;</button><button class="removeButton" onclick="removeSpeciality ();">&#x2212;</button></td>
+<td><button class="addButton" onclick="addDiscipline ();">&#x002B;</button><button class="editButton">&#x270E;</button><button class="removeButton" onclick="removeDiscipline ();">&#x2212;</button></td>
+<td><button class="addButton" onclick="addSection ();">&#x002B;</button><button class="editButton">&#x270E;</button><button class="removeButton" onclick="removeSection ();">&#x2212;</button></td>
 </tr>
 </table>
 <script type="text/javascript">

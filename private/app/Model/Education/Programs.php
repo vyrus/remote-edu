@@ -251,5 +251,73 @@ QUERY;
 			
 			return $this->_cache['disciplinesSections'];
 		}
+		
+		public function removeSpeciality ($specialityID) {
+			$this->removeDisciplines ($specialityID);
+			
+			$sql =
+<<<QUERY
+DELETE FROM `programs`
+WHERE `program_id`=?
+QUERY;
+			
+			$this->prepare ($sql)->execute (array ($specialityID));
+		}
+		
+		private function removeDisciplines ($specialityID) {
+			$sql =
+<<<QUERY
+SELECT `discipline_id`
+FROM `disciplines`
+WHERE `program_id`=?
+QUERY;
+			
+			$disciplinesStmt = $this->prepare ($sql);
+			$disciplinesStmt->execute (array ($specialityID));
+			$disciplines = $disciplinesStmt->fetchAll (PDO::FETCH_ASSOC);
+			if (count ($disciplines)) {
+				foreach ($disciplines as $i => $discipline) {
+					$this->removeSections ($discipline['discipline_id']);
+				}
+				
+				$sql =
+<<<QUERY
+DELETE FROM `disciplines`
+WHERE `program_id`=?
+QUERY;
+				$this->prepare ($sql)->execute (array ($specialityID));
+			}
+		}
+		
+		public function removeDiscipline ($disciplineID) {
+			$this->removeSections ($disciplineID);
+			
+			$sql =
+<<<QUERY
+DELETE FROM `disciplines`
+WHERE `discipline_id`=?
+QUERY;
+			$this->prepare ($sql)->execute ($disciplineID);
+		}
+		
+		private function removeSections ($disciplineID) {
+			$sql =
+<<<QUERY
+DELETE FROM `sections`
+WHERE `discipline_id`=?
+QUERY;
+			
+			$this->prepare ($sql)->execute (array ($disciplineID));
+		}
+		
+		public function removeSection ($sectionID) {
+			$sql =
+<<<QUERY
+DELETE FROM `sections`
+WHERE `section_id`=?
+QUERY;
+			
+			$this->prepare ($sql)->execute (array ($sectionID));
+		}
 	}
 ?>

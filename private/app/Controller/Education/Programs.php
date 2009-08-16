@@ -1,11 +1,4 @@
 <?php
-	/**
-	* Обработка действий, связанных с образовательными дисциплинами.
-	* 
-	* @param
-	* @return
-	*/
-	
 	class Controller_Education_Programs extends Mvc_Controller_Abstract {
 		public function action_index () {
 			$educationPrograms = Model_Education_Programs::create ();
@@ -100,6 +93,39 @@
 				'/education_programs/index',
 				3				
 			);		
+		}
+		
+		public function action_remove_speciality ($params) {
+			$educationPrograms = Model_Education_Programs::create ();
+			$educationPrograms->removeSpeciality ($params['speciality_id']);
+			
+			$this->flash (
+				'Направление успешно удалено',
+				'/education_programs/index',
+				3
+			);
+		}
+		
+		public function action_remove_discipline ($params) {
+			$educationPrograms = Model_Education_Programs::create ();
+			$educationPrograms->removeDiscipline ($params['discipline_id']);
+			
+			$this->flash (
+				'Дисциплина успешно удалена',
+				'/education_programs/index',
+				3
+			);
+		}
+		
+		public function action_remove_section ($params) {
+			$educationPrograms = Model_Education_Programs::create ();
+			$educationPrograms->removeSection ($params['section_id']);
+			
+			$this->flash (
+				'Раздел успешно удален',
+				'/education_programs/index',
+				3
+			);
 		}
 	}
 ?>
