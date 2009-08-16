@@ -1,6 +1,7 @@
 <?php
 	$specialities 	= $this->specialities;
 	$disciplines	= $this->disciplines;
+	$sections		= $this->sections;
 ?>
 <script type="text/javascript">
 	var DISCIPLINES = [];
@@ -8,6 +9,14 @@
 	DISCIPLINES[<?php echo $specialityDiscipline[0]['program_id']; ?>] = [
 	<?php $delimiter = ""; foreach ($specialityDiscipline as $j => $discipline): echo $delimiter ?>
 	{"id":<?php echo $discipline['discipline_id']; ?>,"title":"<?php echo $discipline['title']; ?>"}<?php ; $delimiter =","; endforeach; ?>
+	];
+	<?php endforeach; ?>
+	
+	var SECTIONS = [];
+	<?php foreach ($sections as $i => $disciplineSection): ?>
+	SECTIONS[<?php echo $disciplineSection[0]['discipline_id']; ?>] = [
+	<?php $delimiter = ""; foreach ($disciplineSection as $j => $section): echo $delimiter ?>
+	{"id":<?php echo $section['section_id']; ?>,"title":"<?php echo $section['title']; ?>","number":<?php echo $section['number']; ?>}<?php ; $delimiter =","; endforeach; ?>
 	];
 	<?php endforeach; ?>
 
@@ -38,7 +47,18 @@
 		for (var i = 0; i < disciplines.length; i++) {
 			disciplinesSelect.options[i] = new Option (disciplines[i].title, disciplines[i].id);
 		}
-	}	
+	}
+	
+	function updateSectionsList () {
+		while (sectionsSelect.firstChild) {
+			sectionsSelect.removeChild (sectionsSelect.firstChild);
+		}
+		
+		var sections = SECTIONS[disciplinesSelect.options[disciplinesSelect.selectedIndex].value];
+		for (var i = 0; i < sections.length; i++) {
+			sectionsSelect.options[i] = new Option ("Раздел " + sections[i].number + ": " + sections[i].title, sections[i].id);
+		}
+	}
 </script>
 <table cellspacing="0" cellpadding="0">
 <tr><td>Направления</td><td>Дисциплины</td><td>Разделы</td></tr>
@@ -48,7 +68,7 @@
 <option value="<?php echo $speciality['program_id']; ?>"><?php echo $speciality['title']; ?></option>
 <?php endforeach; ?>
 </select></td>
-<td><select id="disciplinesSelect" class="educationProgramItems" size="10"></select></td>
+<td><select id="disciplinesSelect" class="educationProgramItems" size="10" onchange="updateSectionsList ();"></select></td>
 <td><select id="sectionsSelect" class="educationProgramItems" size="10"></select></td>
 </tr>
 <tr>

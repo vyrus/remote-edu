@@ -197,8 +197,8 @@ QUERY;
 				$result = array ();
 				if (count ($disciplines)) {
 					$programID = $disciplines[0]['program_id'];
-					for ($i = 0; $i < count ($disciplines); $i++) {
-						$result[$programID][] = $disciplines[$i];
+					foreach ($disciplines as $i => $discipline) {
+						$result[$programID][] = $discipline;
 						if (
 							($i + 1 < count ($disciplines)) &&
 							($disciplines[$i + 1]['program_id'] != $programID)
@@ -212,6 +212,44 @@ QUERY;
 			}	
 			
 			return $this->_cache['specialitiesDisciplines'];
+		}
+		
+		public function getSections () {
+			
+			if (! isset ($this->_cache['sections'])) {
+				$sql =
+<<<QUERY
+SELECT *
+FROM `sections`
+ORDER BY `discipline_id`
+QUERY;
+				$this->_cache['sections'] = $this->query ($sql)->fetchAll (PDO::FETCH_ASSOC);
+			}
+			
+			return $this->_cache['sections'];
+		}
+		
+		public function getDisciplinesSections () {
+			if (! isset ($this->_cache ['disciplinesSections'])) {
+				$sections = $this->getSections ();
+				$result = array ();
+				if (count ($sections)) {
+					$disciplineID = $sections[0]['discipline_id'];
+					foreach ($sections as $i => $section) {
+						$result[$disciplineID][] = $section;
+						if (
+							($i + 1 < count ($sections)) &&
+							($sections[$i + 1]['discipline_id'] != $disciplineID)
+						) {
+							$disciplineID = $sections[$i + 1]['discipline_id'];
+						}
+					}
+				}
+				
+				$this->_cache['disciplinesSections'] = $result;
+			}
+			
+			return $this->_cache['disciplinesSections'];
 		}
 	}
 ?>

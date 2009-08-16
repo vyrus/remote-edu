@@ -11,6 +11,7 @@
 			$educationPrograms = Model_Education_Programs::create ();
 			$this->set ('specialities', $educationPrograms->getSpecialities ());
 			$this->set ('disciplines', $educationPrograms->getSpecialitiesDisciplines ());
+			$this->set ('sections', $educationPrograms->getDisciplinesSections ());
 			
 			$this->render ("education_programs/index");
 		}
