@@ -1,5 +1,8 @@
 <?php
 	class Model_Education_Programs extends Mvc_Model_Abstract {
+		const	CHECK_BY_PARENT_ID 	= 0;
+		const 	CHECK_BY_OWN_ID		= 1;
+		
 		private $_cache = array ();
 		
 		public static function create() {
@@ -47,7 +50,20 @@ QUERY;
 			return ($stmt->fetch () !== FALSE);
 		}
 		
-		public function disciplineExists ($specialityID, $title) {
+		public function disciplineExists ($id, $title, $checkType = Model_Education_Programs::CHECK_BY_PARENT_ID) {
+			if ($checkType == Model_Education_Programs::CHECK_BY_OWN_ID) {
+				$sql =
+<<<QUERY
+SELECT `program_id`
+FROM `disciplines`
+WHERE `discipline_id`=?
+QUERY;
+				$getSpecialityIDStmt = $this->prepare ($sql);
+				$getSpecialityIDStmt->bindColumn ('program_id', $id);
+				$getSpecialityIDStmt->execute (array ($id));
+				$getSpecialityIDStmt->fetch (PDO::FETCH_BOUND);
+			}
+			
 			$sql =
 <<<QUERY
 SELECT `discipline_id`
@@ -57,7 +73,7 @@ WHERE
 	`title`		=:title
 QUERY;
 			$params = array (
-				':program_id'	=> $specialityID,
+				':program_id'	=> $id,
 				':title'		=> $title,
 			);
 			
@@ -318,6 +334,86 @@ WHERE `section_id`=?
 QUERY;
 			
 			$this->prepare ($sql)->execute (array ($sectionID));
+		}
+		
+		public function getSpeciality ($specialityID, &$title, &$labourIntensive) {
+			$sql =
+<<<QUERY
+SELECT `title`,`labour_intensive`
+FROM `programs`
+WHERE 
+	`program_id`=? AND
+	`edu_type`='direction'
+QUERY;
+			$getSpecialityStmt = $this->prepare ($sql);
+			$getSpecialityStmt->bindColumn ('title', $title);
+			$getSpecialityStmt->bindColumn ('labour_intensive', $labourIntensive);
+			$getSpecialityStmt->execute (array ($specialityID));
+			
+			$getSpecialityStmt->fetch (PDO::FETCH_BOUND);			
+		}
+		
+		public function editSpeciality ($specialityID, $title, $labourIntensive) {
+			$sql =
+<<<QUERY
+UPDATE `programs`
+SET
+	`title`=:title,
+	`labour_intensive`=:labour_intensive
+WHERE
+	`program_id`=:program_id
+QUERY;
+
+			$params = array (
+				':title'			=> $title,
+				':labour_intensive'	=> $labourIntensive,
+				':program_id'		=> $specialityID
+			);
+
+			$this
+				->prepare ($sql)
+				->execute ($params);
+		}
+		
+		public function getDiscipline ($disciplineID, &$title, &$labourIntensive, &$coef) {
+			$sql =
+<<<QUERY
+SELECT `title`,`labour_intensive`,`coef`
+FROM `disciplines`
+WHERE
+	`discipline_id`=?
+QUERY;
+			$getDisciplineStmt = $this->prepare ($sql);
+			$getDisciplineStmt->bindColumn 	('title', 				$title);
+			$getDisciplineStmt->bindColumn 	('labour_intensive', 	$labourIntensive);
+			$getDisciplineStmt->bindColumn 	('coef', 				$coef);
+			$getDisciplineStmt->execute 	(array ($disciplineID));
+			
+			$getDisciplineStmt->fetch (PDO::FETCH_BOUND);
+		}
+		
+		public function editDiscipline ($disciplineID, $title, $labourIntensive, $coef) {
+			$sql =
+<<<QUERY
+UPDATE `disciplines`
+SET
+	`title`=:title,
+	`labour_intensive`=:labour_intensive,
+	`coef`=:coef
+WHERE
+	`discipline_id`=:discipline_id
+QUERY;
+
+			$params = array (
+				':title'			=> $title,
+				':labour_intensive'	=> $labourIntensive,
+				':coef'				=> $coef,
+				':discipline_id'	=> $disciplineID
+			);
+
+			$this
+				->prepare ($sql)
+				->execute ($params);
 		}
 	}
 ?>

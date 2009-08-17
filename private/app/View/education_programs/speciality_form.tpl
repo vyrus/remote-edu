@@ -1,8 +1,16 @@
-<?php $form = $this->form ?>
+<?php 
+	$form = $this->form;
+	if (isset ($form->speciality)) {
+		$speciality = $form->speciality;
+	}
+?>
 
 <form action="<?php echo $form->action() ?>" method="<?php echo $form->method() ?>">
 <div class="form">
-    
+    <?php if (isset($speciality->error)): ?>
+    <div class="error"><?php echo $speciality->error ?></div>
+    <?php endif; ?>	
+	
     <div class="field">
       <label for="title">Название направления:</label>
       <input name="<?php echo $form->title->name ?>" type="text" id="title" value="<?php echo $form->title->value ?>" />
@@ -22,7 +30,7 @@
     <?php endif; ?>
     
     <div class="field">
-        <input type="submit" value="Добавить" />
+        <input type="submit" value="<?php echo $this->buttonCaption; ?>" />
     </div>
 </div>
 </form>

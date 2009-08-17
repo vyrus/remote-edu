@@ -9,7 +9,9 @@
 			$this->render ("education_programs/index");
 		}
 		
-		public function action_add_speciality () {			
+		public function action_add_speciality () {
+			$this->set ('buttonCaption', 'Добавить');
+						
 			$request = $this->getRequest ();
 			
 			$form = Form_Speciality_Add::create('/add_speciality');
@@ -37,12 +39,16 @@
 		}
 		
 		public function action_add_discipline ($params) {
+			$this->set ('buttonCaption', 'Добавить');
+			
 			$request = $this->getRequest ();
 			$request->set ('speciality', $params['speciality_id']);
 
 			$form = Form_Discipline_Add::create ('/add_discipline/' . $params['speciality_id']);
 			$this->set ('form', $form);
 			$method = $form->method ();
+			$form->setValue ('speciality', $params['speciality_id']);
+			
 			if (empty ($request->$method)) {
 				$this->render ('education_programs/discipline_form');
 			}
@@ -70,7 +76,7 @@
 			$request = $this->getRequest ();
 			$request->set ('discipline', $params['discipline_id']);
 			
-			$form = Form_Section_Add::create ('/add_section/' . $params['discipline_id']);
+			$form = Form_Section::create ('/add_section/' . $params['discipline_id']);
 			$this->set ('form', $form);
 			$method = $form->method ();
 			if (empty ($request->$method)) {
@@ -127,5 +133,91 @@
 				3
 			);
 		}
+		
+		public function action_edit_speciality ($params) {
+			$this->set ('buttonCaption', 'Сохранить');
+			
+			$request = $this->getRequest ();
+			$request->set ('speciality', $params['speciality_id']);
+			
+			$form = Form_Speciality_Edit::create('/edit_speciality/' . $params['speciality_id']);
+			$this->set ('form', $form);			
+			$method = $form->method ();
+			
+			$educationPrograms = Model_Education_Programs::create ();
+			
+			if (empty ($request->$method)) {
+				if (! $form->validateID ($educationPrograms, $request)) {
+					$this->render ('education_programs/speciality_form');
+				}
+				
+				$educationPrograms->getSpeciality ($params['speciality_id'], $title, $labourIntensive);
+				
+				$form->setValue ('title', $title);
+				$form->setValue ('labourIntensive', $labourIntensive);
+				
+				$this->render ('education_programs/speciality_form');
+			}
+			
+			if (! $form->validate ($request, $educationPrograms)) {
+                $this->render ("education_programs/speciality_form");
+            }			
+
+			$educationPrograms->editSpeciality (
+				$params['speciality_id'],
+				$form->title->value,
+				$form->labourIntensive->value
+			);
+			
+			$this->flash (
+				'Данные по направлению успешно изменены',
+				'/education_programs/index',
+				3
+			);		
+		}
+
+		public function action_edit_discipline ($params) {			
+			$this->set ('buttonCaption', 'Сохранить');
+			
+			$request = $this->getRequest ();
+			$request->set ('discipline', $params['discipline_id']);
+			
+			$form = Form_Discipline_Edit::create ('/edit_discipline/' . $params['discipline_id']);
+			$this->set ('form', $form);
+			$method = $form->method ();
+						
+			$educationPrograms = Model_Education_Programs::create ();
+			
+			if (empty ($request->$method)) {
+				if (! $form->validateID ($educationPrograms, $request)) {
+					$this->render ('education_programs/discipline_form');
+				}
+				
+				$educationPrograms->getDiscipline ($params['discipline_id'], $title, $labourIntensive, $coef);
+				
+				$form->setValue ('title', $title);
+				$form->setValue ('labourIntensive', $labourIntensive);
+				$form->setValue ('coef', $coef);				
+				
+				$this->render ('education_programs/discipline_form');
+			}
+						
+			if (! $form->validate ($request, $educationPrograms)) {
+				$this->render ('education_programs/discipline_form');
+			}
+			
+			$educationPrograms->editDiscipline (
+				$params['discipline_id'],
+				$form->title->value,
+				$form->labourIntensive->value,
+				$form->coef->value
+			);
+			
+			$this->flash (
+				'Данные по дисциплине успешно изменены',
+				'/education_programs/index',
+				3
+			);		
+		}		
 	}
 ?>

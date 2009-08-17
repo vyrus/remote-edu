@@ -108,6 +108,30 @@
 					'action'		=> 'remove_section',
 				)
 			),			
+
+			array (
+				'type'		=> Mvc_Router::ROUTE_REGEX,
+				'pattern'	=> array (
+					'regex'	=> '/edit_speciality/([0-9]+)',
+					'params'=> array ('speciality_id'),
+				),
+				'handler'	=> array (
+					'controller'	=> 'Education_Programs',
+					'action'		=> 'edit_speciality',
+				)
+			),
+			
+			array (
+				'type'		=> Mvc_Router::ROUTE_REGEX,
+				'pattern'	=> array (
+					'regex'	=> '/edit_discipline/([0-9]+)',
+					'params'=> array ('discipline_id'),
+				),
+				'handler'	=> array (
+					'controller'	=> 'Education_Programs',
+					'action'		=> 'edit_discipline',
+				)
+			),
 	
             /* Активация слушателя */
             array(

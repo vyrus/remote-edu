@@ -6,18 +6,12 @@
 <script type="text/javascript">
 	var DISCIPLINES = [];
 	<?php foreach ($disciplines as $i => $specialityDiscipline): ?>
-	DISCIPLINES[<?php echo $specialityDiscipline[0]['program_id']; ?>] = [
-	<?php $delimiter = ""; foreach ($specialityDiscipline as $j => $discipline): echo $delimiter ?>
-	{"id":<?php echo $discipline['discipline_id']; ?>,"title":"<?php echo $discipline['title']; ?>"}<?php ; $delimiter =","; endforeach; ?>
-	];
+	DISCIPLINES[<?php echo $specialityDiscipline[0]['program_id']; ?>] = [<?php $delimiter = ""; foreach ($specialityDiscipline as $j => $discipline): echo $delimiter ?>{"id":<?php echo $discipline['discipline_id']; ?>,"title":"<?php echo $discipline['title']; ?>"}<?php ; $delimiter =","; endforeach; ?>];
 	<?php endforeach; ?>
 	
 	var SECTIONS = [];
 	<?php foreach ($sections as $i => $disciplineSection): ?>
-	SECTIONS[<?php echo $disciplineSection[0]['discipline_id']; ?>] = [
-	<?php $delimiter = ""; foreach ($disciplineSection as $j => $section): echo $delimiter ?>
-	{"id":<?php echo $section['section_id']; ?>,"title":"<?php echo $section['title']; ?>","number":<?php echo $section['number']; ?>}<?php ; $delimiter =","; endforeach; ?>
-	];
+	SECTIONS[<?php echo $disciplineSection[0]['discipline_id']; ?>] = [<?php $delimiter = ""; foreach ($disciplineSection as $j => $section): echo $delimiter ?>{"id":<?php echo $section['section_id']; ?>,"title":"<?php echo $section['title']; ?>","number":<?php echo $section['number']; ?>}<?php ; $delimiter =","; endforeach; ?>];
 	<?php endforeach; ?>
 
 	function removeSpeciality () {
@@ -27,6 +21,15 @@
 		}
 		
 		window.location = '/remove_speciality/' + specialitiesSelect.options[specialitiesSelect.selectedIndex].value;
+	}
+
+	function editSpeciality () {
+		if (specialitiesSelect.selectedIndex == -1) {
+			alert ('Необходимо выбрать направление');
+			return;
+		}
+		
+		window.location = '/edit_speciality/' + specialitiesSelect.options[specialitiesSelect.selectedIndex].value;		
 	}
 
 	function addDiscipline () {
@@ -46,6 +49,15 @@
 		
 		window.location = '/remove_discipline/' + disciplinesSelect.options[disciplinesSelect.selectedIndex].value;
 	}
+	
+	function editDiscipline () {
+		if (disciplinesSelect.selectedIndex == -1) {
+			alert ('Необходимо выбрать дисциплину');
+			return;
+		}
+		
+		window.location = '/edit_discipline/' + disciplinesSelect.options[disciplinesSelect.selectedIndex].value;
+	}	
 	
 	function addSection () {
 		if (disciplinesSelect.selectedIndex == -1) {
@@ -108,8 +120,8 @@
 <td><select id="sectionsSelect" class="educationProgramItems" size="10"></select></td>
 </tr>
 <tr>
-<td><a href="/add_speciality"><button class="addButton">&#x002B;</button></a><button class="editButton">&#x270E;</button><button class="removeButton" onclick="removeSpeciality ();">&#x2212;</button></td>
-<td><button class="addButton" onclick="addDiscipline ();">&#x002B;</button><button class="editButton">&#x270E;</button><button class="removeButton" onclick="removeDiscipline ();">&#x2212;</button></td>
+<td><a href="/add_speciality"><button class="addButton">&#x002B;</button></a><button class="editButton" onclick="editSpeciality ();">&#x270E;</button><button class="removeButton" onclick="removeSpeciality ();">&#x2212;</button></td>
+<td><button class="addButton" onclick="addDiscipline ();">&#x002B;</button><button class="editButton" onclick="editDiscipline ();">&#x270E;</button><button class="removeButton" onclick="removeDiscipline ();">&#x2212;</button></td>
 <td><button class="addButton" onclick="addSection ();">&#x002B;</button><button class="editButton">&#x270E;</button><button class="removeButton" onclick="removeSection ();">&#x2212;</button></td>
 </tr>
 </table>
