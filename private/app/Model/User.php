@@ -57,6 +57,14 @@
         */
         const ERR_USER_INACTIVE = 'user-inactive';
         
+        const DOC_TYPE_EMPTY = '';
+        
+        const DOC_TYPE_DIPLOMA_HIGH = 'diploma-high';
+        
+        const DOC_TYPE_DIPLOMA_MEDIUM = 'diploma-medium';
+        
+        const DOC_TYPE_CUSTOM = 'custom';
+        
         /**
         * Название таблицы с пользователями в БД.
         * 
@@ -354,6 +362,134 @@
             $auth = Resources::getInstance()->auth;
             $auth->init()   
                  ->unsetUserId();
+        }
+        
+        public function isExtendedProfileSet($id) {
+            $sql = '
+                SELECT COUNT(*)
+                FROM passports
+                WHERE user_id = ?
+            ';
+            
+            $stmt = $this->prepare($sql);
+            $stmt->execute(array($id));
+            $count = $stmt->fetchColumn();
+            
+            return $count > 0;
+        }
+        
+        public function setExtendedProfile($uid, $profile) {
+            if (!$this->_updateSNP($uid, $profile['general'])) {
+                return false;
+            }
+                
+            if (!$this->_savePassport($uid, $profile['passport'])) {
+                return false;
+            }
+            
+            if (!empty($profile['edu_doc']['type']) && 
+                !$this->_saveEduDoc($uid, $profile['edu_doc']))
+            {
+                return false;
+            }
+                
+            if (!empty($profile['phones']['mobile']) ||
+                !empty($profile['phones']['stationary']))
+            {
+                if (!$this->_savePhones($uid, $profile['phones'])) {
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+        
+        protected function _updateSNP($uid, $snp) {
+            $sql = '
+                UPDATE users
+                SET surname = :surname, name = :name, patronymic = :patronymic
+                WHERE user_id = :user_id
+            ';
+            
+            $stmt = $this->prepare($sql);
+            
+            $snp = (object) $snp;
+            $stmt->bindParam(':surname',    $snp->surname);
+            $stmt->bindParam(':name',       $snp->name);
+            $stmt->bindParam(':patronymic', $snp->patronymic);
+            $stmt->bindParam(':user_id',    $uid);
+            
+            $stmt->execute();
+            $affected = $stmt->rowCount();
+            
+            return $affected > 0;
+        }
+        
+        protected function _savePassport($uid, $passport) {
+            $sql = '
+                INSERT INTO passports
+                (
+                    user_id, series, number, birthday, given_by,
+                    given_date, region_id, city_id, street, house,
+                    flat
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ';
+            
+            $stmt = $this->prepare($sql);
+            
+            $passport = (object) $passport;
+            $stmt->bindParam(1,  $uid);
+            $stmt->bindParam(2,  $passport->series);
+            $stmt->bindParam(3,  $passport->number);
+            $stmt->bindParam(4,  $passport->birthday);
+            $stmt->bindParam(5,  $passport->given_by);
+            $stmt->bindParam(6,  $passport->given_date);
+            $stmt->bindParam(7,  $passport->region_id);
+            $stmt->bindParam(8,  $passport->city_id);
+            $stmt->bindParam(9,  $passport->street);
+            $stmt->bindParam(10, $passport->house);
+            $stmt->bindParam(11, $passport->flat);
+            
+            return $stmt->execute();
+        }
+        
+        protected function _saveEduDoc($uid, $doc) {
+            $sql = '
+                INSERT INTO edu_docs
+                (user_id, type, custom_type, number, exit_year, speciality, qualification)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            ';
+            
+            $stmt = $this->prepare($sql);
+            
+            $doc = (object) $doc;
+            $stmt->bindParam(1, $uid);
+            $stmt->bindParam(2, $doc->type);
+            $stmt->bindParam(3, $doc->custom_type);
+            $stmt->bindParam(4, $doc->number);
+            $stmt->bindParam(5, $doc->exit_year);
+            $stmt->bindParam(6, $doc->speciality);
+            $stmt->bindParam(7, $doc->qualification);
+            
+            return $stmt->execute();
+        }
+        
+        protected function _savePhones($uid, $phones) {
+            $sql = '
+                INSERT INTO phones
+                (user_id, stationary, mobile)
+                VALUES (?, ?, ?)
+            ';
+            
+            $stmt = $this->prepare($sql);
+            
+            $phones = (object) $phones;
+            $stmt->bindParam(1, $uid);
+            $stmt->bindParam(2, $phones->stationary);
+            $stmt->bindParam(3, $phones->mobile);
+            
+            return $stmt->execute();
         }
         
         /**

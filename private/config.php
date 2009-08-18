@@ -161,6 +161,26 @@
                     'controller' => 'users',
                     'action'     => 'activate_employee'
                 )
+            ),
+            
+            array(
+                'type'    => Mvc_Router::ROUTE_STATIC,
+                'pattern' => '/ajax/autocomplete/region',
+                'handler' => array
+                (
+                    'controller' => 'ajax',
+                    'action'     => 'autocomplete_region'
+                )
+            ),
+            
+            array(
+                'type'    => Mvc_Router::ROUTE_STATIC,
+                'pattern' => '/ajax/autocomplete/city',
+                'handler' => array
+                (
+                    'controller' => 'ajax',
+                    'action'     => 'autocomplete_city'
+                )
             )
         ),
         

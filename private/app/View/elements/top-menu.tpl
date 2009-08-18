@@ -4,6 +4,7 @@
         'Index'        				=> 'index',
         'Пользователи' 				=> 'users',
 		'Образовательные программы'	=> 'education_programs',
+        //'Заявки'                    => 'applications',
         'Ошибки'       				=> 'error'
     );
     

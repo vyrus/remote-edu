@@ -41,3 +41,90 @@ CREATE TABLE `programs` (
   PRIMARY KEY (`program_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
+
+-- 
+-- Структура таблицы `regions`
+-- 
+
+DROP TABLE IF EXISTS `regions`;
+CREATE TABLE `regions` (
+  `region_id` int(10) unsigned NOT NULL auto_increment,
+  `code` tinyint(2) unsigned zerofill NOT NULL,
+  `name` char(40) NOT NULL,
+  PRIMARY KEY  (`region_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- 
+-- Структура таблицы `localities`
+-- 
+
+DROP TABLE IF EXISTS `localities`;
+CREATE TABLE `localities` (
+  `locality_id` int(10) unsigned NOT NULL auto_increment,
+  `region_id` int(10) unsigned NOT NULL,
+  `code` smallint(3) unsigned zerofill NOT NULL,
+  `name` char(40) NOT NULL,
+  `type` enum('аал','арбан','аул','волость','высел','г','городок','д','дп','ж/д_будка','ж/д_казарм','ж/д_оп','ж/д_платф','ж/д_пост','ж/д_рзд','ж/д_ст','заимка','казарма','кв-л','кордон','кп','м','мкр','нп','остров','п','п/о','п/р','п/ст','пгт','погост','починок','промзона','рзд','рп','с','с/а','с/о','с/п','с/с','сл','снт','ст','ст-ца','тер','у','х') NOT NULL,
+  PRIMARY KEY  (`locality_id`),
+  KEY `fk_localities_regions` (`region_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- 
+-- Структура таблицы `edu_docs`
+-- 
+
+DROP TABLE IF EXISTS `edu_docs`;
+CREATE TABLE `edu_docs` (
+  `edu_doc_id` int(10) unsigned NOT NULL auto_increment,
+  `user_id` int(10) unsigned default NULL,
+  `type` enum('diploma-high','diploma-medium','custom') NOT NULL,
+  `custom_type` varchar(256) default NULL,
+  `number` varchar(128) NOT NULL,
+  `exit_year` year(4) NOT NULL,
+  `speciality` varchar(256) NOT NULL,
+  `qualification` varchar(256) NOT NULL,
+  PRIMARY KEY  (`edu_doc_id`),
+  KEY `fk_edu_docs_users` (`user_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+-- 
+-- Структура таблицы `passports`
+-- 
+
+DROP TABLE IF EXISTS `passports`;
+CREATE TABLE `passports` (
+  `passport_id` int(10) unsigned NOT NULL auto_increment,
+  `user_id` int(10) unsigned NOT NULL,
+  `series` smallint(4) unsigned zerofill NOT NULL,
+  `number` mediumint(6) unsigned zerofill NOT NULL,
+  `birthday` date NOT NULL,
+  `given_by` varchar(256) NOT NULL,
+  `given_date` date NOT NULL,
+  `region_id` int(10) unsigned NOT NULL,
+  `city_id` int(10) unsigned NOT NULL,
+  `street` varchar(64) NOT NULL,
+  `house` varchar(8) NOT NULL,
+  `flat` varchar(8) default NULL,
+  PRIMARY KEY  (`passport_id`),
+  KEY `fk_passports_users` (`user_id`),
+  KEY `fk_passports_regions` (`region_id`),
+  KEY `fk_passports_localities` (`city_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+-- 
+-- Структура таблицы `phones`
+-- 
+
+DROP TABLE IF EXISTS `phones`;
+CREATE TABLE `phones` (
+  `phones_id` int(10) unsigned NOT NULL auto_increment,
+  `user_id` int(10) unsigned default NULL,
+  `stationary` varchar(16) default NULL,
+  `mobile` varchar(32) default NULL,
+  PRIMARY KEY  (`phones_id`),
+  KEY `fk_phones_users` (`user_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;

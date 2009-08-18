@@ -268,6 +268,100 @@
             $this->flash($msg, '/users/index/', false);
         }
         
+        public function action_profile_extended() {
+            /**
+            * @todo ACL.
+            */
+            
+            $user = Model_User::create();
+            $udata = (object) $user->getAuth();
+            
+            if ($user->isExtendedProfileSet($udata->user_id)) {
+                $this->flash('Ваш профиль уже заполнен', '/users/index/');
+            }
+            
+            $request = $this->getRequest();
+            
+            $action = '/users/profile_extended/';
+            $form = Form_Profile_Student_Extended::create($action);
+            $this->set('form', $form);
+            
+            $method = $form->method();
+            if (empty($request->$method)) {
+                $this->render();
+            }
+            
+            $region = Model_Region::create();
+            $locality = Model_Locality::create();
+            
+            if (!$form->validate($request, $region, $locality)) {
+                $this->render();
+            }
+            
+            $profile = array(
+                'general' => array(
+                    'surname'    => null,
+                    'name'       => null,
+                    'patronymic' => null
+                ),
+                
+                'passport' => array(
+                    'birthday'   => null,
+                    'series'     => 'passport_series',
+                    'number'     => 'passport_number',
+                    'given_by'   => 'passport_given_by',
+                    'given_date' => 'passport_given_date',
+                    'region_id'  => null,
+                    'city_id'    => null,
+                    'street'     => null,
+                    'house'      => null,
+                    'flat'       => null
+                ),
+                
+                'edu_doc' => array(
+                    'type'          => 'doc_type',
+                    'custom_type'   => 'doc_custom_type',
+                    'number'        => 'doc_number',
+                    'exit_year'     => null,
+                    'speciality'    => null,
+                    'qualification' => null
+                ),
+                
+                'phones' => array(
+                    'mobile'     => 'phone_mobile',
+                    'stationary' => 'phone_stationary'
+                )
+            );
+            
+            foreach ($profile as $section => $fields)
+            {
+                foreach ($fields as $field_id => $value)
+                {
+                    $id = (null === $value ? $field_id : $value);
+                    $value = $form->$id->value;
+                    
+                    if (!strlen($value)) {
+                        $value = null;
+                    }
+                    
+                    $profile[$section][$field_id] = $value;
+                }
+            }
+            
+            function _toMysqlDate(& $date) {
+                $date = date('Y-m-d', strtotime($date));
+            }
+            
+            _toMysqlDate($profile['passport']['birthday']);
+            _toMysqlDate($profile['passport']['given_date']);
+            
+            if (!$user->setExtendedProfile($udata->user_id, $profile)) {
+                $this->flash('Ошибка при сохранении профиля', '/users/index/');
+            }
+            
+            $this->flash('Ваш профиль успешно обновлён', '/users/index/');
+        }
+        
         /**
         * Снятие авторизации.
         */

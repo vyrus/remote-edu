@@ -23,6 +23,13 @@
         
         public function validate(Http_Request $request, Model_User $user) {
             $result = $this->_validateRegistration($request, $user);
+            $result &= $this->_validatePasswdsMatch();
+            
+            return $result;
+        }
+        
+        protected function _validatePasswdsMatch() {
+            $result = true;
             
             /* Если пароль прошёл проверку, то оба поля пароля на совпадение */
             if (!$this->hasError('passwd') &&

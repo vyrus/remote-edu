@@ -358,6 +358,8 @@
             $update_localities = $this->_db->prepare($sql);
             
             $find_duplicates->execute();
+            $find_duplicates->setFetchMode(Db_Pdo::FETCH_ASSOC);
+            
             $processed_codes = array();
             $num_duplicates = 0;
             foreach ($find_duplicates as $duplicate) {

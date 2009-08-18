@@ -4,6 +4,12 @@
     <title><?php echo (isset($this->title) ? $this->title : 'Главная') ?> :: Дистанционное обучение РЦИО</title>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
     <link href="/css/my_layout.css" rel="stylesheet" type="text/css" />
+    <link href="/css/ui-lightness/jquery-ui-1.7.2.custom.css" rel="stylesheet" type="text/css" />
+    <link href="/css/autocomplete.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="/js/jquery-1.3.2.min.js"></script> 
+    <script type="text/javascript" src="/js/jquery-ui-1.7.2.custom.min.js"></script> 
+    <script type="text/javascript" src="/js/ui.datepicker-ru.js"></script> 
+    <script type="text/javascript" src="/js/jquery.autocomplete.js"></script> 
     <!--[if lte IE 7]>
     <link href="/css/patches/patch_my_layout.css" rel="stylesheet" type="text/css" />
     <![endif]-->
