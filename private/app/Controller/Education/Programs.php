@@ -73,10 +73,12 @@
 		}
 		
 		public function action_add_section ($params) {
+			$this->set ('buttonCaption', 'Добавить');
+			
 			$request = $this->getRequest ();
 			$request->set ('discipline', $params['discipline_id']);
 			
-			$form = Form_Section::create ('/add_section/' . $params['discipline_id']);
+			$form = Form_Section_Add::create ('/add_section/' . $params['discipline_id']);			
 			$this->set ('form', $form);
 			$method = $form->method ();
 			if (empty ($request->$method)) {
@@ -218,6 +220,48 @@
 				'/education_programs/index',
 				3
 			);		
+		}
+		
+		public function action_edit_section ($params) {
+			$this->set ('buttonCaption', 'Сохранить');
+			
+			$request = $this->getRequest ();
+			$request->set ('section', $params['section_id']);
+			
+			$form = Form_Section_Edit::create ('/edit_section/' . $params['section_id']);
+			$this->set ('form', $form);
+			$method = $form->method ();
+
+			$educationPrograms = Model_Education_Programs::create ();
+						
+			if (empty ($request->$method)) {				
+				if (! $form->validateID ($educationPrograms, $request)) {
+					$this->render ('education_programs/section_form');
+				}				
+				
+				$educationPrograms->getSection ($params['section_id'], $title, $number);
+				
+				$form->setValue ('title', 	$title);
+				$form->setValue ('number', 	$number);
+				
+				$this->render ('education_programs/section_form');
+			}
+			
+			if (! $form->validate ($request, $educationPrograms)) {
+				$this->render ('education_programs/section_form');
+			}
+			
+			$educationPrograms->editSection (
+				$params['section_id'],
+				$form->title->value,
+				$form->number->value
+			);
+			
+			$this->flash (
+				'Данные по разделу успешно изменены',
+				'/education_programs/index',
+				3
+			);			
 		}		
 	}
 ?>

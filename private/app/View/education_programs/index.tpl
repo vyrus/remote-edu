@@ -77,6 +77,15 @@
 		window.location = '/remove_section/' + sectionsSelect.options[sectionsSelect.selectedIndex].value;
 	}
 	
+	function editSection () {
+		if (sectionsSelect.selectedIndex == -1) {
+			alert ('Необходимо выбрать раздел');
+			return;
+		}
+		
+		window.location = '/edit_section/' + sectionsSelect.options[sectionsSelect.selectedIndex].value;
+	}	
+	
 	function clearDisciplinesList () {
 		while (disciplinesSelect.firstChild) {
 			disciplinesSelect.removeChild (disciplinesSelect.firstChild);
@@ -122,7 +131,7 @@
 <tr>
 <td><a href="/add_speciality"><button class="addButton">&#x002B;</button></a><button class="editButton" onclick="editSpeciality ();">&#x270E;</button><button class="removeButton" onclick="removeSpeciality ();">&#x2212;</button></td>
 <td><button class="addButton" onclick="addDiscipline ();">&#x002B;</button><button class="editButton" onclick="editDiscipline ();">&#x270E;</button><button class="removeButton" onclick="removeDiscipline ();">&#x2212;</button></td>
-<td><button class="addButton" onclick="addSection ();">&#x002B;</button><button class="editButton">&#x270E;</button><button class="removeButton" onclick="removeSection ();">&#x2212;</button></td>
+<td><button class="addButton" onclick="addSection ();">&#x002B;</button><button class="editButton" onclick="editSection ();">&#x270E;</button><button class="removeButton" onclick="removeSection ();">&#x2212;</button></td>
 </tr>
 </table>
 <script type="text/javascript">

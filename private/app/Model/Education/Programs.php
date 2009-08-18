@@ -83,7 +83,20 @@ QUERY;
 			return ($disciplineExistsStmt->fetch () !== FALSE);
 		}
 		
-		public function sectionExists ($disciplineID, $title) {
+		public function sectionExists ($id, $title, $checkType = Model_Education_Programs::CHECK_BY_PARENT_ID) {
+			if ($checkType == Model_Education_Programs::CHECK_BY_OWN_ID) {
+				$sql =
+<<<QUERY
+SELECT `discipline_id`
+FROM `sections`
+WHERE `section_id`=?
+QUERY;
+				$getDisciplineIDStmt = $this->prepare ($sql);
+				$getDisciplineIDStmt->bindColumn ('discipline_id', $id);
+				$getDisciplineIDStmt->execute (array ($id));
+				$getDisciplineIDStmt->fetch (PDO::FETCH_BOUND);
+			}
+
 			$sql =
 <<<QUERY
 SELECT `section_id`
@@ -93,7 +106,7 @@ WHERE
 	`title`=:title
 QUERY;
 			$params = array (
-				':discipline_id'=> $disciplineID,
+				':discipline_id'=> $id,
 				':title'		=> $title,
 			);
 
@@ -103,7 +116,33 @@ QUERY;
 			return ($sectionExistsStmt->fetch () !== FALSE);
 		}
 		
-		public function sectionNumberExists  ($disciplineID, $number) {
+		public function sectionIDExists ($id) {
+			$sql =
+<<<QUERY
+SELECT `section_id`
+FROM `sections`
+WHERE `section_id`=?
+QUERY;
+			$stmt = $this->prepare($sql);
+			$stmt->execute(array($id));
+
+			return ($stmt->fetch () !== FALSE);		
+		}
+		
+		public function sectionNumberExists  ($id, $number, $checkType = Model_Education_Programs::CHECK_BY_PARENT_ID) {
+			if ($checkType == Model_Education_Programs::CHECK_BY_OWN_ID) {
+				$sql =
+<<<QUERY
+SELECT `discipline_id`
+FROM `sections`
+WHERE `section_id`=?
+QUERY;
+				$getDisciplineIDStmt = $this->prepare ($sql);
+				$getDisciplineIDStmt->bindColumn ('discipline_id', $id);
+				$getDisciplineIDStmt->execute (array ($id));
+				$getDisciplineIDStmt->fetch (PDO::FETCH_BOUND);
+			}
+			
 			$sql =
 <<<QUERY
 SELECT `section_id`
@@ -113,7 +152,7 @@ WHERE
 	`number`=:number
 QUERY;
 			$params = array (
-				':discipline_id'=> $disciplineID,
+				':discipline_id'=> $id,
 				':number'		=> $number,
 			);
 
@@ -313,7 +352,7 @@ QUERY;
 DELETE FROM `disciplines`
 WHERE `discipline_id`=?
 QUERY;
-			$this->prepare ($sql)->execute ($disciplineID);
+			$this->prepare ($sql)->execute (array ($disciplineID));
 		}
 		
 		private function removeSections ($disciplineID) {
@@ -411,6 +450,43 @@ QUERY;
 				':discipline_id'	=> $disciplineID
 			);
 
+			$this
+				->prepare ($sql)
+				->execute ($params);
+		}
+		
+		public function getSection ($sectionID, &$title, &$number) {
+			$sql =
+<<<QUERY
+SELECT `title`,`number`
+FROM `sections`
+WHERE `section_id`=?
+QUERY;
+			$getSectionStmt = $this->prepare ($sql);
+			$getSectionStmt->bindColumn ('title', 	$title);
+			$getSectionStmt->bindColumn ('number', 	$number);
+			$getSectionStmt->execute 	(array ($sectionID));
+			
+			$getSectionStmt->fetch (PDO::FETCH_BOUND);
+		}
+		
+		public function editSection ($sectionID, $title, $number) {
+			$sql =
+<<<QUERY
+UPDATE `sections`
+SET
+	`title`=:title,
+	`number`=:number
+WHERE
+	`section_id`=:section_id
+QUERY;
+			
+			$params = array (
+				':title'		=> $title,
+				':number'		=> $number,
+				':section_id'	=> $sectionID,
+			);
+			
 			$this
 				->prepare ($sql)
 				->execute ($params);

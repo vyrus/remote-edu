@@ -132,6 +132,18 @@
 					'action'		=> 'edit_discipline',
 				)
 			),
+
+			array (
+				'type'		=> Mvc_Router::ROUTE_REGEX,
+				'pattern'	=> array (
+					'regex'	=> '/edit_section/([0-9]+)',
+					'params'=> array ('section_id'),
+				),
+				'handler'	=> array (
+					'controller'	=> 'Education_Programs',
+					'action'		=> 'edit_section',
+				)
+			),
 	
             /* Активация слушателя */
             array(

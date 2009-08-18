@@ -16,6 +16,18 @@ CREATE TABLE `users` (
   PRIMARY KEY  (`user_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `sections`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `sections` (
+  `section_id` int(11) NOT NULL AUTO_INCREMENT,
+  `discipline_id` int(11) DEFAULT NULL,
+  `title` varchar(256) DEFAULT NULL,
+  `number` tinyint(4) DEFAULT NULL,
+  PRIMARY KEY (`section_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+SET character_set_client = @saved_cs_client;
+
 DROP TABLE IF EXISTS `disciplines`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
