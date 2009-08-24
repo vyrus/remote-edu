@@ -41,11 +41,14 @@
 			),
 			
 			array (
-				'type'		=> Mvc_Router::ROUTE_STATIC,
-				'pattern'	=> "/add_speciality",
+				'type'		=> Mvc_Router::ROUTE_REGEX,
+				'pattern'	=> array (
+					'regex'	=> '/add_program/(direction|course)',
+					'params'=> array ('program_type'),
+				),
 				'handler'	=> array (
 					'controller'	=> "Education_Programs",
-					'action'		=> 'add_speciality',
+					'action'		=> 'add_program',
 				),
 			),
 			
@@ -76,12 +79,12 @@
 			array (
 				'type'		=> Mvc_Router::ROUTE_REGEX,
 				'pattern'	=> array (
-					'regex'	=> '/remove_speciality/([0-9]+)',
-					'params'=> array ('speciality_id'),
+					'regex'	=> '/remove_program/(direction|course)/([0-9]+)',
+					'params'=> array ('program_type', 'program_id'),
 				),
 				'handler'	=> array (
 					'controller'	=> 'Education_Programs',
-					'action'		=> 'remove_speciality',
+					'action'		=> 'remove_program',
 				)
 			),			
 
@@ -100,24 +103,24 @@
 			array (
 				'type'		=> Mvc_Router::ROUTE_REGEX,
 				'pattern'	=> array (
-					'regex'	=> '/remove_section/([0-9]+)',
-					'params'=> array ('section_id'),
+					'regex'	=> '/remove_program/([0-9]+)',
+					'params'=> array ('program_id'),
 				),
 				'handler'	=> array (
 					'controller'	=> 'Education_Programs',
-					'action'		=> 'remove_section',
+					'action'		=> 'remove_program',
 				)
 			),			
 
 			array (
 				'type'		=> Mvc_Router::ROUTE_REGEX,
 				'pattern'	=> array (
-					'regex'	=> '/edit_speciality/([0-9]+)',
-					'params'=> array ('speciality_id'),
+					'regex'	=> '/edit_program/(direction|course)/([0-9]+)',
+					'params'=> array ('program_type','program_id'),
 				),
 				'handler'	=> array (
 					'controller'	=> 'Education_Programs',
-					'action'		=> 'edit_speciality',
+					'action'		=> 'edit_program',
 				)
 			),
 			

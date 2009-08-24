@@ -1,10 +1,10 @@
 <?php
-	class Form_Speciality_Abstract extends Form_Abstract {
+	class Form_Program_Abstract extends Form_Abstract {
 		protected function addTitle () {
 			$this
 				->addField('title')
 				->setValidator('/^.{3,256}$/ixu')
-				->setError ('Название специальности -- последовательность символов длинной не менее 3 символов и не более 256');      
+				->setError ('Название программы -- последовательность символов длинной не менее 3 символов и не более 256');      
             return $this;
 		}
 		

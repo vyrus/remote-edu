@@ -9,30 +9,34 @@
             return new self();
         }
 		
-		public function specialityIDExists ($id) {
+		public function programIDExists ($id, $type) {
 			$sql =
 <<<QUERY
 SELECT `program_id`
 FROM `programs`
-WHERE `program_id`=?
+WHERE 
+	`program_id`=? AND
+	`edu_type`=?
 QUERY;
 
 			$stmt = $this->prepare($sql);
-			$stmt->execute(array($id));
+			$stmt->execute(array($id, $type));
 
 			return ($stmt->fetch () !== FALSE);
 		}
 		
-		public function specialityExists ($title) {
+		public function programExists ($title, $type) {
 			$sql =
 <<<QUERY
 SELECT `program_id`
 FROM `programs`
-WHERE `title`=?
+WHERE 
+	`title`=? AND
+	`edu_type`=?
 QUERY;
 			
 			$stmt = $this->prepare($sql);
-			$stmt->execute(array($title));
+			$stmt->execute (array ($title, $type));
 
 			return ($stmt->fetch () !== FALSE);
 		}
@@ -58,10 +62,10 @@ SELECT `program_id`
 FROM `disciplines`
 WHERE `discipline_id`=?
 QUERY;
-				$getSpecialityIDStmt = $this->prepare ($sql);
-				$getSpecialityIDStmt->bindColumn ('program_id', $id);
-				$getSpecialityIDStmt->execute (array ($id));
-				$getSpecialityIDStmt->fetch (PDO::FETCH_BOUND);
+				$getProgramIDStmt = $this->prepare ($sql);
+				$getProgramIDStmt->bindColumn ('program_id', $id);
+				$getProgramIDStmt->execute (array ($id));
+				$getProgramIDStmt->fetch (PDO::FETCH_BOUND);
 			}
 			
 			$sql =
@@ -162,7 +166,7 @@ QUERY;
 			return ($sectionExistsStmt->fetch () !== FALSE);
 		}
 				
-		public function createSpeciality ($title, $labourIntensive) {
+		public function createProgram ($title, $labourIntensive, $type) {
 			$sql =
 <<<QUERY
 INSERT INTO `programs` (`title`,`labour_intensive`,`edu_type`,`paid_type`)
@@ -171,7 +175,7 @@ QUERY;
 			$params = array (
 				':title'			=> $title,
 				':labour_intensive'	=> $labourIntensive,
-				':edu_type'			=> 'direction',
+				':edu_type'			=> $type,
 				':paid_type'		=> 'free',
 			);
 			
@@ -180,7 +184,7 @@ QUERY;
 				->execute ($params);
 		}
 		
-		public function createDiscipline ($specialityID, $title, $coef, $labourIntensive) {
+		public function createDiscipline ($programID, $title, $coef, $labourIntensive) {
 			$sql =
 <<<QUERY
 INSERT INTO `disciplines` (`program_id`,`title`,`coef`,`labour_intensive`)
@@ -188,7 +192,7 @@ VALUES (:program_id,:title,:coef,:labour_intensive)
 QUERY;
 
 			$params = array (
-				':program_id'		=> $specialityID,
+				':program_id'		=> $programID,
 				':title'			=> $title,
 				':coef'				=> $coef,
 				':labour_intensive'	=> $labourIntensive,				
@@ -217,18 +221,30 @@ QUERY;
 				->execute ($params);
 		}
 		
-		public function getSpecialities () {
-			if (! isset ($this->_cache['specialities'])) {
+		public function getDirections () {
+			if (! isset ($this->_cache['directions'])) {
 				$sql =
 <<<QUERY
 SELECT *
 FROM `programs`
+WHERE `edu_type`='direction'
 QUERY;
 			
-				$this->_cache['specialities'] = $this->query ($sql)->fetchAll (PDO::FETCH_ASSOC);
+				$this->_cache['directions'] = $this->query ($sql)->fetchAll (PDO::FETCH_ASSOC);
 			}
 			
-			return $this->_cache['specialities'];
+			return $this->_cache['directions'];
+		}
+		
+		public function getCourses () {
+			$sql =
+<<<QUERY
+SELECT *
+FROM `programs`
+WHERE `edu_type`='course'
+QUERY;
+
+			return $this->query ($sql)->fetchAll (PDO::FETCH_ASSOC);
 		}
 		
 		public function getDisciplines () {
@@ -246,8 +262,8 @@ QUERY;
 			return $this->_cache['disciplines'];
 		}
 		
-		public function getSpecialitiesDisciplines () {
-			if (! isset ($this->_cache['specialitiesDisciplines'])) {
+		public function getDirectionsDisciplines () {
+			if (! isset ($this->_cache['directionsDisciplines'])) {
 				$disciplines = $this->getDisciplines ();
 				$result = array ();
 				if (count ($disciplines)) {
@@ -263,10 +279,10 @@ QUERY;
 					}
 				}
 				
-				$this->_cache['specialitiesDisciplines'] = $result;
+				$this->_cache['directionsDisciplines'] = $result;
 			}	
 			
-			return $this->_cache['specialitiesDisciplines'];
+			return $this->_cache['directionsDisciplines'];
 		}
 		
 		public function getSections () {
@@ -307,8 +323,8 @@ QUERY;
 			return $this->_cache['disciplinesSections'];
 		}
 		
-		public function removeSpeciality ($specialityID) {
-			$this->removeDisciplines ($specialityID);
+		public function removeProgram ($programID) {
+			$this->removeDisciplines ($programID);
 			
 			$sql =
 <<<QUERY
@@ -316,10 +332,10 @@ DELETE FROM `programs`
 WHERE `program_id`=?
 QUERY;
 			
-			$this->prepare ($sql)->execute (array ($specialityID));
+			$this->prepare ($sql)->execute (array ($programID));
 		}
 		
-		private function removeDisciplines ($specialityID) {
+		private function removeDisciplines ($programID) {
 			$sql =
 <<<QUERY
 SELECT `discipline_id`
@@ -328,7 +344,7 @@ WHERE `program_id`=?
 QUERY;
 			
 			$disciplinesStmt = $this->prepare ($sql);
-			$disciplinesStmt->execute (array ($specialityID));
+			$disciplinesStmt->execute (array ($programID));
 			$disciplines = $disciplinesStmt->fetchAll (PDO::FETCH_ASSOC);
 			if (count ($disciplines)) {
 				foreach ($disciplines as $i => $discipline) {
@@ -340,7 +356,7 @@ QUERY;
 DELETE FROM `disciplines`
 WHERE `program_id`=?
 QUERY;
-				$this->prepare ($sql)->execute (array ($specialityID));
+				$this->prepare ($sql)->execute (array ($programID));
 			}
 		}
 		
@@ -375,24 +391,24 @@ QUERY;
 			$this->prepare ($sql)->execute (array ($sectionID));
 		}
 		
-		public function getSpeciality ($specialityID, &$title, &$labourIntensive) {
+		public function getProgram ($programID, $type, &$title, &$labourIntensive) {
 			$sql =
 <<<QUERY
 SELECT `title`,`labour_intensive`
 FROM `programs`
 WHERE 
 	`program_id`=? AND
-	`edu_type`='direction'
+	`edu_type`=?
 QUERY;
-			$getSpecialityStmt = $this->prepare ($sql);
-			$getSpecialityStmt->bindColumn ('title', $title);
-			$getSpecialityStmt->bindColumn ('labour_intensive', $labourIntensive);
-			$getSpecialityStmt->execute (array ($specialityID));
+			$getProgramStmt = $this->prepare ($sql);
+			$getProgramStmt->bindColumn ('title', $title);
+			$getProgramStmt->bindColumn ('labour_intensive', $labourIntensive);
+			$getProgramStmt->execute (array ($programID, $type));
 			
-			$getSpecialityStmt->fetch (PDO::FETCH_BOUND);			
+			$getProgramStmt->fetch (PDO::FETCH_BOUND);			
 		}
 		
-		public function editSpeciality ($specialityID, $title, $labourIntensive) {
+		public function editProgram ($programID, $type, $title, $labourIntensive) {
 			$sql =
 <<<QUERY
 UPDATE `programs`
@@ -400,13 +416,15 @@ SET
 	`title`=:title,
 	`labour_intensive`=:labour_intensive
 WHERE
-	`program_id`=:program_id
+	`program_id`=:program_id AND
+	`edu_type`=:program_type
 QUERY;
 
 			$params = array (
 				':title'			=> $title,
 				':labour_intensive'	=> $labourIntensive,
-				':program_id'		=> $specialityID
+				':program_id'		=> $programID,
+				':program_type'		=> $type,
 			);
 
 			$this

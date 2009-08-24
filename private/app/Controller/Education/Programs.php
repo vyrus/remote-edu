@@ -2,37 +2,45 @@
 	class Controller_Education_Programs extends Mvc_Controller_Abstract {
 		public function action_index () {
 			$educationPrograms = Model_Education_Programs::create ();
-			$this->set ('specialities', $educationPrograms->getSpecialities ());
-			$this->set ('disciplines', $educationPrograms->getSpecialitiesDisciplines ());
-			$this->set ('sections', $educationPrograms->getDisciplinesSections ());
+			$this->set ('directions',	$educationPrograms->getDirections 				());
+			$this->set ('courses', 		$educationPrograms->getCourses 					());
+			$this->set ('disciplines',	$educationPrograms->getDirectionsDisciplines 	());
+			$this->set ('sections', 	$educationPrograms->getDisciplinesSections 		());
 			
 			$this->render ("education_programs/index");
 		}
 		
-		public function action_add_speciality () {
+		public function action_add_program ($params) {
 			$this->set ('buttonCaption', 'Добавить');
+			$this->set ('programTypeCaption', (($params['program_type'] == 'direction') ? ('направления') : ('курсов')));
 						
 			$request = $this->getRequest ();
+			$request->set ('program_type', $params['program_type']);
 			
-			$form = Form_Speciality_Add::create('/add_speciality');
+			$form = Form_Program_Add::create('/add_program/' . $params['program_type']);
 			$this->set ('form', $form);			
 			$method = $form->method ();
 			if (empty ($request->$method)) {
-				$this->render ("education_programs/speciality_form");
+				$this->render ("education_programs/program_form");
 			}
 			
 			$educationPrograms = Model_Education_Programs::create ();
 			
 			if (! $form->validate ($request, $educationPrograms)) {
-                $this->render ("education_programs/speciality_form");
+                $this->render ("education_programs/program_form");
             }
 
-			$educationPrograms->createSpeciality (
+			$educationPrograms->createProgram (
 				$form->title->value, 
-				$form->labourIntensive->value
+				$form->labourIntensive->value,
+				$params['program_type']
 			);
 			$this->flash (
-				'Направление успешно добавлено',
+				(
+					($params['program_type'] == 'direction') ?
+					('Направление успешно добавлено') :
+					('Курсы успешно добавлены')
+				),
 				'/education_programs/index',
 				3
 			);
@@ -103,12 +111,16 @@
 			);		
 		}
 		
-		public function action_remove_speciality ($params) {
+		public function action_remove_program ($params) {
 			$educationPrograms = Model_Education_Programs::create ();
-			$educationPrograms->removeSpeciality ($params['speciality_id']);
+			$educationPrograms->removeProgram ($params['program_id'], $params['program_type']);
 			
 			$this->flash (
-				'Направление успешно удалено',
+				(
+					($params['program_type'] == 'direction') ?
+					('Направление успешно удалено') :
+					('Курсы успешно удалены')
+				),
 				'/education_programs/index',
 				3
 			);
@@ -136,13 +148,15 @@
 			);
 		}
 		
-		public function action_edit_speciality ($params) {
+		public function action_edit_program ($params) {
 			$this->set ('buttonCaption', 'Сохранить');
+			$this->set ('programTypeCaption', (($params['program_type'] == 'direction') ? ('направления') : ('курсов')));			
 			
 			$request = $this->getRequest ();
-			$request->set ('speciality', $params['speciality_id']);
+			$request->set ('program', $params['program_id']);
+			$request->set ('program_type', $params['program_type']);			
 			
-			$form = Form_Speciality_Edit::create('/edit_speciality/' . $params['speciality_id']);
+			$form = Form_Program_Edit::create('/edit_program/' . $params['program_type'] . '/' . $params['program_id']);
 			$this->set ('form', $form);			
 			$method = $form->method ();
 			
@@ -150,29 +164,30 @@
 			
 			if (empty ($request->$method)) {
 				if (! $form->validateID ($educationPrograms, $request)) {
-					$this->render ('education_programs/speciality_form');
+					$this->render ('education_programs/program_form');
 				}
 				
-				$educationPrograms->getSpeciality ($params['speciality_id'], $title, $labourIntensive);
+				$educationPrograms->getProgram ($params['program_id'], $params['program_type'], $title, $labourIntensive);
 				
 				$form->setValue ('title', $title);
 				$form->setValue ('labourIntensive', $labourIntensive);
 				
-				$this->render ('education_programs/speciality_form');
+				$this->render ('education_programs/program_form');
 			}
 			
 			if (! $form->validate ($request, $educationPrograms)) {
-                $this->render ("education_programs/speciality_form");
+                $this->render ("education_programs/program_form");
             }			
 
-			$educationPrograms->editSpeciality (
-				$params['speciality_id'],
+			$educationPrograms->editProgram (
+				$params['program_id'],
+				$params['program_type'],
 				$form->title->value,
 				$form->labourIntensive->value
 			);
 			
 			$this->flash (
-				'Данные по направлению успешно изменены',
+				'Данные по ' . (($params['program_type'] == 'direction') ? ('направлению') : ('курсам')) . ' успешно изменены',
 				'/education_programs/index',
 				3
 			);		

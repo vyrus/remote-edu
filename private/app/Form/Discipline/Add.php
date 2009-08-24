@@ -1,7 +1,7 @@
 <?php
 	class Form_Discipline_Add extends Form_Discipline_Abstract {
 		private function validateSpeciality (Model_Education_Programs $educationPrograms) {
-			if (! $educationPrograms->specialityIDExists ($this->speciality->value)) {
+			if (! $educationPrograms->programIDExists ($this->speciality->value, 'direction')) {
 				$this->invalidate();
 				$this->setValidationError('speciality', 'Направления с таким ID не существует');
 				
