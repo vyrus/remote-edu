@@ -399,7 +399,7 @@
                 
                 $affected = $update_localities->rowCount();
                 $report[] = array(
-                    'updation foreign keys',
+                    'updating foreign keys',
                     'duplicate'     => $duplicate,
                     'affected_rows' => $affected
                 );

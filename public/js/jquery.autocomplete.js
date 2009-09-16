@@ -46,7 +46,8 @@
       highlight: true,
       params: {},
       fnFormatResult: fnFormatResult,
-      delimiter: null
+      delimiter: null,
+      responseCache: false
     };
     if (options) { $.extend(this.options, options); }
     if(this.options.lookup){
@@ -211,7 +212,13 @@
     
     getSuggestions: function(q) {
       var cr, me, ls;
-      cr = this.isLocal ? this.getSuggestionsLocal(q) : this.cachedResponse[q];
+      
+      if (this.isLocal) {
+        cr = this.getSuggestionsLocal(q);
+      } else if (this.options.responseCache) {
+        cr = this.cachedResponse[q];
+      }
+      
       if (cr && $.isArray(cr.suggestions)) {
         this.suggestions = cr.suggestions;
         this.data = cr.data;
@@ -266,7 +273,11 @@
         response = eval('(' + text + ')');
       } catch (err) { return; }
       if (!$.isArray(response.data)) { response.data = []; }
-      this.cachedResponse[response.query] = response;
+      
+      if (this.options.responseCache) {
+        this.cachedResponse[response.query] = response;
+      }
+      
       if (response.suggestions.length === 0) { this.badQueries.push(response.query); }
       if (response.query === this.getQuery(this.currentValue)) {
         this.suggestions = response.suggestions;

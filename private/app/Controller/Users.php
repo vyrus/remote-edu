@@ -7,7 +7,7 @@
     */
     class Controller_Users extends Mvc_Controller_Abstract {
         /**
-        * Карта для отображения роллей из select'а во внутреннее обозначение.
+        * Карта для отображения ролей из select'а во внутреннее обозначение.
         * 
         * @var array
         */
