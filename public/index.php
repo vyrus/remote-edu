@@ -10,4 +10,5 @@
     $router = Resources::getInstance()->router;
     /* Обрабатывем запрос, передаём управление соответствующему контроллеру */
     $router->dispatch($request);
+    
 ?>

@@ -13,7 +13,8 @@
                 FROM localities 
                 WHERE name LIKE :name AND
                       region_id = :region_id
-                LIMIT 10             
+                ORDER BY CHAR_LENGTH(name) ASC
+                LIMIT 10
             ';
             
             $values = array(

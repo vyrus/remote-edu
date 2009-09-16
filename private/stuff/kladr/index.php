@@ -12,6 +12,7 @@
     Converter_Kladr::create($dbf, $db['dsn'], $db['user'], $db['passwd'])
         ->convert()
         ->fixupRegions()
+        ->fixupTwoCapitals()
     ;
     die;
     
@@ -277,7 +278,7 @@
                 '53' => 'Новгородская область',
                 '03' => 'Республика Бурятия',
                 '24' => 'Красноярский край',
-                '15' => 'Республика Северная Осетия - Алания',
+                '15' => 'Республика Северная Осетия — Алания',
                 '08' => 'Республика Калмыкия',
                 '05' => 'Республика Дагестан'
             );
@@ -410,6 +411,44 @@
             
             echo 'Applying regions patch...' . PHP_EOL;
             print_r($report);
+            
+            return $this;
+        }
+        
+        /**
+        * Москва и Санкт-Петербург являеются городами федерального назначения и 
+        * в структуре КЛАДР выделены на уровне регионов. После применения
+        * self::fixupRegions() они удаляются из таблицы регионов
+        * конвертированной базы, теперь их надо добавить в список городов.
+        */
+        public function fixupTwoCapitals() {
+            $sql = '
+                INSERT INTO localities
+                (region_id, code, name, type)
+                VALUES (:rid, :code, :name, :type)
+            ';
+            
+            $stmt = $this->_db->prepare($sql);
+            
+            $moscow = array(
+                /* Узнаем id записи Московской области по коду */
+                ':rid'  => $this->_getRegionId(50),
+                ':code' => 77,
+                ':name' => 'Москва',
+                ':type' => 'г'
+            );
+            
+            $peter = array(
+                ':rid'  => $this->_getRegionId(47),
+                ':code' => 78,
+                ':name' => 'Санкт-Петербург',
+                ':type' => 'г'
+            );
+            
+            echo 'Inserting two capitals in cities list...' . PHP_EOL;
+            
+            $stmt->execute($moscow);
+            $stmt->execute($peter);
         }
         
         protected function _insertObject(stdClass $obj, $throw_e = false) {
