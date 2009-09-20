@@ -53,16 +53,12 @@
         'х'          => 'хутор'
     );
     
-    /**
-    * @todo XSS.
-    */
     $result = array('query' => $this->query);
     
     foreach ($this->cities as $city) {
         $name  = $city['name'];
         $type = $abbrs_map[ $city['type'] ];
-        //$name .= ('г' == $city['type'] ? '' : ' (' . $city['type'] . ')');
-        $name .= ' (' . $type . ')';
+        $name .= ('г' == $city['type'] ? '' : ' (' . $type . ')');
         
         $result['suggestions'][] = $name;
         $result['data'][] = $city['id'];

@@ -10,10 +10,6 @@
         return $('#region_id').attr('value');
     }
                         
-    /**
-    * @todo Disable response cache.
-    */
-    
     var custom_type_idx = 3;
                                
     $(function() {
