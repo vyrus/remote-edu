@@ -18,6 +18,17 @@
         }
         
         /**
+        * Инициализация диспетчера запросов.
+        * 
+        * @return Mvc_Dispatcher
+        */
+        protected function get_dispatcher() {
+            $dispatcher = Mvc_Dispatcher::create();
+            
+            return $dispatcher;
+        }
+        
+        /**
         * Инициализация роутера.
         * 
         * @return Mvc_Router

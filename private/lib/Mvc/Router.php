@@ -3,7 +3,7 @@
     /* $Id$ */
 
     /**
-    * Класс маршрутизатора запросов, делегирует обработку запросов контроллерам.
+    * Класс маршрутизатора запросов. Определяет, какой обработчик надо вызывать.
     */
     class Mvc_Router {
         /**
@@ -35,83 +35,23 @@
         protected $_routes = array();
         
         /**
-        * Перехватывать ли ошибки 404, когда не найдена запрашиваемая страница
-        * (не найдены соответствующий маршрут, контроллер, или действие). Если
-        * установлено в false, то будут генерироваться исключения. Если в true,
-        * то управление будет передаваться соответствующему обработчичку.
-        * 
-        * @var boolean
-        */
-        protected $_catch_error_404 = true;
-        
-        /**
-        * Обработчик для ошибки 404.
-        * 
-        * @var array
-        */
-        protected $_error_404_handler = array(
-            'controller' => 'error',
-            'action'     => '404'
-        );
-        
-        /**
         * Метод-конструктор класса.
         * 
-        * @param  array   $routes            Список маршрутов.
-        * @param  boolean $catch_error_404   Перехватывать ли ошибку 404.
-        * @param  array   $error_404_handler Обработчик для ошибки 404.
+        * @param  array $routes Список маршрутов.
         * @return void
         */
-        public function __construct
-        (
-            array $routes = array(), $catch_error_404 = true,
-            array $error_404_handler = null
-        )
-        {                 
+        public function __construct(array $routes = array()) {                 
             $this->addRoutes($routes);
-            $this->catchError404($catch_error_404);
-            $this->setError404Handler($error_404_handler);
         }
         
         /**
         * Создание экземпляра класса.
         * 
-        * @param  array   $routes            Список маршрутов.
-        * @param  boolean $catch_error_404   Перехватывать ли ошибку 404.
-        * @param  array   $error_404_handler Обработчик для ошибки 404.
+        * @param  array $routes Список маршрутов.
         * @return Mvc_Router
         */
-        public static function create
-        (
-            array $routes = array(), $catch_error_404 = true,
-            array $error_404_handler = null
-        )
-        {
-            return new self($routes, $catch_error_404, $error_404_handler);
-        }
-        
-        /**
-        * Установка параметра, перехватывать ли ошибку 404.
-        * 
-        * @param  boolean $value Значение параметра.
-        * @return void
-        */
-        public function catchError404($value) {
-            $this->_catch_error_404 = $value;
-        }
-        
-        /**
-        * Установка обработчика для ошибки 404.
-        * 
-        * @param  array $handler Обработчик.
-        * @return void.
-        */
-        public function setError404Handler(array $handler = null) {
-            if (null === $handler) {
-                return;
-            }
-            
-            $this->_error_404_handler = $handler;
+        public static function create(array $routes = array()) {
+            return new self($routes);
         }
         
         /**
@@ -143,11 +83,11 @@
         }
         
         /**
-        * Обработка запроса, передача управления контроллеру в соответствии с 
-        * заданными маршрутами.
+        * В соответствии с заданными маршрутами определяет, какому обработчику
+        * надо передать управление.
         * 
         * @param  Http_Request $request Объект запроса.
-        * @return void
+        * @return array|false Указатель на обработчик либо false.
         */
         public function dispatch(Http_Request $request) {
             /**
@@ -178,15 +118,14 @@
                     
                     /* Добавляем параметры, полученные из строки запроса */
                     $route['handler']['params'] += $params;
-                    /* Делегируем управление контроллеру */               
-                    $this->_call($route['handler'], $request);
                     
-                    return;
+                    /* Возвращаем указатель на обработчик */
+                    return $route['handler'];
                 }
             }
             
-            /* Если ни один маршрутов не подошёл, то используем стандартный */
-            $this->_defaultRoute($path, $request);
+            /* Если ни один из маршрутов не подошёл, то пробуем стандартный */
+            return $this->_defaultRoute($path, $request);
         }
         
         /**
@@ -290,12 +229,12 @@
         }
         
         /**
-        * Определение обработчки для запроса в соответствии со стандартным
+        * Определение обработчика для запроса в соответствии со стандартным
         * маршрутом (/контроллер/действие/параметры).
         * 
         * @param  string       $path    Строка запроса.
         * @param  Http_Request $request Объект запроса.
-        * @return void
+        * @return array|boolean Указатель на обработчик либо false.
         */
         protected function _defaultRoute($path, Http_Request $request) {
             /* Удаляем разделитель с концов строки запроса */
@@ -310,15 +249,12 @@
                 $path = array('index', 'index');
             }
             
-            
             /** 
-            * Если в массиве осталось меньше двух элементов (один - контроллер,
-            * второй - действие), то вызываем обработку ошибки 404.
+            * Если в массиве осталось меньше двух параметров, то мы не можем
+            * определить обработчик.
             */
-            if (sizeof($path) < 2)
-            {
-                $msg = 'Контроллер/действие не определены';
-                $this->_error_404($msg, $request);
+            if (sizeof($path) < 2) {
+                return false;
             }
             
             /* Иначе, создаём массив с параметрами обработчика */
@@ -331,98 +267,8 @@
                 'params' => $path
             );
             
-            /* Вызываем обработчик */
-            $this->_call($handler, $request);
-        }
-        
-        /**
-        * Вызов обработчика.
-        * 
-        * @param  array        $handler Параметры обработчика.
-        * @param  Http_Request $request Объект запроса.
-        * @return void
-        */
-        protected function _call(array $handler, Http_Request $request) {
-            /* Если в объекте-запросе нет раздела роутера, создаём его */
-            if (!isset($request->_router)) {
-                $request->_router = array();
-            }
-            /* Сохраняем для запроса назначенный обработчик */
-            $request->_router['handler'] = $handler; 
-            
-            /* Определяем название класса контроллера */
-            $class = 'Controller_' . ucfirst($handler['controller']);
-
-            /* Если такой класс не найден - ошибка 404 */
-
-            if (!class_exists($class /* $autoload = true */))
-            {
-                $msg = sprintf('Не найден класс контроллера "%s"', $class);
-                $this->_error_404($msg, $request);
-            }
-            
-            /* Определяем нужный метод в классе контроллера */
-            $method = 'action_' . $handler['action'];
-            
-            /* Если такой метод недоступен - ошибка 404 */
-            if (!$this->_isCallable($class, $method))
-            {
-                $msg = 'Не найден метод "%s" в контроллере "%s"';
-                $msg = sprintf($msg, $method, $class);
-                $this->_error_404($msg, $request);
-            }
-
-            /* Инициализируем контроллер */
-            $controller = new $class($request);
-            
-            /* Настраиваем параметры вызова */
-            $callback = array($controller, $method);
-            $params = array();
-            if (!empty($handler['params'])) {
-                $params[] = $handler['params'];
-            }
-            
-            /* Вызываем обработчик */
-            call_user_func_array($callback, $params);
-        }
-        
-        /**
-        * Определение доступности метода в классе. Метод доступен, если он объявлен
-        * в коде класса со спецификатором public.
-        * 
-        * @param  string $class  Название класса.
-        * @param  string $method Название метода.
-        * @return boolean
-        */
-        protected function _isCallable($class, $method) {
-            return in_array($method, get_class_methods($class));
-        }
-        
-        /**
-        * Обработка ошибки 404.
-        * 
-        * @param  string       $reason  Причина возникновения ошибки.
-        * @param  Http_Request $request Объект обрабатываемого запроса.
-        * @return void
-        * @throws Mvc_Router_Exception Если не найден обработчик.
-        */
-        protected function _error_404($reason, Http_Request $request) {
-            if (
-                /* Если выключен перехват ошибки 404 */
-                !$this->_catch_error_404 ||
-                /* или если она произошла при вызове обработчика самой ошибки */
-                (
-                    isset($request->_router) &&
-                    $this->_error_404_handler === $request->_router['handler']
-                )
-            )
-            {
-                /* Генерируем исключение */
-                throw new Mvc_Router_Exception($reason);
-            }
-            
-            /* Иначе вызываем установленный обработчик для ошибки */
-            $this->_call($this->_error_404_handler, $request);
+            /* Вовзращаем указатель на обработчик */
+            return $handler;
         }
     }
 
