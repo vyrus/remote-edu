@@ -29,6 +29,9 @@
         ),
         
         /* Маршруты */
+        /**
+        * @todo Сделать покрасивше пути сайта.
+        */
         'routes' => array
         (
 			array (
@@ -196,6 +199,48 @@
                     'controller' => 'ajax',
                     'action'     => 'autocomplete_city'
                 )
+            )
+        ),
+        
+        /* Права доступа к разделам сайта */
+        'permissions' => array
+        (
+            /**
+            * Здесь перечисляются роли пользователей и пути, к которым у них
+            * есть доступ. Все пути, не перечисленные здесь, считаются 
+            * общедоступными.
+            * 
+            * роль_пользователя => array(
+            *   'контроллер/действие'
+            * )
+            */ 
+            
+            /* Слушатель */
+            Model_User::ROLE_STUDENT => array
+            (
+                'users/profile_extended'
+            ),
+            
+            /* Преподаватель */
+            Model_User::ROLE_TEACHER => array
+            (
+                /*_*/
+            ),
+            
+            /* Администратор */
+            Model_User::ROLE_ADMIN => array
+            (
+                'users/register_employee',
+                'Education_Programs/index',
+                'Education_Programs/add_program',
+                'Education_Programs/add_discipline',
+                'Education_Programs/add_section',
+                'Education_Programs/remove_program',
+                'Education_Programs/remove_discipline',
+                'Education_Programs/remove_section',
+                'Education_Programs/edit_program',
+                'Education_Programs/edit_discipline',
+                'Education_Programs/edit_discipline',
             )
         ),
         

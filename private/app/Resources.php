@@ -23,7 +23,9 @@
         * @return Mvc_Dispatcher
         */
         protected function get_dispatcher() {
-            $dispatcher = Mvc_Dispatcher::create();
+            $config = $this->_config['permissions'];
+            
+            $dispatcher = Mvc_Dispatcher::create($config);
             
             return $dispatcher;
         }

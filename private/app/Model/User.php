@@ -73,6 +73,13 @@
         protected $_table = 'users';
         
         /**
+        * Кэш данных авторизации.
+        * 
+        * @var array
+        */
+        protected static $_auth_cache = null;
+        
+        /**
         * Создание экземпляра модели.
         * 
         * @return Model_User
@@ -335,6 +342,11 @@
         * @return boolean|array False, если авторизация не пройдена, иначе массив с данными пользователя.
         */
         public function getAuth() {
+            /* Если в кэше авторизации уже есть данные, то возвращаем их */
+            if (null !== self::$_auth_cache) {
+                return self::$_auth_cache;
+            }
+            
             $auth = Resources::getInstance()->auth;
             $auth->init();
             
@@ -349,6 +361,9 @@
                 $auth->unsetUserId();
                 return false;
             }
+            
+            /* Сохраняем данные пользователя в кэш авторизации */
+            self::$_auth_cache = $user;
             
             return $user;
         }

@@ -37,6 +37,7 @@
         * @var boolean
         */
         protected $_catch_errors = array(
+            403 => true,
             404 => true
         );
         
@@ -47,6 +48,11 @@
         */
         protected $_error_handlers = array
         (
+            403 => array(
+                'controller' => 'error',
+                'action'     => '403'
+            ),
+            
             404 => array(
                 'controller' => 'error',
                 'action'     => '404'
@@ -54,19 +60,37 @@
         );
         
         /**
+        * Приватные обработчики, для которых производится проверка прав доступа.
+        * 
+        * @var array
+        */
+        protected $_private_paths = array();
+        
+        /**
+        * Права доступа для различных ролей пользователей.
+        * 
+        * @var array
+        */
+        protected $_permissions = array();
+        
+        /**
         * Метод-конструктор класса.
         * 
+        * @param  array $permissions Права на доступ.
         * @return void
         */
-        public function __construct() {/*_*/}
+        public function __construct(array $permissions = array()) {
+            $this->setPermissions($permissions);
+        }
         
         /**
         * Создание экземпляра класса.
         * 
+        * @param  array $permissions Права на доступ.
         * @return Mvc_Router
         */
-        public static function create() {
-            return new self();
+        public static function create(array $permissions = array()) {
+            return new self($permissions);
         }
         
         /**
@@ -96,7 +120,36 @@
         }
         
         /**
-        * Определяет с помощью роутера обработчик и пытается вызывать его.
+        * Установка прав на доступ к обработчикам.
+        * 
+        * @param  array $permissions Права на доступ.
+        * @return void 
+        */
+        public function setPermissions(array $permissions = array()) {
+            foreach ($permissions as $user_role => $paths)
+            {
+                foreach ($paths as $path)
+                {
+                    $this->setPermission($user_role, $path);
+                }
+            }
+        }
+        
+        /**
+        * Установка разрешения на доступ к обработчику для заданной роли
+        * пользователя.
+        * 
+        * @param  mixed  $user_role Роль пользователя.
+        * @param  string $path      Путь в формате "контроллер/действие".
+        * @return void
+        */
+        public function setPermission($user_role, $path) {
+            $this->_private_paths[$path] = true;
+            $this->_permissions[$user_role][$path] = true;
+        }
+        
+        /**
+        * Определяет с помощью роутера обработчик и пытается вызвать его.
         * 
         * @param  $request Http_Request Объект запроса.
         * @return boolean
@@ -109,9 +162,15 @@
             if (false === ($handler = $router->dispatch($request)))
             {
                 $msg = 'Контроллер/действие не определены';
-                $this->_error_404($msg, $request);
+                $this->_raise_error(404, $msg, $request);
                 
                 return false;
+            }
+              
+            /* Проверям права на доступ */
+            if (false === $this->_checkPermissions($handler)) {
+                $msg = 'Доступ запрещён';
+                $this->_raise_error(403, $msg, $request);
             }
             
             /* Пытаемся вызывать обработчик и обрабатываем возможные ошибки */
@@ -123,7 +182,7 @@
             elseif (self::ERROR_CONTROLLER_NOT_FOUND === $r->error_code)
             {
                 $msg = sprintf('Не найден класс контроллера "%s"', $r->class);
-                $this->_error_404($msg, $request);
+                $this->_raise_error(404, $msg, $request);
                 
                 return false;
             }
@@ -132,10 +191,41 @@
             {
                 $msg = 'Не найден метод "%s" в контроллере "%s"';
                 $msg = sprintf($msg, $r->method, $r->class);
-                $this->_error_404($msg, $request);
+                $this->_raise_error(404, $msg, $request);
                 
                 return false;
             }
+        }
+        
+        /**
+        * Проверка прав на доступ к контроллеру/действию.
+        * 
+        * @param  array $handler Обработчик запроса.
+        * @return boolean
+        */
+        protected function _checkPermissions(array $handler) {
+            $path = $handler['controller'] . '/' . $handler['action'];
+            
+            /* Если путь не общедоступный */
+            if (isset($this->_private_paths[$path]))
+            {
+                $user = Model_User::create();
+                
+                /* Проверяем, авторизован ли пользователь */
+                if (false === ($udata = $user->getAuth())) {
+                    return false;
+                }
+                
+                $udata = (object) $udata;
+                $perms = & $this->_permissions[$udata->role];
+                
+                /* Проверяем, установлено ли разрешение на доступ */
+                if (!isset($perms[$path])) {
+                    return false;
+                }
+            }
+            
+            return true;
         }
         
         /**
@@ -213,22 +303,24 @@
         }
         
         /**
-        * Обработка ошибки 404.
+        * Метод для обработки ошибок. Если в настройках не задан перехват данной
+        * ошибки, то будет сгенерировано исключение. Иначе метод попытаеся 
+        * вызвать заданный обработчик для ошибки.
         * 
+        * @param  int          $code    Код ошибки.
         * @param  string       $reason  Причина возникновения ошибки.
-        * @param  Http_Request $request Объект обрабатываемого запроса.
-        * @return void
-        * @throws Mvc_Router_Exception Не найден или не установлен обработчик.
+        * @param  Http_Request $request Объект запроса.
+        * @return
         */
-        protected function _error_404($reason, Http_Request $request) {
+        protected function _raise_error($code, $reason, Http_Request $request) {
             /* Если выключен перехват ошибки */
-            if (!$this->_catch_errors[404]) {
+            if (!$this->_catch_errors[$code]) {
                 /* Генерируем исключение */
                 throw new Mvc_Router_Exception($reason);
             }
             
             /* Вызываем обработчик ошибки */
-            $r = $this->_call($this->_error_handlers[404], $request);
+            $r = $this->_call($this->_error_handlers[$code], $request);
             
             /* Если не удалось вызывать обработчик */
             if (self::ERROR_SUCCESS !== $r) {
