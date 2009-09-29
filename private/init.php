@@ -24,7 +24,7 @@
     * Включаем загрузку файлов из директорий приложения, библиотеки и сторонних
     * скриптов
     */
-    Init::setIncludePath( array(APP, LIB, THIRD_PARTY) );
+    Init::setIncludePath( array(ROOT, APP, LIB, THIRD_PARTY) );
     
     Init::define('CR',   "\r");
     Init::define('LF',   "\n");   

@@ -61,7 +61,7 @@
         */
         public static function setIncludePath($paths = array()) {
             /* Добавляем к списку с новыми папками, строку со списком старых */
-            array_unshift($paths, get_include_path());
+            $paths[] = get_include_path();
             
             /* Сворачиваем массив в строку, разделяя элементы PATH_SEPARATOR */
             $paths = implode(PATH_SEPARATOR, $paths);
