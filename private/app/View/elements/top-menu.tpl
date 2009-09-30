@@ -12,7 +12,7 @@
 ?>
 <?php foreach ($elements as $title => $controller): ?>
     <?php if ($controller == strtolower ($cur_ctrl)): ?>
-        <li class="active"><strong><?php echo $title; ?></strong></li>
+        <li class="active"><?php echo $title; ?></li>
     <?php else: ?>
         <li><a href="/<?php echo $controller ?>/index/"><?php echo $title ?></a></li>
     <?php endif; ?>
