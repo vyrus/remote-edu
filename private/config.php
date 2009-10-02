@@ -35,13 +35,22 @@
         'routes' => array
         (
 			array (
-				'type'		=> Mvc_Router::ROUTE_STATIC,
-				'pattern'	=> "/education_programs",
-				'handler'	=> array (
-					'controller'	=> "Education_Programs",
-					'action'		=> 'index',
-				),
-			),
+                'type'        => Mvc_Router::ROUTE_STATIC,
+                'pattern'    => "/education_students",
+                'handler'    => array (
+                    'controller'    => "Education_Students",
+                    'action'        => 'index',
+                ),
+            ),
+            
+            array (
+                'type'        => Mvc_Router::ROUTE_STATIC,
+                'pattern'    => "/education_programs",
+                'handler'    => array (
+                    'controller'    => "Education_Programs",
+                    'action'        => 'index',
+                ),
+            ),
 			
 			array (
 				'type'		=> Mvc_Router::ROUTE_REGEX,
@@ -224,7 +233,7 @@
             /* Преподаватель */
             Model_User::ROLE_TEACHER => array
             (
-                /*_*/
+                'Education_Students/index'
             ),
             
             /* Администратор */
@@ -240,7 +249,8 @@
                 'Education_Programs/remove_section',
                 'Education_Programs/edit_program',
                 'Education_Programs/edit_discipline',
-                'Education_Programs/edit_discipline',
+                'Education_Programs/edit_section',
+                'Education_Students/index'
             )
         ),
         
