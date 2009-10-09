@@ -23,6 +23,9 @@
                 $this->flash($msg, $link);
             }
             
+            /**
+            * @todo Исправить на получение данных от браузера.
+            */
             $object_id = 2;
             $type = Model_Application::TYPE_DISCIPLINE;
             
