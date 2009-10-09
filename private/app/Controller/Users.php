@@ -269,10 +269,6 @@
         }
         
         public function action_profile_extended() {
-            /**
-            * @todo ACL.
-            */
-            
             $user = Model_User::create();
             $udata = (object) $user->getAuth();
             

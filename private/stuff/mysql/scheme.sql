@@ -140,3 +140,30 @@ CREATE TABLE `phones` (
   PRIMARY KEY  (`phones_id`),
   KEY `fk_phones_users` (`user_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+-- --------------------------------------------------------
+
+-- 
+-- Структура таблицы `applications`
+--
+
+CREATE TABLE `applications` (
+  `app_id` int(10) unsigned NOT NULL auto_increment,
+  `user_id` int(10) unsigned NOT NULL,
+  `object_id` int(10) unsigned NOT NULL,
+  `type` enum('program','discipline') NOT NULL,
+  `status` enum('applied','declined','accepted','signed','paid') NOT NULL,
+  PRIMARY KEY  (`app_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+-- 
+-- Структура таблицы `apps_history`
+-- 
+
+CREATE TABLE `apps_history` (
+  `app_id` int(10) unsigned NOT NULL,
+  `status` enum('applied','declined','accepted','signed','paid') NOT NULL,
+  `modifed` datetime NOT NULL,
+  PRIMARY KEY  (`app_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
