@@ -4,9 +4,9 @@
 
 INSERT INTO `users` (`login`, `passwd`, `role`, `email`, `surname`, `name`, `patronymic`, `status`)
 VALUES
-('admin', 'bd945caf6e009b23a4998106f0be8d3a', 'admin', 'admin@remote-edu.localhost', 'Админов', 'Админ', 'Админович', 'active'),
-('teacher', 'bd945caf6e009b23a4998106f0be8d3a', 'teacher', 'teacher@remote-edu.localhost', 'Преподов', 'Препод', 'Преподович', 'active'),
-('student', 'bd945caf6e009b23a4998106f0be8d3a', 'student', 'student@remote-edu.localhost', 'Студентов', 'Студент', 'Студентович', 'active');
+('admin', /* 123 */ 'bd945caf6e009b23a4998106f0be8d3a', 'admin', 'admin@remote-edu.localhost', 'Админов', 'Админ', 'Админович', 'active'),
+('teacher', /* 123 */ 'bd945caf6e009b23a4998106f0be8d3a', 'teacher', 'teacher@remote-edu.localhost', 'Преподов', 'Препод', 'Преподович', 'active'),
+('student', /* 123 */ 'bd945caf6e009b23a4998106f0be8d3a', 'student', 'student@remote-edu.localhost', 'Студентов', 'Студент', 'Студентович', 'active');
 
 -- 
 -- Дамп данных таблицы `programs`
