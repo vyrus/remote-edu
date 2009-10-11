@@ -147,6 +147,21 @@
 		}
 	}
 </script>
+<style type="text/css">
+	select.educationProgramItems {
+		width						: 130px;
+		margin-right				: 15px;
+	}
+	
+	button.addButton,
+	button.editButton,
+	button.removeButton {
+		border 						: 1px solid #AAAAAA;
+		background-color 			: #FFFFFF;
+		width						: 25px;
+		height						: 25px;
+	}
+</style>
 <table cellspacing="0" cellpadding="0">
 <tr><td><select id="programsTypeSelect" onchange="switchProgramsType ();"><option value="direction">Направления</option><option value="course">Курсы</option></select></td><td>Дисциплины</td><td>Разделы</td></tr>
 <tr>

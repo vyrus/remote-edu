@@ -35,7 +35,25 @@
         'routes' => array
         (
 			array (
-                'type'        => Mvc_Router::ROUTE_STATIC,
+				'type'		=> Mvc_Router::ROUTE_STATIC,
+				'pattern'	=> '/educational_materials',
+				'handler'	=> array (
+					'controller'	=> 'Educational_Materials',
+					'action'		=> 'index',
+				),
+			),
+			
+			array (
+				'type'		=> Mvc_Router::ROUTE_STATIC,
+				'pattern'	=> '/upload_materials',
+				'handler'	=> array (
+					'controller'	=> 'Educational_Materials',
+					'action'		=> 'upload',
+				), 
+			),
+	
+			array (
+                'type'       => Mvc_Router::ROUTE_STATIC,
                 'pattern'    => "/education_students",
                 'handler'    => array (
                     'controller'    => "Education_Students",
@@ -240,6 +258,10 @@
             Model_User::ROLE_ADMIN => array
             (
                 'users/register_employee',
+
+				'Educational_Materials/index',
+				'Educational_Materials/upload',
+
                 'Education_Programs/index',
                 'Education_Programs/add_program',
                 'Education_Programs/add_discipline',

@@ -610,7 +610,6 @@
           <div class="clr"></div>
 		  
 		  <div class="debug"> 
-			<?php print_r($this) ?>		  
 		  </div> 
 		  
 		  
