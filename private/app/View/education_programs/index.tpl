@@ -3,6 +3,12 @@
 	$courses		= $this->courses;
 	$disciplines	= $this->disciplines;
 	$sections		= $this->sections;
+	
+	foreach ($sections as $i => $disciplineSections) {
+		foreach ($disciplineSections as $j => $section) {
+			$sections[$i][$j]['title'] = 'Раздел ' . $section['number'] . ': ' . $section['title'];
+		}
+	}	
 ?>
 <script type="text/javascript">
 	var PROGRAMS			= [];
@@ -16,13 +22,13 @@
 	
 	var SECTIONS 	= [];
 	<?php foreach ($sections as $i => $disciplineSection): ?>
-	SECTIONS[<?php echo $disciplineSection[0]['discipline_id']; ?>] = [<?php $delimiter = ""; foreach ($disciplineSection as $j => $section): echo $delimiter ?>{"id":<?php echo $section['section_id']; ?>,"title":"<?php echo $section['title']; ?>","number":<?php echo $section['number']; ?>}<?php ; $delimiter =","; endforeach; ?>];
+	SECTIONS[<?php echo $disciplineSection[0]['discipline_id']; ?>] = [<?php $delimiter = ""; foreach ($disciplineSection as $j => $section): echo $delimiter ?>{"id":<?php echo $section['section_id']; ?>,"title":"<?php echo $section['title']; ?>"}<?php ; $delimiter =","; endforeach; ?>];
 	<?php endforeach; ?>
 
 	function switchProgramsType () {
-		clearProgramsList 		();
-		clearDisciplinesList 	();
-		clearSectionsList 		();
+		clearSelect (programsSelect);
+		clearSelect (disciplinesSelect);
+		clearSelect (sectionsSelect);
 		
 		for (var i = 0; i < PROGRAMS[programsTypeSelect.value].length; i++) {
 			programsSelect.options[i] = new Option (PROGRAMS[programsTypeSelect.value][i].title, PROGRAMS[programsTypeSelect.value][i].id);
@@ -110,40 +116,22 @@
 		window.location = '/edit_section/' + sectionsSelect.options[sectionsSelect.selectedIndex].value;
 	}
 	
-	function clearProgramsList () {
-		while (programsSelect.firstChild) {
-			programsSelect.removeChild (programsSelect.firstChild);
-		}		
+	function clearSelect (select) {
+		while (select.firstChild) {
+			select.removeChild (select.firstChild);
+		}				
 	}
 	
-	function clearDisciplinesList () {
-		while (disciplinesSelect.firstChild) {
-			disciplinesSelect.removeChild (disciplinesSelect.firstChild);
-		}		
-	}
-	
-	function clearSectionsList () {
-		while (sectionsSelect.firstChild) {
-			sectionsSelect.removeChild (sectionsSelect.firstChild);
-		}		
-	}
-	
-	function updateDisciplinesList () {
-		clearDisciplinesList ();
-		clearSectionsList ();
-		
-		var disciplines = DISCIPLINES[programsSelect.options[programsSelect.selectedIndex].value];
-		for (var i = 0; i < disciplines.length; i++) {
-			disciplinesSelect.options[i] = new Option (disciplines[i].title, disciplines[i].id);
+	function updateSelect (parentSelect, select, items, clear) {
+		for (var i = 0; i < clear.length; i++) {
+			clearSelect (clear[i]);
 		}
-	}
-	
-	function updateSectionsList () {
-		clearSectionsList ();
-				
-		var sections = SECTIONS[disciplinesSelect.options[disciplinesSelect.selectedIndex].value];
-		for (var i = 0; i < sections.length; i++) {
-			sectionsSelect.options[i] = new Option ("Раздел " + sections[i].number + ": " + sections[i].title, sections[i].id);
+		
+		var selectItems = items[parentSelect.options[parentSelect.selectedIndex].value];
+		if (selectItems) {
+			for (var i = 0; i < selectItems.length; i++) {
+				select.options[i] = new Option (selectItems[i].title, selectItems[i].id);
+			}
 		}
 	}
 </script>
@@ -165,12 +153,12 @@
 <table cellspacing="0" cellpadding="0">
 <tr><td><select id="programsTypeSelect" onchange="switchProgramsType ();"><option value="direction">Направления</option><option value="course">Курсы</option></select></td><td>Дисциплины</td><td>Разделы</td></tr>
 <tr>
-<td><select id="programsSelect" class="educationProgramItems" size="10" onchange="updateDisciplinesList ();">
+<td><select id="programsSelect" class="educationProgramItems" size="10" onchange="updateSelect (programsSelect, disciplinesSelect, DISCIPLINES, [disciplinesSelect, sectionsSelect]);">
 <?php foreach ($directions as $i => $direction): ?>
 <option value="<?php echo $direction['program_id']; ?>"><?php echo $direction['title']; ?></option>
 <?php endforeach; ?>
 </select></td>
-<td><select id="disciplinesSelect" class="educationProgramItems" size="10" onchange="updateSectionsList ();"></select></td>
+<td><select id="disciplinesSelect" class="educationProgramItems" size="10" onchange="updateSelect (disciplinesSelect, sectionsSelect, SECTIONS, [sectionsSelect]);"></select></td>
 <td><select id="sectionsSelect" class="educationProgramItems" size="10"></select></td>
 </tr>
 <tr>

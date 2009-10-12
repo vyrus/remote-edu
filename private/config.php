@@ -133,12 +133,12 @@
 			array (
 				'type'		=> Mvc_Router::ROUTE_REGEX,
 				'pattern'	=> array (
-					'regex'	=> '/remove_program/([0-9]+)',
-					'params'=> array ('program_id'),
+					'regex'	=> '/remove_section/([0-9]+)',
+					'params'=> array ('section_id'),
 				),
 				'handler'	=> array (
 					'controller'	=> 'Education_Programs',
-					'action'		=> 'remove_program',
+					'action'		=> 'remove_section',
 				)
 			),			
 
