@@ -57,14 +57,14 @@
               <div id="navigation">
                 <div class="inner">
 				<ul class="menu">
-                  <li class="first"><a href="/">Главная</a></li>
+                  <!-- <li class="first"><a href="/">Главная</a></li>
 				  <li><a href="####">Каталог курсов</a> </li>
 				  <li><a href="####">О центре</a> </li>
 				  <li><a href="####">Форум</a> </li>
 				  <li><a href="####">Расписание</a> </li>
 				  <li><a href="####">Ссылки</a> </li>				  
 				  <li><a href="####">Новости</a></li>
-				  <li>|||</li>
+				  <li>|||</li> -->
 				  <?php $this->renderElement('top-menu') ?>
 				  </ul>
                 </div>
@@ -332,14 +332,14 @@
 					</div>
 					</form>
 					<div class="topic-leftblock">
-					<span><b>П</b>ользователи</span>
+					<span><b>Д</b>ействия</span>
                 </div>
 				
                 <div class="cntnt-leftblock">
 				
                   <ul class="user-menu">
 				  
-				  <?php $this->renderElement('users-actions') ?> 
+				  <?php $this->renderElement($this->_request->_router['handler']['controller'] . '-actions') ?> 
 				  
                    <li class="headli">
                       <a href="#">Привет, Йован!</a>
@@ -609,7 +609,7 @@
           <div id="left-footer"></div>
           <div class="clr"></div>
 		  
-		  <div class="debug"> 
+		  <div class="debug">
 		  </div> 
 		  
 		  

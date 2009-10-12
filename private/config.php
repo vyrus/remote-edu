@@ -33,19 +33,10 @@
         * @todo Сделать покрасивше пути сайта.
         */
         'routes' => array
-        (
+        (			
 			array (
 				'type'		=> Mvc_Router::ROUTE_STATIC,
-				'pattern'	=> '/educational_materials',
-				'handler'	=> array (
-					'controller'	=> 'Educational_Materials',
-					'action'		=> 'index',
-				),
-			),
-			
-			array (
-				'type'		=> Mvc_Router::ROUTE_STATIC,
-				'pattern'	=> '/upload_materials',
+				'pattern'	=> '/educational_materials/upload',
 				'handler'	=> array (
 					'controller'	=> 'Educational_Materials',
 					'action'		=> 'upload',
