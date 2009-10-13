@@ -2,6 +2,8 @@
     
     /* $Id$ */
     
+    /* commit test */
+    
     require_once '../private/init.php';
     
     /* Инициализируем объект запроса */ 
