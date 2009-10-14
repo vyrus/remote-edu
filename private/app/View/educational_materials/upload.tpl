@@ -9,6 +9,8 @@
 			$sections[$i][$j]['title'] = 'Раздел ' . $section['number'] . ': ' . $section['title'];
 		}
 	}
+	
+	$invalidMaterialsForms = $this->invalidMaterialsForms;
 ?>
 <link type="text/css" href="/css/ui-lightness/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
 <style type="text/css">
@@ -193,22 +195,26 @@
 		__EducationalMaterial[this.id] 	= this;
 	}
 		
-	EducationalMaterial.prototype.create = function () {
+	EducationalMaterial.prototype.create = function (
+		descriptionValue, 
+		sectionValue, 
+		descriptionErrorText, 
+		filenameErrorText, 
+		sectionErrorText
+	) {
 		var description					= document.createElement ('input');
 		description.type				= 'text';
-		description.name				= 'description[' + this.id + ']';
+		description.name				= 'material[' + this.id + '][description]';
+		description.value				= ((descriptionValue) ? (descriptionValue) : (''));
 		
 		var fileReference				= document.createElement ('input');
 		fileReference.type				= 'file';
-		fileReference.name				= 'fileReference[' + this.id + ']';
+		fileReference.name				= 'fileReference' + this.id;
 		
 		this.section					= document.createElement ('input');
 		this.section.type				= 'hidden';
-		this.section.name				= 'section[' + this.id + ']';
-		
-		this.sectionDescription			= document.createElement ('input');
-		this.sectionDescription.type	= 'hidden';
-		this.sectionDescription.name	= 'sectionDescription[' + this.id + ']';
+		this.section.name				= 'material[' + this.id + '][section]';
+		this.section.value				= ((sectionValue) ? (sectionValue) : (''));
 		
 		this.container = document.createElement ('div').appendChild (
 			document.createElement ('table').appendChild (
@@ -244,8 +250,6 @@
 							).parentNode
 						).parentNode.appendChild (
 							this.section
-						).parentNode.appendChild (
-							this.sectionDescription
 						).parentNode
 					).parentNode
 				).parentNode.appendChild (
@@ -263,14 +267,52 @@
 		this.container.className = 'educationalMaterial';
 				
 		document.getElementById ('educationalMaterials').appendChild (this.container);
-		
+
+		if (this.section.value != '') {
+			$ ('tr:eq(2) td:last-child a', this.container).text (getFullSectionDescription (this.section.value));
+		}		
 		$ ('tr:eq(2) td:last-child a'	, this.container).attr		('href', 'javascript:__EducationalMaterial[' + this.id + '].openSectionSelectDialog()');
-		$ ('tr:lt(3) td:first-child'	, this.container).addClass ('caption');
-		$ ('tr:lt(3) td:last-child'		, this.container).addClass ('field');
+		$ ('tr:lt(3) td:first-child'	, this.container).addClass	('caption');
+		$ ('tr:lt(3) td:last-child'		, this.container).addClass	('field');
 		$ ('tr:eq(3) td'				, this.container).attr		('colspan', '2');
 		$ ('tr:eq(3) td'				, this.container).addClass	('cancel');
 		$ ('tr:eq(3) td a'				, this.container).attr		('href', 'javascript:__EducationalMaterial[' + this.id + '].destroy()');
+	
+		var descriptionRow	= $ ('tr:eq(0)', this.container);
+		var filenameRow		= $ ('tr:eq(1)', this.container);
+		var sectionRow		= $ ('tr:eq(2)', this.container);
+
+	
+		if (descriptionErrorText !== null) {
+			$ (descriptionRow).after (this.createErrorMessage (descriptionErrorText))
+		}
+
+		if (filenameErrorText !== null) {
+			$ (filenameRow).after (this.createErrorMessage (filenameErrorText))
+		}
+
+		if (sectionErrorText !== null) {
+			$ (sectionRow).after (this.createErrorMessage (sectionErrorText))
+		}
 	}
+	
+	EducationalMaterial.prototype.createErrorMessage = function (errorText) {
+		var errorMessage = document.createElement ('tr').appendChild (
+			document.createElement ('td')
+		).parentNode.appendChild (
+			document.createElement ('td').appendChild (
+				document.createElement ('div').appendChild (
+					document.createTextNode (errorText)
+				).parentNode
+			).parentNode
+		).parentNode;
+		
+		$ ('div'			, errorMessage).addClass ('error');
+		$ ('td:first-child'	, errorMessage).addClass ('caption');
+		$ ('td:last-child'	, errorMessage).addClass ('field');
+		
+		return errorMessage;
+	}	
 	
 	EducationalMaterial.prototype.openSectionSelectDialog = function () {
 		eval ('var callback = function () {__EducationalMaterial[' + this.id + '].onSectionSelect ();}');
@@ -288,7 +330,7 @@
 		}
 	}
 	
-	EducationalMaterial.prototype.onSectionSelect = function () {
+	EducationalMaterial.prototype.onSectionSelect = function () {		
 		if (sectionsSelect.attr ('selectedIndex') == -1) {
 			alert ('Необходимо выделить требуемый раздел');
 			return;
@@ -296,9 +338,8 @@
 		
 		var sectionsSelectOptions 		= sectionsSelect.attr ('options')
 		this.section.value 				= sectionsSelectOptions[sectionsSelect.attr ('selectedIndex')].value;
-		this.sectionDescription.value 	= getFullSectionDescription (this.section.value);
 		
-		$ ('tr:eq(2) td:last-child a', this.container).text (this.sectionDescription.value);
+		$ ('tr:eq(2) td:last-child a', this.container).text (getFullSectionDescription (this.section.value));
 		
 		selectSectionDialog.dialog ('close');
 	}
@@ -307,8 +348,8 @@
 		this.container.parentNode.removeChild (this.container);
 	}
 	
-	function createEducationalMaterial () {
-		(new EducationalMaterial ()).create ();		
+	function createEducationalMaterial (descriptionValue, sectionValue, descriptionErrorText, filenameErrorText, sectionErrorText) {
+		(new EducationalMaterial ()).create (descriptionValue, sectionValue, descriptionErrorText, filenameErrorText, sectionErrorText);		
 	}
 </script>
 
@@ -328,9 +369,9 @@
 </div>
 
 <h3>Загрузить материалы</h3>
-<form id="educationalMaterials" name="educationalMaterials" method="post" action="/upload_materials" enctype="multipart/form-data">
+<form id="educationalMaterials" name="educationalMaterials" method="post" action="/educational_materials/upload" enctype="multipart/form-data">
 </form>
-<a href="javascript:createEducationalMaterial()">добавить материал</a>
+<a href="javascript:createEducationalMaterial(null, null, null, null, null)">добавить материал</a>
 <a href="javascript:document.educationalMaterials.submit()">загрузить</a>
 
 <script type="text/javascript">
@@ -350,5 +391,23 @@
 			width 		: 'auto'
 		}
 	);
-	createEducationalMaterial ();
+
+<?php if (empty ($invalidMaterialsForms)): ?>
+	createEducationalMaterial (null, null, null, null, null);
+<?php else: ?>
+<?php foreach ($invalidMaterialsForms as $i => $form): ?>
+<?php
+	$description	= $form->description;
+	$filename		= $form->filename;
+	$section		= $form->section;
+?>
+	createEducationalMaterial (
+		'<?php echo $description->value; ?>', 
+		<?php echo (($section->value) ? ($section->value) : ("''")); ?>, 
+		<?php echo ((isset ($description->error)) ? ("'" . $description->error . "'") : ('null')); ?>, 
+		<?php echo ((isset ($filename->error)) ? ("'" . $filename->error . "'") : ('null')); ?>, 
+		<?php echo ((isset ($section->error)) ? ("'" . $section->error . "'") : ('null')); ?>
+	);
+<?php endforeach; ?>	
+<?php endif; ?>
 </script>

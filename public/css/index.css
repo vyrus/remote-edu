@@ -185,7 +185,9 @@ li.headli li.subli a:hover {text-decoration:underline;}
 * html #accordion {border-bottom: 0;}
 
 
-
+div.error {
+	color: #AA0000;
+}
 
 ul.menu { 
 	border: 0 none;
