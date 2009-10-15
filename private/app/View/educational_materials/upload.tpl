@@ -268,7 +268,10 @@
 				
 		document.getElementById ('educationalMaterials').appendChild (this.container);
 
-		if (this.section.value != '') {
+		if (
+			(this.section.value != '') &&
+			(sectionErrorText === null)
+		) {
 			$ ('tr:eq(2) td:last-child a', this.container).text (getFullSectionDescription (this.section.value));
 		}		
 		$ ('tr:eq(2) td:last-child a'	, this.container).attr		('href', 'javascript:__EducationalMaterial[' + this.id + '].openSectionSelectDialog()');

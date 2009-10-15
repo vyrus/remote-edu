@@ -23,6 +23,8 @@
 
 			$invalidMaterialsForms = array ();
 			if (count ($requestData['material'])) {
+				$educationalMaterials = Model_Educational_Materials::create ();
+				
 				foreach ($requestData['material'] as $i => $material) {
 					$request->set (
 						'get',
@@ -37,6 +39,9 @@
 					$materialForm->setMethod (Form_Abstract::METHOD_GET);
 					if (! $materialForm->validate ($request)) {
 						$invalidMaterialsForms[] = $materialForm;
+					}
+					else {
+						$educationalMaterials->addMaterial ($material['description'], $material['section'], $request->files['fileReference' . $i]);
 					}
 				}
 			}

@@ -16,6 +16,19 @@ CREATE TABLE `users` (
   PRIMARY KEY  (`user_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `materials`;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+CREATE TABLE `materials` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `description` varchar(255) DEFAULT NULL,
+  `original_filename` varchar(255) DEFAULT NULL,
+  `mime_type` varchar(255) DEFAULT NULL,
+  `filename` varchar(255) DEFAULT NULL,
+  `section` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
 DROP TABLE IF EXISTS `sections`;
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;

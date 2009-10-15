@@ -18,7 +18,9 @@
 				} while (file_exists ($this->directory . '/' . $filename)); 
 			}
 			
-			copy ($path, $this->directory . '/' . $filename);
+			if (@move_uploaded_file ($path, $this->directory . '/' . $filename) === FALSE) {
+				throw new Exception ('Невозможно сохранить файл на сервере');
+			}
 			
 			return $filename;
 		}
