@@ -125,12 +125,12 @@
 <input type="submit" value="отфильтровать" />
 </form>
 </nobr>
-<form id="deleteMaterials" name="deleteMaterials" method="post" action="#">
+<form id="deleteMaterials" name="deleteMaterials" action="/educational_materials/remove" method="post">
 <table class="materials" border="0" cellspacing="2" cellpadding="0">
 <tr class="odd"><td class="checkbox"><input name="all" type="checkbox" onclick="setAllCheckboxesStatus ('deleteMaterials')" /></th><th class="description">Название</th></tr>
 <?php if (! empty ($materials)): ?>
 <?php foreach ($materials as $i => $material): ?>
-<tr<?php if ($i % 2): ?> class="odd"<?php else: ?> class="even"<?php endif; ?>><td class="checkbox"><input type="checkbox" /></td><td class="description"><a href="#"><?php echo $material['description']; ?></a></td></tr>
+<tr<?php if ($i % 2): ?> class="odd"<?php else: ?> class="even"<?php endif; ?>><td class="checkbox"><input name="<?php echo $material['id']; ?>" type="checkbox" /></td><td class="description"><a href="#"><?php echo $material['description']; ?></a></td></tr>
 <?php endforeach; ?>
 <?php endif; ?>
 </table>

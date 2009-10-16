@@ -25,6 +25,12 @@
 			return $filename;
 		}
 		
+		public function removeFile ($filename) {
+			if (@unlink ($this->directory . '/' . $filename) === FALSE) {
+				throw new Exception ('Невозможно удалить файл с сервера');
+			}
+		}
+		
 		public function getFileContent ($filename) {
 			return file_get_contents ($this->directory . '/' . $filename);
 		}

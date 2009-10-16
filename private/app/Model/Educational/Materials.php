@@ -28,16 +28,33 @@ QUERY;
 				'section'			=> $section,
 			);
 			
-			$this
-				->prepare ($sql)
+			$this->prepare ($sql)
 				->execute ($params);
 		}
 		
-		public function getMaterials ($filter) {
-			if (empty ($filter)) {
-				return array ();
-			}
+		public function removeMaterial ($materialID) {
+			$sql =
+<<<QUERY
+SELECT `filename`
+FROM `materials`
+WHERE `id`=?
+QUERY;
+			$stmt = $this->prepare ($sql);
+			$stmt->execute (array ($materialID));
+			$filename = $stmt->fetchAll (PDO::FETCH_ASSOC);
 			
+			$this->storage->removeFile ($filename[0]['filename']);
+			
+			$sql =
+<<<QUERY
+DELETE FROM `materials`
+WHERE `id`=?
+QUERY;
+			$this->prepare ($sql)
+				->execute (array ($materialID));
+		}
+		
+		public function getMaterials ($filter) {
 			$sql =
 <<<QUERY
 SELECT
@@ -48,7 +65,7 @@ QUERY;
 
 			
 			do {
-				if ($filter['programsSelect'] == -1) {
+				if ((empty ($filter)) || ($filter['programsSelect'] == -1)) {
 					$tables			= '';
 					$condition		= '';
 					$queryParams	= array ();

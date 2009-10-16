@@ -19,6 +19,26 @@
 			$this->render	('educational_materials/index');
 		}
 		
+		public function action_remove () {
+			$request		= $this->getRequest ();
+			$requestData	= $request->post;
+
+			$educationalMaterials	= Model_Educational_Materials::create ();
+			if (! empty ($requestData)) {
+				foreach ($requestData as $materialID => $value) {
+					if ($materialID != 'all') {
+						$educationalMaterials->removeMaterial ($materialID);
+					}
+				}
+			}
+			
+			$this->flash (
+				'Материалы успешно удалены',
+				'/educational_materials/index',
+				3
+			);			
+		}
+		
 		public function action_upload () {
 			$educationPrograms = Model_Education_Programs::create ();
 			$this->set ('directions',	$educationPrograms->getDirections 				());

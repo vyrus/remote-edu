@@ -42,6 +42,15 @@
 					'action'		=> 'upload',
 				), 
 			),
+			
+			array (
+				'type'		=> Mvc_Router::ROUTE_STATIC,
+				'pattern'	=> '/educational_materials/remove',
+				'handler'	=> array (
+					'controller'	=> 'Educational_Materials',
+					'action'		=> 'remove',
+				),
+			),
 	
 			array (
                 'type'       => Mvc_Router::ROUTE_STATIC,
@@ -252,6 +261,7 @@
 
 				'Educational_Materials/index',
 				'Educational_Materials/upload',
+				'Educational_Materials/remove',
 
                 'Education_Programs/index',
                 'Education_Programs/add_program',
