@@ -1,7 +1,22 @@
 <?php
 	class Controller_Educational_Materials extends Mvc_Controller_Abstract {
 		public function action_index () {			
-			$this->render ('educational_materials/index');
+			$educationPrograms = Model_Education_Programs::create ();
+			$this->set ('directions',	$educationPrograms->getDirections 				());
+			$this->set ('courses', 		$educationPrograms->getCourses 					());
+			$this->set ('disciplines',	$educationPrograms->getDirectionsDisciplines 	());
+			$this->set ('sections', 	$educationPrograms->getDisciplinesSections 		());
+			$this->set ('invalidMaterialsForms', array ());
+
+			$request				= $this->getRequest ();
+			$requestData			= $request->post;
+			$educationalMaterials	= Model_Educational_Materials::create ();
+
+			$this->set		('programID', 		(isset ($requestData['programsSelect'])) ? ($requestData['programsSelect']) : (-1));
+			$this->set		('disciplineID',	(isset ($requestData['disciplinesSelect'])) ? ($requestData['disciplinesSelect']) : (-1));
+			$this->set		('sectionID',		(isset ($requestData['sectionsSelect'])) ? ($requestData['sectionsSelect']) : (-1));			
+			$this->set		('materials',		$educationalMaterials->getMaterials ($requestData));
+			$this->render	('educational_materials/index');
 		}
 		
 		public function action_upload () {
