@@ -33,7 +33,19 @@
         * @todo Сделать покрасивше пути сайта.
         */
         'routes' => array
-        (			
+        (
+			array (
+				'type'		=> Mvc_Router::ROUTE_REGEX,
+				'pattern'	=> array (
+					'regex'	=> '/educational_material/([0-9]+)',
+					'params'=> array ('material_id'),
+				),
+				'handler'	=> array (
+					'controller'	=> "Educational_Materials",
+					'action'		=> 'get_material',
+				),
+			),
+		
 			array (
 				'type'		=> Mvc_Router::ROUTE_STATIC,
 				'pattern'	=> '/educational_materials/upload',

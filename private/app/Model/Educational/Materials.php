@@ -101,5 +101,26 @@ QUERY;
 
 			return $stmt->fetchAll (PDO::FETCH_ASSOC);
 		}
+		
+		public function getMaterial ($materialID) {
+			$sql =
+<<<QUERY
+SELECT
+	`original_filename`,`mime_type`,`filename`
+FROM
+	`materials`
+WHERE
+	`id`=?
+QUERY;
+
+			$stmt = $this->prepare ($sql);
+			$stmt->execute (array ($materialID));
+			$fileInfo = $stmt->fetchAll (PDO::FETCH_ASSOC);
+
+			header('Content-Disposition: attachment; filename="' . $fileInfo[0]['original_filename']);
+			header('Content-Type: ' . $fileInfo[0]['mime_type']);
+			
+			echo $this->storage->getFileContent ($fileInfo[0]['filename']);
+		}
 	}
 ?>

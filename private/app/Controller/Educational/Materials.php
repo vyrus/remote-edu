@@ -60,7 +60,7 @@
 			if (count ($requestData['material'])) {
 				$educationalMaterials = Model_Educational_Materials::create ();
 				
-				foreach ($requestData['material'] as $i => $material) {
+				foreach ($requestData['material'] as $i => $material) {					
 					$request->set (
 						'get',
 						array (
@@ -80,6 +80,7 @@
 					}
 				}
 			}
+			
 			if (! empty ($invalidMaterialsForms)) {
 				$this->set		('invalidMaterialsForms', $invalidMaterialsForms);
 				$this->render	('educational_materials/upload');
@@ -90,6 +91,11 @@
 				'/educational_materials/index',
 				3
 			);
+		}
+		
+		public function action_get_material ($params) {
+			$educationalMaterials = Model_Educational_Materials::create ();
+			$educationalMaterials->getMaterial ($params['material_id']);
 		}
 	}
 ?>

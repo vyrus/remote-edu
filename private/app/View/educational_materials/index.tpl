@@ -130,7 +130,7 @@
 <tr class="odd"><td class="checkbox"><input name="all" type="checkbox" onclick="setAllCheckboxesStatus ('deleteMaterials')" /></th><th class="description">Название</th></tr>
 <?php if (! empty ($materials)): ?>
 <?php foreach ($materials as $i => $material): ?>
-<tr<?php if ($i % 2): ?> class="odd"<?php else: ?> class="even"<?php endif; ?>><td class="checkbox"><input name="<?php echo $material['id']; ?>" type="checkbox" /></td><td class="description"><a href="#"><?php echo $material['description']; ?></a></td></tr>
+<tr<?php if ($i % 2): ?> class="odd"<?php else: ?> class="even"<?php endif; ?>><td class="checkbox"><input name="<?php echo $material['id']; ?>" type="checkbox" /></td><td class="description"><a href="/educational_material/<?php echo $material['id']; ?>"><?php echo $material['description']; ?></a></td></tr>
 <?php endforeach; ?>
 <?php endif; ?>
 </table>
