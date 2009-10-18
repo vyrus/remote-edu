@@ -108,20 +108,16 @@
 	</select></td>
 	<td><select id="disciplinesSelect" class="educationProgramItems" size="10" onmouseup="changePhrase(this.id);"></select></td>
 </tr>
-<tr>
-	<td colspan=2><br />
-	<div id="appChosen">Учебная программа не выбрана.<br /></div>
-	</td>
-</tr>
-</tr>
-<tr>
-	<td colspan=2> 
-		<input name="programType" type="hidden" id="programType" /> 
-		<input name="programId" type="hidden" id="programId" /> 
-        <input type="submit" value="Подать заявку" onclick="appApply();" />
-	</td>
-</tr>
 </table>
+<p>
+	<div id="appChosen">Учебная программа не выбрана.<br /></div>
+</p>
+<p>
+	<input name="programType" type="hidden" id="programType" /> 
+	<input name="programId" type="hidden" id="programId" /> 
+	<input type="submit" value="Подать заявку" onclick="appApply();" />
+</p>
+
 <script type="text/javascript">
 	var programsTypeSelect	= document.getElementById ('programsTypeSelect');
 	var programsSelect 		= document.getElementById ('programsSelect');

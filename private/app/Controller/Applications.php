@@ -23,7 +23,8 @@
         /**
         * Подача заявки на программу/дисциплину.
         */
-        public function action_apply($params) {
+        public function action_apply($params)
+        {
             $user = Model_User::create();
             $udata = (object) $user->getAuth();
 /*раскоментировать когда поправится подключение js-функций, подгружающих списки городов/областей
@@ -37,8 +38,8 @@
             /**
             * Получение данных от браузера.
             */
-            $object_id = $params[1];
-            $type = $params[0];
+            $object_id = $params['program_id'];
+            $type = $params['program_type'];
             
             $app = Model_Application::create();       
             $app->apply($udata->user_id, $object_id, $type);

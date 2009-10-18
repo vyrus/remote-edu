@@ -189,6 +189,19 @@
 					'action'		=> 'edit_section',
 				)
 			),
+			
+            /* Подача заявки */
+            array(
+				'type'		=> Mvc_Router::ROUTE_REGEX,
+				'pattern'	=> array (
+					'regex'	=> '/applications/apply/(discipline|program)/([0-9]+)',
+					'params'=> array ('program_type', 'program_id'),
+				),
+				'handler'	=> array (
+					'controller'	=> 'applications',
+					'action'		=> 'apply',
+				)
+			),			
 	
             /* Активация слушателя */
             array(
@@ -257,7 +270,9 @@
             /* Слушатель */
             Model_User::ROLE_STUDENT => array
             (
-                'users/profile_extended'
+                'users/profile_extended',
+				'applications/list', 																// просмотр списка заявок и их статусов
+				'applications/apply' 																// подача заяка				
             ),
             
             /* Преподаватель */
