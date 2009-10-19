@@ -5,6 +5,20 @@
     class Controller_Applications extends Mvc_Controller_Abstract {
         const RETURN_URL = '/applications/index/';
         
+        /**
+        * Карта соответствия обозначений статусов заявок названиям статусов заявок.
+        * 
+        * @var array
+        */
+        protected $_app_status_map = array(
+            'applied' => 'подана',
+            'declined' => 'отклонена',
+            'accepted' => 'принята',
+            'signed' => 'подписана',
+            'paid' => 'оплачена'
+        );
+
+        
         public function action_index()
         {
 			$educationPrograms = Model_Education_Programs::create ();
@@ -44,7 +58,7 @@
             $app = Model_Application::create();       
             $app->apply($udata->user_id, $object_id, $type);
             
-            $this->flash('Заявка подана', self::RETURN_URL);
+            $this->flash('Заявка подана', '/applications/list/');
         }
         
         /**
@@ -56,21 +70,15 @@
             
             $user = Model_User::create();
             $udata = (object) $user->getAuth();
-            
-            /* Выполняем здесь какие-нибудь общественно-полезные действия =)*/
-            
             /**
             * @todo Paginator.
             */
             $app = Model_Application::create();
             $apps = $app->getAppsInfo($udata->user_id);
             
-            /* По ходу дейтсвия формируем набор переменных для шаблона */
             $this->set('applications', $apps);
+            $this->set('statuses', $this->_app_status_map);
             
-            $this->set('test', 'true');
-            
-            /* А потом уже вызываем рендеринг самого шаблона */
             $this->render();
         }
     }
