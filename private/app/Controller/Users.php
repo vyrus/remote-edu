@@ -15,8 +15,40 @@
             'teacher' => Model_User::ROLE_TEACHER,
             'admin'   => Model_User::ROLE_ADMIN
         );
-        
-        public function action_index() {
+
+        /**
+        * Инструкции для слушателя.
+        */
+        public function action_index_by_student() {
+            $msg = 'После регистрации и офрмления договора вы можете подать заявку.Для этого
+                    в пункте меню "заявки" выберите интересующее вас направление ';
+            $this->flash($msg, '/users/index_by_student/');
+
+            $this->render();
+        }
+
+        /**
+        * Инструкции для преподавателя.
+        */
+        public function action_index_by_teacher() {
+            $msg = 'В пункте "учебные материалы" вы можете управлять загруженными материалами и
+                    добавлять новые';
+            $this->flash($msg, '/users/index_by_teacher/');
+
+            $this->render();
+        }
+
+        /**
+        * Инструкции для админа.
+        */
+        public function action_index_by_admin() {
+            $msg = 'В пункте "зарегистрированные слушатели" можно просмотреть пользователей,
+                    находящихся на стадии:<br />
+                    "зарегистрирован",
+                    "обучается",
+                    и тд';
+            $this->flash($msg, '/users/index_by_admin/');
+
             $this->render();
         }
         
@@ -38,6 +70,23 @@
             }
             
             $user = Model_User::create();
+            $udata = (object) $user->getAuth();
+            if (isset($udata->role))
+            {
+                if (Model_User::ROLE_TEACHER == $udata->role)
+                {
+                    $redirect_link = '/users/index_by_teacher/';
+                }elseif (Model_User::ROLE_ADMIN == $udata->role)
+                {
+                    $redirect_link = '/users/index_by_admin/';
+                }elseif (Model_User::ROLE_STUDENT == $udata->role)
+                {
+                    $redirect_link = '/users/index_by_student/';
+                }
+            }else
+            {
+                $redirect_link = '/index/index/';
+            }
             
             /* Если данные не прошли проверку, показываем ошибки */
             if (!$form->validate($request, $user)) {
@@ -63,7 +112,8 @@
             
             $msg = 'Вы успешно зарегистрированы, письмо для активации ' .
                    'отправлено на ваш email';
-            $this->flash($msg, '/users/index/');
+
+            $this->flash($msg, $redirect_link);
         }
         
         /**
@@ -73,24 +123,43 @@
         */
         public function action_activate_student(array $params = array()) {
             $user = Model_User::create();
-            $id = $params['user_id'];
+            $udata = (object) $user->getAuth();
+            if (isset($udata->role))
+            {
+                if (Model_User::ROLE_TEACHER == $udata->role)
+                {
+                    $redirect_link = '/users/index_by_teacher/';
+                }elseif (Model_User::ROLE_ADMIN == $udata->role)
+                {
+                    $redirect_link = '/users/index_by_admin/';
+                }elseif (Model_User::ROLE_STUDENT == $udata->role)
+                {
+                    $redirect_link = '/users/index_by_student/';
+                }
+            }else
+            {
+                $redirect_link = '/index/index/';
+            }
             
+            $id = $params['user_id'];
+            $this->flash($msg, $redirect_link);            
+
             /* Проверяем статус пользователя */
             $status = $user->getStatus($id);
 
             if (false === $status) {
-                $this->flash('Пользователь не найден', '/users/index/');
+                $this->flash('Пользователь не найден', $redirect_link);            
             }
             
             if (Model_User::STATUS_INACTIVE !== $status) {
-                $this->flash('Аккаунт уже активирован', '/users/index/');
+                $this->flash('Аккаунт уже активирован', $redirect_link);            
             }
             
             /* Проверяем код активации */
             $code = $user->getActivationCode($id);
 
             if ($params['code'] !== $code) {
-                $this->flash('Неправильный код активации', '/users/index/', false);
+                $this->flash('Неправильный код активации', $redirect_link, false);
             }
             
             /* Активируем слушателя */
@@ -102,17 +171,17 @@
                 $msg = 'Не удалось активировать аккаунт';
             }
             
-            $this->flash($msg, '/users/index/', false);
+            $this->flash($msg, $redirect_link, false);
         }
         
         /**
         * Регистрация сотрудника (преподавателя/администратора).
         */
-        public function action_register_employee() {
+        public function action_register_employee_by_admin() {
             $request = $this->getRequest();
             
             /* Создаём объект формы с полями первичной регистрации */
-            $action = '/users/register_employee/';
+            $action = '/users/register_employee_by_admin/';
             $form = Form_Profile_Employee_Registration::create($action);
             $this->set('form', $form);
             
@@ -121,8 +190,6 @@
             if (empty($request->$method)) {
                 $this->render();
             }
-            
-            $user = Model_User::create();
             
             /* Если данные не прошли проверку, показываем ошибки */
             if (!$form->validate($request, $user)) {
@@ -152,7 +219,7 @@
                 $id, $login, $email, $activation_code
             );
                                                          
-            $this->flash('Новый сотрудник успешно добавлен', '/users/index/');
+            $this->flash('Новый сотрудник успешно добавлен', $redirect_link);
         }
         
         /**
@@ -162,24 +229,42 @@
         */
         public function action_activate_employee(array $params = array()) {
             $user = Model_User::create();
+            $udata = (object) $user->getAuth();
+            if (isset($udata->role))
+            {
+                if (Model_User::ROLE_TEACHER == $udata->role)
+                {
+                    $redirect_link = '/users/index_by_teacher/';
+                }elseif (Model_User::ROLE_ADMIN == $udata->role)
+                {
+                    $redirect_link = '/users/index_by_admin/';
+                }elseif (Model_User::ROLE_STUDENT == $udata->role)
+                {
+                    $redirect_link = '/users/index_by_student/';
+                }
+            }else
+            {
+                $redirect_link = '/index/index/';
+            }
+
             $id = $params['user_id'];
             
             /* Проверяем текущйи статус */
             $status = $user->getStatus($id);
 
             if (false === $status) {
-                $this->flash('Пользователь не найден', '/users/index/');
+                $this->flash('Пользователь не найден', $redirect_link);
             }
             
             if (Model_User::STATUS_INACTIVE !== $status) {
-                $this->flash('Аккаунт уже активирован', '/users/index/');
+                $this->flash('Аккаунт уже активирован', $redirect_link);
             }
             
             /* Сверяем код активации */
             $code = $user->getActivationCode($id);
 
             if ($params['code'] !== $code) {
-                $this->flash('Неправильный код активации', '/users/index/', false);
+                $this->flash('Неправильный код активации', $redirect_link, false);
             }
             
             /* Генерируем пароль для аккаунта и обновляем данные в БД */
@@ -194,7 +279,7 @@
                 $msg = 'Не удалось активировать аккаунт';
             }
             
-            $this->flash($msg, '/users/index/', false);
+            $this->flash($msg, $redirect_link, false);
         }
         
         /**
@@ -224,6 +309,23 @@
             }
             
             $user = Model_User::create();
+            $udata = (object) $user->getAuth();
+            if (isset($udata->role))
+            {
+                if (Model_User::ROLE_TEACHER == $udata->role)
+                {
+                    $redirect_link = '/users/index_by_teacher/';
+                }elseif (Model_User::ROLE_ADMIN == $udata->role)
+                {
+                    $redirect_link = '/users/index_by_admin/';
+                }elseif (Model_User::ROLE_STUDENT == $udata->role)
+                {
+                    $redirect_link = '/users/index_by_student/';
+                }
+            }else
+            {
+                $redirect_link = '/index/index/';
+            }
             
             $login  = $form->login->value;
             $passwd = $form->passwd->value;
@@ -248,7 +350,7 @@
             
             /* Если всё удачно, выводим сообщение об успешной авторизации */
             $msg = 'Вы успешно авторизованы';
-            $this->flash($msg, '/users/index/');                                         
+            $this->flash($msg, $redirect_link);                                         
         }
         
         /**
@@ -256,29 +358,45 @@
         */
         public function action_whoami() {
             $user = Model_User::create();
-                    
+            $udata = (object) $user->getAuth();
+            if (isset($udata->role))
+            {
+                if (Model_User::ROLE_TEACHER == $udata->role)
+                {
+                    $redirect_link = '/users/index_by_teacher/';
+                }elseif (Model_User::ROLE_ADMIN == $udata->role)
+                {
+                    $redirect_link = '/users/index_by_admin/';
+                }elseif (Model_User::ROLE_STUDENT == $udata->role)
+                {
+                    $redirect_link = '/users/index_by_student/';
+                }
+            }else
+            {
+                $redirect_link = '/index/index/';   
+            }
             if (false === ($udata = $user->getAuth())) {                               
-                $this->flash('Вы не авторизованы', '/users/index/');
+                $this->flash('Вы не авторизованы', $redirect_link);
             }
             
             $msg = sprintf(
                 'Вы авторизованы как %s (%s)',
                 $udata['login'], $udata['role']
             );
-            $this->flash($msg, '/users/index/', false);
+            $this->flash($msg, $redirect_link, false);
         }
         
-        public function action_profile_extended() {
+        public function action_profile_extended_by_student() {
             $user = Model_User::create();
             $udata = (object) $user->getAuth();
             
             if ($user->isExtendedProfileSet($udata->user_id)) {
-                $this->flash('Ваш профиль уже заполнен', '/users/index/');
+                $this->flash('Ваш профиль уже заполнен', '/users/index_by_student/');
             }
             
             $request = $this->getRequest();
             
-            $action = '/users/profile_extended/';
+            $action = '/users/profile_extended_by_student/';
             $form = Form_Profile_Student_Extended::create($action);
             $this->set('form', $form);
             
@@ -352,10 +470,10 @@
             _toMysqlDate($profile['passport']['given_date']);
             
             if (!$user->setExtendedProfile($udata->user_id, $profile)) {
-                $this->flash('Ошибка при сохранении профиля', '/users/index/');
+                $this->flash('Ошибка при сохранении профиля', '/users/index_by_student/');
             }
             
-            $this->flash('Ваш профиль успешно обновлён', '/users/index/');
+            $this->flash('Ваш профиль успешно обновлён', '/users/index_by_student/');
         }
         
         /**
@@ -363,9 +481,27 @@
         */
         public function action_logout() {
             $user = Model_User::create();
+            $udata = (object) $user->getAuth();
+            if (isset($udata->role))
+            {
+                if (Model_User::ROLE_TEACHER == $udata->role)
+                {
+                    $redirect_link = '/users/index_by_teacher/';
+                }elseif (Model_User::ROLE_ADMIN == $udata->role)
+                {
+                    $redirect_link = '/users/index_by_admin/';
+                }elseif (Model_User::ROLE_STUDENT == $udata->role)
+                {
+                    $redirect_link = '/users/index_by_student/';
+                }
+            }else
+            {
+                $redirect_link = '/index/index/';
+            }
+            
             $user->resetAuth();
             
-            $this->flash('Авторизация потеряна', '/users/index/');
+            $this->flash('Авторизация потеряна', $redirect_link);
         }   
     }
 

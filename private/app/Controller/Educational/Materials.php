@@ -1,6 +1,6 @@
 <?php
 	class Controller_Educational_Materials extends Mvc_Controller_Abstract {
-		public function action_index () {			
+		public function action_index_by_admin () {			
 			$educationPrograms = Model_Education_Programs::create ();
 			$this->set ('directions',	$educationPrograms->getDirections 				());
 			$this->set ('courses', 		$educationPrograms->getCourses 					());
@@ -16,9 +16,23 @@
 			$this->set		('disciplineID',	(isset ($requestData['disciplinesSelect'])) ? ($requestData['disciplinesSelect']) : (-1));
 			$this->set		('sectionID',		(isset ($requestData['sectionsSelect'])) ? ($requestData['sectionsSelect']) : (-1));			
 			$this->set		('materials',		$educationalMaterials->getMaterials ($requestData));
-			$this->render	('educational_materials/index');
+			$this->render	('educational_materials/index_by_admin');
 		}
-		
+
+		public function action_index_by_teacher () {			
+            $msg = 'Тут будут учебные материалы, добавленные залогиненным преподавателем';
+            $this->flash($msg, '/educational_materials/index_by_teacher/');
+
+            $this->render();
+		}
+
+		public function action_index_by_student () {			
+            $msg = 'Тут будут учебные материалы, доступные для слушателя';
+            $this->flash($msg, '/educational_materials/index_by_student/');
+
+            $this->render();
+		}
+
 		public function action_remove () {
 			$request		= $this->getRequest ();
 			$requestData	= $request->post;

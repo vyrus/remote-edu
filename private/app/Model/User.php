@@ -348,7 +348,7 @@
             }
             
             $auth = Resources::getInstance()->auth;
-            $auth->init();
+            $auth->init();   
             
             /* Если пользователь не прошёл авторизацию, возвращаем false */
             if (false === ($user_id = $auth->getUserId())) {

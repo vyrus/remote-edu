@@ -69,7 +69,11 @@
         * @return Auth
         */
         public function init() {
-            session_start();
+            $sid = session_id();                                                                    // при login и logout без проверки сессия стартует 2 раза (2-й раз из-за проверки прав в меню)            
+            if (empty($sid))
+            {
+                session_start();    
+            }
             return $this;
         }
         

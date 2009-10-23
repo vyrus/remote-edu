@@ -18,8 +18,10 @@
             'paid' => 'оплачена'
         );
 
-        
-        public function action_index()
+        /**
+        * форма для подачи заявки слушателем.
+        */
+        public function action_index_by_student()
         {
 			$educationPrograms = Model_Education_Programs::create ();
 			$this->set ('directions',	$educationPrograms->getDirections 				());
@@ -31,6 +33,25 @@
             $form = Form_Profile_Student_Registration::create($action);
             $this->set('form', $form);
 			
+            $this->render();
+        }
+
+        /**
+        * Список поданных заявок для админа.
+        */
+        public function action_index_by_admin()
+        {
+            $user = Model_User::create();
+            $udata = (object) $user->getAuth();
+            /**
+            * @todo Paginator.
+            */
+            $app = Model_Application::create();
+            $apps = $app->getAllAppsInfo();
+            
+            $this->set('applications', $apps);
+            $this->set('statuses', $this->_app_status_map);
+            
             $this->render();
         }
         
@@ -45,7 +66,7 @@
             if (!$user->isExtendedProfileSet($udata->user_id))
             {
                 $msg = 'Заполните, пожалуйста, свой профиль';
-                $link = '/users/profile_extended/';
+                $link = '/users/profile_extended_by_student/';
                 $this->flash($msg, $link);
             }
 */
@@ -58,16 +79,14 @@
             $app = Model_Application::create();       
             $app->apply($udata->user_id, $object_id, $type);
             
-            $this->flash('Заявка подана', '/applications/list/');
+            $this->flash('Заявка подана', '/applications/list_by_student/');
         }
         
         /**
         * Просмотр статуса заявок слушателем.
         */
-        public function action_list() {
-            
-            /* Управление прходит сюда после диспетчера */
-            
+        public function action_list_by_student()
+        {
             $user = Model_User::create();
             $udata = (object) $user->getAuth();
             /**

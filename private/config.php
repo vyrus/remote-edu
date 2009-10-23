@@ -270,23 +270,31 @@
             /* Слушатель */
             Model_User::ROLE_STUDENT => array
             (
-                'users/profile_extended',
+                'users/profile_extended_by_student',
+
 				'applications/list', 																// просмотр списка заявок и их статусов
-				'applications/apply' 																// подача заяка				
+				'applications/apply', 																// подача заяка
+				'applications/index_by_student',													// форма для подачи заявки
+
+				'Educational_Materials/index_by_student'
             ),
             
             /* Преподаватель */
             Model_User::ROLE_TEACHER => array
             (
-                'Education_Students/index'
+                'Education_Students/index',
+
+				'Educational_Materials/index_by_teacher'											// учебные материалы, добавленные залогиненным преподавателем
             ),
             
             /* Администратор */
             Model_User::ROLE_ADMIN => array
             (
-                'users/register_employee',
+                'users/register_employee_by_admin',													// учебные материалы, доступные для слушателя
 
-				'Educational_Materials/index',
+				'applications/index_by_admin',														// список поданных заявок всех пользователей
+
+				'Educational_Materials/index_by_admin',
 				'Educational_Materials/upload',
 				'Educational_Materials/remove',
 

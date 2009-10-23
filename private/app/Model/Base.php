@@ -7,7 +7,8 @@
             'applications' => 'applications',
             'apps_history' => 'apps_history',
             'programs'     => 'programs',
-            'disciplines'  => 'disciplines'
+            'disciplines'  => 'disciplines',
+            'users'        => 'users',            
         );
     }
 
