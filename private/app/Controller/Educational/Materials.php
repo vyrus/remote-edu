@@ -1,5 +1,26 @@
 <?php
 	class Controller_Educational_Materials extends Mvc_Controller_Abstract {
+		private $templatesPostfix = '';
+		
+		public function __construct (Http_Request $request) {
+			$user = Model_User::create();
+			$udata = (object) $user->getAuth();
+			
+            if (isset($udata->role)) {
+				if (Model_User::ROLE_TEACHER == $udata->role) {
+					$this->templatePostfix = '_by_teacher';
+				}
+				elseif (Model_User::ROLE_ADMIN == $udata->role) {
+					$this->templatePostfix = '_by_admin';
+				}
+				elseif (Model_User::ROLE_STUDENT == $udata->role) {
+					$this->templatePostfix = '_by_student';
+				}
+            }
+
+			parent::__construct ($request);
+		}
+				
 		public function action_index_by_admin () {			
 			$educationPrograms = Model_Education_Programs::create ();
 			$this->set ('directions',	$educationPrograms->getDirections 				());
@@ -16,7 +37,7 @@
 			$this->set		('disciplineID',	(isset ($requestData['disciplinesSelect'])) ? ($requestData['disciplinesSelect']) : (-1));
 			$this->set		('sectionID',		(isset ($requestData['sectionsSelect'])) ? ($requestData['sectionsSelect']) : (-1));			
 			$this->set		('materials',		$educationalMaterials->getMaterials ($requestData));
-			$this->render	('educational_materials/index_by_admin');
+			$this->render	('educational_materials/index' . $this->templatePostfix);
 		}
 
 		public function action_index_by_teacher () {			
@@ -26,11 +47,15 @@
             $this->render();
 		}
 
-		public function action_index_by_student () {			
+		public function action_index_by_student () {
+			/*		
             $msg = 'Тут будут учебные материалы, доступные для слушателя';
             $this->flash($msg, '/educational_materials/index_by_student/');
 
             $this->render();
+			*/
+			
+			$this->action_index ();
 		}
 
 		public function action_remove () {
@@ -48,7 +73,7 @@
 			
 			$this->flash (
 				'Материалы успешно удалены',
-				'/educational_materials/index',
+				'/educational_materials/index' . $this->templatesPostfix,
 				3
 			);			
 		}
@@ -102,7 +127,7 @@
 
 			$this->flash (
 				'Все материалы успешно загружены',
-				'/educational_materials/index',
+				'/educational_materials/index' . $this->templatesPostfix,
 				3
 			);
 		}
