@@ -167,6 +167,31 @@
             return $this->prepare($sql)
                         ->execute($values);
         }
+        
+        /**
+        * Изменение статуса заявки на переданный.
+        * 
+        * @return array
+        */
+        public function setAppStatus($new_status,$app_id)
+        {
+            $sql = '
+                UPDATE ' . $this->_tables['applications'] . ' a
+                SET status = :new_status
+                WHERE app_id = :app_id
+            ';    
+           
+            $values = array(
+                ':app_id'     => $app_id,
+                ':new_status' => $new_status
+            );
+            
+            $stmt = $this->prepare($sql);
+            $stmt->execute($values);
+            
+            $row_count = $stmt->rowCount();
+            return $row_count > 0;
+        }
     }
 
 ?>

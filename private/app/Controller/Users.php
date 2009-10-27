@@ -309,23 +309,6 @@
             }
             
             $user = Model_User::create();
-            $udata = (object) $user->getAuth();
-            if (isset($udata->role))
-            {
-                if (Model_User::ROLE_TEACHER == $udata->role)
-                {
-                    $redirect_link = '/users/index_by_teacher/';
-                }elseif (Model_User::ROLE_ADMIN == $udata->role)
-                {
-                    $redirect_link = '/users/index_by_admin/';
-                }elseif (Model_User::ROLE_STUDENT == $udata->role)
-                {
-                    $redirect_link = '/users/index_by_student/';
-                }
-            }else
-            {
-                $redirect_link = '/index/index/';
-            }
             
             $login  = $form->login->value;
             $passwd = $form->passwd->value;
@@ -348,6 +331,24 @@
                 $this->render();
             }
             
+            $udata = (object) $user->getAuth();
+            if (isset($udata->role))
+            {
+                if (Model_User::ROLE_TEACHER == $udata->role)
+                {
+                    $redirect_link = '/users/index_by_teacher/';
+                }elseif (Model_User::ROLE_ADMIN == $udata->role)
+                {
+                    $redirect_link = '/users/index_by_admin/';
+                }elseif (Model_User::ROLE_STUDENT == $udata->role)
+                {
+                    $redirect_link = '/users/index_by_student/';
+                }
+            }else
+            {
+                $redirect_link = '/index/index/';
+            }
+
             /* Если всё удачно, выводим сообщение об успешной авторизации */
             $msg = 'Вы успешно авторизованы';
             $this->flash($msg, $redirect_link);                                         
@@ -481,6 +482,8 @@
         */
         public function action_logout() {
             $user = Model_User::create();
+            
+            $user->resetAuth();
             $udata = (object) $user->getAuth();
             if (isset($udata->role))
             {
@@ -497,10 +500,7 @@
             }else
             {
                 $redirect_link = '/index/index/';
-            }
-            
-            $user->resetAuth();
-            
+            }            
             $this->flash('Авторизация потеряна', $redirect_link);
         }   
     }

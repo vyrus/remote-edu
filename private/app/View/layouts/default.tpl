@@ -145,14 +145,8 @@
                 </div>
 				
                 <div class="cntnt-leftblock">
-				
                   <ul class="user-menu">
-				  
-				  <?php $this->renderElement($this->_request->_router['handler']['controller'] . '-actions') ?> 
-				  
-                   <li class="headli">
-                      <a href="#">Привет, Йован!</a>
-                    </li>
+					  <?php $this->renderElement($this->_request->_router['handler']['controller'] . '-actions') ?> 
                   </ul>
                 </div>
               </div>

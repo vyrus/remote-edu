@@ -100,6 +100,22 @@
             
             $this->render();
         }
+        
+        public function action_change_app_status($params)
+        {
+            $user = Model_User::create();
+            $udata = (object) $user->getAuth();
+
+            $new_status = $params['new_status'];
+            $app_id = $params['app_id'];
+            
+            $app = Model_Application::create();       
+            $app->setAppStatus($new_status,$app_id);
+            
+            $this->flash('Заявка '.$this->_app_status_map[$new_status], '/applications/index_by_admin/');
+          
+            $this->render();            
+        }
     }
     
 ?>

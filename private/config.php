@@ -201,7 +201,19 @@
 					'controller'	=> 'applications',
 					'action'		=> 'apply',
 				)
-			),			
+			),
+			
+            array(
+				'type'		=> Mvc_Router::ROUTE_REGEX,
+				'pattern'	=> array (
+					'regex'	=> '/applications/change_app_status/(declined|accepted|signed|paid|applied)/([0-9]+)',
+					'params'=> array ('new_status', 'app_id'),
+				),
+				'handler'	=> array (
+					'controller'	=> 'applications',
+					'action'		=> 'change_app_status',
+				)
+			),
 	
             /* Активация слушателя */
             array(

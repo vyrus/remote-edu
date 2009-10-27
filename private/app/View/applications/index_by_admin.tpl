@@ -15,6 +15,14 @@
 		width 			: 300px;
 	}
 </style>
+
+<script type="text/javascript">
+function changeStatus(newStatus,appId)
+{
+	window.location = '/applications/change_app_status/' + newStatus + '/' + appId;
+}
+</script>
+
 <?php $this->title = 'Заявки' ?>
 <h3>Статусы заявок слушателей</h3><br />
 <table class="materials" border="0" cellspacing="2" cellpadding="0">
@@ -40,20 +48,20 @@
 				<td> <?
 					if ($app['status'] == 'applied')
 					{ ?>
-						<input type='button' name='accept' value='принять'>
-						<input type='button' name='accept' value='отклонить'>		<?
+						<button class="addButton" name='accept' onclick="changeStatus ('accepted',<?=$app['app_id']?>);">принять</button>						
+						<button class="addButton" name='decline' onclick="changeStatus ('declined',<?=$app['app_id']?>);">отклонить</button> <?
 					}elseif ($app['status'] == 'declined')
 					{ ?>
-						<input type='button' name='accept' value='удалить'>		<?
+						<button class="addButton" name='delApp' onclick="changeStatus ('deleted',<?=$app['app_id']?>);">удалить</button>	<?
 					}elseif ($app['status'] == 'accepted')
 					{ ?>
-						<input type='button' name='accept' value='подписана'>		<?
+						<button class="addButton" name='signedApp' onclick="changeStatus ('signed',<?=$app['app_id']?>);">подписана</button>	<?
 					}elseif ($app['status'] == 'signed')
 					{ ?>
-						<input type='button' name='accept' value='оплачена'>		<?
+						<button class="addButton" name='paidApp' onclick="changeStatus ('paid',<?=$app['app_id']?>);">оплачена</button>	<?
 					}elseif ($app['status'] == 'paid')
 					{ ?>
-						<input type='button' name='accept' value='удалить'>		<?
+						<button class="addButton" name='delApp' onclick="changeStatus ('deleted',<?=$app['app_id']?>);">удалить</button>	<?
 					}
 					?>
 				</td>
