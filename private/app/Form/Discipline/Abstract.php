@@ -27,7 +27,7 @@
 			$this
 				->addField ('coef')
 				->setValidator ('/^[0-9]+$/ixu')
-				->setError ('Хз что тут пока написать,потом допишем');
+				->setError ('Введите коэффициент дисциплины (от 1 до 100)');
 			return $this;
 		}
 		

@@ -278,5 +278,117 @@
 				3
 			);			
 		}		
+        
+        /**
+        * Отображение доступных для слушателя программ.
+        */
+        public function action_show_available() {
+            /* Получаем данные слушателя */
+            $user = Model_User::create();
+            $udata = (object) $user->getAuth();
+            
+            /* Находим оплаченные заяки */
+            $app = Model_Application::create();
+            $apps = $app->getPaidApps($udata->user_id);
+            
+            $program = Model_Education_Programs::create();
+            
+            /**
+            * @todo Обрабатывать ситуацию, когда программа бесплатная.
+            */                                        
+            
+            /* Список доступных направлений и их доступных дисциплин */
+            $avail_programs = array();
+            /* Список доступных дисциплин (которые покупались отдельно от направлений) */
+            $avail_disciplines = array();
+            
+            foreach ($apps as $a)                         
+            {
+                $a = (object) $a;
+                
+                if (Model_Application::TYPE_PROGRAM == $a->type)
+                {
+                    $discs = $program->getDisciplinesByProgramId($a->object_id);
+                    
+                    /**
+                    * @todo Подгружать реальную сумму оплаты.
+                    */
+                    $payment_total = 30;
+                    
+                    /**
+                    * @todo Подгружать реальную стоимость программы.
+                    */
+                    $cost_total = 100;
+                    
+                    $discs = $this->_getAllowedDisciplines(
+                        $discs, $payment_total, $cost_total
+                    );
+                    
+                    /* Если ни одна дисциплина не доступна, идём дальше */
+                    if (!sizeof($discs)) continue;
+                    
+                    /* Получаем данные о программе и добавляем дисциплины */
+                    $program_data = $program->getProgramInfo($a->object_id);
+                    $program_data['disciplines'] = $discs;
+                    
+                    $avail_programs[] = $program_data;
+                }
+                elseif (Model_Application::TYPE_DISCIPLINE == $a->type)
+                {
+                    /**
+                    * @todo А может ли слушатель оплатить часть стоимости
+                    * отдельной дисциплины? Если может, то надо добавить
+                    * проверку, полностью ли дисциплина оплачена.
+                    */
+                    $program->getDiscipline($a->object_id, $title, $_, $_, $_);
+                    
+                    $disc = array(
+                        'discipline_id' => $a->object_id,
+                        'title'         => $title
+                    );
+                    $avail_disciplines[] = $disc;
+                }
+            }
+            
+            $this->set('programs',    $avail_programs);
+            $this->set('disciplines', $avail_disciplines);
+            
+            $this->render();
+        }
+        
+        /**
+        * Выбирает из списка переданных дисциплин те, которые в соответствии с 
+        * их коэффициентами в рамках направления и общей суммы оплаты по заявке
+        * считаются доступными для слушателя. 
+        * В списке дисциплин по ключу "coef" должен присутствовать коэффициент
+        * дисциплины.
+        * 
+        * @param array     $disciplines Список дисциплин.
+        * @param int|float $payment     Обшая сумма оплаты.
+        * @param int|float $cost        Стоимость направления.
+        */
+        protected function _getAllowedDisciplines
+        (
+            array $disciplines = array(), $payment, $cost
+        )
+        {
+            $percent_paid = round($payment / $cost * 100);
+        
+            $allowed = array();
+            $percent_accum = 0;
+            
+            foreach ($disciplines as $disc)
+            {
+                $percent_accum += $disc['coef'];
+                
+                if ($percent_paid >= $percent_accum) {
+                    $allowed[] = $disc;
+                } else {
+                    break;
+                }
+            }
+            
+            return $allowed;
+        }
 	}
 ?>

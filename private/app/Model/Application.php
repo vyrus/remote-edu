@@ -25,12 +25,65 @@
         const STATUS_APPLIED = 'applied';
         
         /**
+        * Статус заявки: отклонена.
+        * 
+        * @var const
+        */
+        const STATUS_DECLINED = 'declined';
+        
+        /**
+        * Статус заявки: принята, ожидаем подписания договора.
+        * 
+        * @var const
+        */
+        const STATUS_ACCEPTED = 'accepted';
+        
+        /**
+        * Статус заявки: договор подписан, ожидаем оплаты.
+        * 
+        * @var const
+        */
+        
+        const STATUS_SIGNED = 'signed';
+        
+        /**
+        * Статус заявки: оплата произведена.
+        * 
+        * @var const
+        */
+        const STATUS_PAID = 'paid';
+        
+        /**
+        * Карта соответствия обозначений статусов заявок названиям статусов
+        * заявок.
+        * 
+        * @var array
+        */
+        protected static $_status_map = array(
+            self::STATUS_APPLIED  => 'подана',
+            self::STATUS_DECLINED => 'отклонена',
+            self::STATUS_ACCEPTED => 'принята',
+            self::STATUS_SIGNED   => 'подписана',
+            self::STATUS_PAID     => 'оплачена'
+        );
+        
+        /**
         * Создание нового экземпляра класса.
         * 
         * @return Model_Application Fluent interface.
         */
         public static function create() {
             return new self();
+        }
+        
+        /**
+        * Возвращает карту статусов из внутренних обозначений в нормальные
+        * названия.
+        * 
+        * @return array
+        */
+        public static function getStatusMap() {
+            return self::$_status_map;
         }
         
         /**
@@ -104,6 +157,32 @@
             $stmt->execute($values);
             
             $apps = $stmt->fetchAll(Db_PdO::FETCH_ASSOC);
+            return $apps;
+        }
+        
+        /**
+        * Получение оплаченных слушателем заявок.
+        * 
+        * @param  int $user_id Идентификатор пользователя.
+        * @return array
+        */
+        public function getPaidApps($user_id) {
+            $sql = '
+                SELECT object_id, type
+                FROM ' . $this->_tables['applications'] . '
+                WHERE status = :status AND
+                      user_id = :uid
+            ';
+            
+            $values = array(
+                ':uid'    => $user_id,
+                ':status' => self::STATUS_PAID
+            );
+            
+            $stmt = $this->prepare($sql);
+            $stmt->execute($values);
+            
+            $apps = $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
             return $apps;
         }
         

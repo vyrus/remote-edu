@@ -73,6 +73,10 @@
                 ),
             ),
             
+            /**
+            * @todo Зачем нужен этот маршрут?
+            */
+            /*     
             array (
                 'type'        => Mvc_Router::ROUTE_STATIC,
                 'pattern'    => "/education_programs",
@@ -81,6 +85,7 @@
                     'action'        => 'index',
                 ),
             ),
+            */
 			
 			array (
 				'type'		=> Mvc_Router::ROUTE_REGEX,
@@ -288,7 +293,8 @@
 				'applications/apply', 																// подача заяка
 				'applications/index_by_student',													// форма для подачи заявки
 
-				'Educational_Materials/index_by_student'
+				'Educational_Materials/index_by_student',
+                'Education_Programs/show_available'
             ),
             
             /* Преподаватель */
@@ -320,6 +326,7 @@
                 'Education_Programs/edit_program',
                 'Education_Programs/edit_discipline',
                 'Education_Programs/edit_section',
+                
                 'Education_Students/index'
             )
         ),

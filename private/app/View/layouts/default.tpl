@@ -97,13 +97,7 @@
 			<div class="inner">
 			
 			
-			<div class="leftblock">		
-
-<!-- 			LOGIN PASS	
-Куды вставлять, барин? =) Прям тут
-
-			
- -->				
+			<div class="leftblock">						
 					<?php
 						
 						 /* Инициализируем обработчик формы */

@@ -6,19 +6,6 @@
         const RETURN_URL = '/applications/index/';
         
         /**
-        * Карта соответствия обозначений статусов заявок названиям статусов заявок.
-        * 
-        * @var array
-        */
-        protected $_app_status_map = array(
-            'applied' => 'подана',
-            'declined' => 'отклонена',
-            'accepted' => 'принята',
-            'signed' => 'подписана',
-            'paid' => 'оплачена'
-        );
-
-        /**
         * форма для подачи заявки слушателем.
         */
         public function action_index_by_student()
@@ -50,7 +37,7 @@
             $apps = $app->getAllAppsInfo();
             
             $this->set('applications', $apps);
-            $this->set('statuses', $this->_app_status_map);
+            $this->set('statuses', Model_Application::getStatusMap());
             
             $this->render();
         }
@@ -62,14 +49,20 @@
         {
             $user = Model_User::create();
             $udata = (object) $user->getAuth();
-/*раскоментировать когда поправится подключение js-функций, подгружающих списки городов/областей
+            
+            /**
+            * @todo Раскоментировать когда поправится подключение js-функций,
+            * подгружающих списки городов/областей.
+            */
+            /*
             if (!$user->isExtendedProfileSet($udata->user_id))
             {
                 $msg = 'Заполните, пожалуйста, свой профиль';
                 $link = '/users/profile_extended_by_student/';
                 $this->flash($msg, $link);
             }
-*/
+            */
+            
             /**
             * Получение данных от браузера.
             */
@@ -96,7 +89,7 @@
             $apps = $app->getAppsInfo($udata->user_id);
             
             $this->set('applications', $apps);
-            $this->set('statuses', $this->_app_status_map);
+            $this->set('statuses', Model_Application::getStatusMap());
             
             $this->render();
         }
@@ -110,9 +103,10 @@
             $app_id = $params['app_id'];
             
             $app = Model_Application::create();       
-            $app->setAppStatus($new_status,$app_id);
+            $app->setAppStatus($new_status, $app_id);
             
-            $this->flash('Заявка '.$this->_app_status_map[$new_status], '/applications/index_by_admin/');
+            $map = Model_Application::getStatusMap();
+            $this->flash('Заявка ' . $map[$new_status], '/applications/index_by_admin/');
           
             $this->render();            
         }

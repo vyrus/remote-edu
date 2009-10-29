@@ -1,5 +1,5 @@
 <?php
-	class Model_Education_Programs extends Mvc_Model_Abstract {
+	class Model_Education_Programs extends Model_Base {
 		const	CHECK_BY_PARENT_ID 	= 0;
 		const 	CHECK_BY_OWN_ID		= 1;
 		
@@ -509,5 +509,45 @@ QUERY;
 				->prepare ($sql)
 				->execute ($params);
 		}
+        
+        /**
+        * Возвращает список всех дисциплин, входящих в образовательную
+        * программу.
+        * 
+        * @param  int $program_id Идентификатор программы.
+        * @return array
+        */
+        public function getDisciplinesByProgramId($program_id) {
+            $sql = '
+                SELECT discipline_id, title, coef
+                FROM ' . $this->_tables['disciplines'] . '
+                WHERE program_id = ?
+            ';
+            
+            $stmt = $this->prepare($sql);
+            $stmt->execute(array($program_id));
+            
+            $discs = $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
+            return $discs;
+        }
+        
+        /**
+        * Получение всей информации об образовательной программе.
+        * 
+        * @param  int $program_id Идентификатор программы.
+        * @return array|false
+        */
+        public function getProgramInfo($program_id) {
+            $sql = '
+                SELECT *
+                FROM ' . $this->_tables['programs'] . '
+                WHERE program_id = ?
+            ';
+            
+            $stmt = $this->prepare($sql);
+            $stmt->execute(array($program_id));
+            
+            return $stmt->fetch(Db_Pdo::FETCH_ASSOC);
+        }
 	}
 ?>
