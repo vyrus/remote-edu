@@ -119,7 +119,7 @@
 					}
 				}
 			}
-			
+
 			if (! empty ($invalidMaterialsForms)) {
 				$this->set		('invalidMaterialsForms', $invalidMaterialsForms);
 				$this->render	('educational_materials/upload');

@@ -20,7 +20,8 @@
 <table class="materials" border="0" cellspacing="2" cellpadding="0">
 	<tr class="odd">
 	<th class="description">Заявка</th>
-	<th class="description">Статус</th>	
+	<th class="description">Статус</th>
+	<th class="description">Договор</th>	
 	</tr> <?
 	if (! empty ($this->applications))
 	{
@@ -35,6 +36,17 @@
 					<td class="description">Заявка на изучение дисциплины "<?=$app['discipline_title']?>"</td> <?
 				} ?>
 				<td><?=$this->statuses[$app['status']]?></td>
+				<td><?
+					if ($app['status'] == 'accepted')
+					{
+						if (empty($app['contract_filename']))
+						{
+							echo"идёт формирование договора";
+						}else
+						{ ?>
+							<a href="<?=$app['contract_filename'].'.doc'?>">скачать договор</a></td> <?
+						}
+					} ?>
 			</tr> <?
 		}
 	} ?>

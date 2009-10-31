@@ -295,6 +295,7 @@
         * @return boolean
         */
         public function login($login, $passwd, & $result) {
+
              $sql = '
                 SELECT *
                 FROM  ' . $this->_table . '

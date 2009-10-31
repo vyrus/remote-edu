@@ -132,6 +132,7 @@
         public function getAppsInfo($user_id) {
             $sql = '
                 SELECT a.app_id, a.status,
+                       contract_filename,      
                        p.title AS program_title,
                        d.title AS discipline_title
                 FROM ' . $this->_tables['applications'] . ' a
@@ -196,6 +197,7 @@
         {
             $sql = '
                 SELECT a.app_id, a.status, u.name, u.surname, u.patronymic,
+                        contract_filename,
                        p.title AS program_title,
                        d.title AS discipline_title
                 FROM ' . $this->_tables['applications'] . ' a
@@ -272,5 +274,4 @@
             return $row_count > 0;
         }
     }
-
 ?>

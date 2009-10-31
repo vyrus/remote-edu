@@ -184,13 +184,12 @@
             $action = '/users/register_employee_by_admin/';
             $form = Form_Profile_Employee_Registration::create($action);
             $this->set('form', $form);
-            
             /* Если данных от формы нет, предлагаем заполнить */
             $method = $form->method();
             if (empty($request->$method)) {
                 $this->render();
             }
-            
+
             /* Если данные не прошли проверку, показываем ошибки */
             if (!$form->validate($request, $user)) {
                 $this->render();

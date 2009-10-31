@@ -38,8 +38,49 @@
             
             $this->set('applications', $apps);
             $this->set('statuses', Model_Application::getStatusMap());
+			$this->set ('invalidMaterialsForms', array ());
+			
+    		$contract = Model_Contract::create ();
             
-            $this->render();
+			$request	= $this->getRequest ();
+			$requestData	= $request->files;
+			if (empty ($requestData)) {
+				$this->render ('/applications/index_by_admin');
+			}
+                                                                                                    // [ загрузка договора
+			$invalidMaterialsForms = array ();
+
+            foreach ($request->files as $key=>$item)
+            {
+                list($empty_str,$app_id) = (split('fileReference',$key));
+            }
+
+            $request->set (
+                'get',
+                array (
+                    'filename'		=> $request->files['fileReference' . $app_id]['name'],
+                )
+            );
+
+            $contractForm = Form_Contract_Upload::create ('');
+            $contractForm->setMethod (Form_Abstract::METHOD_GET);
+            if (! $contractForm->validate ($request)) {
+                $invalidMaterialsForms[] = $contractForm;
+            }
+            else {
+                $contract->addContract ($request->files['fileReference' . $app_id],$app_id);
+            }
+			
+			if (! empty ($invalidMaterialsForms)) {
+				$this->set		('invalidMaterialsForms', $invalidMaterialsForms);
+				$this->render	('educational_materials/upload');
+			}
+
+			$this->flash (
+				'Договор успешно загружен',
+				'/applications/index_by_admin',
+				3
+			);
         }
         
         /**
@@ -110,6 +151,55 @@
           
             $this->render();            
         }
+        
+		public function action_upload_agreement ()
+        {
+			$app = Model_Application::create();       
+			
+			$request	= $this->getRequest ();
+			$form 		= Form_Materials_Upload::create ('/applications/upload_agreement');
+			
+			$method 		= $form->method ();
+			$requestData	= $request->$method;
+			if (empty ($requestData)) {
+				$this->render ('/applications/upload_agreement');
+			}
+
+			$invalidMaterialsForms = array ();
+			if (count ($requestData['material'])) {
+				$educationalMaterials = Model_Educational_Materials::create ();
+				
+				foreach ($requestData['material'] as $i => $material) {					
+					$request->set (
+						'get',
+						array (
+							'filename'		=> $request->files['fileReference' . $i]['name'],
+						)
+					);
+
+					$materialForm = Form_Materials_Upload::create ('');
+					$materialForm->setMethod (Form_Abstract::METHOD_GET);
+					if (! $materialForm->validate ($request)) {
+						$invalidMaterialsForms[] = $materialForm;
+					}
+					else {
+						$educationalMaterials->addMaterial ($material['description'], $material['section'], $request->files['fileReference' . $i]);
+					}
+				}
+			}
+			
+			if (! empty ($invalidMaterialsForms)) {
+				$this->set		('invalidMaterialsForms', $invalidMaterialsForms);
+				$this->render	('educational_materials/upload');
+			}
+
+			$this->flash (
+				'Все материалы успешно загружены',
+				'/educational_materials/index' . $this->templatesPostfix,
+				3
+			);
+		}
+        
     }
     
 ?>
