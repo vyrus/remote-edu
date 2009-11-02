@@ -76,7 +76,7 @@
             /**
             * @todo Зачем нужен этот маршрут?
             */
-            /*     
+			/*
             array (
                 'type'        => Mvc_Router::ROUTE_STATIC,
                 'pattern'    => "/education_programs",
@@ -85,7 +85,7 @@
                     'action'        => 'index',
                 ),
             ),
-            */
+			*/
 			
 			array (
 				'type'		=> Mvc_Router::ROUTE_REGEX,

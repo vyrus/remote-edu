@@ -21,7 +21,7 @@
 			parent::__construct ($request);
 		}
 				
-		public function action_index_by_admin () {			
+		public function action_index () {			
 			$educationPrograms = Model_Education_Programs::create ();
 			$this->set ('directions',	$educationPrograms->getDirections 				());
 			$this->set ('courses', 		$educationPrograms->getCourses 					());
@@ -38,6 +38,10 @@
 			$this->set		('sectionID',		(isset ($requestData['sectionsSelect'])) ? ($requestData['sectionsSelect']) : (-1));			
 			$this->set		('materials',		$educationalMaterials->getMaterials ($requestData));
 			$this->render	('educational_materials/index' . $this->templatePostfix);
+		}
+		
+		public function action_index_by_admin () {
+			$this->action_index ();
 		}
 
 		public function action_index_by_teacher () {			

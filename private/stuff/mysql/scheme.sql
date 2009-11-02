@@ -159,21 +159,23 @@ CREATE TABLE `phones` (
 -- Структура таблицы `applications`
 --
 
+DROP TABLE IF EXISTS `applications`;
 CREATE TABLE `applications` (
-  `app_id` int(10) unsigned NOT NULL auto_increment,
+  `app_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(10) unsigned NOT NULL,
   `object_id` int(10) unsigned NOT NULL,
   `type` enum('program','discipline') NOT NULL,
   `status` enum('applied','declined','accepted','signed','paid') NOT NULL,
-  PRIMARY KEY  (`app_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
+  `contract_filename` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`app_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8
 -- --------------------------------------------------------
 
 -- 
 -- Структура таблицы `apps_history`
 -- 
 
+DROP TABLE IF EXISTS `apps_history`;
 CREATE TABLE `apps_history` (
   `app_id` int(10) unsigned NOT NULL,
   `status` enum('applied','declined','accepted','signed','paid') NOT NULL,

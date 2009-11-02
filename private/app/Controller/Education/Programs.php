@@ -1,5 +1,26 @@
 <?php
 	class Controller_Education_Programs extends Mvc_Controller_Abstract {
+		private $templatesPostfix = '';
+		
+		public function __construct (Http_Request $request) {
+			$user = Model_User::create();
+			$udata = (object) $user->getAuth();
+			
+            if (isset($udata->role)) {
+				if (Model_User::ROLE_TEACHER == $udata->role) {
+					$this->templatePostfix = '_by_teacher';
+				}
+				elseif (Model_User::ROLE_ADMIN == $udata->role) {
+					$this->templatePostfix = '_by_admin';
+				}
+				elseif (Model_User::ROLE_STUDENT == $udata->role) {
+					$this->templatePostfix = '_by_student';
+				}
+            }
+
+			parent::__construct ($request);
+		}
+
 		public function action_index () {
 			$educationPrograms = Model_Education_Programs::create ();
 			$this->set ('directions',	$educationPrograms->getDirections 				());
@@ -8,6 +29,10 @@
 			$this->set ('sections', 	$educationPrograms->getDisciplinesSections 		());
 			
 			$this->render ("education_programs/index");
+		}
+		
+		public function action_by_admin () {
+			$this->action_index ();
 		}
 		
 		public function action_add_program ($params) {
