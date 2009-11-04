@@ -211,7 +211,7 @@
             array(
 				'type'		=> Mvc_Router::ROUTE_REGEX,
 				'pattern'	=> array (
-					'regex'	=> '/applications/change_app_status/(declined|accepted|signed|paid|applied)/([0-9]+)',
+					'regex'	=> '/applications/change_app_status/(accepted|declined|signed)/([0-9]+)',
 					'params'=> array ('new_status', 'app_id'),
 				),
 				'handler'	=> array (
@@ -310,7 +310,8 @@
             (
                 'users/register_employee_by_admin',													// учебные материалы, доступные для слушателя
 
-				'applications/index_by_admin',														// список поданных заявок всех пользователей
+                'applications/index_by_admin',                                                        // список поданных заявок всех пользователей
+				'applications/delete',
 
 				'Educational_Materials/index_by_admin',
 				'Educational_Materials/upload',

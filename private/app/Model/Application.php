@@ -47,13 +47,6 @@
         const STATUS_SIGNED = 'signed';
         
         /**
-        * Статус заявки: оплата произведена.
-        * 
-        * @var const
-        */
-        const STATUS_PAID = 'paid';
-        
-        /**
         * Карта соответствия обозначений статусов заявок названиям статусов
         * заявок.
         * 
@@ -63,8 +56,7 @@
             self::STATUS_APPLIED  => 'подана',
             self::STATUS_DECLINED => 'отклонена',
             self::STATUS_ACCEPTED => 'принята',
-            self::STATUS_SIGNED   => 'подписана',
-            self::STATUS_PAID     => 'оплачена'
+            self::STATUS_SIGNED   => 'подписана'
         );
         
         /**
@@ -250,6 +242,26 @@
         }
         
         /**
+        * Удаление истории обработки заявки.
+        * 
+        * @param int $app_id Идентификатор заявки.
+        * @return boolean
+        */
+        protected function _deleteHistory($app_id) {
+            $sql = '
+                DELETE
+                FROM ' . $this->_tables['apps_history'] . '
+                WHERE app_id = ?
+            ';
+            
+            $stmt = $this->prepare($sql);
+            $stmt->execute(array($app_id));
+            
+            $affected = $stmt->rowCount();
+            return ($affected > 0);
+        }
+        
+        /**
         * Изменение статуса заявки на переданный.
         * 
         * @return array
@@ -272,6 +284,28 @@
             
             $row_count = $stmt->rowCount();
             return $row_count > 0;
+        }
+        
+        /**
+        * Удаление заявки с указанным идентификатором.
+        * 
+        * @param  int $app_id Идентификатор заявки.
+        * @return boolean
+        */
+        public function delete($app_id) {
+            $sql = '
+                DELETE
+                FROM ' . $this->_tables['applications'] . '
+                WHERE app_id = ?
+            ';
+            
+            $stmt = $this->prepare($sql);
+            $stmt->execute(array($app_id));
+            
+            $this->_deleteHistory($app_id);
+            
+            $affected = $stmt->rowCount();
+            return ($affected > 0);
         }
     }
 ?>

@@ -34,6 +34,10 @@
             * @todo Paginator.
             */
             $app = Model_Application::create();
+            /**
+            * @todo Выводить только заявки, которые ещё не полностью оплачены
+            * (или вообще ешё не приняты/подписаны).
+            */
             $apps = $app->getAllAppsInfo();
             
             $this->set('applications', $apps);
@@ -199,6 +203,26 @@
 				3
 			);
 		}
+        
+        /**
+        * Удаление заявки из базы данных
+        */
+        public function action_delete(array $params = array()) {
+            if (!isset($params[0])) {
+                $this->flash('Не указан номер заявки', self::RETURN_URL);
+            }
+            
+            $app_id = intval($params[0]);
+            $app = Model_Application::create();
+            
+            if (!$app->delete($app_id)) {
+                $msg = 'Не удалось удалить заявку с номером ' . $app_id;
+            } else {
+                $msg = 'Заявка успешно удалена';
+            }
+            
+            $this->flash($msg, self::RETURN_URL);
+        }
         
     }
     
