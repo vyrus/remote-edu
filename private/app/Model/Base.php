@@ -8,7 +8,8 @@
             'apps_history' => 'apps_history',
             'programs'     => 'programs',
             'disciplines'  => 'disciplines',
-            'users'        => 'users',            
+            'users'        => 'users',
+            'payments'     => 'payments'       
         );
     }
 

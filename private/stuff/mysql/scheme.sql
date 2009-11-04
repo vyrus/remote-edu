@@ -182,3 +182,24 @@ CREATE TABLE `apps_history` (
   `modifed` datetime NOT NULL,
   PRIMARY KEY  (`app_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+
+--
+-- Удаляем статус заявки "оплачена".
+--
+ALTER TABLE `applications` CHANGE `status` `status` ENUM('applied', 'declined', 'accepted', 'signed');
+ALTER TABLE `apps_history` CHANGE `status` `status` ENUM('applied', 'declined', 'accepted', 'signed');
+
+-- 
+-- Структура таблицы `payments`
+-- 
+
+DROP TABLE IF EXISTS `payments`;
+CREATE TABLE `payments` (
+  `payment_id` int(10) unsigned NOT NULL auto_increment,
+  `app_id` int(10) unsigned NOT NULL,
+  `amount` float default NULL,
+  `created` datetime default NULL,
+  PRIMARY KEY  (`payment_id`),
+  KEY `fk_payments_applications` (`app_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
