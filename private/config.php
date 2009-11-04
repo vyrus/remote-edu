@@ -312,6 +312,8 @@
 
                 'applications/index_by_admin',                                                        // список поданных заявок всех пользователей
 				'applications/delete',
+                
+                'payments/add',
 
 				'Educational_Materials/index_by_admin',
 				'Educational_Materials/upload',
