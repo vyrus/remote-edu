@@ -52,13 +52,6 @@
 		}
 
 		public function action_index_by_student () {
-			/*		
-            $msg = 'Тут будут учебные материалы, доступные для слушателя';
-            $this->flash($msg, '/educational_materials/index_by_student/');
-
-            $this->render();
-			*/
-			
 			$this->action_index ();
 		}
 
