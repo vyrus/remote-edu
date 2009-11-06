@@ -154,22 +154,69 @@
         }
         
         /**
-        * Получение оплаченных слушателем заявок.
+        * Получение обработанных заявок на программы, т.е. заявок, которые были
+        * приняты админом, либо которые были приняты админом и по которым
+        * подписаны договоры.
         * 
         * @param  int $user_id Идентификатор пользователя.
         * @return array
         */
-        public function getPaidApps($user_id) {
+        public function getProcessedAppsForPrograms($user_id) {
             $sql = '
-                SELECT object_id, type
-                FROM ' . $this->_tables['applications'] . '
-                WHERE status = :status AND
-                      user_id = :uid
+                SELECT a.app_id, a.object_id, a.status, p.paid_type
+                FROM ' . $this->_tables['applications'] . ' a
+                
+                LEFT JOIN ' . $this->_tables['programs'] . ' p
+                ON p.program_id = a.object_id
+                
+                WHERE a.type = :program AND
+                      a.status IN (:accepted, :signed) AND
+                      a.user_id = :uid
             ';
             
             $values = array(
-                ':uid'    => $user_id,
-                ':status' => self::STATUS_PAID
+                ':uid'      => $user_id,
+                ':program'  => Model_Application::TYPE_PROGRAM,
+                ':accepted' => self::STATUS_ACCEPTED,
+                ':signed'   => self::STATUS_SIGNED
+            );
+            
+            $stmt = $this->prepare($sql);
+            $stmt->execute($values);
+            
+            $apps = $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
+            return $apps;
+        }
+        
+        /**
+        * Получение обработанных заявок на дисциплины, т.е. заявок, которые были
+        * приняты админом, либо которые были приняты админом и по которым
+        * подписаны договоры.
+        * 
+        * @param  int $user_id Идентификатор пользователя.
+        * @return array
+        */
+        public function getProcessedAppsForDisciplines($user_id) {
+            $sql = '
+                SELECT a.app_id, a.object_id, a.status, p.paid_type, d.coef
+                FROM ' . $this->_tables['applications'] . ' a
+                
+                LEFT JOIN ' . $this->_tables['disciplines'] . ' d
+                ON d.discipline_id = a.object_id
+                
+                LEFT JOIN ' . $this->_tables['programs'] . ' p
+                ON p.program_id = d.program_id
+                
+                WHERE a.type = :discipline AND
+                      a.status IN (:accepted, :signed) AND
+                      a.user_id = :uid
+            ';
+            
+            $values = array(
+                ':uid'        => $user_id,
+                ':discipline' => Model_Application::TYPE_DISCIPLINE,
+                ':accepted'   => self::STATUS_ACCEPTED,
+                ':signed'     => self::STATUS_SIGNED
             );
             
             $stmt = $this->prepare($sql);

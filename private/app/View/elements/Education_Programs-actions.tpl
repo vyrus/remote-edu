@@ -1,28 +1,29 @@
 <?php
-	/* ññûëêè, äîñòóïíûå ïîëüçîâàòåëþ, íåçàâèñèìî îò ïðàâ äîñòóïà*/	    
+	/* ÑÑÑ‹Ð»ÐºÐ¸, Ð´Ð¾ÑÑ‚ÑƒÐ¿Ð½Ñ‹Ðµ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»ÑŽ, Ð½ÐµÐ·Ð°Ð²Ð¸ÑÐ¸Ð¼Ð¾ Ð¾Ñ‚ Ð¿Ñ€Ð°Ð² Ð´Ð¾ÑÑ‚ÑƒÐ¿Ð°*/	    
 	$educationProgramsAction = array(
     );
 	
-	/* ññûëêè, äîñòóïíûå òîëüêî àäìèíó*/	        
+	/* ÑÑÑ‹Ð»ÐºÐ¸, Ð´Ð¾ÑÑ‚ÑƒÐ¿Ð½Ñ‹Ðµ Ñ‚Ð¾Ð»ÑŒÐºÐ¾ Ð°Ð´Ð¼Ð¸Ð½Ñƒ*/	        
     $admin_educationProgramsAction = array(
     );
 
-	/* ññûëêè, äîñòóïíûå òîëüêî ïðåïîäó*/	        
+	/* ÑÑÑ‹Ð»ÐºÐ¸, Ð´Ð¾ÑÑ‚ÑƒÐ¿Ð½Ñ‹Ðµ Ñ‚Ð¾Ð»ÑŒÐºÐ¾ Ð¿Ñ€ÐµÐ¿Ð¾Ð´Ñƒ*/	        
     $teacher_educationProgramsAction = array(
     );
 
-	/* ññûëêè, äîñòóïíûå òîëüêî ñëóøàòåëþ*/	        
+	/* ÑÑÑ‹Ð»ÐºÐ¸, Ð´Ð¾ÑÑ‚ÑƒÐ¿Ð½Ñ‹Ðµ Ñ‚Ð¾Ð»ÑŒÐºÐ¾ ÑÐ»ÑƒÑˆÐ°Ñ‚ÐµÐ»ÑŽ*/	        
     $student_educationProgramsAction = array(
+        'Ð”Ð¾ÑÑ‚ÑƒÐ¿Ð½Ñ‹Ðµ Ð¿Ñ€Ð¾Ð³Ñ€Ð°Ð¼Ð¼Ñ‹' => 'available/'
     );
 	
     //Wtfi
     $cur_ctrl = $_SERVER['REQUEST_URI'];
-	$prefix = '/educational_programs/';
+	$prefix = '/education_programs/';
 
 	$user = Model_User::create();
 	$udata = (object) $user->getAuth();
 	
-	/* âûâîä îáùèõ ïóíêòîâ ìåíþ*/
+	/* Ð²Ñ‹Ð²Ð¾Ð´ Ð¾Ð±Ñ‰Ð¸Ñ… Ð¿ÑƒÐ½ÐºÑ‚Ð¾Ð² Ð¼ÐµÐ½ÑŽ*/
 		  foreach ($educationProgramsAction as $title => $controller): ?>
 		<?php if ($prefix. $controller == strtolower ($cur_ctrl)): ?>
 			<li class="headli active"><?php echo $title; ?></li>
@@ -45,7 +46,7 @@
 		{
 			$items = 'student_educationProgramsAction';	
 		}
-	/* âûâîä ïóíêòîâ ìåíþ, ñïåöèôè÷åñêèõ äëÿ çàëîãèíåííîãî ïîëüçîâàòåëÿ */
+	/* Ð²Ñ‹Ð²Ð¾Ð´ Ð¿ÑƒÐ½ÐºÑ‚Ð¾Ð² Ð¼ÐµÐ½ÑŽ, ÑÐ¿ÐµÑ†Ð¸Ñ„Ð¸Ñ‡ÐµÑÐºÐ¸Ñ… Ð´Ð»Ñ Ð·Ð°Ð»Ð¾Ð³Ð¸Ð½ÐµÐ½Ð½Ð¾Ð³Ð¾ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ */
 		  foreach (${$items} as $title => $controller): ?>
 		<?php if ($controller == strtolower ($cur_ctrl)): ?>
 			<li class="active"><?php echo $title; ?></li>

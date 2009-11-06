@@ -36,6 +36,26 @@
             
             return $stmt->execute($values);
         }
+        
+        /**
+        * Получение общей суммы платежей по заявке.
+        * 
+        * @param  int $app_id Идентификатор заявки.
+        * @return float
+        */
+        public function getTotal($app_id) {
+            $sql = '
+                SELECT SUM(amount)
+                FROM ' . $this->_tables['payments'] . '
+                WHERE app_id = ?
+            ';
+            
+            $stmt = $this->prepare($sql);
+            $stmt->execute(array($app_id));
+            
+            $total = $stmt->fetchColumn(0);
+            return $total;
+        }
     }
 
 ?>

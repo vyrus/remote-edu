@@ -203,3 +203,9 @@ CREATE TABLE `payments` (
   PRIMARY KEY  (`payment_id`),
   KEY `fk_payments_applications` (`app_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Изменяем тип поля, чтобы можно было гарантировать точность чисел. Максимальное
+-- значените для DECIMAL(9, 2) составляет 9999999.99.
+--
+ALTER TABLE `payments` CHANGE `amount` `amount` DECIMAL(9, 2) UNSIGNED DEFAULT NULL;

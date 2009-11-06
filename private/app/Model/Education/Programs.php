@@ -3,6 +3,20 @@
 		const	CHECK_BY_PARENT_ID 	= 0;
 		const 	CHECK_BY_OWN_ID		= 1;
 		
+        /**
+        * Тип программы: бесплатная.
+        * 
+        * @var const
+        */
+        const PAID_TYPE_FREE = 'free';
+        
+        /**
+        * Тип программы: платная.
+        * 
+        * @var const
+        */
+        const PAID_TYPE_PAID = 'paid';
+        
 		private $_cache = array ();
 		
 		public static function create() {

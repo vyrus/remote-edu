@@ -22,13 +22,20 @@
 		}
 
 		public function action_index () {
-			$educationPrograms = Model_Education_Programs::create ();
-			$this->set ('directions',	$educationPrograms->getDirections 				());
-			$this->set ('courses', 		$educationPrograms->getCourses 					());
-			$this->set ('disciplines',	$educationPrograms->getDirectionsDisciplines 	());
-			$this->set ('sections', 	$educationPrograms->getDisciplinesSections 		());
-			
-			$this->render ("education_programs/index");
+            $educationPrograms = Model_Education_Programs::create ();
+            $this->set ('directions',    $educationPrograms->getDirections                 ());
+            $this->set ('courses',         $educationPrograms->getCourses                     ());
+            $this->set ('disciplines',    $educationPrograms->getDirectionsDisciplines     ());
+            $this->set ('sections',     $educationPrograms->getDisciplinesSections         ());
+            
+            $this->render ("education_programs/index");
+        }
+        
+        /**
+        * @todo Remove this placeholder.
+        */
+        public function action_index_by_student () {
+			$this->flash('', '', false);
 		}
 		
 		public function action_by_admin () {
@@ -305,115 +312,128 @@
 		}		
         
         /**
-        * Отображение доступных для слушателя программ.
+        * Отображение доступных для слушателя программ и дисциплин.
         */
-        public function action_show_available() {
+        public function action_available() {
             /* Получаем данные слушателя */
             $user = Model_User::create();
             $udata = (object) $user->getAuth();
             
-            /* Находим оплаченные заяки */
-            $app = Model_Application::create();
-            $apps = $app->getPaidApps($udata->user_id);
-            
+            $app     = Model_Application::create();
             $program = Model_Education_Programs::create();
-            
-            /**
-            * @todo Обрабатывать ситуацию, когда программа бесплатная.
-            */                                        
+            $disc    = Model_Discipline::create();
+            $payment = Model_Payment::create();
             
             /* Список доступных направлений и их доступных дисциплин */
             $avail_programs = array();
-            /* Список доступных дисциплин (которые покупались отдельно от направлений) */
+            /* Список доступных дисциплин (которые покупались отдельно от
+            программ) */
             $avail_disciplines = array();
             
-            foreach ($apps as $a)                         
+            /* Получаем список заявок на образовательные программы */
+            $program_apps = $app->getProcessedAppsForPrograms($udata->user_id);
+            
+            /* Перебираем его */
+            foreach ($program_apps as $a)                         
             {
                 $a = (object) $a;
                 
-                if (Model_Application::TYPE_PROGRAM == $a->type)
+                if
+                (
+                    /* Если программы бесплатная */
+                    Model_Education_Programs::PAID_TYPE_FREE == $a->paid_type &&
+                    /* и заявка принята администратором, */
+                    Model_Application::STATUS_ACCEPTED == $a->status
+                    ||
+                    /* Или если программа платная */
+                    Model_Education_Programs::PAID_TYPE_PAID == $a->paid_type &&
+                    /* и договор по заявке подписан, */
+                    Model_Application::STATUS_SIGNED == $a->status
+                )
                 {
-                    $discs = $program->getDisciplinesByProgramId($a->object_id);
+                    /* То получаем список доступных дисциплин */
+                    $discs = $disc->getAllowed($a->object_id,
+                                               $a->paid_type,
+                                               $a->app_id);
                     
-                    /**
-                    * @todo Подгружать реальную сумму оплаты.
-                    */
-                    $payment_total = 30;
-                    
-                    /**
-                    * @todo Подгружать реальную стоимость программы.
-                    */
-                    $cost_total = 100;
-                    
-                    $discs = $this->_getAllowedDisciplines(
-                        $discs, $payment_total, $cost_total
-                    );
-                    
-                    /* Если ни одна дисциплина не доступна, идём дальше */
-                    if (!sizeof($discs)) continue;
-                    
-                    /* Получаем данные о программе и добавляем дисциплины */
+                    /* Получаем информацию о программе */
                     $program_data = $program->getProgramInfo($a->object_id);
+                    /* Добавляем доступные дисциплины */
                     $program_data['disciplines'] = $discs;
                     
+                    /* И вносим программу в список доступных */
                     $avail_programs[] = $program_data;
                 }
-                elseif (Model_Application::TYPE_DISCIPLINE == $a->type)
+            }
+            
+            /* Получаем список заявок на отдельные дисциплины */
+            $disc_app = $app->getProcessedAppsForDisciplines($udata->user_id);
+            
+            /* Перебираем его */
+            foreach ($disc_app as $a)
+            {
+                $a = (object) $a;
+                
+                /* Если программа, которой принадлежит дисциплина, платная */
+                if (Model_Education_Programs::PAID_TYPE_PAID == $a->paid_type)
                 {
-                    /**
-                    * @todo А может ли слушатель оплатить часть стоимости
-                    * отдельной дисциплины? Если может, то надо добавить
-                    * проверку, полностью ли дисциплина оплачена.
-                    */
-                    $program->getDiscipline($a->object_id, $title, $_, $_, $_);
+                    /* и договор по заявке ещё не подписан, */
+                    if (Model_Application::STATUS_SIGNED !== $a->status)
+                    {
+                        /* то переходим к следующей заявке */
+                        continue;
+                    }      
                     
-                    $disc = array(
-                        'discipline_id' => $a->object_id,
-                        'title'         => $title
-                    );
-                    $avail_disciplines[] = $disc;
+                    /* Если договор подписан, то находим общую сумму платежей */
+                    $payment_total = $payment->getTotal($a->app_id);
+                    
+                    /* Если ещё не поступило ни одного платежа, */
+                    if (null === $payment_total) {
+                        /* то переходим к следующей заявке */
+                        continue;
+                    }
+                    
+                    /**
+                    * @todo Брать реальную стоимость программы.
+                    */
+                    /* Находим стоимость программы */
+                    $program_cost = 1000;
+                    /* Вычисляем стоимость дисциплины */
+                    $total_cost = round($a->coef / 100, 3) * $program_cost;
+                    
+                    /* Если оплачено меньше, чем дисциплина стоит, */
+                    if ($payment_total < $total_cost) {
+                        /* то переходим к следующей заявке */
+                        continue;
+                    }
+                     
                 }
+                /* Если же программа бесплатная */
+                elseif (Model_Education_Programs::PAID_TYPE_FREE == $a->paid_type)
+                {
+                    /* и администратор ещё не принял заявку, */
+                    if (Model_Application::STATUS_ACCEPTED !== $a->status)
+                    {
+                        /* то переходим к следующей заявке */
+                        continue;
+                    }
+                }
+                
+                /* Получаем данные дисциплины */
+                $program->getDiscipline($a->object_id, $title, $_, $_, $_);
+                
+                /* И заносим её в список доступных */
+                $disc = array(
+                    'discipline_id' => $a->object_id,
+                    'title'         => $title
+                );
+                $avail_disciplines[] = $disc;
             }
             
             $this->set('programs',    $avail_programs);
             $this->set('disciplines', $avail_disciplines);
             
             $this->render();
-        }
-        
-        /**
-        * Выбирает из списка переданных дисциплин те, которые в соответствии с 
-        * их коэффициентами в рамках направления и общей суммы оплаты по заявке
-        * считаются доступными для слушателя. 
-        * В списке дисциплин по ключу "coef" должен присутствовать коэффициент
-        * дисциплины.
-        * 
-        * @param array     $disciplines Список дисциплин.
-        * @param int|float $payment     Обшая сумма оплаты.
-        * @param int|float $cost        Стоимость направления.
-        */
-        protected function _getAllowedDisciplines
-        (
-            array $disciplines = array(), $payment, $cost
-        )
-        {
-            $percent_paid = round($payment / $cost * 100);
-        
-            $allowed = array();
-            $percent_accum = 0;
-            
-            foreach ($disciplines as $disc)
-            {
-                $percent_accum += $disc['coef'];
-                
-                if ($percent_paid >= $percent_accum) {
-                    $allowed[] = $disc;
-                } else {
-                    break;
-                }
-            }
-            
-            return $allowed;
         }
 	}
 ?>
