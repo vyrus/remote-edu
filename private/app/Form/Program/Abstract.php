@@ -16,7 +16,23 @@
 			return $this;
 		}
 
+		protected function setCostValidator (Http_Request $request) {
+			$method			= $this->method ();
+			$requestData	= &$request->$method;
+
+			if ($requestData['paidType'] == 'free') {
+				$requestData['cost'] = NULL;
+				return;
+			}
+			
+			$this
+				->setValidator('/^[0-9]+(?:\.[0-9]{1,2})?$/ixu', Form_Abstract::VALIDATOR_REGEX, 'cost')
+				->setError('Введите стоимость, например "1900.53"');
+		}
+
 		public function validate (Http_Request $request, Model_Education_Programs $educationPrograms) {
+			$this->setCostValidator ($request);
+			
 			return (
 				(parent::validate ($request)) &&
 				($this->validateTitle($educationPrograms, $request))
@@ -28,7 +44,9 @@
                 ->setAction($action)
                 ->setMethod(self::METHOD_POST)
                 ->addTitle ()
-                ->addLabourIntensive ();
+                ->addLabourIntensive ()
+				->addField ('paidType')
+				->addField ('cost');
         }
 	}
 ?>

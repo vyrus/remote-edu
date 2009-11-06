@@ -44,7 +44,7 @@
 		
 		public function action_add_program ($params) {
 			$this->set ('buttonCaption', 'Добавить');
-			$this->set ('programTypeCaption', (($params['program_type'] == 'direction') ? ('направления') : ('курсов')));
+			$this->set ('programType', $params['program_type']);
 						
 			$request = $this->getRequest ();
 			$request->set ('program_type', $params['program_type']);
@@ -65,7 +65,9 @@
 			$educationPrograms->createProgram (
 				$form->title->value, 
 				$form->labourIntensive->value,
-				$params['program_type']
+				$params['program_type'],
+				$form->paidType->value,
+				$form->cost->value
 			);
 			$this->flash (
 				(
@@ -182,7 +184,7 @@
 		
 		public function action_edit_program ($params) {
 			$this->set ('buttonCaption', 'Сохранить');
-			$this->set ('programTypeCaption', (($params['program_type'] == 'direction') ? ('направления') : ('курсов')));			
+			$this->set ('programType', $params['program_type']);
 			
 			$request = $this->getRequest ();
 			$request->set ('program', $params['program_id']);
@@ -199,10 +201,12 @@
 					$this->render ('education_programs/program_form');
 				}
 				
-				$educationPrograms->getProgram ($params['program_id'], $params['program_type'], $title, $labourIntensive);
+				$educationPrograms->getProgram ($params['program_id'], $params['program_type'], $title, $labourIntensive, $paidType, $cost);
 				
 				$form->setValue ('title', $title);
 				$form->setValue ('labourIntensive', $labourIntensive);
+				$form->setValue ('paidType', $paidType);
+				$form->setValue ('cost', $cost);
 				
 				$this->render ('education_programs/program_form');
 			}
@@ -215,7 +219,9 @@
 				$params['program_id'],
 				$params['program_type'],
 				$form->title->value,
-				$form->labourIntensive->value
+				$form->labourIntensive->value,
+				$form->paidType->value,
+				$form->cost->value
 			);
 			
 			$this->flash (

@@ -26,7 +26,7 @@
 		
 		protected function validateTitle (Model_Education_Programs $educationPrograms, Http_Request $request) {
 			if ($educationPrograms->programExists ($this->title->value, $request->program_type)) {
-				$educationPrograms->getProgram ($request->program, $request->program_type, $title, $labourIntensive);
+				$educationPrograms->getProgram ($request->program, $request->program_type, $title, $labourIntensive, $paidType, $cost);
 				if ($title != $this->title->value) {				
 					$this->invalidate();
 					$this->setValidationError (

@@ -180,17 +180,18 @@ QUERY;
 			return ($sectionExistsStmt->fetch () !== FALSE);
 		}
 				
-		public function createProgram ($title, $labourIntensive, $type) {
+		public function createProgram ($title, $labourIntensive, $type, $paidType, $cost) {
 			$sql =
 <<<QUERY
-INSERT INTO `programs` (`title`,`labour_intensive`,`edu_type`,`paid_type`)
-VALUES (:title,:labour_intensive,:edu_type,:paid_type)
+INSERT INTO `programs` (`title`,`labour_intensive`,`edu_type`,`paid_type`,`cost`)
+VALUES (:title,:labour_intensive,:edu_type,:paid_type,:cost)
 QUERY;
 			$params = array (
 				':title'			=> $title,
 				':labour_intensive'	=> $labourIntensive,
 				':edu_type'			=> $type,
-				':paid_type'		=> 'free',
+				':paid_type'		=> $paidType,
+				':cost'				=> ($cost) ? ($cost) : (NULL),
 			);
 			
 			$this
@@ -405,10 +406,10 @@ QUERY;
 			$this->prepare ($sql)->execute (array ($sectionID));
 		}
 		
-		public function getProgram ($programID, $type, &$title, &$labourIntensive) {
+		public function getProgram ($programID, $type, &$title, &$labourIntensive, &$paidType, &$cost) {
 			$sql =
 <<<QUERY
-SELECT `title`,`labour_intensive`
+SELECT `title`,`labour_intensive`,`paid_type`,`cost`
 FROM `programs`
 WHERE 
 	`program_id`=? AND
@@ -417,18 +418,24 @@ QUERY;
 			$getProgramStmt = $this->prepare ($sql);
 			$getProgramStmt->bindColumn ('title', $title);
 			$getProgramStmt->bindColumn ('labour_intensive', $labourIntensive);
+			$getProgramStmt->bindColumn ('paid_type', $paidType);
+			$getProgramStmt->bindColumn ('cost', $cost);
 			$getProgramStmt->execute (array ($programID, $type));
 			
 			$getProgramStmt->fetch (PDO::FETCH_BOUND);			
 		}
 		
-		public function editProgram ($programID, $type, $title, $labourIntensive) {
+		public function editProgram ($programID, $type, $title, $labourIntensive, $paidType, $cost) {
+			var_dump ($cost);
+			
 			$sql =
 <<<QUERY
 UPDATE `programs`
 SET
 	`title`=:title,
-	`labour_intensive`=:labour_intensive
+	`labour_intensive`=:labour_intensive,
+	`paid_type`=:paid_type,
+	`cost`=:cost
 WHERE
 	`program_id`=:program_id AND
 	`edu_type`=:program_type
@@ -437,8 +444,10 @@ QUERY;
 			$params = array (
 				':title'			=> $title,
 				':labour_intensive'	=> $labourIntensive,
+				':paid_type'		=> $paidType,
 				':program_id'		=> $programID,
 				':program_type'		=> $type,
+				':cost'				=> ($cost) ? ($cost) : (NULL),
 			);
 
 			$this
