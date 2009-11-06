@@ -168,7 +168,7 @@ CREATE TABLE `applications` (
   `status` enum('applied','declined','accepted','signed','paid') NOT NULL,
   `contract_filename` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`app_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 -- --------------------------------------------------------
 
 -- 

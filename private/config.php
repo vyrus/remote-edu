@@ -73,20 +73,6 @@
                 ),
             ),
             
-            /**
-            * @todo Зачем нужен этот маршрут?
-            */
-			/*
-            array (
-                'type'        => Mvc_Router::ROUTE_STATIC,
-                'pattern'    => "/education_programs",
-                'handler'    => array (
-                    'controller'    => "Education_Programs",
-                    'action'        => 'index',
-                ),
-            ),
-			*/
-			
 			array (
 				'type'		=> Mvc_Router::ROUTE_REGEX,
 				'pattern'	=> array (

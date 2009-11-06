@@ -38,7 +38,7 @@
 			$this->flash('', '', false);
 		}
 		
-		public function action_by_admin () {
+		public function action_index_by_admin () {
 			$this->action_index ();
 		}
 		
