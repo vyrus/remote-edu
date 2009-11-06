@@ -51,7 +51,7 @@
 	/* вывод пунктов меню, специфических для залогиненного пользователя */
 		  foreach (${$items} as $title => $controller): ?>
 		<?php if ($controller == strtolower ($cur_ctrl)): ?>
-			<li class="active"><?php echo $title; ?></li>
+			<li class="headli active"><?php echo $title; ?></li>
 		<?php else: ?>
 			<li class="headli">
 				<a href="<?=$prefix.$controller ?>"><?=$title ?></a>

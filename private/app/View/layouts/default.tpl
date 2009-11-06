@@ -1,418 +1,279 @@
-﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    
-    <meta http-equiv="Content-Type" content="text/html; charset=windows-1251"/>
-   
-	<title><?php echo (isset($this->title) ? $this->title : 'Главная') ?> :: Дистанционное обучение РЦИО</title>
-   
-    <link rel="stylesheet" href="/css/index.css" type="text/css">
-	<!--[if lte IE 7]>
-    <link href="/css/patches/patch_my_layout.css" rel="stylesheet" type="text/css" />
-    <![endif]-->
-    <meta name="keywords" content="ключевые слова" />
-    <meta name="description" content="Описание" />
-    <meta name="robots" content="All, Index" />
-	
-    <script type="text/javascript" src="/js/prototype.js"></script>
-    <script type="text/javascript" src="/js/effects.js"></script>
-	
-  </head>
-  
-  <body>
-    <div id="minwidth">                  
-      <div id="container">
-        <!-- Header -->		
-        <div id="topheader">
-          <div id="topmenu">
-            <a href="123#" class="tophome"><img src="/images/icon_home.gif" width="11" height="10"/></a>
-            <a href="##">Запись на курсы</a> 	<img src="/images/line_topmenu.gif" alt=""/>
-			<a href="##">Стоимость</a> 			<img src="/images/line_topmenu.gif" alt=""/>
-			<a href="##">О центре</a> 			<img src="/images/line_topmenu.gif" alt=""/>
-			<a href="##">Контакты</a>			
-          </div>
-          <div id="topsearch">
-            <form name="" action="" method="post" enctype="multipart/form-data">
-              <input name="" class="txtfld" value="" type="text" />
-			  <input name="" src="/images/icon_search.gif" class="button" type="image"/>
-            </form>
-          </div>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<title>
+дистанционное обучение · Орловский Региональный Центр Интернет-образования</title>
+<meta http-equiv="Content-Type" content="text/html; utf-8">
+<meta name="keywords" content="">
+<meta name="description" content="">
+<meta name="robots" content="All, Index">
+<link rel="icon" href="/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" href="/files/css/index.css" type="text/css">
+<script type="text/javascript" src="/files/js/prototype.js"></script>
+<script type="text/javascript" src="/files/js/effects.js"></script>
+<script type="text/javascript">
+function seltext () {
+  loginbox=document.getElementById('login');
+  passwdbox=document.getElementById('passwd');
+  if (loginbox.value == "логин") {
+    loginbox.value = "";
+  }
+  if (passwdbox.value == "пароль") {
+    passwdbox.value = "";
+  }
+}
+</script>
+
+</head>
+<body>
+<div id="minwidth">
+
+    <div id="container">
+        <!-- Header -->
+        <div id="topheader2">
+            <div id="topmenu">
+			<a href="/" class="tophome"><img src="/files/images/icon_home.gif" alt="" width="11" height="10"></a>
+			<a href="/zapis_na_dist.php">Подать заявку</a>
+			<img src="/files/images/line_topmenu.gif" alt="">
+			<a href="/pismo">Задать вопрос</a>
+
+			<img src="/files/images/line_topmenu.gif" alt="">
+			<a href="/article967">Нормативные документы</a>
+			<img src="/files/images/line_topmenu.gif" alt="">
+			<a href="/444">Образец свидетельства</a>
+			</div>
+			<div id="topsearch">
+				
+<?php
+	$action = '/users/login/';
+	$form = Form_Profile_Login::create($action);
+?>
+				
+<form action="<?php echo $form->action() ?>" method="<?php echo $form->method() ?>">
+<input type="text" class="txtfld" id="login" value="логин" onclick="seltext()" name="login">&nbsp;<input type="password" id="passwd" value="пароль" onclick="seltext()" name="passwd" class="txtfld"> <input name="" src="/files/images/icon_ok.gif" class="button" type="image"><!--<input type="submit" value="ок">--> <a href="/reg" title="Регистрация">Регистрация</a>
+<!--<tr><td><a href="/remember_password.html" title="Забыли пароль?">Забыли пароль?</a></td></tr>-->
+</form>
+			</div>
+            
         </div>
         <div id="header">
-          <div id="logo">
-            <a href="###"><img src="/images/logo.jpg" alt="" width="287"
-            height="113" /></a>
-          </div>
-          <div class="clr"></div>
-          <div id="topcart">
-            <strong>Наш адрес:</strong><br />
-            <span>г. Орел, Наугорское шоссе 40</span><br />
-            <strong>Телефон:</strong><br />
-            <span>(4862) 34-55-98</span>
-          </div>
-        </div><!-- #Header --><!-- Body -->
-        <div id="wrapper">
-          <div id="main">
-            <div id="main-container">
-              <div id="navigation">
-                <div class="inner">
-				<ul class="menu">
-                  <!-- <li class="first"><a href="/">Главная</a></li>
-				  <li><a href="####">Каталог курсов</a> </li>
-				  <li><a href="####">О центре</a> </li>
-				  <li><a href="####">Форум</a> </li>
-				  <li><a href="####">Расписание</a> </li>
-				  <li><a href="####">Ссылки</a> </li>				  
-				  <li><a href="####">Новости</a></li>
-				  <li>|||</li> -->
-				  <?php $this->renderElement('top-menu') ?>
-				  </ul>
-                </div>
-              </div>
-              <div id="content">
-                <div class="clr"></div>
-				<div id="this-content"> 
-					<?php echo $this->content ?>
-				</div>
-				
-				<br>
-				
-				  <!-- <div id="col1_content" class="clearfix">
-                        <ul>                             
-                            <?php  
-                               // $ctrl = $this -> _request -> _router[REQUEST_URI] ;//$this->_request->_router['handler']['controller'];
-                               // $element = $ctrl . '-actions';								
-                               // $this->renderElement($element);								
-                            ?>
-                        </ul>
-                    </div>  -->
-              </div>
-            </div>
-          </div>  
-		  
-		  		  
-          <!-- Menu -->
-		  
-		  <div id="leftcolumn">
-			<div class="inner">
-			
-			
-			<div class="leftblock">						
-					<?php
-						
-						 /* Инициализируем обработчик формы */
-						$action = '/users/login/';
-						$form = Form_Profile_Login::create($action);
-					
-					?>
-					<form action="<?php echo $form->action() ?>" method="<?php echo $form->method() ?>">
-					<div class="form">
-						<?php if (isset($this->error)): /* Как проверять ошибки я хз =) Потому что мне не понятно, куда данные будут отправляться */ ?>
-						<div class="error"><?php echo $this->error ?></div>
-						<?php endif; ?>
-						
-						<div class="field">
-						  <label for="login">Имя пользователя:</label>
-						  <input name="<?php echo $form->login->name ?>" type="text" id="login" value="<?php echo $form->login->value ?>" />
-						</div>
-						
-						<?php if (isset($form->login->error)): ?>
-						<div class="error"><?php echo $form->login->error ?></div>
-						<?php endif; ?>
-						
-						<div class="field">
-						  <label for="passwd">Пароль:</label>
-						  <input name="<?php echo $form->passwd->name ?>" type="password" id="passwd" value="<?php echo $form->passwd->value ?>" />
-						</div>
-						
-						<?php if (isset($form->passwd->error)): ?>
-						<div class="error"><?php echo $form->passwd->error ?></div>
-						<?php endif; ?>
+            <div id="logo">
+			<a href="/"><img src="/files/images/logo.jpg" alt="" width="287" height="113"></a>
+			</div>			
+            <div class="clr"></div>
+            <div id="topcart">
 
-						<div class="field">
-							<input type="submit" value="Войти" />
+			<strong>Наш адрес:</strong><br>
+			<span>г. Орел, Наугорское шоссе 40</span><br>
+			<strong>Телефоны:</strong><br>
+			<span>(4862) 40-96-14, 43-09-44</span>			</div>
+            <div id="logoostu"></div>
+			
+        </div>
+
+        <!-- #Header -->        <!-- Body -->
+        <div id="wrapper">
+            <div id="main">
+                <div id="main-container">
+				  
+					<div id="navigation2">
+                        <div class="inner">
+						<ul class="menu"><?php $this->renderElement('top-menu') ?></ul>
 						</div>
 					</div>
-					</form>
-					<div class="topic-leftblock">
-					<span><b>Д</b>ействия</span>
-                </div>
+<div id="content"><?php echo $this->content ?></div>
+<div class="clr"></div>
+
+<div class="clr"></div>
+
+                                                                        <div class="cntnt-container">
+                             
+	                         <table class="we-have" border="1" width="100%">
+
+	                           <tbody><tr>
+	                           <td align="right">
+	                             <div id="pagination">
+	                                 	                             </div>
+	                            </td>
+	                            </tr>
+	                        </tbody></table>
+                        </div>
+<noindex>
+<div class="allpagenavi">
+<a href="javascript:history.back()">Назад</a>
+<a href="/" title="Главная">Главная</a>
+</div>
+</noindex>
+
+					</div>
+				  </div>
+				  </div>
+			
+
+			
+			
+<div id="leftcolumn">
+                <div class="inner">
+
+<div class="leftblock">
+<div class="topic-leftblock"><span><b>Д</b>исциплины</span></div>
+<div class="cntnt-leftblock"><div>
+<ul id="accordion_no">
+<?php $this->renderElement($this->_request->_router['handler']['controller'] . '-actions') ?>
+</ul>
+</div>
+
 				
-                <div class="cntnt-leftblock">
-                  <ul class="user-menu">
-					  <?php $this->renderElement($this->_request->_router['handler']['controller'] . '-actions') ?> 
-                  </ul>
-                </div>
-              </div>
-			
-			
-			
-              <div class="leftblock">
-                <div class="topic-leftblock">
-                  <span><b>О</b>бучение</span>
-                </div>
-                <div class="cntnt-leftblock">
-                  <div>
-                    <ul id="accordion">
-                      <li class="headli">
-                        <a href="#">Пользователь ПК</a>
-                        <ul>
-                          <li class='subli'>
-                            <a href="#">Подссылка 1.1</a>
-                          </li>
-                          <li class='subli'>
-                            <a href="#">Подссылка 1.2</a>
-                          </li>
-                          <li class='subli'>
-                            <a href="#">Подссылка 1.3</a>
-                          </li>
-                          <li class='subli'>
-                            <a href="#">Подссылка 1.4</a>
-                          </li>
-                        </ul>
-                      </li>
-                      <li class="headli">
-                        <a href="#">Компьютер для школьника</a>
-                        <ul>
-                          <li class='subli'>
-                            <a href="#">Подссылка 2.1</a>
-                          </li>
-                          <li class='subli'>
-                            <a href="#">Подссылка 2.2</a>
-                          </li>
-                          <li class='subli'>
-                            <a href="#">Подссылка 2.3</a>
-                          </li>
-                          <li class='subli'>
-                            <a href="#">Подссылка 2.4</a>
-                          </li>
-                        </ul>
-                      </li>
-                      <li class="headli">
-                        <a href="#">Компьютерная школа для старшеклассников</a>
-                        <ul>
-                          <li class='subli'>
-                            <a href="#">Подссылка 3.1</a>
-                          </li>
-                          <li class='subli'>
-                            <a href="#">Подссылка 3.2</a>
-                          </li>
-                        </ul>
-                      </li>
-                      <li class="headli">
-                        <a href="#">Компьютерная графика и дизайн</a>
-                        <ul>
-                          <li class='subli'>
-                            <a href="#">Подссылка 4.1</a>
-                          </li>
-                          <li class='subli'>
-                            <a href="#">Подссылка 4.2</a>
-                          </li>
-                        </ul>
-                      </li>
-                      <li class="headli">
-                        <a href="#">Сайтостроение</a>
-                        <ul>
-                          <li class='subli'>
-                            <a href="#">Подссылка 5.1</a>
-                          </li>
-                          <li class='subli'>
-                            <a href="#">Подссылка 5.2</a>
-                          </li>
-                          <li class='subli'>
-                            <a href="#">Подссылка 5.3</a>
-                          </li>
-                        </ul>
-                      </li>
-                      <li class="headli">
-                        <a href="#">Программирование на языках высокого
-                        уровня</a>
-                        <ul>
-                          <li class='subli'>
-                            <a href="#">Подссылка 6.1</a>
-                          </li>
-                          <li class='subli'>
-                            <a href="#">Подссылка 6.2</a>
-                          </li>
-                          <li class='subli'>
-                            <a href="#">Подссылка 6.3</a>
-                          </li>
-                        </ul>
-                      </li>
-                      <li class="headli">
-                        <a href="#">Информационные технологии для
-                        школьников</a>
-                        <ul>
-                          <li class='subli'>
-                            <a href="#">Подссылка 7.1</a>
-                          </li>
-                          <li class='subli'>
-                            <a href="#">Подссылка 7.2</a>
-                          </li>
-                        </ul>
-                      </li>
-                      <li class="headli">
-                        <a href="#">Начальная профессиональная подготовка
-                        (Оператор ЭВМ)</a>
-                        <ul>
-                          <li class='subli'>
-                            <a href="#">Подссылка 8.1</a>
-                          </li>
-                          <li class='subli'>
-                            <a href="#">Подссылка 8.2</a>
-                          </li>
-                          <li class='subli'>
-                            <a href="#">Подссылка 8.3</a>
-                          </li>
-                        </ul>
-                      </li>
-                      <li class="headli">
-                        <a href="#">Дополнительное Профессиональное Образование
-                        (ДПО)</a>
-                        <ul>
-                          <li class='subli'>
-                            <a href="#">Подссылка 9.1</a>
-                          </li>
-                          <li class='subli'>
-                            <a href="#">Подссылка 9.2</a>
-                          </li>
-                          <li class='subli'>
-                            <a href="#">Подссылка 9.3</a>
-                          </li>
-                        </ul>
-                      </li>
-                      <li class="headli">
-                        <a href="#">Интернет-технологии в учебном процессе</a>
-                        <ul>
-                          <li class='subli'>
-                            <a href="#">Подссылка 10.1</a>
-                          </li>
-                          <li class='subli'>
-                            <a href="#">Подссылка 10.2</a>
-                          </li>
-                          <li class='subli'>
-                            <a href="#">Подссылка 10.3</a>
-                          </li>
-                        </ul>
-                      </li>
-                      <li class="headli">
-                        <a href="#">Операционная система Linux</a>
-                        <ul>
-                          <li class='subli'>
-                            <a href="#">Подссылка 11.1</a>
-                          </li>
-                          <li class='subli'>
-                            <a href="#">Подссылка 11.2</a>
-                          </li>
-                          <li class='subli'>
-                            <a href="#">Подссылка 11.3</a>
-                          </li>
-                          <li class='subli'>
-                            <a href="#">Подссылка 11.4</a>
-                          </li>
-                          <li class='subli'>
-                            <a href="#">Подссылка 11.5</a>
-                          </li>
-                        </ul>
-                      </li>
-                    </ul><!-- Menu -->
-					
-					<script type="text/javascript">
-						$$('#accordion > li:not([class="active"]) ul').invoke('setStyle', { display : 'none' }).invoke('addClassName', 'collapsed');
-						$$('#accordion > li[class="active"] ul').invoke('addClassName', 'expanded');
-						$$('#accordion > li > a').invoke(
-							'observe', 
-							'click', 
-							function(e)
-							{
-								e.stop();
-								var el = e.findElement('a');
-								var ul = el.up('li').down('ul');
-								if (ul) {
-									if (ul.hasClassName('collapsed')) {
-										var c = $$('#accordion ul:not([class="collapsed"])')[0];
-										if (c) {
-											new Effect.BlindUp(c.toggleClassName('collapsed').toggleClassName('expanded'));
-										}
-									}
-									
-									new Effect.BlindDown(ul.toggleClassName('collapsed').toggleClassName('expanded'));
-								}
-							}
-						);
-					</script>
-					
-                  </div>
-                </div>
-              </div>
-              <div class="leftblock">
-                <div class="topic-leftblock">
-                  <span><b>К</b>онтакты</span>
-                </div>
-                <div class="cntnt-leftblock">
-                  <div id="contacts">
-                    <strong>Наш адрес:</strong><br />
-                    г. Орел, Наугорское шоссе, 40<br />
-                    <strong>Телефон</strong><br />
-                    (4862) 40-67-83<br />
-                    <strong>e-mail</strong><br />
-                    <a href="mailto:sale@uchimvas.ru">sale@uchimvas.ru</a>
-                  </div>
-                </div>
-              </div>
-              <div class="leftblock">
-                <div class="topic-leftblock">
-                  <span><b>П</b>артнеры</span>
-                </div>
-                <div class="cntnt-leftblock">
-                  <ul class="top-ten">
-                    <li>
-                      <a href="#">Орел ГТУ</a>
-                    </li>
-                    <li>
-                      <a href="#">Linux</a>
-                    </li>
-                    <li>
-                      <a href="#">CISCO</a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="clr"></div>
-        </div><!-- footer -->
-        <div id="footer">
-          <div id="main-footer">
-            <div class="inner">
-              <div id="bottom-footer">
-                <div id="anotation">
-                  <p align="justify">
-                    Пара предложений про ИЦ с ключевыми словами
-                  </p>
-                </div>
-                <div id="copyryght">
-                  <div class="left">
-                    <strong>© 2001-2009</strong>
-                  </div>
-                </div>
-                <div class="break" align="right">
-                  <br />
-                  счетчик
-                </div>
-              </div>
-            </div>
-          </div>
-          <div id="left-footer"></div>
-          <div class="clr"></div>
-		  
-		  <div class="debug">
-		  </div> 
-		  
-		  
-        </div><!-- #footer -->
-        <!-- #Body -->
-      </div>
-    </div>
-  </body>
-</html>
+<div class="leftblock">
+                        <div class="topic-leftblock"><span><b>Д</b>исциплины</span></div>
+
+                        <div class="cntnt-leftblock">
+                                                        <div>
+<ul id="accordion_no">
+<li class="headli_no">
+            <a href="/article986">Сетевая академия CISCO (программа CCNA)</a>
+</li>
+</ul>
+<ul id="accordion">
+        <li class="headli">
+            <a href="/article987">Программы профессиональной переподготовки</a>
+
+            <ul>
+             <li class='subli'><a href="/article988">Программирование</a></li> <li class='subli'><a href="/article989">Информационные технологии в сфере профессиональных коммуникаций</a></li>            </ul>
+        </li>
+
+
+
+    </ul>
+<script type="text/javascript">
+$$('#accordion > li:not([class="active"]) ul').invoke('setStyle', { display : 'none' }).invoke('addClassName', 'collapsed');
+$$('#accordion > li[class="active"] ul').invoke('addClassName', 'expanded');
+$$('#accordion > li > a').invoke(
+    'observe', 
+    'click', 
+    function(e)
+    {
+        e.stop();
+        var el = e.findElement('a');
+        var ul = el.up('li').down('ul');
+        if (ul) {
+            if (ul.hasClassName('collapsed')) {
+                var c = $$('#accordion ul:not([class="collapsed"])')[0];
+                if (c) {
+                    new Effect.BlindUp(c.toggleClassName('collapsed').toggleClassName('expanded'));
+                }
+            }
+            
+            new Effect.BlindDown(ul.toggleClassName('collapsed').toggleClassName('expanded'));
+        }
+    }
+);
+</script>
+
+														
+														</div>
+                                                    </div>
+                    </div>
+                                        
+<div class="leftblock">
+	<div class="topic-leftblock"><span><b>К</b>онтакты</span></div>
+		<div class="cntnt-leftblock">
+		<div id="contacts"><strong>Наш адрес:</strong><br>
+
+		г. Орел, Наугорское шоссе, 40<br>
+		<strong>Телефоны</strong><br>
+		(4862) 40-96-14, (4862) 43-09-44<br>
+		<b><a href="/pismo" title="Обратная связь">Обратная связь</a></b>
+		</div>
+		</div>
+	</div>
+
+<noindex>
+<div class="leftblock">
+	<div class="topic-leftblock"><span><b>У</b>чредитель</span></div>
+		<div class="cntnt-leftblock">
+			<ul class="top-ten">
+				<li><a href="http://ostu.ru/" title="ОрелГТУ" target="_blank">Орловский государственный технический университет</a></li>
+			</ul>
+		</div>
+
+</div>
+	
+	<div class="leftblock">
+	<div class="topic-leftblock"><span><b>П</b>артнеры</span></div>
+		<div class="cntnt-leftblock">
+			<ul class="top-ten">
+				<li><a href="http://ostu.ru/inst/cisco/main/" title="CISCO" target="_blank">Сетевая академия CISCO</a></li>
+				<li><a href="http://ostu.ru/inst/linux/main/" title="Linux" target="_blank">Центр компетентности Linux</a></li>
+
+			</ul>
+		</div>
+	</div>
+	
+	<div class="leftblock">
+	<div class="topic-leftblock"><span><b>П</b>оиск</span></div>
+		<div class="cntnt-leftblock">
+				<form name="" action="" method="post" enctype="multipart/form-data">
+                <input name="s" class="txtfld" value="" type="text">
+
+                <input name="" src="files/images/icon_search.gif" class="button" type="image"></form>
+		</div>
+	</div>
+</noindex>	
+</div>
+
+</div>
+
+<div class="clr"></div>
+        </div>
+                <!-- footer -->
+<div id="footer">
+
+	<div id="main-footer">
+		<div class="inner">
+			<div id="bottom-footer">
+				<div id="anotation">
+				<p align="justify">Сниппет</p>
+				</div>
+
+				<div class="break" style="float: right;">
+				<noindex>
+
+				<!--LiveInternet counter--><script type="text/javascript"><!--
+document.write("<a href='http://www.liveinternet.ru/click' "+
+"target=_blank><img src='http://counter.yadro.ru/hit?t14.3;r"+
+escape(document.referrer)+((typeof(screen)=="undefined")?"":
+";s"+screen.width+"*"+screen.height+"*"+(screen.colorDepth?
+screen.colorDepth:screen.pixelDepth))+";u"+escape(document.URL)+
+";"+Math.random()+
+"' alt='' title='LiveInternet: показано число просмотров за 24"+
+" часа, посетителей за 24 часа и за сегодня' "+
+"border='0' width='88' height='31'><\/a>")
+//--></script><!--/LiveInternet-->
+<!-- Yandex.Metrika -->
+<script src="mc.yandex.ru/metrika/watch.js" type="text/javascript"></script>
+<script type="text/javascript">
+try { var yaCounter409700 = new Ya.Metrika(409700); } catch(e){}
+</script>
+<noscript><div style="position: absolute;"><img src="mc.yandex.ru/watch/409700" alt="" /></div></noscript>
+<!-- /Yandex.Metrika -->
+				</noindex>
+				</div>
+
+				<div id="copyryght">
+
+					&copy; 2001-2009 АНО "Центр Интернет-образования"
+				</div>
+				<div id="license">Лицензия Серия А № 266623 выдана Департаментом социальной политики Орловской области 16 ноября 2007 года.<br />
+Свидетельство о госаккредитации № 1351 от 30 декабря 2008 г. выдано Департаментом социальной политики Орловской области</div>
+			</div>
+		</div>
+	</div>
+		<div id="left-footer"></div>
+
+		<div class="clr"></div>
+</div>
+	<!-- #footer -->
+<!-- #Body -->
+</div>
+</div>
+</body></html>
