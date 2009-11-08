@@ -209,3 +209,8 @@ CREATE TABLE `payments` (
 -- значените для DECIMAL(9, 2) составляет 9999999.99.
 --
 ALTER TABLE `payments` CHANGE `amount` `amount` DECIMAL(9, 2) UNSIGNED DEFAULT NULL;
+
+--
+-- Добавляем поле для цен направлений/курсов.
+--
+ALTER TABLE `programs` ADD `cost` DECIMAL(9, 2) UNSIGNED DEFAULT NULL;
