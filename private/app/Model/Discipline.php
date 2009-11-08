@@ -43,16 +43,34 @@
                 return array();
             }
             
-            /**
-            * @todo Брать реальную стоимость направления.
-            */
             /* Находим стоимость всей программы */
             $program = Model_Education_Programs::create();
-            $cost_total = 1000;
+            $program_data = $program->getProgramInfo($program_id);
+            $cost_total = $program_data['cost'];
             
             /* По коэффициентам дисциплин рассчитываем, какие из них доступны */
             $discs = $this->_getAllowed($discs, $payment_total, $cost_total);
             return $discs;
+        }
+        
+        /**
+        * Полученные данных о дисциплине.
+        * 
+        * @param  int $disc_id Идентификатор дисциплины.
+        * @return array
+        */
+        public function get($disc_id) {
+            $sql = '
+                SELECT *
+                FROM ' . $this->_tables['disciplines'] . '
+                WHERE discipline_id = ?
+            ';
+            
+            $stmt = $this->prepare($sql);
+            $stmt->execute(array($disc_id));
+            
+            $data = $stmt->fetch(Db_Pdo::FETCH_ASSOC);
+            return $data;
         }
         
         /**

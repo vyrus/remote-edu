@@ -1,5 +1,5 @@
 <?php
-	class Model_Educational_Materials extends Mvc_Model_Abstract {
+	class Model_Educational_Materials extends Model_Base {
 		private $storage;
 		
 		public function __construct () {
@@ -122,5 +122,30 @@ QUERY;
 			
 			echo $this->storage->getFileContent ($fileInfo[0]['filename']);
 		}
+        
+        /**
+        * Получение всех материалов по идентификатором разделов.
+        * 
+        * @param  array $section_ids Список идентификаторов разделов.
+        * @return array Список вида array($section_id => array($material, ...)).
+        */
+        public function getAllBySections(array $section_ids) {
+            $sql = '
+                SELECT *
+                FROM ' . $this->_tables['materials'] . '
+                WHERE section = ?
+            ';
+            
+            $stmt = $this->prepare($sql);
+            
+            $materials = array();
+            
+            foreach ($section_ids as $id) {
+                $stmt->execute(array($id));
+                $materials[$id] = $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
+            }
+            
+            return $materials;
+        }
 	}
 ?>

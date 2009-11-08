@@ -133,5 +133,50 @@
 			$educationalMaterials = Model_Educational_Materials::create ();
 			$educationalMaterials->getMaterial ($params['material_id']);
 		}
+        
+        /**
+        * Отображение доступных материалов.
+        */
+        public function action_show(array $params = array()) {
+            if (!isset($params[0]) || is_int ($params[0]))
+            {
+                $this->flash('Не указан идентификатор дисциплины',
+                             '/education_programs/available/');
+            }
+            
+            if (!isset($params[1]) || is_int($params[1]))
+            {
+                $this->flash('Не указан идентификатор заявки',
+                             '/education_programs/available/');
+            }
+            
+            $disc_id = intval($params[0]);
+            $app_id  = intval($params[1]);
+            
+            /**
+            * @todo Сделать проверку на доступность дисциплины.
+            */
+            
+            $disc = Model_Discipline::create();
+            $disc_data = $disc->get($disc_id);
+            
+            $section = Model_Section::create();
+            $sections = $section->getAllByDiscipline($disc_id);
+            
+            $section_ids = array();
+            
+            foreach ($sections as $section) {
+                $section_ids[] = $section['section_id'];
+            }
+            
+            $material = Model_Educational_Materials::create();
+            $materials = $material->getAllBySections($section_ids);
+            
+            $this->set('discipline', $disc_data);
+            $this->set('sections', $sections);
+            $this->set('materials', $materials);
+            
+            $this->render();
+        }
 	}
 ?>

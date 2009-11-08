@@ -3,7 +3,7 @@
     /* $Id$ */
 
     class Controller_Applications extends Mvc_Controller_Abstract {
-        const RETURN_URL = '/applications/index/';
+        const RETURN_URL = '/applications/index_by_admin/';
         
         /**
         * форма для подачи заявки слушателем.

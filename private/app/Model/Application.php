@@ -198,7 +198,8 @@
         */
         public function getProcessedAppsForDisciplines($user_id) {
             $sql = '
-                SELECT a.app_id, a.object_id, a.status, p.paid_type, d.coef
+                SELECT a.app_id, a.object_id, a.status, p.program_id, 
+                       p.paid_type, d.coef
                 FROM ' . $this->_tables['applications'] . ' a
                 
                 LEFT JOIN ' . $this->_tables['disciplines'] . ' d

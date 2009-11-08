@@ -336,6 +336,10 @@
             программ) */
             $avail_disciplines = array();
             
+            /**
+            * @todo This needs some serious refactoring, though...
+            */
+            
             /* Получаем список заявок на образовательные программы */
             $program_apps = $app->getProcessedAppsForPrograms($udata->user_id);
             
@@ -366,6 +370,8 @@
                     $program_data = $program->getProgramInfo($a->object_id);
                     /* Добавляем доступные дисциплины */
                     $program_data['disciplines'] = $discs;
+                    /* Добавляем номер заявки */
+                    $program_data['app_id'] = $a->app_id;
                     
                     /* И вносим программу в список доступных */
                     $avail_programs[] = $program_data;
@@ -399,11 +405,10 @@
                         continue;
                     }
                     
-                    /**
-                    * @todo Брать реальную стоимость программы.
-                    */
                     /* Находим стоимость программы */
-                    $program_cost = 1000;
+                    $program_data = $program->getProgramInfo($a->program_id);
+                    $program_cost = $program_data['cost'];
+                    
                     /* Вычисляем стоимость дисциплины */
                     $total_cost = round($a->coef / 100, 3) * $program_cost;
                     
@@ -431,7 +436,8 @@
                 /* И заносим её в список доступных */
                 $disc = array(
                     'discipline_id' => $a->object_id,
-                    'title'         => $title
+                    'title'         => $title,
+                    'app_id'        => $a->app_id
                 );
                 $avail_disciplines[] = $disc;
             }

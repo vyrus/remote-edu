@@ -9,7 +9,9 @@
             'programs'     => 'programs',
             'disciplines'  => 'disciplines',
             'users'        => 'users',
-            'payments'     => 'payments'       
+            'payments'     => 'payments',
+            'sections'     => 'sections',
+            'materials'    => 'materials'
         );
     }
 

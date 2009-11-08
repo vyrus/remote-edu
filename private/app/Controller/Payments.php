@@ -13,7 +13,8 @@
             $request = $this->getRequest();
             
             if (!isset($params[0])) {
-                $this->flash('Не указан идентификатор заявки', '/');
+                $this->flash('Не указан идентификатор заявки',
+                             '/applications/index_by_admin');
             }
             
             $app_id = intval($params[0]);
@@ -41,7 +42,7 @@
                 $msg = 'Платёж успешно добавлен';
             }
             
-            $this->flash($msg, '/');
+            $this->flash($msg, '/applications/index_by_admin');
         }                       
     }
 
