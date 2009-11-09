@@ -41,7 +41,7 @@
 					'params'=> array ('material_id'),
 				),
 				'handler'	=> array (
-					'controller'	=> "Educational_Materials",
+					'controller'	=> 'educational_materials',
 					'action'		=> 'get_material',
 				),
 			),
@@ -50,7 +50,7 @@
 				'type'		=> Mvc_Router::ROUTE_STATIC,
 				'pattern'	=> '/educational_materials/upload',
 				'handler'	=> array (
-					'controller'	=> 'Educational_Materials',
+					'controller'	=> 'educational_materials',
 					'action'		=> 'upload',
 				), 
 			),
@@ -59,7 +59,7 @@
 				'type'		=> Mvc_Router::ROUTE_STATIC,
 				'pattern'	=> '/educational_materials/remove',
 				'handler'	=> array (
-					'controller'	=> 'Educational_Materials',
+					'controller'	=> 'educational_materials',
 					'action'		=> 'remove',
 				),
 			),
@@ -68,7 +68,7 @@
                 'type'       => Mvc_Router::ROUTE_STATIC,
                 'pattern'    => "/education_students",
                 'handler'    => array (
-                    'controller'    => "Education_Students",
+                    'controller'    => "education_students",
                     'action'        => 'index',
                 ),
             ),
@@ -80,7 +80,7 @@
 					'params'=> array ('program_type'),
 				),
 				'handler'	=> array (
-					'controller'	=> "Education_Programs",
+					'controller'	=> "education_programs",
 					'action'		=> 'add_program',
 				),
 			),
@@ -92,7 +92,7 @@
 					'params'=> array ('speciality_id'),
 				),
 				'handler'	=> array (
-					'controller'	=> 'Education_Programs',
+					'controller'	=> 'education_programs',
 					'action'		=> 'add_discipline',
 				)
 			),
@@ -104,7 +104,7 @@
 					'params'=> array ('discipline_id'),
 				),
 				'handler'	=> array (
-					'controller'	=> 'Education_Programs',
+					'controller'	=> 'education_programs',
 					'action'		=> 'add_section',
 				)
 			),
@@ -116,7 +116,7 @@
 					'params'=> array ('program_type', 'program_id'),
 				),
 				'handler'	=> array (
-					'controller'	=> 'Education_Programs',
+					'controller'	=> 'education_programs',
 					'action'		=> 'remove_program',
 				)
 			),			
@@ -128,7 +128,7 @@
 					'params'=> array ('discipline_id'),
 				),
 				'handler'	=> array (
-					'controller'	=> 'Education_Programs',
+					'controller'	=> 'education_programs',
 					'action'		=> 'remove_discipline',
 				)
 			),			
@@ -140,7 +140,7 @@
 					'params'=> array ('section_id'),
 				),
 				'handler'	=> array (
-					'controller'	=> 'Education_Programs',
+					'controller'	=> 'education_programs',
 					'action'		=> 'remove_section',
 				)
 			),			
@@ -152,7 +152,7 @@
 					'params'=> array ('program_type','program_id'),
 				),
 				'handler'	=> array (
-					'controller'	=> 'Education_Programs',
+					'controller'	=> 'education_programs',
 					'action'		=> 'edit_program',
 				)
 			),
@@ -164,7 +164,7 @@
 					'params'=> array ('discipline_id'),
 				),
 				'handler'	=> array (
-					'controller'	=> 'Education_Programs',
+					'controller'	=> 'education_programs',
 					'action'		=> 'edit_discipline',
 				)
 			),
@@ -176,7 +176,7 @@
 					'params'=> array ('section_id'),
 				),
 				'handler'	=> array (
-					'controller'	=> 'Education_Programs',
+					'controller'	=> 'education_programs',
 					'action'		=> 'edit_section',
 				)
 			),
@@ -279,16 +279,16 @@
 				'applications/apply', 																// подача заяка
 				'applications/index_by_student',													// форма для подачи заявки
 
-				'Educational_Materials/index_by_student',
-                'Education_Programs/show_available'
+				'educational_materials/index_by_student',
+                'education_programs/show_available'
             ),
             
             /* Преподаватель */
             Model_User::ROLE_TEACHER => array
             (
-                'Education_Students/index',
+                'education_students/index',
 
-				'Educational_Materials/index_by_teacher'											// учебные материалы, добавленные залогиненным преподавателем
+				'educational_materials/index_by_teacher'											// учебные материалы, добавленные залогиненным преподавателем
             ),
             
             /* Администратор */
@@ -301,22 +301,22 @@
                 
                 'payments/add',
 
-				'Educational_Materials/index_by_admin',
-				'Educational_Materials/upload',
-				'Educational_Materials/remove',
+				'educational_materials/index_by_admin',
+				'educational_materials/upload',
+				'educational_materials/remove',
 
-                'Education_Programs/index',
-                'Education_Programs/add_program',
-                'Education_Programs/add_discipline',
-                'Education_Programs/add_section',
-                'Education_Programs/remove_program',
-                'Education_Programs/remove_discipline',
-                'Education_Programs/remove_section',
-                'Education_Programs/edit_program',
-                'Education_Programs/edit_discipline',
-                'Education_Programs/edit_section',
+                'education_programs/index',
+                'education_programs/add_program',
+                'education_programs/add_discipline',
+                'education_programs/add_section',
+                'education_programs/remove_program',
+                'education_programs/remove_discipline',
+                'education_programs/remove_section',
+                'education_programs/edit_program',
+                'education_programs/edit_discipline',
+                'education_programs/edit_section',
                 
-                'Education_Students/index'
+                'education_students/index'
             )
         ),
         
