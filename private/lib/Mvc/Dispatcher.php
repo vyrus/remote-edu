@@ -245,7 +245,16 @@
             $request->_router['handler'] = $handler; 
             
             /* Определяем название класса контроллера */
-            $class = 'Controller_' . ucfirst($handler['controller']);
+            $name = $handler['controller'];
+            /* Переводим символы после подчёркиваний в верхний регистр, чтобы
+            имена классов определялись корректно. Иначе на *nix-системах файлы с
+            классами не подгружаются. */
+            /* education_programs -> education_Programs */
+            $name = preg_replace('/_([a-z]{1})/e', '"_".ucfirst("$1")', $name);
+            /* education_Programs -> Education_Programs */
+            $name = ucfirst($name);
+            /* Education_Programs -> Controller_Education_Programs */
+            $class = 'Controller_' . ucfirst($name);
 
             /* Если такой класс не найден, возвращаем ошибку */
             if (!class_exists($class /* $autoload = true */))
