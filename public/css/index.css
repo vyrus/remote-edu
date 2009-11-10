@@ -115,7 +115,7 @@ p {margin-top:1em;}
 #pagination a {border:1px solid #d8dddf; padding: 0 3px 0 5px; display:inline-block; background:#f5f9fa; color:#39525a; font-weight:bold; font-size:0.95em;}
 
 * html #leftcolumn {margin-top:-5px;}
-#leftcolumn {width:247px; float:left; border-top:1px solid #fff; background:#ececec;}
+#leftcolumn {width:247px; float:left; border-top:1px solid #fff; background:#ececec; vertical-align: top;}
 #leftcolumn .inner {margin:15px 10px; width:227px;}
 #leftcolumn .leftblock {border-bottom:12px solid #c0c0c0; margin-bottom:10px;}
 #leftcolumn .topic-leftblock {background-color:#17244d; height:2.5em; color:#fff; padding:0.5em 0 0 0.5em;}
@@ -189,6 +189,7 @@ div.error {
 	color: #AA0000;
 }
 
+/*
 ul.menu { 
 	border: 0 none;
 	display: block;
@@ -212,3 +213,4 @@ ul.menu  li {
 	padding: 0px 0px 0px 0px;
 	background: url(/images/line_navigation.gif) no-repeat;
 }
+	 */
