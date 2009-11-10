@@ -35,11 +35,11 @@ $udata = (object) $user->getAuth();
 /* вывод общих пунктов меню*/
 	  foreach ($elements as $title => $controller): ?>
     <?php if ($controller == strtolower ($cur_ctrl)): ?>
-        <li class="active"><?php echo $title; ?></li>
-		<img src="/files/images/line_navigation.gif" alt="">
+        <a href="/<?=$controller ?>/index/"><?=$title ?></a>
+        <img alt="" src="files/images/line_navigation.gif"/>
     <?php else: ?>
-        <li><a href="/<?=$controller ?>/index/"><?=$title ?></a></li>
-		<img src="/files/images/line_navigation.gif" alt="">
+        <a href="/<?=$controller ?>/index/"><?=$title ?></a>
+        <img alt="" src="files/images/line_navigation.gif"/>
     <?php endif; ?>
 <?php endforeach;
 
@@ -61,11 +61,11 @@ if (isset($udata->role))
 	/* вывод пунктов меню, специфических для залогиненного пользователя */
 		  foreach (${$items} as $title => $controller): ?>
 		<?php if ($controller == strtolower ($cur_ctrl)): ?>
-			<li class="active"><?php echo $title; ?></li>
-			<img src="/files/images/line_navigation.gif" alt="">			
+			<a href="/<?=$controller ?>/<?=$default_action?>/"><?=$title ?></a>
+                        <img alt="" src="files/images/line_navigation.gif"/>
 		<?php else: ?>
-			<li><a href="/<?=$controller ?>/<?=$default_action?>/"><?=$title ?></a></li>
-			<img src="/files/images/line_navigation.gif" alt="">
+			<a href="/<?=$controller ?>/<?=$default_action?>/"><?=$title ?></a>
+                        <img alt="" src="files/images/line_navigation.gif"/>
 		<?php endif; ?>
 	<?php endforeach; 	
 }												  

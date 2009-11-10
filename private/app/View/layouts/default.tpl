@@ -1,7 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><head>
-<title>
-дистанционное обучение · Орловский Региональный Центр Интернет-образования</title>
+<title>дистанционное обучение · Орловский Региональный Центр Интернет-образования</title>
 <meta http-equiv="Content-Type" content="text/html; utf-8">
 <meta name="keywords" content="">
 <meta name="description" content="">
@@ -22,26 +21,23 @@ function seltext () {
   }
 }
 </script>
-
 </head>
+
 <body>
 <div id="minwidth">
-
-    <div id="container">
+  <div id="container">
         <!-- Header -->
-        <div id="topheader2">
-            <div id="topmenu">
-			<a href="/" class="tophome"><img src="/files/images/icon_home.gif" alt="" width="11" height="10"></a>
-			<a href="/zapis_na_dist.php">Подать заявку</a>
-			<img src="/files/images/line_topmenu.gif" alt="">
-			<a href="/pismo">Задать вопрос</a>
-
-			<img src="/files/images/line_topmenu.gif" alt="">
-			<a href="/article967">Нормативные документы</a>
-			<img src="/files/images/line_topmenu.gif" alt="">
-			<a href="/444">Образец свидетельства</a>
-			</div>
-			<div id="topsearch">
+    <div id="topheader">
+      <div id="topmenu">
+	<a href="http://uchimvas.ru/" class="tophome"><img src="/files/images/icon_home.gif" alt="" width="11" height="10"></a>
+        <a href="http://uchimvas.ru/zapis_na_kursy">Запись на курсы</a>
+        <img alt="" src="files/images/line_topmenu.gif"/>
+        <a href="http://uchimvas.ru/article885">О центре</a>
+        <img alt="" src="files/images/line_topmenu.gif"/>
+        <a href="http://uchimvas.ru/pismo">Обратная связь</a>
+        <img alt="" src="files/images/line_topmenu.gif"/>
+        <a href="http://uchimvas.ru/article967">Нормативные документы</a>      </div>
+      <div id="topsearch">
 				
 <?php
 	$action = '/users/login/';
@@ -72,31 +68,27 @@ function seltext () {
 
         <!-- #Header -->        <!-- Body -->
         <div id="wrapper">
-            <div id="main">
-                <div id="main-container">
-				  
-					<div id="navigation2">
-                        <div class="inner">
-						<ul class="menu"><?php $this->renderElement('top-menu') ?></ul>
-						</div>
-					</div>
-<div id="content"><?php echo $this->content ?></div>
-<div class="clr"></div>
-
-<div class="clr"></div>
-
-                                                                        <div class="cntnt-container">
-                             
-	                         <table class="we-have" border="1" width="100%">
-
-	                           <tbody><tr>
-	                           <td align="right">
-	                             <div id="pagination">
-	                                 	                             </div>
-	                            </td>
-	                            </tr>
-	                        </tbody></table>
-                        </div>
+          <div id="main">
+            <div id="main-container">
+	      <div id="navigation">
+                <div class="inner">
+		  <?php $this->renderElement('top-menu') ?>
+		</div>
+	      </div>
+              <div id="content"><?php echo $this->content ?></div>
+              <div class="clr"></div>
+              <div class="clr"></div>
+              <div class="cntnt-container">
+	        <table class="we-have" border="1" width="100%">
+	          <tbody>
+                    <tr>
+	              <td align="right">
+	                <div id="pagination"></div>
+	              </td>
+	            </tr>
+	          </tbody>
+                </table>
+              </div>
 <noindex>
 <div class="allpagenavi">
 <a href="javascript:history.back()">Назад</a>
@@ -107,43 +99,36 @@ function seltext () {
 					</div>
 				  </div>
 				  </div>
-			
-
-			
-			
 <div id="leftcolumn">
-                <div class="inner">
+  <div class="inner">
 
-<div class="leftblock">
-<div class="topic-leftblock"><span><b>Д</b>исциплины</span></div>
-<div class="cntnt-leftblock"><div>
-<ul id="accordion_no">
-<?php $this->renderElement($this->_request->_router['handler']['controller'] . '-actions') ?>
-</ul>
-</div>
+    <div class="leftblock">
+      <div class="topic-leftblock"><span><b>Д</b>истанционка</span></div>
+        <div class="cntnt-leftblock">
+          <div>
+            <ul id="accordion_no">
+              <?php $this->renderElement($this->_request->_router['handler']['controller'] . '-actions') ?>
+            </ul>
+          </div>
+        </div>
+    </div>
 
-				
-<div class="leftblock">
-                        <div class="topic-leftblock"><span><b>Д</b>исциплины</span></div>
-
-                        <div class="cntnt-leftblock">
-                                                        <div>
-<ul id="accordion_no">
-<li class="headli_no">
-            <a href="/article986">Сетевая академия CISCO (программа CCNA)</a>
-</li>
-</ul>
-<ul id="accordion">
-        <li class="headli">
-            <a href="/article987">Программы профессиональной переподготовки</a>
-
-            <ul>
-             <li class='subli'><a href="/article988">Программирование</a></li> <li class='subli'><a href="/article989">Информационные технологии в сфере профессиональных коммуникаций</a></li>            </ul>
-        </li>
-
-
-
-    </ul>
+    <div class="leftblock">
+      <div class="topic-leftblock"><span><b>Д</b>исциплины</span></div>
+        <div class="cntnt-leftblock">
+          <div>
+            <ul id="accordion_no">
+              <li class="headli_no"><a href="/article986">Сетевая академия CISCO (программа CCNA)</a></li>
+            </ul>
+            <ul id="accordion">
+              <li class="headli">
+                <a href="/article987">Программы профессиональной переподготовки</a>
+                  <ul>
+                    <li class='subli'><a href="/article988">Программирование</a></li>
+                    <li class='subli'><a href="/article989">Информационные технологии в сфере профессиональных коммуникаций</a></li>
+                  </ul>
+              </li>
+            </ul>
 <script type="text/javascript">
 $$('#accordion > li:not([class="active"]) ul').invoke('setStyle', { display : 'none' }).invoke('addClassName', 'collapsed');
 $$('#accordion > li[class="active"] ul').invoke('addClassName', 'expanded');
@@ -168,11 +153,9 @@ $$('#accordion > li > a').invoke(
     }
 );
 </script>
-
-														
-														</div>
-                                                    </div>
-                    </div>
+	  </div>
+        </div>
+    </div>
                                         
 <div class="leftblock">
 	<div class="topic-leftblock"><span><b>К</b>онтакты</span></div>
