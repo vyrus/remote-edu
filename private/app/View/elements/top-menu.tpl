@@ -36,10 +36,10 @@ $udata = (object) $user->getAuth();
 	  foreach ($elements as $title => $controller): ?>
     <?php if ($controller == strtolower ($cur_ctrl)): ?>
         <a href="/<?=$controller ?>/index/"><?=$title ?></a>
-        <img alt="" src="files/images/line_navigation.gif"/>
+        <img alt="" src="/files/images/line_navigation.gif"/>
     <?php else: ?>
         <a href="/<?=$controller ?>/index/"><?=$title ?></a>
-        <img alt="" src="files/images/line_navigation.gif"/>
+        <img alt="" src="/files/images/line_navigation.gif"/>
     <?php endif; ?>
 <?php endforeach;
 
@@ -62,10 +62,10 @@ if (isset($udata->role))
 		  foreach (${$items} as $title => $controller): ?>
 		<?php if ($controller == strtolower ($cur_ctrl)): ?>
 			<a href="/<?=$controller ?>/<?=$default_action?>/"><?=$title ?></a>
-                        <img alt="" src="files/images/line_navigation.gif"/>
+                        <img alt="" src="/files/images/line_navigation.gif"/>
 		<?php else: ?>
 			<a href="/<?=$controller ?>/<?=$default_action?>/"><?=$title ?></a>
-                        <img alt="" src="files/images/line_navigation.gif"/>
+                        <img alt="" src="/files/images/line_navigation.gif"/>
 		<?php endif; ?>
 	<?php endforeach; 	
 }												  

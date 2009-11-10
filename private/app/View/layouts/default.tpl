@@ -31,232 +31,223 @@ function seltext () {
       <div id="topmenu">
 	<a href="http://uchimvas.ru/" class="tophome"><img src="/files/images/icon_home.gif" alt="" width="11" height="10"></a>
         <a href="http://uchimvas.ru/zapis_na_kursy">Запись на курсы</a>
-        <img alt="" src="files/images/line_topmenu.gif"/>
+        <img alt="" src="/files/images/line_topmenu.gif"/>
         <a href="http://uchimvas.ru/article885">О центре</a>
-        <img alt="" src="files/images/line_topmenu.gif"/>
+        <img alt="" src="/files/images/line_topmenu.gif"/>
         <a href="http://uchimvas.ru/pismo">Обратная связь</a>
-        <img alt="" src="files/images/line_topmenu.gif"/>
-        <a href="http://uchimvas.ru/article967">Нормативные документы</a>      </div>
+        <img alt="" src="/files/images/line_topmenu.gif"/>
+        <a href="http://uchimvas.ru/article967">Нормативные документы</a>
+      </div>
       <div id="topsearch">
 				
 <?php
 	$action = '/users/login/';
 	$form = Form_Profile_Login::create($action);
 ?>
-				
-<form action="<?php echo $form->action() ?>" method="<?php echo $form->method() ?>">
-<input type="text" class="txtfld" id="login" value="логин" onclick="seltext()" name="login">&nbsp;<input type="password" id="passwd" value="пароль" onclick="seltext()" name="passwd" class="txtfld"> <input name="" src="/files/images/icon_ok.gif" class="button" type="image"><!--<input type="submit" value="ок">--> <a href="/reg" title="Регистрация">Регистрация</a>
-<!--<tr><td><a href="/remember_password.html" title="Забыли пароль?">Забыли пароль?</a></td></tr>-->
-</form>
-			</div>
-            
-        </div>
-        <div id="header">
-            <div id="logo">
-			<a href="/"><img src="/files/images/logo.jpg" alt="" width="287" height="113"></a>
-			</div>			
-            <div class="clr"></div>
-            <div id="topcart">
+        <form action="<?php echo $form->action() ?>" method="<?php echo $form->method() ?>">
+          <input type="text" class="txtfld" id="login" value="логин" onclick="seltext()" name="login">&nbsp;<input type="password" id="passwd" value="пароль" onclick="seltext()" name="passwd" class="txtfld"> <input name="" src="/files/images/icon_ok.gif" class="button" type="image"><!--<input type="submit" value="ок">--> <a href="/reg" title="Регистрация">Регистрация</a>
+          <!--<tr><td><a href="/remember_password.html" title="Забыли пароль?">Забыли пароль?</a></td></tr>-->
+        </form>
+      </div>
+    </div>
+    <div id="header">
+      <div id="logo">
+        <a href="/"><img src="/files/images/logo.jpg" alt="" width="287" height="113"></a>
+      </div>			
+      <div class="clr"></div>
+      <div id="topcart">
+        <strong>Наш адрес:</strong><br>
+        <span>г. Орел, Наугорское шоссе 40</span><br>
+        <strong>Телефоны:</strong><br>
+        <span>(4862) 40-96-14, 43-09-44</span>
+      </div>
+      <div id="logoostu"></div>
+    </div>
+      <!-- #Header -->
 
-			<strong>Наш адрес:</strong><br>
-			<span>г. Орел, Наугорское шоссе 40</span><br>
-			<strong>Телефоны:</strong><br>
-			<span>(4862) 40-96-14, 43-09-44</span>			</div>
-            <div id="logoostu"></div>
-			
+      <!-- Body -->
+    <div id="wrapper">
+      <div id="main">
+        <div id="main-container">
+          <div id="navigation">
+            <div class="inner">
+              <?php $this->renderElement('top-menu') ?>
+            </div>
+          </div>
+          <div id="content">
+            <?php echo $this->content ?>
+          </div>
+          <div class="cntnt-container">
+            <table class="we-have" border="1" width="100%">
+              <tbody>
+                <tr>
+                  <td align="right">
+                    <div id="pagination"></div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <noindex>
+            <div class="allpagenavi">
+              <a href="javascript:history.back()">Назад</a>
+              <a href="/" title="Главная">Главная</a>
+            </div>
+          </noindex>
         </div>
+      </div>
+    </div>
 
-        <!-- #Header -->        <!-- Body -->
-        <div id="wrapper">
-          <div id="main">
-            <div id="main-container">
-	      <div id="navigation">
-                <div class="inner">
-		  <?php $this->renderElement('top-menu') ?>
-		</div>
-	      </div>
-              <div id="content"><?php echo $this->content ?></div>
-              <div class="clr"></div>
-              <div class="clr"></div>
-              <div class="cntnt-container">
-	        <table class="we-have" border="1" width="100%">
-	          <tbody>
-                    <tr>
-	              <td align="right">
-	                <div id="pagination"></div>
-	              </td>
-	            </tr>
-	          </tbody>
-                </table>
+    <div id="leftcolumn">
+      <div class="inner">
+
+        <div class="leftblock">
+          <div class="topic-leftblock"><span><b>Д</b>истанционка</span></div>
+            <div class="cntnt-leftblock">
+              <div>
+                <ul id="accordion_no">
+                  <?php $this->renderElement($this->_request->_router['handler']['controller'] . '-actions') ?>
+                </ul>
               </div>
-<noindex>
-<div class="allpagenavi">
-<a href="javascript:history.back()">Назад</a>
-<a href="/" title="Главная">Главная</a>
-</div>
-</noindex>
+            </div>
+        </div>
 
-					</div>
-				  </div>
-				  </div>
-<div id="leftcolumn">
-  <div class="inner">
-
-    <div class="leftblock">
-      <div class="topic-leftblock"><span><b>Д</b>истанционка</span></div>
-        <div class="cntnt-leftblock">
-          <div>
-            <ul id="accordion_no">
-              <?php $this->renderElement($this->_request->_router['handler']['controller'] . '-actions') ?>
-            </ul>
+        <div class="leftblock">
+          <div class="topic-leftblock"><span><b>Д</b>исциплины</span></div>
+          <div class="cntnt-leftblock">
+            <div>
+              <ul id="accordion_no">
+                <li class="headli_no"><a href="/article986">Сетевая академия CISCO (программа CCNA)</a></li>
+              </ul>
+              <ul id="accordion">
+                <li class="headli">
+                  <a href="/article987">Программы профессиональной переподготовки</a>
+                    <ul>
+                      <li class='subli'><a href="/article988">Программирование</a></li>
+                      <li class='subli'><a href="/article989">Информационные технологии в сфере профессиональных коммуникаций</a></li>
+                    </ul>
+                </li>
+              </ul>
+              <script type="text/javascript">
+              $$('#accordion > li:not([class="active"]) ul').invoke('setStyle', { display : 'none' }).invoke('addClassName', 'collapsed');
+              $$('#accordion > li[class="active"] ul').invoke('addClassName', 'expanded');
+              $$('#accordion > li > a').invoke(
+                  'observe', 
+                  'click', 
+                  function(e)
+                  {
+                      e.stop();
+                      var el = e.findElement('a');
+                      var ul = el.up('li').down('ul');
+                      if (ul) {
+                          if (ul.hasClassName('collapsed')) {
+                              var c = $$('#accordion ul:not([class="collapsed"])')[0];
+                              if (c) {
+                                  new Effect.BlindUp(c.toggleClassName('collapsed').toggleClassName('expanded'));
+                              }
+                          }
+                          
+                          new Effect.BlindDown(ul.toggleClassName('collapsed').toggleClassName('expanded'));
+                      }
+                  }
+              );
+              </script>
+            </div>
           </div>
         </div>
-    </div>
-
-    <div class="leftblock">
-      <div class="topic-leftblock"><span><b>Д</b>исциплины</span></div>
-        <div class="cntnt-leftblock">
-          <div>
-            <ul id="accordion_no">
-              <li class="headli_no"><a href="/article986">Сетевая академия CISCO (программа CCNA)</a></li>
-            </ul>
-            <ul id="accordion">
-              <li class="headli">
-                <a href="/article987">Программы профессиональной переподготовки</a>
-                  <ul>
-                    <li class='subli'><a href="/article988">Программирование</a></li>
-                    <li class='subli'><a href="/article989">Информационные технологии в сфере профессиональных коммуникаций</a></li>
-                  </ul>
-              </li>
-            </ul>
-<script type="text/javascript">
-$$('#accordion > li:not([class="active"]) ul').invoke('setStyle', { display : 'none' }).invoke('addClassName', 'collapsed');
-$$('#accordion > li[class="active"] ul').invoke('addClassName', 'expanded');
-$$('#accordion > li > a').invoke(
-    'observe', 
-    'click', 
-    function(e)
-    {
-        e.stop();
-        var el = e.findElement('a');
-        var ul = el.up('li').down('ul');
-        if (ul) {
-            if (ul.hasClassName('collapsed')) {
-                var c = $$('#accordion ul:not([class="collapsed"])')[0];
-                if (c) {
-                    new Effect.BlindUp(c.toggleClassName('collapsed').toggleClassName('expanded'));
-                }
-            }
-            
-            new Effect.BlindDown(ul.toggleClassName('collapsed').toggleClassName('expanded'));
-        }
-    }
-);
-</script>
-	  </div>
+    
+        <div class="leftblock">
+          <div class="topic-leftblock"><span><b>К</b>онтакты</span></div>
+          <div class="cntnt-leftblock">
+            <div id="contacts"><strong>Наш адрес:</strong><br>
+              г. Орел, Наугорское шоссе, 40<br>
+              <strong>Телефоны</strong><br>
+              (4862) 40-96-14, (4862) 43-09-44<br>
+              <b><a href="/pismo" title="Обратная связь">Обратная связь</a></b>
+            </div>
+          </div>
         </div>
-    </div>
-                                        
-<div class="leftblock">
-	<div class="topic-leftblock"><span><b>К</b>онтакты</span></div>
-		<div class="cntnt-leftblock">
-		<div id="contacts"><strong>Наш адрес:</strong><br>
-
-		г. Орел, Наугорское шоссе, 40<br>
-		<strong>Телефоны</strong><br>
-		(4862) 40-96-14, (4862) 43-09-44<br>
-		<b><a href="/pismo" title="Обратная связь">Обратная связь</a></b>
-		</div>
-		</div>
-	</div>
-
-<noindex>
-<div class="leftblock">
-	<div class="topic-leftblock"><span><b>У</b>чредитель</span></div>
-		<div class="cntnt-leftblock">
-			<ul class="top-ten">
-				<li><a href="http://ostu.ru/" title="ОрелГТУ" target="_blank">Орловский государственный технический университет</a></li>
-			</ul>
-		</div>
-
-</div>
-	
-	<div class="leftblock">
-	<div class="topic-leftblock"><span><b>П</b>артнеры</span></div>
-		<div class="cntnt-leftblock">
-			<ul class="top-ten">
-				<li><a href="http://ostu.ru/inst/cisco/main/" title="CISCO" target="_blank">Сетевая академия CISCO</a></li>
-				<li><a href="http://ostu.ru/inst/linux/main/" title="Linux" target="_blank">Центр компетентности Linux</a></li>
-
-			</ul>
-		</div>
-	</div>
-	
-	<div class="leftblock">
-	<div class="topic-leftblock"><span><b>П</b>оиск</span></div>
-		<div class="cntnt-leftblock">
-				<form name="" action="" method="post" enctype="multipart/form-data">
+    
+        <noindex>
+          <div class="leftblock">
+            <div class="topic-leftblock"><span><b>У</b>чредитель</span></div>
+              <div class="cntnt-leftblock">
+                <ul class="top-ten">
+                  <li><a href="http://ostu.ru/" title="ОрелГТУ" target="_blank">Орловский государственный технический университет</a></li>
+                </ul>
+              </div>
+            </div>
+            <div class="leftblock">
+              <div class="topic-leftblock"><span><b>П</b>артнеры</span></div>
+              <div class="cntnt-leftblock">
+                <ul class="top-ten">
+                  <li><a href="http://ostu.ru/inst/cisco/main/" title="CISCO" target="_blank">Сетевая академия CISCO</a></li>
+                  <li><a href="http://ostu.ru/inst/linux/main/" title="Linux" target="_blank">Центр компетентности Linux</a></li>
+                </ul>
+              </div>
+            </div>
+            <div class="leftblock">
+            <div class="topic-leftblock"><span><b>П</b>оиск</span></div>
+              <div class="cntnt-leftblock">
+                <form name="" action="" method="post" enctype="multipart/form-data">
                 <input name="s" class="txtfld" value="" type="text">
+                <input name="" src="/files/images/icon_search.gif" class="button" type="image"></form>
+              </div>
+            </div>
+        </noindex>	
+      </div>
+    </div>
 
-                <input name="" src="files/images/icon_search.gif" class="button" type="image"></form>
-		</div>
-	</div>
-</noindex>	
-</div>
-
-</div>
-
-<div class="clr"></div>
+    <div class="clr"></div>
+    </div>
+              <!-- footer -->
+    <div id="footer">
+      <div id="main-footer">
+        <div class="inner">
+          <div id="bottom-footer">
+            <div id="anotation">
+              <p align="justify">Сниппет</p>
+            </div>
+            <div class="break" style="float: right;">
+              <noindex>
+    <!--LiveInternet counter-->
+                <script type="text/javascript"><!--
+                  document.write("<a href='http://www.liveinternet.ru/click' "+
+                  "target=_blank><img src='http://counter.yadro.ru/hit?t14.3;r"+
+                  escape(document.referrer)+((typeof(screen)=="undefined")?"":
+                  ";s"+screen.width+"*"+screen.height+"*"+(screen.colorDepth?
+                  screen.colorDepth:screen.pixelDepth))+";u"+escape(document.URL)+
+                  ";"+Math.random()+
+                  "' alt='' title='LiveInternet: показано число просмотров за 24"+
+                  " часа, посетителей за 24 часа и за сегодня' "+
+                  "border='0' width='88' height='31'><\/a>")
+                  //--></script><!--/LiveInternet-->
+                  <!-- Yandex.Metrika -->
+                  <script src="mc.yandex.ru/metrika/watch.js" type="text/javascript"></script>
+                  <script type="text/javascript">
+                  try { var yaCounter409700 = new Ya.Metrika(409700); } catch(e){}
+                </script>
+                <noscript>
+                  <div style="position: absolute;"><img src="mc.yandex.ru/watch/409700" alt="" /></div>
+                </noscript>
+                <!-- /Yandex.Metrika -->
+              </noindex>
+            </div>
+            <div id="copyryght">&copy; 2001-2009 АНО "Центр Интернет-образования"</div>
+            <div id="license">Лицензия Серия А № 266623 выдана Департаментом социальной
+              политики Орловской области 16 ноября 2007 года.<br />
+              Свидетельство о госаккредитации № 1351 от 30 декабря 2008 г. выдано
+              Департаментом социальной политики Орловской области
+            </div>
+          </div>
         </div>
-                <!-- footer -->
-<div id="footer">
-
-	<div id="main-footer">
-		<div class="inner">
-			<div id="bottom-footer">
-				<div id="anotation">
-				<p align="justify">Сниппет</p>
-				</div>
-
-				<div class="break" style="float: right;">
-				<noindex>
-
-				<!--LiveInternet counter--><script type="text/javascript"><!--
-document.write("<a href='http://www.liveinternet.ru/click' "+
-"target=_blank><img src='http://counter.yadro.ru/hit?t14.3;r"+
-escape(document.referrer)+((typeof(screen)=="undefined")?"":
-";s"+screen.width+"*"+screen.height+"*"+(screen.colorDepth?
-screen.colorDepth:screen.pixelDepth))+";u"+escape(document.URL)+
-";"+Math.random()+
-"' alt='' title='LiveInternet: показано число просмотров за 24"+
-" часа, посетителей за 24 часа и за сегодня' "+
-"border='0' width='88' height='31'><\/a>")
-//--></script><!--/LiveInternet-->
-<!-- Yandex.Metrika -->
-<script src="mc.yandex.ru/metrika/watch.js" type="text/javascript"></script>
-<script type="text/javascript">
-try { var yaCounter409700 = new Ya.Metrika(409700); } catch(e){}
-</script>
-<noscript><div style="position: absolute;"><img src="mc.yandex.ru/watch/409700" alt="" /></div></noscript>
-<!-- /Yandex.Metrika -->
-				</noindex>
-				</div>
-
-				<div id="copyryght">
-
-					&copy; 2001-2009 АНО "Центр Интернет-образования"
-				</div>
-				<div id="license">Лицензия Серия А № 266623 выдана Департаментом социальной политики Орловской области 16 ноября 2007 года.<br />
-Свидетельство о госаккредитации № 1351 от 30 декабря 2008 г. выдано Департаментом социальной политики Орловской области</div>
-			</div>
-		</div>
-	</div>
-		<div id="left-footer"></div>
-
-		<div class="clr"></div>
-</div>
+      </div>
+      <div id="left-footer"></div>
+      <div class="clr"></div>
+    </div>
 	<!-- #footer -->
 <!-- #Body -->
+  </div>
 </div>
-</div>
-</body></html>
+</body>
+</html>
