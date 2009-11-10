@@ -71,7 +71,23 @@
             if (! $contractForm->validate ($request)) {
                 $invalidMaterialsForms[] = $contractForm;
             }
-            else {
+            else 
+			{
+				$emailParams = array();
+				$emailParams['bodyText'] = 'Во вложении находиться договор об оказании услуг по дистанционному обучению. 
+                                    Для начала обучения договор необходимо распечатать, подписать и доставить в 
+                                    центр обучения.';
+                $emailParams['bodyHtml'] = '';                                    
+                $emailParams['fromEmail'] = 'zvezdochka30@ya.ru';
+                $emailParams['fromName'] = 'Центр Интернет Образования';
+                $emailParams['toEmail'] = $udata->email; 
+                $emailParams['toName'] = 'Слушатель';                
+                $emailParams['subject'] = 'Договор об оказании услуг по дистанционному обучению';
+                $emailParams['attachFile'] = $request->files['fileReference' . $app_id]['tmp_name'];
+                $emailParams['attachType'] = 'application/msword';
+                $emailParams['attachName'] = 'договор об оказани образовательных услуг';
+                $contract->sendContractByMail ($emailParams);				
+
                 $contract->addContract ($request->files['fileReference' . $app_id],$app_id);
             }
 			
