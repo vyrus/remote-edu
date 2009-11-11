@@ -75,7 +75,7 @@ function seltext () {
 
 						<a href="http://uchimvas.ru/article899">Преподаватели и сотрудники</a>
 						<img src="/files/images/line_navigation.gif" alt="">
-						<a href="http://uchimvas.ru/article990">Прайс на дистанционное обучение</a>
+						<a href="http://uchimvas.ru/article990">Прайс</a>
 						<img src="/files/images/line_navigation.gif" alt="">
 						<a href="http://uchimvas.ru/article991">Как оплатить</a>
 						<img src="/files/images/line_navigation.gif" alt="">
