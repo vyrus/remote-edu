@@ -2,28 +2,28 @@
 	/* ссылки, доступные пользователю, независимо от прав доступа*/	    
     $elements = array(
         'Главная'      				=> 'index',
-        'Ошибки'       				=> 'error'
+        //'Ошибки'       				=> 'error'
     );
 	
 	/* ссылки, доступные только админу*/	        
     $admin_elements = array(
         'Пользователи' 				=> 'users',
-		'Образовательные программы'	=> 'education_programs',		
-		'Учебные Материалы'			=> 'educational_materials',
+		'Программы'					=> 'education_programs',		
+		'Материалы'					=> 'educational_materials',
         'Заявки'                    => 'applications'
     );
 	
 	/* ссылки, доступные только преподу*/	        
     $teacher_elements = array(
         'Пользователи' 				=> 'users',
-		'Учебные Материалы'			=> 'educational_materials'
+		'Материалы'					=> 'educational_materials'
     );
 
 	/* ссылки, доступные только слушателю*/	        
     $student_elements = array(
         //'Слушатели' 				=> 'users',
-        'Образовательные программы' => 'education_programs',        
-		'Учебные Материалы'			=> 'educational_materials',
+        'Программы' 				=> 'education_programs',        
+		'Материалы'					=> 'educational_materials',
         'Заявки'                    => 'applications'
     );
 

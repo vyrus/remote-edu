@@ -72,6 +72,17 @@ function seltext () {
           <div id="navigation2">
             <div class="inner">
               <?php $this->renderElement('top-menu') ?>
+
+						<a href="http://uchimvas.ru/article899">Преподаватели и сотрудники</a>
+						<img src="/files/images/line_navigation.gif" alt="">
+						<a href="http://uchimvas.ru/article990">Прайс на дистанционное обучение</a>
+						<img src="/files/images/line_navigation.gif" alt="">
+						<a href="http://uchimvas.ru/article991">Как оплатить</a>
+						<img src="/files/images/line_navigation.gif" alt="">
+						<a href="http://uchimvas.ru/article992">Договор на обучение</a>
+						<img src="/files/images/line_navigation.gif" alt="">
+						<a href="http://uchimvas.ru/forum.html">Форум</a>
+              
             </div>
           </div>
           <div id="content">
