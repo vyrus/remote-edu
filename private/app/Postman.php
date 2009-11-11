@@ -21,13 +21,35 @@
         const TYPE_REG_EMPLOYEE = 'reg-employee';
         
         /**
+        * Тип письма: договор об обучении.
+        * 
+        * @var const
+        */
+        const TYPE_CONTRACT = 'contract';
+
+        /**
+        * Тип прикреплённого файла: документ word.
+        * 
+        * @var const
+        */
+        const TYPE_ATTACHMENT = 'application/msword';
+
+        /**
+        * Имя прикреплённого файла.
+        * 
+        * @var const
+        */
+        const ATTACHMENT_NAME = 'договор об оказани образовательных услуг';
+
+        /**
         * Заголовки писем по типу.
         * 
         * @var array
         */         
         protected $_subjects = array(
             self::TYPE_REG_STUDENT => 'Регистрация',
-            self::TYPE_REG_EMPLOYEE => 'Регистрация'
+            self::TYPE_REG_EMPLOYEE => 'Регистрация',
+            self::TYPE_CONTRACT => 'Договор об оказании услуг по дистанционному обучению'			
         );
         
         /**
@@ -36,8 +58,13 @@
         * @var array
         */
         protected $_messages = array(
-            self::TYPE_REG_STUDENT => 'Вы зарегистрированы под логином %s. Для активации аккаунта пройдите по ссылке %s.',
-            self::TYPE_REG_EMPLOYEE => 'Вы зарегистрированы под логином %s. Для активации аккаунта и получения пароля пройдите по ссылке %s.'
+            self::TYPE_REG_STUDENT => 'Вы зарегистрированы под логином %s. Для активации аккаунта 
+			                           пройдите по ссылке %s.',
+            self::TYPE_REG_EMPLOYEE => 'Вы зарегистрированы под логином %s. Для активации аккаунта и
+			                            получения пароля пройдите по ссылке %s.',
+            self::TYPE_CONTRACT => 'Во вложении находиться договор об оказании услуг по 
+			                        дистанционному обучению. Для начала обучения договор необходимо 
+									распечатать, подписать и доставить в центр обучения.'			
         );
         
         /**
@@ -134,7 +161,34 @@
             
             return $this->_send($email, $subject, $message);
         }
-        
+
+
+        /**
+        * Отправка договора слушателю.
+        * 
+        * @param  string $user_email      Email пользователя.
+        * @param  string $attachFilePath  Путь прикрепляемого файла.
+        * @return
+        */
+        public function sendContractStudent($user_email,$attachFilePath) 
+		{
+            /* Получаем заголовок и текст письма */
+            $subject = $this->_getSubject(self::TYPE_CONTRACT);
+            
+            $message = $this->_getMessage(self::TYPE_CONTRACT);
+
+            if (!empty($attachFilePath) && file_exists($attachFilePath))
+            {
+                $attachment = $this->_mail->createAttachment(file_get_contents($attachFilePath));
+                $attachment->type        = self::TYPE_ATTACHMENT;
+                $attachment->disposition = Zend_Mime::DISPOSITION_ATTACHMENT;
+                $attachment->filename    = self::ATTACHMENT_NAME;
+            }          
+            
+            return $this->_send($user_email, $subject, $message);
+        }
+
+       
         /**
         * Отправка письма.
         * 

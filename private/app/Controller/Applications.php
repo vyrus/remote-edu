@@ -73,20 +73,12 @@
             }
             else 
 			{
-				$emailParams = array();
-				$emailParams['bodyText'] = 'Во вложении находиться договор об оказании услуг по дистанционному обучению. 
-                                    Для начала обучения договор необходимо распечатать, подписать и доставить в 
-                                    центр обучения.';
-                $emailParams['bodyHtml'] = '';                                    
-                $emailParams['fromEmail'] = 'zvezdochka30@ya.ru';
-                $emailParams['fromName'] = 'Центр Интернет Образования';
-                $emailParams['toEmail'] = $udata->email; 
-                $emailParams['toName'] = 'Слушатель';                
-                $emailParams['subject'] = 'Договор об оказании услуг по дистанционному обучению';
-                $emailParams['attachFile'] = $request->files['fileReference' . $app_id]['tmp_name'];
-                $emailParams['attachType'] = 'application/msword';
-                $emailParams['attachName'] = 'договор об оказани образовательных услуг';
-                $contract->sendContractByMail ($emailParams);				
+	            $postman = Resources::getInstance()->postman;
+
+	            $postman->sendContractStudent(
+                    $udata->email,
+                    $request->files['fileReference' . $app_id]['tmp_name']
+	            );
 
                 $contract->addContract ($request->files['fileReference' . $app_id],$app_id);
             }
@@ -174,50 +166,6 @@
         
 		public function action_upload_agreement ()
         {
-			$app = Model_Application::create();       
-			
-			$request	= $this->getRequest ();
-			$form 		= Form_Materials_Upload::create ('/applications/upload_agreement');
-			
-			$method 		= $form->method ();
-			$requestData	= $request->$method;
-			if (empty ($requestData)) {
-				$this->render ('/applications/upload_agreement');
-			}
-
-			$invalidMaterialsForms = array ();
-			if (count ($requestData['material'])) {
-				$educationalMaterials = Model_Educational_Materials::create ();
-				
-				foreach ($requestData['material'] as $i => $material) {					
-					$request->set (
-						'get',
-						array (
-							'filename'		=> $request->files['fileReference' . $i]['name'],
-						)
-					);
-
-					$materialForm = Form_Materials_Upload::create ('');
-					$materialForm->setMethod (Form_Abstract::METHOD_GET);
-					if (! $materialForm->validate ($request)) {
-						$invalidMaterialsForms[] = $materialForm;
-					}
-					else {
-						$educationalMaterials->addMaterial ($material['description'], $material['section'], $request->files['fileReference' . $i]);
-					}
-				}
-			}
-			
-			if (! empty ($invalidMaterialsForms)) {
-				$this->set		('invalidMaterialsForms', $invalidMaterialsForms);
-				$this->render	('educational_materials/upload');
-			}
-
-			$this->flash (
-				'Все материалы успешно загружены',
-				'/educational_materials/index' . $this->templatesPostfix,
-				3
-			);
 		}
                 
         /**

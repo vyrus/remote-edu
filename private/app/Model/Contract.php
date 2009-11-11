@@ -33,28 +33,5 @@
             $row_count = $stmt->rowCount();
             return $row_count > 0;
 		}
-
-        public function sendContractByMail ($params)
-		{
-			require_once 'Zend/Mail.php';
-			$mail = new Zend_Mail('utf-8');
-
-            if (!empty($params['bodyText'])) 
-			{
-				$mail->setBodyText($params['bodyText']);				
-			}
-            if (!empty($params['bodyHtml'])) $mail->setBodyHtml($params['bodyHtml']);
-            $mail->setFrom($params['fromEmail'], $params['fromName']);
-            $mail->addTo($params['toEmail'], $params['toName']);
-            $mail->setSubject($params['subject']);
-            if (!empty($params['attachFile']) && file_exists($params['attachFile']))
-			{
-				$attachment = $mail->createAttachment(file_get_contents($params['attachFile']));
-                $attachment->type        = $params['attachType'];
-                $attachment->disposition = Zend_Mime::DISPOSITION_ATTACHMENT;
-                $attachment->filename    = $params['attachName'];
-            }
-            $mail->send();			
-		}
 	}
 ?>

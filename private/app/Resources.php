@@ -74,6 +74,11 @@
             return $auth;    
         }
         
+        /**
+        * Инициализация объекта рассылки почтовых сообщений.
+        * 
+        * @return Postman
+        */
         protected function get_postman() {
             $config = $this->_config['postman'];
             
