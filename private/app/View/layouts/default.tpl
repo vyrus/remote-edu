@@ -117,14 +117,14 @@ function seltext () {
           <div class="cntnt-leftblock">
             <div>
               <ul id="accordion_no">
-                <li class="headli_no"><a href="/article986">Сетевая академия CISCO (программа CCNA)</a></li>
+                <li class="headli_no"><a href="http://uchimvas.ru/article986">Сетевая академия CISCO (программа CCNA)</a></li>
               </ul>
               <ul id="accordion">
                 <li class="headli">
-                  <a href="/article987">Программы профессиональной переподготовки</a>
+                  <a href="http://uchimvas.ru/article987">Программы профессиональной переподготовки</a>
                     <ul>
-                      <li class='subli'><a href="/article988">Программирование</a></li>
-                      <li class='subli'><a href="/article989">Информационные технологии в сфере профессиональных коммуникаций</a></li>
+                      <li class='subli'><a href="http://uchimvas.ru/article988">Программирование</a></li>
+                      <li class='subli'><a href="http://uchimvas.ru/article989">Информационные технологии в сфере профессиональных коммуникаций</a></li>
                     </ul>
                 </li>
               </ul>
@@ -163,7 +163,7 @@ function seltext () {
               г. Орел, Наугорское шоссе, 40<br>
               <strong>Телефоны</strong><br>
               (4862) 40-96-14, (4862) 43-09-44<br>
-              <b><a href="/pismo" title="Обратная связь">Обратная связь</a></b>
+              <b><a href="http://uchimvas.ru/pismo" title="Обратная связь">Обратная связь</a></b>
             </div>
           </div>
         </div>
