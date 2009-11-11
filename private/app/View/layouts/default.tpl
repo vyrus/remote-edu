@@ -27,7 +27,7 @@ function seltext () {
 <div id="minwidth">
   <div id="container">
         <!-- Header -->
-    <div id="topheader">
+    <div id="topheader2">
       <div id="topmenu">
 	<a href="http://uchimvas.ru/" class="tophome"><img src="/files/images/icon_home.gif" alt="" width="11" height="10"></a>
         <a href="http://uchimvas.ru/zapis_na_kursy">Запись на курсы</a>
@@ -69,7 +69,7 @@ function seltext () {
     <div id="wrapper">
       <div id="main">
         <div id="main-container">
-          <div id="navigation">
+          <div id="navigation2">
             <div class="inner">
               <?php $this->renderElement('top-menu') ?>
             </div>
