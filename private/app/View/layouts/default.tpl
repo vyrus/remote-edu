@@ -29,15 +29,15 @@ function seltext () {
         <!-- Header -->
     <div id="topheader2">
       <div id="topmenu">
-	<a href="http://uchimvas.ru/" class="tophome"><img src="/files/images/icon_home.gif" alt="" width="11" height="10"></a>
-        <a href="http://uchimvas.ru/zapis_na_kursy">Запись на курсы</a>
-        <img alt="" src="/files/images/line_topmenu.gif"/>
-        <a href="http://uchimvas.ru/article885">О центре</a>
-        <img alt="" src="/files/images/line_topmenu.gif"/>
-        <a href="http://uchimvas.ru/pismo">Обратная связь</a>
-        <img alt="" src="/files/images/line_topmenu.gif"/>
-        <a href="http://uchimvas.ru/article967">Нормативные документы</a>
-      </div>
+		<a href="/" class="tophome"><img src="/files/images/icon_home.gif" alt="" width="11" height="10"></a>
+		<a href="http://uchimvas.ru/zapis_na_dist.php">Подать заявку</a>
+		<img src="/files/images/line_topmenu.gif" alt="">
+		<a href="http://uchimvas.ru/pismo">Задать вопрос</a>
+		<img src="/files/images/line_topmenu.gif" alt="">
+		<a href="http://uchimvas.ru/article967">Нормативные документы</a>
+		<img src="/files/images/line_topmenu.gif" alt="">
+		<a href="http://uchimvas.ru/444">Образец свидетельства</a>
+	  </div>
       <div id="topsearch">
 				
 <?php
