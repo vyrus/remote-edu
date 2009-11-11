@@ -121,7 +121,7 @@ function seltext () {
               </ul>
               <ul id="accordion">
                 <li class="headli">
-                  <a href="http://uchimvas.ru/article987">Программы профессиональной переподготовки</a>
+                  <a href="/">Программы профессиональной переподготовки</a>
                     <ul>
                       <li class='subli'><a href="http://uchimvas.ru/article988">Программирование</a></li>
                       <li class='subli'><a href="http://uchimvas.ru/article989">Информационные технологии в сфере профессиональных коммуникаций</a></li>
