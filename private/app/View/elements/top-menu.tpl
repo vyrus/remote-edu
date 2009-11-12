@@ -1,72 +1,82 @@
 <?php
-	/* ссылки, доступные пользователю, независимо от прав доступа*/	    
-    $elements = array(
-        'Главная'      				=> 'index',
-        //'Ошибки'       				=> 'error'
+
+	/* ссылки, доступные пользователю, независимо от прав доступа */	    
+    $generic_elements = array(
+        'Главная'  => 'http://uchimvas.ru/',
+        //'Ошибки' => 'error'
     );
 	
-	/* ссылки, доступные только админу*/	        
+	/* ссылки, доступные только админу */	        
     $admin_elements = array(
-        'Пользователи' 				=> 'users',
-		'Программы'					=> 'education_programs',		
-		'Материалы'					=> 'educational_materials',
-        'Заявки'                    => 'applications'
+        'Пользователи' => 'users',
+		'Программы'	   => 'education_programs',		
+		'Материалы'	   => 'educational_materials',
+        'Заявки'       => 'applications'
     );
 	
-	/* ссылки, доступные только преподу*/	        
+	/* ссылки, доступные только преподу */	        
     $teacher_elements = array(
-        'Пользователи' 				=> 'users',
-		'Материалы'					=> 'educational_materials'
+        'Пользователи' => 'users',
+		'Материалы'	   => 'educational_materials'
     );
 
-	/* ссылки, доступные только слушателю*/	        
+	/* ссылки, доступные только слушателю */	        
     $student_elements = array(
-        //'Слушатели' 				=> 'users',
-        'Программы' 				=> 'education_programs',        
-		'Материалы'					=> 'educational_materials',
-        'Заявки'                    => 'applications'
+        //'Слушатели' => 'users',
+        'Программы'   => 'education_programs',        
+		'Материалы'	  => 'educational_materials',
+        'Заявки'      => 'applications'  
     );
 
-    $cur_ctrl = $this->_request->_router['handler']['controller'];
+    /* Дополнительные ссылки */
+    $external_links = array(
+        'Преподаватели и сотрудники' => 'http://uchimvas.ru/article899',
+        'Прайс'                      => 'http://uchimvas.ru/article990',
+        'Оплата'                     => 'http://uchimvas.ru/article991',
+        'Форум'                      => 'http://uchimvas.ru/forum.html'
+    );
+    
+    /* Карта соответствия ролйе пользователей и выводимых пунктов меню */
+    $_role2elems = array(
+        Model_User::ROLE_STUDENT => $student_elements,
+        Model_User::ROLE_TEACHER => $teacher_elements,
+        Model_User::ROLE_ADMIN   => $admin_elements
+    );
+    
+    $cur_ctrl = strtolower($this->_request->_router['handler']['controller']);
+    
+    $user = Model_User::create();
+    $udata = $user->getAuth();
+    $role = (false === $udata ? false : $udata['role']);
 
-$user = Model_User::create();
-$udata = (object) $user->getAuth();
-
-/* вывод общих пунктов меню*/
-	  foreach ($elements as $title => $controller): ?>
-    <?php if ($controller == strtolower ($cur_ctrl)): ?>
-        <a href="/<?=$controller ?>/index/"><?=$title ?></a>
-        <img alt="" src="/files/images/line_navigation.gif"/>
-    <?php else: ?>
-        <a href="/<?=$controller ?>/index/"><?=$title ?></a>
-        <img alt="" src="/files/images/line_navigation.gif"/>
-    <?php endif; ?>
-<?php endforeach;
-
-if (isset($udata->role))
-{
-	if (Model_User::ROLE_TEACHER == $udata->role)
-	{
-		$default_action = "index_by_teacher";
-		$items = 'teacher_elements';
-	}elseif (Model_User::ROLE_ADMIN == $udata->role)
-	{
-		$default_action = "index_by_admin";
-		$items = 'admin_elements';	
-	}elseif (Model_User::ROLE_STUDENT == $udata->role)
-	{
-		$default_action = "index_by_student";
-		$items = 'student_elements';	
-	}
-	/* вывод пунктов меню, специфических для залогиненного пользователя */
-		  foreach (${$items} as $title => $controller): ?>
-		<?php if ($controller == strtolower ($cur_ctrl)): ?>
-			<a href="/<?=$controller ?>/<?=$default_action?>/"><?=$title ?></a>
-                        <img alt="" src="/files/images/line_navigation.gif"/>
-		<?php else: ?>
-			<a href="/<?=$controller ?>/<?=$default_action?>/"><?=$title ?></a>
-                        <img alt="" src="/files/images/line_navigation.gif"/>
-		<?php endif; ?>
-	<?php endforeach; 	
-}												  
+    /* Берём общие для всех пользователей элементы меню */
+    $elems = $generic_elements;
+    
+    /* Если пользователь авторизован, добавляем пункты меню для его роли */
+    if (false !== $role) {
+        $elems = array_merge($elems, $_role2elems[$role]);
+    }
+                                       
+    /* Если пользователь - не администратор, то добавляем внешние ссылки */
+    if (Model_User::ROLE_ADMIN !== $role) {
+        $elems = array_merge($elems, $external_links);
+    }
+    
+    end($elems);
+    $last_key = key($elems);
+    
 ?>
+    
+<?php foreach ($elems as $title => $link): ?>
+    <?php if (strpos($link, 'http') === 0): ?>
+        <a href="<?php echo $link ?>"><?php echo $title ?></a>
+    <?php elseif ($cur_ctrl == $link): ?>
+        <a href="/<?php echo $link ?>/index/"><?php echo $title ?></a>
+    <?php else: ?>
+        <a href="/<?php echo $link ?>/index/"><?php echo $title ?></a>
+    <?php endif; ?>
+    
+    <?php if ($last_key !== $title): ?>
+        <img alt="" src="/files/images/line_navigation.gif" />
+    <?php endif; ?>
+<?php endforeach; ?>

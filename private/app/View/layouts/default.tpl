@@ -72,15 +72,6 @@ function seltext () {
           <div id="navigation2">
             <div class="inner">
               <?php $this->renderElement('top-menu') ?>
-
-						<a href="http://uchimvas.ru/article899">Преподаватели и сотрудники</a>
-						<img src="/files/images/line_navigation.gif" alt="">
-						<a href="http://uchimvas.ru/article990">Прайс</a>
-						<img src="/files/images/line_navigation.gif" alt="">
-						<a href="http://uchimvas.ru/article991">Оплата</a>
-						<img src="/files/images/line_navigation.gif" alt="">
-						<a href="http://uchimvas.ru/forum.html">Форум</a>
-              
             </div>
           </div>
           <div id="content">
