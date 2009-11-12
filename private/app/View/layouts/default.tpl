@@ -107,8 +107,7 @@ function seltext () {
           </noindex>
         </div>
       </div>
-    </div>
-
+	  
     <div id="leftcolumn">
       <div class="inner">
 
@@ -211,6 +210,7 @@ function seltext () {
 
     <div class="clr"></div>
     </div>
+ </div>
               <!-- footer -->
     <div id="footer">
       <div id="main-footer">
