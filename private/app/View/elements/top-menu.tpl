@@ -8,24 +8,24 @@
 	
 	/* ссылки, доступные только админу */	        
     $admin_elements = array(
-        'Пользователи' => 'users',
-		'Программы'	   => 'education_programs',		
-		'Материалы'	   => 'educational_materials',
-        'Заявки'       => 'applications'
+        'Пользователи' => 'users/index_by_admin/',
+		'Программы'	   => 'education_programs/index_by_admin/',		
+		'Материалы'	   => 'educational_materials/index_by_admin/',
+        'Заявки'       => 'applications/index_by_admin'
     );
 	
 	/* ссылки, доступные только преподу */	        
     $teacher_elements = array(
-        'Пользователи' => 'users',
-		'Материалы'	   => 'educational_materials'
+        'Пользователи' => 'users/index/',
+		'Материалы'	   => 'educational_materials/index/'
     );
 
 	/* ссылки, доступные только слушателю */	        
     $student_elements = array(
         //'Слушатели' => 'users',
-        //'Программы'   => 'education_programs',        
-		//'Материалы'	  => 'educational_materials',
-        'Заявки'      => 'applications'  
+        'Программы'   => 'education_programs/index_by_student/',        
+		//'Материалы'	  => 'educational_materials/index_by_student/',
+        'Заявки'      => 'applications/index_by_student/'
     );
 
     /* Дополнительные ссылки */
@@ -71,9 +71,9 @@
     <?php if (strpos($link, 'http') === 0): ?>
         <a href="<?php echo $link ?>"><?php echo $title ?></a>
     <?php elseif ($cur_ctrl == $link): ?>
-        <a href="/<?php echo $link ?>/index/"><?php echo $title ?></a>
+        <a href="/<?php echo $link ?>"><?php echo $title ?></a>
     <?php else: ?>
-        <a href="/<?php echo $link ?>/index/"><?php echo $title ?></a>
+        <a href="/<?php echo $link ?>"><?php echo $title ?></a>
     <?php endif; ?>
     
     <?php if ($last_key !== $title): ?>

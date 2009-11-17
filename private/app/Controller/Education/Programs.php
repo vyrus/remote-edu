@@ -35,7 +35,7 @@
         * @todo Remove this placeholder.
         */
         public function action_index_by_student () {
-			$this->flash('', '', false);
+			$this->render();
 		}
 		
 		public function action_index_by_admin () {
