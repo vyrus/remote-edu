@@ -23,8 +23,8 @@
 	/* ссылки, доступные только слушателю */	        
     $student_elements = array(
         //'Слушатели' => 'users',
-        'Программы'   => 'education_programs',        
-		'Материалы'	  => 'educational_materials',
+        //'Программы'   => 'education_programs',        
+		//'Материалы'	  => 'educational_materials',
         'Заявки'      => 'applications'  
     );
 
