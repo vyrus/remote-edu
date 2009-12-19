@@ -335,22 +335,23 @@
             {
                 if (Model_User::ROLE_TEACHER == $udata->role)
                 {
-                    $redirect_link = '/users/index_by_teacher/';
+                    $redirect_link = 'users/index_by_teacher';
                 }elseif (Model_User::ROLE_ADMIN == $udata->role)
                 {
-                    $redirect_link = '/users/index_by_admin/';
+                    $redirect_link = 'users/index_by_admin';
                 }elseif (Model_User::ROLE_STUDENT == $udata->role)
                 {
-                    $redirect_link = '/users/index_by_student/';
+                    $redirect_link = 'users/index_by_student';
                 }
             }else
             {
-                $redirect_link = '/index/index/';
+                $redirect_link = 'index/index';
             }
 
-            /* Если всё удачно, выводим сообщение об успешной авторизации */
+            /* Если всё удачно, выводим сообщение об успешной авторизации 
             $msg = 'Вы успешно авторизованы';
-            $this->flash($msg, $redirect_link);                                         
+            $this->flash($msg, $redirect_link);                           */
+            $this->render($redirect_link);              
         }
         
         /**

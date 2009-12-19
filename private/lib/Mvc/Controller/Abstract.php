@@ -109,7 +109,7 @@
         * @param  int|boolean $timeout Задержка перед автоматическим переходом.
         * @return void
         */
-        public function flash($message, $link, $timeout = 10) {
+        public function flash($message, $link, $timeout = 5) {
             $vars = array(
                 'message' => $message,
                 'link'    => $link,
