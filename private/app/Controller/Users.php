@@ -476,7 +476,12 @@
             
             $this->flash('Ваш профиль успешно обновлён', '/users/index_by_student/');
         }
-        
+
+        public function action_howtostart() 
+        {
+            $this->render('index/howtostart');
+        }
+                
         /**
         * Снятие авторизации.
         */

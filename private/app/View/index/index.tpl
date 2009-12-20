@@ -1,9 +1,9 @@
 <div class="distobzag">Дистанционное образование</div>
 					
 <div class="dist3">
-<div class="dist2"><a href=""><div>Как начать обучение?</div></a></div>
+<div class="dist2"><a href="/users/howtostart/"><div>Как начать обучение?</div></a></div>
 
-<div class="dist"><a href=""><div>Начать обучение</div></a></div>
+<div class="dist"><a href="/users/login/"><div>Начать обучение</div></a></div>
 </div>
 
 <div class="content-topic"><span>&nbsp;Дистанционное обучение. Преимущества и возможности</span></div>
