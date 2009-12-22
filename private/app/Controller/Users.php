@@ -353,7 +353,13 @@
             $this->flash($msg, $redirect_link);                           */
             $this->render($redirect_link);              
         }
-        
+
+		// Фукнция завода на инструкцию
+ 		public function action_instructions() 
+        {
+            $this->render('users/instructions');
+        }        
+
         /**
         * Отображение информации об авторизованном пользователе.
         */
@@ -471,10 +477,12 @@
             _toMysqlDate($profile['passport']['given_date']);
             
             if (!$user->setExtendedProfile($udata->user_id, $profile)) {
-                $this->flash('Ошибка при сохранении профиля', '/users/index_by_student/');
+                $this->render('users/profile_extended_by_student');
+				//$this->flash('Ошибка при сохранении профиля', '/users/index_by_student/');
             }
-            
-            $this->flash('Ваш профиль успешно обновлён', '/users/index_by_student/');
+
+            $this->render('applications/index_by_student');    
+            //$this->flash('Ваш профиль успешно обновлён', '/users/index_by_student/');
         }
 
         public function action_howtostart() 
