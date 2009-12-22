@@ -2,16 +2,16 @@
 
 	/* ссылки, доступные пользователю, независимо от прав доступа */	    
     $generic_elements = array(
-        'Главная'  => 'http://uchimvas.ru/',
+        'Главная'  => 'http://dist.uchimvas.ru/',
         //'Ошибки' => 'error'
     );
 	
 	/* ссылки, доступные только админу */	        
     $admin_elements = array(
-        'Пользователи' => 'users/index_by_admin/',
-		'Программы'	   => 'education_programs/index_by_admin/',		
-		'Материалы'	   => 'educational_materials/index_by_admin/',
-        'Заявки'       => 'applications/index_by_admin'
+        'Пользователи'                     => 'users/index_by_admin/',
+	'Формирование учебных программ'	   => 'education_programs/index_by_admin/',		
+	'Загрузка материалов'   	   => 'educational_materials/index_by_admin/',
+        'Заявки на обучение'               => 'applications/index_by_admin'
     );
 	
 	/* ссылки, доступные только преподу */	        
@@ -23,9 +23,9 @@
 	/* ссылки, доступные только слушателю */	        
     $student_elements = array(
         //'Слушатели' => 'users',
-        'Программы'   => 'education_programs/index_by_student/',        
+        'Мои курсы'   => 'education_programs/index_by_student/',        
 		//'Материалы'	  => 'educational_materials/index_by_student/',
-        'Заявки'      => 'applications/index_by_student/'
+        'Новый курс'      => 'applications/index_by_student/'
     );
 
     /* Дополнительные ссылки */
@@ -36,7 +36,7 @@
         'Форум'                      => 'http://uchimvas.ru/forum.html'
     );
     
-    /* Карта соответствия ролйе пользователей и выводимых пунктов меню */
+    /* Карта соответствия ролей пользователей и выводимых пунктов меню */
     $_role2elems = array(
         Model_User::ROLE_STUDENT => $student_elements,
         Model_User::ROLE_TEACHER => $teacher_elements,
