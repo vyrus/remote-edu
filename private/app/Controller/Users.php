@@ -354,12 +354,6 @@
             $this->render($redirect_link);              
         }
 
-		// Функция завода на инструкции
- 		public function action_instructions_by_user() 
-        {
-            $this->render('users/instructions');
-        }        
-
         /**
         * Отображение информации об авторизованном пользователе.
         */
@@ -490,6 +484,11 @@
         {
             $this->render('index/howtostart');
         }
+		// Функция завода на инструкции
+ 		public function action_instructions_by_user() 
+        {
+            $this->render('users/instructions');
+        }        
                 
         /**
         * Снятие авторизации.
