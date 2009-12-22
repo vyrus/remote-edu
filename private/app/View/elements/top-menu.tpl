@@ -23,9 +23,9 @@
 	/* ссылки, доступные только слушателю */	        
     $student_elements = array(
         //'Слушатели' => 'users',
-        'Мои курсы'   => 'education_programs/index_by_student/',        
+        'Мои курсы'                        => 'education_programs/available/',        
 		//'Материалы'	  => 'educational_materials/index_by_student/',
-        'Новый курс'      => 'applications/index_by_student/'
+        'Новый курс'                       => 'applications/index_by_student/'
     );
 
     /* Дополнительные ссылки */

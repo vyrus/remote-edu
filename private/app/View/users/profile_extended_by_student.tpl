@@ -73,8 +73,8 @@
 <div class="form">
     <?php /* Фамилия */ $field = $form->surname ?>
     <div class="field">
-      <label for="<?php echo $field->name ?>">Фамилия:</label>
       <input name="<?php echo $field->name ?>" id="<?php echo $field->name ?>" value="<?php echo $field->value ?>" /> 
+      <label for="<?php echo $field->name ?>">Фамилия:</label>
     </div>
     
             <?php if (isset($field->error)): ?>
@@ -82,9 +82,10 @@
             <?php endif; ?>
         
     <?php /* Имя */ $field = $form->name ?>
+    <br>
     <div class="field">
-      <label for="<?php echo $field->name ?>">Имя:</label>
       <input name="<?php echo $field->name ?>" id="<?php echo $field->name ?>" value="<?php echo $field->value ?>" /> 
+      <label for="<?php echo $field->name ?>">Имя:</label>
     </div>
     
             <?php if (isset($field->error)): ?>
@@ -92,9 +93,10 @@
             <?php endif; ?>
         
     <?php /* Отчество */ $field = $form->patronymic ?>
+    <br>
     <div class="field">
-      <label for="<?php echo $field->name ?>">Отчество:</label>
       <input name="<?php echo $field->name ?>" id="<?php echo $field->name ?>" value="<?php echo $field->value ?>" /> 
+      <label for="<?php echo $field->name ?>">Отчество:</label>
     </div>
     
             <?php if (isset($field->error)): ?>
@@ -102,9 +104,10 @@
             <?php endif; ?>
     
     <?php /* Дата рождения */ $field = $form->birthday ?>
+    <br>
     <div class="field">
-      <label for="<?php echo $field->name ?>">Дата рождения:</label>
       <input name="<?php echo $field->name ?>" id="<?php echo $field->name ?>" value="<?php echo $field->value ?>" /> 
+      <label for="<?php echo $field->name ?>">Дата рождения:</label>
     </div>
     
             <?php if (isset($field->error)): ?>
@@ -112,9 +115,10 @@
             <?php endif; ?>
             
     <?php /* Серия паспорта */ $field = $form->passport_series ?>
+    <br>
     <div class="field">
-      <label for="<?php echo $field->name ?>">Серия паспорта:</label>
       <input name="<?php echo $field->name ?>" id="<?php echo $field->name ?>" value="<?php echo $field->value ?>" /> 
+      <label for="<?php echo $field->name ?>">Серия паспорта:</label>
     </div>
     
             <?php if (isset($field->error)): ?>
@@ -122,9 +126,10 @@
             <?php endif; ?>
 
     <?php /* Номер паспорта */ $field = $form->passport_number ?>
+    <br>
     <div class="field">
-      <label for="<?php echo $field->name ?>">Номер паспорта:</label>
       <input name="<?php echo $field->name ?>" id="<?php echo $field->name ?>" value="<?php echo $field->value ?>" /> 
+      <label for="<?php echo $field->name ?>">Номер паспорта:</label>
     </div>
     
             <?php if (isset($field->error)): ?>
@@ -132,9 +137,10 @@
             <?php endif; ?>
     
     <?php /* Кем выдан паспорт */ $field = $form->passport_given_by ?>
+    <br>
     <div class="field">
-      <label for="<?php echo $field->name ?>">Кем выдан паспорт:</label>
       <input name="<?php echo $field->name ?>" id="<?php echo $field->name ?>" value="<?php echo $field->value ?>" /> 
+      <label for="<?php echo $field->name ?>">Кем выдан паспорт:</label>
     </div>
     
             <?php if (isset($field->error)): ?>
@@ -142,9 +148,10 @@
             <?php endif; ?>
 
     <?php /* Дата выдачи паспорта */ $field = $form->passport_given_date ?>
+    <br>
     <div class="field">
-      <label for="<?php echo $field->name ?>">Дата выдачи паспорта:</label>
       <input name="<?php echo $field->name ?>" id="<?php echo $field->name ?>" value="<?php echo $field->value ?>" /> 
+      <label for="<?php echo $field->name ?>">Дата выдачи паспорта:</label>
     </div>
     
             <?php if (isset($field->error)): ?>
@@ -152,9 +159,10 @@
             <?php endif; ?>
 
     <?php /* Область/край */ $field = $form->region ?>
+    <br>
     <div class="field">
+      <input name="<?php echo $field->name ?>" id="<?php echo $field->name ?>" value="<?php echo $field->value ?>"/> 
       <label for="<?php echo $field->name ?>">Область/край:</label>
-      <input name="<?php echo $field->name ?>" id="<?php echo $field->name ?>" value="<?php echo $field->value ?>" style="width: 150px;"/> 
       
       <?php $field = $form->region_id ?> 
       <input type="hidden" name="<?php echo $field->name ?>" id="region_id" value="<?php echo $field->value ?>" />
@@ -165,9 +173,10 @@
             <?php endif; ?>
             
     <?php /* Город */ $field = $form->city ?>
+    <br>
     <div class="field">
-      <label for="<?php echo $field->name ?>">Город:</label>
       <input name="<?php echo $field->name ?>" id="<?php echo $field->name ?>" value="<?php echo $field->value ?>" /> 
+      <label for="<?php echo $field->name ?>">Город:</label>
       
       <?php $field = $form->city_id ?> 
       <input type="hidden" name="<?php echo $field->name ?>" id="<?php echo $field->name ?>" value="<?php echo $field->value ?>" />
@@ -178,9 +187,10 @@
             <?php endif; ?>
     
     <?php /* Улица */ $field = $form->street ?>
+    <br>
     <div class="field">
-      <label for="<?php echo $field->name ?>">Улица:</label>
       <input name="<?php echo $field->name ?>" id="<?php echo $field->name ?>" value="<?php echo $field->value ?>" /> 
+      <label for="<?php echo $field->name ?>">Улица:</label>
     </div>
     
             <?php if (isset($field->error)): ?>
@@ -188,9 +198,10 @@
             <?php endif; ?>        
     
     <?php /* Дом/корпус */ $field = $form->house ?>
+    <br>
     <div class="field">
-      <label for="<?php echo $field->name ?>">Дом/корпус:</label>
       <input name="<?php echo $field->name ?>" id="<?php echo $field->name ?>" value="<?php echo $field->value ?>" /> 
+      <label for="<?php echo $field->name ?>">Дом/корпус:</label>
     </div>
     
             <?php if (isset($field->error)): ?>
@@ -198,9 +209,10 @@
             <?php endif; ?>        
     
     <?php /* Квартира/комната */ $field = $form->flat ?>
+    <br>
     <div class="field">
-      <label for="<?php echo $field->name ?>">Квартира/комната:</label>
       <input name="<?php echo $field->name ?>" id="<?php echo $field->name ?>" value="<?php echo $field->value ?>" /> 
+      <label for="<?php echo $field->name ?>">Квартира/комната:</label>
     </div>
     
             <?php if (isset($field->error)): ?>
@@ -208,8 +220,8 @@
             <?php endif; ?>        
     
     <?php /* Вид документа об образовании */ $field = $form->doc_type ?>
+    <br>
     <div class="field">
-      <label for="<?php echo $field->name ?>">Вид документа:</label>
       <select name="<?php echo $field->name ?>" id="<?php echo $field->name ?>">
         <?php $values = array(
                     Model_User::DOC_TYPE_EMPTY          => '',
@@ -224,6 +236,7 @@
             </option>
         <?php endforeach ?>
       </select> 
+      <label for="<?php echo $field->name ?>">Вид документа:</label>
     </div>
     
             <?php if (isset($field->error)): ?>
@@ -231,9 +244,10 @@
             <?php endif; ?>
             
     <?php /* Иной вид документа */ $field = $form->doc_custom_type ?>
+    <br>
     <div class="field" id="doc_custom_field">
-      <label for="<?php echo $field->name ?>">Иное:</label>
       <input name="<?php echo $field->name ?>" id="<?php echo $field->name ?>" value="<?php echo $field->value ?>" /> 
+      <label for="<?php echo $field->name ?>">Иное:</label>
     </div>
     
             <?php if (isset($field->error)): ?>
@@ -241,9 +255,10 @@
             <?php endif; ?>
             
     <?php /* Номер документа */ $field = $form->doc_number ?>
+    <br>
     <div class="field">
-      <label for="<?php echo $field->name ?>">Номер документа:</label>
       <input name="<?php echo $field->name ?>" id="<?php echo $field->name ?>" value="<?php echo $field->value ?>" /> 
+      <label for="<?php echo $field->name ?>">Номер документа:</label>
     </div>
     
             <?php if (isset($field->error)): ?>
@@ -251,9 +266,10 @@
             <?php endif; ?>
             
     <?php /* Год окончания */ $field = $form->exit_year ?>
+    <br>
     <div class="field">
-      <label for="<?php echo $field->name ?>">Год окончания:</label>
       <input name="<?php echo $field->name ?>" id="<?php echo $field->name ?>" value="<?php echo $field->value ?>" /> 
+      <label for="<?php echo $field->name ?>">Год окончания:</label>
     </div>
     
             <?php if (isset($field->error)): ?>
@@ -261,9 +277,10 @@
             <?php endif; ?>
     
     <?php /* Специальность */ $field = $form->speciality ?>
+    <br>
     <div class="field">
-      <label for="<?php echo $field->name ?>">Специальность:</label>
       <input name="<?php echo $field->name ?>" id="<?php echo $field->name ?>" value="<?php echo $field->value ?>" /> 
+      <label for="<?php echo $field->name ?>">Специальность:</label>
     </div>                      
     
             <?php if (isset($field->error)): ?>
@@ -271,9 +288,10 @@
             <?php endif; ?>
             
     <?php /* Квалификация */ $field = $form->qualification ?>
+    <br>
     <div class="field">
-      <label for="<?php echo $field->name ?>">Квалификация:</label>
       <input name="<?php echo $field->name ?>" id="<?php echo $field->name ?>" value="<?php echo $field->value ?>" /> 
+      <label for="<?php echo $field->name ?>">Квалификация:</label>
     </div>
     
             <?php if (isset($field->error)): ?>
@@ -281,9 +299,10 @@
             <?php endif; ?>
             
     <?php /* Мобильный телефон */ $field = $form->phone_mobile ?>
+    <br>
     <div class="field">
-      <label for="<?php echo $field->name ?>">Мобильный телефон:</label>
       <input name="<?php echo $field->name ?>" id="<?php echo $field->name ?>" value="<?php echo $field->value ?>" /> 
+      <label for="<?php echo $field->name ?>">Мобильный телефон:</label>
     </div>
     
             <?php if (isset($field->error)): ?>
@@ -291,15 +310,17 @@
             <?php endif; ?>
             
     <?php /* Стационарный телефон */ $field = $form->phone_stationary ?>
+    <br>
     <div class="field">
-      <label for="<?php echo $field->name ?>">Стационарный телефон:</label>
       <input name="<?php echo $field->name ?>" id="<?php echo $field->name ?>" value="<?php echo $field->value ?>" /> 
+      <label for="<?php echo $field->name ?>">Стационарный телефон:</label>
     </div>
     
             <?php if (isset($field->error)): ?>
             <div class="error"><?php echo $field->error ?></div>
             <?php endif; ?>
             
+    <br>
     <div class="field">
         <input type="submit" value="Сохранить" />
     </div>
