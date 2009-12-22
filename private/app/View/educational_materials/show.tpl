@@ -12,7 +12,7 @@
     <ul>
         <?php foreach ($this->materials[$s->section_id] as $m): ?>
             <?php $m = (object) $m ?>
-            <li><?php echo $m->description ?> <a href="/educational_material/<?php echo $m->id ?>">&rarr;</a></li>
+            <li><a href="/educational_material/<?php echo $m->id ?>"><?php echo $m->description ?></a></li>
         <?php endforeach; ?>
     </ul>
 <?php endforeach; ?>
