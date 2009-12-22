@@ -20,7 +20,7 @@
     $user_action_elements = array(
 	//'Вход'                        => 'login',
     //'Кто я?'                      => 'whoami',
-	  'Инструкция пользователю'     => 'instructions',
+	  'Инструкция пользователю'     => 'instructions_by_user',
       'Выйти из системы'	        => 'logout'
     );
 

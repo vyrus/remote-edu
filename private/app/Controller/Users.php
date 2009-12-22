@@ -354,8 +354,8 @@
             $this->render($redirect_link);              
         }
 
-		// Фукнция завода на инструкцию
- 		public function action_instructions() 
+		// Функция завода на инструкции
+ 		public function action_instructions_by_user() 
         {
             $this->render('users/instructions');
         }        
@@ -484,7 +484,8 @@
             $this->render('applications/index_by_student');    
             //$this->flash('Ваш профиль успешно обновлён', '/users/index_by_student/');
         }
-
+		
+		// Функция завода на страницу "Как начать обучение?"
         public function action_howtostart() 
         {
             $this->render('index/howtostart');

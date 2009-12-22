@@ -16,7 +16,8 @@
 	/* ссылки, доступные только слушателю*/	        
     $student_educationMaterialsAction = array(
 
-        'Список материалов'		=> 'index_by_student'
+        //'Список материалов'		=> 'index_by_student'
+        'Инструкция пользователю'	=> 'instructions_by_student'
     );
 	
     //Wtfi
