@@ -189,6 +189,10 @@ div.error {
 	color: #AA0000;
 }
 
+.form {
+    padding:    10px;
+}
+
 /*
 ul.menu { 
 	border: 0 none;
