@@ -8,7 +8,7 @@
 	
 	/* ссылки, доступные только админу */	        
     $admin_elements = array(
-        'Пользователи'                     => 'users/index_by_admin/',
+        'Регистрация пользователя'         => 'users/index_by_admin/',
 	'Формирование учебных программ'	   => 'education_programs/index_by_admin/',		
 	'Загрузка материалов'   	   => 'educational_materials/index_by_admin/',
         'Заявки на обучение'               => 'applications/index_by_admin'
@@ -16,16 +16,16 @@
 	
 	/* ссылки, доступные только преподу */	        
     $teacher_elements = array(
-        'Пользователи' => 'users/index/',
-		'Материалы'	   => 'educational_materials/index/'
+        'Пользователи'     => 'users/index/',
+	'Материалы'	   => 'educational_materials/index/'
     );
 
 	/* ссылки, доступные только слушателю */	        
     $student_elements = array(
-        //'Слушатели' => 'users',
-        'Мои курсы'                        => 'education_programs/available/',        
+        'Моё меню'         => 'users/login/',
+        'Мои курсы'        => 'education_programs/available/',        
 		//'Материалы'	  => 'educational_materials/index_by_student/',
-        'Новый курс'                       => 'applications/index_by_student/'
+        'Мой новый курс'   => 'applications/index_by_student/'
     );
 
     /* Дополнительные ссылки */

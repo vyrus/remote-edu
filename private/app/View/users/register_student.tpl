@@ -3,6 +3,8 @@
 
 <form action="<?php echo $form->action() ?>" method="<?php echo $form->method() ?>">
 <div class="form">
+    Регистрация в системе дистанционного обучения Орловского регионального центра Интернет-образования:<p>
+
     <?php /* Логин */ $field = $form->login ?>
     <div class="field">
       <input name="<?php echo $field->name ?>" type="text" id="login" value="<?php echo $field->value ?>" />

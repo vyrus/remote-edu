@@ -6,7 +6,10 @@
     <?php if (isset($this->error)): ?>
     <div class="error"><?php echo $this->error ?></div>
     <?php endif; ?>
-    
+
+    Укажите, пожалуйста, имя пользователя и пароль, или 
+    <a href="/users/register_student" title="Регистрация" target=blank>зарегистрируйтесь</a>.
+    <p>
     <div class="field">
       <input name="<?php echo $form->login->name ?>" type="text" id="login" value="<?php echo $form->login->value ?>" />
       <label for="login">Имя пользователя:</label>
@@ -32,5 +35,3 @@
     </div>
 </div>
 </form>
-<br>
-Для того чтобы авторизоваться в системе, Вам необходимо пройти <a href="/users/register_student" title="Регистрация">регистрацию</a>
