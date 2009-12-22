@@ -91,6 +91,14 @@ function seltext () {
 	  
     <div id="leftcolumn">
       <div class="inner">
+<?php
+    $user = Model_User::create();
+    $udata = $user->getAuth();
+    $role = (false === $udata ? false : $udata['role']);
+
+    /* Если пользователь авторизован, выводим форму логина */
+    if (false !== $role) {
+?>
 
         <div class="leftblock">
           <div class="topic-leftblock"><span><b>Д</b>истанционка</span></div>
@@ -102,7 +110,9 @@ function seltext () {
               </div>
             </div>
         </div>
-
+<?php
+    }
+?>
         <div class="leftblock">
           <div class="topic-leftblock"><span><b>Д</b>исциплины</span></div>
           <div class="cntnt-leftblock">
