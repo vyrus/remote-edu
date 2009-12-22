@@ -504,9 +504,9 @@
                 }
             }else
             {
-                $redirect_link = '/index/index/';
+                $redirect_link = 'index/index';
             }            
-            $this->flash('Авторизация потеряна', $redirect_link);
+            $this->render($redirect_link);//$this->flash('Авторизация потеряна', $redirect_link);
         }   
     }
 
