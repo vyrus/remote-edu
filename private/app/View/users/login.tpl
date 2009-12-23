@@ -1,5 +1,21 @@
 <?php $this->title = 'Вход' ?>
 <?php $form = $this->form ?>
+<?php
+    $user = Model_User::create();
+    $udata = (object) $user->getAuth();
+    if (isset($udata->role)) {
+      if (Model_User::ROLE_TEACHER == $udata->role) {
+        $link = 'users/index_by_teacher';
+        header('Location: http://dist.uchimvas.ru/' . $link);
+      }elseif (Model_User::ROLE_ADMIN == $udata->role) {
+        $link = 'users/index_by_admin';
+        header('Location: http://dist.uchimvas.ru/' . $link);
+      }elseif (Model_User::ROLE_STUDENT == $udata->role) {
+        $link = 'users/instructions_by_user';
+        header('Location: http://dist.uchimvas.ru/' . $link);
+      }
+    }
+?>
 
 <form action="<?php echo $form->action() ?>" method="<?php echo $form->method() ?>">
 <div class="form">
