@@ -3,7 +3,28 @@
 <div class="dist3">
 <div class="dist2"><a href="/users/howtostart/"><div>Как начать обучение?</div></a></div>
 
-<div class="dist"><a href="/users/login/"><div>Начать обучение</div></a></div>
+<?
+            $user = Model_User::create();
+            $udata = (object) $user->getAuth();
+            if (isset($udata->role))
+            {
+                if (Model_User::ROLE_TEACHER == $udata->role)
+                {
+                    $redirect_link = '/users/index_by_teacher/';
+                }elseif (Model_User::ROLE_ADMIN == $udata->role)
+                {
+                    $redirect_link = '/users/index_by_admin/';
+                }elseif (Model_User::ROLE_STUDENT == $udata->role)
+                {
+                    $redirect_link = '/users/instructions_by_user/';
+                }
+            }else
+            {
+                $redirect_link = '/users/login/';
+            }
+  
+?>
+<div class="dist"><a href="<?=$redirect_link?>"><div>Начать обучение</div></a></div>
 </div>
 
 <div class="content-topic"><span>&nbsp;Дистанционное обучение. Преимущества и возможности</span></div>

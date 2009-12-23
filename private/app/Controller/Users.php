@@ -478,6 +478,12 @@
             $this->render('applications/index_by_student');    
             //$this->flash('Ваш профиль успешно обновлён', '/users/index_by_student/');
         }
+
+        public function action_view_profile_extended($user_id) 
+        {
+            $user = Model_User::create();
+            /*...*/
+        }
 		
 		// Функция завода на страницу "Как начать обучение?"
         public function action_howtostart() 
