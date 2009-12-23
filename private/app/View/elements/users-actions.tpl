@@ -2,6 +2,7 @@
 	
 	/* ссылки, доступные только админу*/	        
     $admin_user_action_elements = array(
+	  'Инструкция'              => 'instructions_by_admin',
       'Регистрация сотрудника'	=> 'register_employee_by_admin',
       'Регистрация слушателя' 	=> 'register_student'
     );
@@ -13,14 +14,14 @@
 	/* ссылки, доступные только слушателю*/	        
     $student_user_action_elements = array(
       //'Регистрация слушателя' 	=> 'register_student',
-      'Подробная анкета слушателя'  => 'profile_extended_by_student'
+      'Подробная анкета слушателя'  => 'profile_extended_by_student',
+	  'Инструкция пользователю'     => 'instructions_by_user'
     );
 	
 	/* ссылки, доступные пользователю, независимо от прав доступа*/	    
     $user_action_elements = array(
 	//'Вход'                        => 'login',
     //'Кто я?'                      => 'whoami',
-	  'Инструкция пользователю'     => 'instructions_by_user',
       'Выйти из системы'	        => 'logout'
     );
 

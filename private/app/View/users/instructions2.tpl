@@ -1,5 +1,6 @@
 <?php $this->title = 'Личный кабинет';?>
-<b>Для того чтобы обучаться нужно:</b>
+<b>Инструкция как пользоваться материлами:</b>
+<!--
 <ol>
     <li>Заполнить <a href="/users/profile_extended_by_student/" target=blank>
 "Подробную анкету слушателя"</a>;</li>
@@ -36,3 +37,4 @@
     программы в пункте <a href="/education_programs/available/" target=blank>"Мои курсы"</a>.</li>
 </ol>
 </font>
+-->

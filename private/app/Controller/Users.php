@@ -484,18 +484,7 @@
             $user = Model_User::create();
             /*...*/
         }
-		
-		// Функция завода на страницу "Как начать обучение?"
-        public function action_howtostart() 
-        {
-            $this->render('index/howtostart');
-        }
-		// Функция завода на инструкции
- 		public function action_instructions_by_user() 
-        {
-            $this->render('users/instructions');
-        }        
-                
+
         /**
         * Снятие авторизации.
         */
@@ -522,6 +511,19 @@
             }            
             $this->render($redirect_link);//$this->flash('Авторизация потеряна', $redirect_link);
         }   
+
+		// Функция завода на страницу "Как начать обучение?"
+        public function action_howtostart() 
+        {
+            $this->render('index/howtostart');
+        }
+
+		// Функция завода на инструкции
+ 		public function action_instructions_by_user() 
+        {
+            $this->render('users/instructions');
+        }        
+
     }
 
 ?>

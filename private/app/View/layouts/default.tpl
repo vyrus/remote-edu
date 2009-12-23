@@ -35,8 +35,6 @@ function seltext () {
 		<a href="http://uchimvas.ru/pismo">Задать вопрос</a>
 		<img src="/files/images/line_topmenu.gif" alt="">
 		<a href="http://uchimvas.ru/article967">Нормативные документы</a>
-		<img src="/files/images/line_topmenu.gif" alt="">
-		<a href="http://uchimvas.ru/444">Образец свидетельства</a>
 	  </div>
       <div id="topsearch">
 		<?php $this->renderElement('top-login') ?>
@@ -96,7 +94,7 @@ function seltext () {
     $udata = $user->getAuth();
     $role = (false === $udata ? false : $udata['role']);
 
-    /* Если пользователь авторизован, выводим форму логина */
+    /* Если пользователь не авторизован, не выводим меню дистанционки */
     if (false !== $role) {
 ?>
 

@@ -30,10 +30,9 @@
 
     /* Дополнительные ссылки */
     $external_links = array(
-        'Преподаватели и сотрудники' => 'http://uchimvas.ru/article899',
-        'Прайс'                      => 'http://uchimvas.ru/article990',
-        'Оплата'                     => 'http://uchimvas.ru/article991',
-        'Форум'                      => 'http://uchimvas.ru/forum.html'
+        'Прайс на дистанционное обучение'       => 'http://uchimvas.ru/article990',
+        'Как оплатить'                          => 'http://uchimvas.ru/article991',
+        'Форум'                                 => 'http://uchimvas.ru/forum.html'
     );
     
     /* Карта соответствия ролей пользователей и выводимых пунктов меню */
