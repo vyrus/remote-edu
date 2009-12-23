@@ -71,7 +71,9 @@
 
 <form action="<?php echo $form->action() ?>" method="<?php echo $form->method() ?>">
 <div class="form">
+    <h3>Заполните, пожалуйста, "Подробную анкету слушателя":</h3>
     <?php /* Фамилия */ $field = $form->surname ?>
+    <br><br>
     <div class="field">
       <input name="<?php echo $field->name ?>" id="<?php echo $field->name ?>" value="<?php echo $field->value ?>" /> 
       <label for="<?php echo $field->name ?>">Фамилия:</label>

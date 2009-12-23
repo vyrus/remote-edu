@@ -13,7 +13,8 @@
 
 	/* ссылки, доступные только слушателю*/	        
     $student_educationProgramsAction = array(
-        'Доступные программы' => 'available/'
+        'Доступные программы'           => 'available/',
+        'Инструкция пользователю'	=> 'instructions_by_student/'
     );
 	
     //Wtfi
