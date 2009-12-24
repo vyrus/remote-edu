@@ -80,7 +80,7 @@ function seltext () {
           </div>
           <noindex>
             <div class="allpagenavi">
-<?php if(isset($this->title) && $this->title != 'Заявки') {?>
+<?php if($_SERVER['REQUEST_URI'] != '/applications/list_by_student/') {?>
               <a href="javascript:history.back()">Назад</a>
 <?php } ?>
               <a href="/" title="Главная">Главная</a>
