@@ -82,7 +82,7 @@
                     $redirect_link = '/users/index_by_admin/';
                 }elseif (Model_User::ROLE_STUDENT == $udata->role)
                 {
-                    $redirect_link = '/users/index_by_student/';
+                    $redirect_link = '/users/login/';
                 }
             }else
             {
@@ -119,8 +119,8 @@
 			  по <a href=/users/login/ title=Авторизация>ссылке</a> и
 			  приступить к обучению!';
 
-//            $this->flash($msg, $redirect_link);
-			$this->render('$redirect_link');
+            $this->flash($msg, $redirect_link);
+//			$this->render($redirect_link);
          }
         
         /**
