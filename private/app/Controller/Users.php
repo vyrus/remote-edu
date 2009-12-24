@@ -377,7 +377,7 @@
                     $redirect_link = '/users/index_by_admin/';
                 }elseif (Model_User::ROLE_STUDENT == $udata->role)
                 {
-                    $redirect_link = '/users/index_by_student/';
+                    $redirect_link = '/users/instructions/';
                 }
             }else
             {
