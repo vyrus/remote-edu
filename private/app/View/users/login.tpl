@@ -16,7 +16,9 @@
       }
     }
 ?>
-
+<h3>Вход в систему дистанционного обучения</h3>
+<br>
+<br>
 <form action="<?php echo $form->action() ?>" method="<?php echo $form->method() ?>">
 <div class="form">
     <?php if (isset($this->error)): ?>

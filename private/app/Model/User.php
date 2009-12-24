@@ -148,7 +148,7 @@
                 ':surname'    => $surname,
                 ':name'       => $name,
                 ':patronymic' => $patronymic,
-                ':status'     => self::STATUS_INACTIVE
+                ':status'     => self::STATUS_ACTIVE
             );
             
             $this->prepare($sql)

@@ -86,7 +86,7 @@
                 }
             }else
             {
-                $redirect_link = '/index/index/';
+                $redirect_link = '/users/login/';
             }
             
             /* Если данные не прошли проверку, показываем ошибки */
@@ -111,11 +111,17 @@
                 $id, $login, $email, $activation_code
             );
             
-            $msg = 'Вы успешно зарегистрированы, письмо для активации ' .
-                   'отправлено на ваш email';
+            $msg = 'Вы успешно зарегистрированы в системе дистанционного обучения.<p>
+			  Через 5 сек. Вас автоматически перенаправят на страницу
+			  <a href=/users/login/ title=Авторизация>авторизации</a>.
+			  <p>
+			  Также, Вы можете, не дожидаясь перенаправления, авторизоваться в системе,
+			  по <a href=/users/login/ title=Авторизация>ссылке</a> и
+			  приступить к обучению!';
 
-            $this->flash($msg, $redirect_link);
-        }
+//            $this->flash($msg, $redirect_link);
+			$this->render('$redirect_link');
+         }
         
         /**
         * Активация аккаунта слушателя.
@@ -387,7 +393,7 @@
             );
             $this->flash($msg, $redirect_link, false);
         }
-        
+
         public function action_profile_extended_by_student() {
             $user = Model_User::create();
             $udata = (object) $user->getAuth();
