@@ -26,7 +26,7 @@
     <?php endif; ?>
 
     Укажите, пожалуйста, имя пользователя и пароль, или 
-    <a href="/users/register_student" title="Регистрация" target=blank>зарегистрируйтесь</a>.
+    <a href="/users/register_student/" title="Регистрация">зарегистрируйтесь</a>.
     <p>
     <div class="field">
       <input name="<?php echo $form->login->name ?>" type="text" id="login" value="<?php echo $form->login->value ?>" />
