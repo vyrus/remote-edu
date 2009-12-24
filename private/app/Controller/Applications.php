@@ -125,7 +125,15 @@
             $app = Model_Application::create();       
             $app->apply($udata->user_id, $object_id, $type);
             
-            $this->flash('Заявка подана', '/applications/list_by_student/');
+            $msg = 'Вы успешно подали заявку на учебный курс.<p>
+			  Через 5 сек. Вас автоматически перенаправят на страницу просмотра
+			  поданых Вами <a href="/applications/list_by_student/" title=Мои заявки> заявок</a>.
+			  <p>
+			  Также, Вы можете, не дожидаясь перенаправления, перейти на страницу
+			  <a href="/applications/index_by_student/" title=Авторизация>Мой новый курс</a> и
+			  подать зявку на ещё один учебный курс!';
+
+            $this->flash($msg, '/applications/list_by_student/');
         }
         
         /**
