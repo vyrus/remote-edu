@@ -14,7 +14,7 @@
         (
             'dsn'     => 'mysql:host=localhost;dbname=remote-edu',
             'user'    => 'root',
-            'passwd'  => '',
+            'passwd'  => 'vjqmysql',
             'options' => array(
                 /* Будет кидать исключения при ошибках */
                 Db_Pdo::ATTR_ERRMODE => Db_Pdo::ERRMODE_EXCEPTION

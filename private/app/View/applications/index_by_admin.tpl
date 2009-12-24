@@ -45,19 +45,23 @@
     <tr class="odd">
     <th class="description">Заявка</th>
     <th class="description">Слушатель</th>        
-    <th class="description">Статус</th>    
+    <th class="description">Статус</th>
+    <th class="description">Действие</th>
     </tr>
     
     <?php foreach ($this->applications as $i => $app): ?>
     <?php $class = ($i % 2 ? "odd" : "even") ?>
     <tr class="<?php echo $class ?>">
         <?php if ($app['program_title']): ?>
-            <td class="description">Заявка на изучение программы "<?php echo $app['program_title'] ?>"</td>
+            <td class="description">Заявка на изучение направления "<?php echo $app['program_title'] ?>"</td>
         <?php elseif($app['discipline_title']): ?>
             <td class="description">Заявка на изучение дисциплины "<?php echo $app['discipline_title'] ?>"</td>
         <?php endif; ?>
             
-            <td><?php echo $app['name'] . ' ' . $app['surname'] . ' ' . $app['patronymic'] ?></td>
+            <td><?php
+            if(empty($app['name']) && empty($app['surname']) && empty($app['patronymic']))
+               echo  $app['login'];
+            else echo $app['surname'] . ' ' . $app['name'] . ' ' . $app['patronymic']; ?></td>
             <td width='10%'><?php echo $this->statuses[$app['status']] ?></td>
             <td>
                 <?php switch ($app['status']):

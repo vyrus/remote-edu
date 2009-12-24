@@ -30,7 +30,7 @@
 			<tr<? if ($i % 2) {?> class="odd" <?} else {?> class="even"<?}?>> <?
 				if ($app['program_title'])
 				{ ?>
-					<td class="description">Заявка на изучение программы "<?=$app['program_title']?>"</td> <?
+					<td class="description">Заявка на изучение направления "<?=$app['program_title']?>"</td> <?
 				}elseif ($app['discipline_title'])
 				{ ?>
 					<td class="description">Заявка на изучение дисциплины "<?=$app['discipline_title']?>"</td> <?

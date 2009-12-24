@@ -45,8 +45,8 @@
         public function validate(Http_Request $request, Model_Region $region, Model_Locality $locality) {
             $result = parent::validate($request);
             
-            $result &= $this->_validateRegionId('region_id', $region, 'Выберите регион из списка');
-            $result &= $this->_validateCityId('city_id', $locality, 'Выберите город из списка');
+//            $result &= $this->_validateRegionId('region_id', $region, 'Выберите регион из списка');
+//            $result &= $this->_validateCityId('city_id', $locality, 'Выберите город из списка');
             $result &= $this->_validateOptionalField('flat', '/^[0-9]+$/ixu', 'Укажите номер квартиры (целое число)');
             
             $regex = sprintf('/^(%s|%s|%s)$/xu', Model_User::DOC_TYPE_DIPLOMA_HIGH,

@@ -169,11 +169,11 @@
       <?php $field = $form->region_id ?> 
       <input type="hidden" name="<?php echo $field->name ?>" id="region_id" value="<?php echo $field->value ?>" />
     </div>
-    
+  
             <?php if (isset($field->error)): ?>
             <div class="error"><?php echo $field->error ?></div>
             <?php endif; ?>
-            
+
     <?php /* Город */ $field = $form->city ?>
     <br>
     <div class="field">
