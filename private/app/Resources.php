@@ -84,7 +84,8 @@
             
             $postman = Postman::create(
                 $this->_config['base_url'],
-                $config['from_email'], $config['from_name']
+                $config['from_email'], $config['from_name'],
+                $config['smtp-authrize']
             );   
             
             return $postman; 

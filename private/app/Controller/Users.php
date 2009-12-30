@@ -148,8 +148,7 @@
                 $redirect_link = '/index/index/';
             }
             
-            $id = $params['user_id'];
-            $this->flash($msg, $redirect_link);            
+            $id = $params['user_id'];            
 
             /* Проверяем статус пользователя */
             $status = $user->getStatus($id);

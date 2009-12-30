@@ -5,7 +5,7 @@
     /**
     * Модель для работы с пользователями.
     */
-    class Model_User extends Mvc_Model_Abstract {
+    class Model_User extends Model_Base {
         /**
         * Роль пользователя: администратор.
         * 
@@ -66,13 +66,6 @@
         const DOC_TYPE_CUSTOM = 'custom';
         
         /**
-        * Название таблицы с пользователями в БД.
-        * 
-        * @var string
-        */
-        protected $_table = 'users';
-        
-        /**
         * Кэш данных авторизации.
         * 
         * @var array
@@ -97,7 +90,7 @@
         public function exists($login) {
             $sql = '
                 SELECT COUNT(*)
-                FROM  ' . $this->_table . '
+                FROM  ' . $this->_tables['users'] . '
                 WHERE login = ?
             ';
             
@@ -128,7 +121,7 @@
         )
         {
             $sql = '
-                INSERT INTO ' . $this->_table . '
+                INSERT INTO ' . $this->_tables['users'] . '
                 (login, passwd, role, email, surname, name, patronymic, status)
                 VALUES
                 (:login, :passwd, :role, :email, :surname, :name, :patronymic, :status)
@@ -166,7 +159,7 @@
         public function getStatus($id) {
             $sql = '
                 SELECT status
-                FROM ' . $this->_table  . '
+                FROM ' . $this->_tables['users']  . '
                 WHERE user_id = ?
             ';
             
@@ -190,7 +183,7 @@
             return $code;
         }
         
-        /**
+        /** 
         * Шифрование пароля.
         * 
         * @param  string $passwd
@@ -232,7 +225,7 @@
         */
         public function activateStudent($id) {
             $sql = '
-                UPDATE ' . $this->_table . '
+                UPDATE ' . $this->_tables['users'] . '
                 SET status = :status
                 WHERE user_id = :id AND
                       role = :role
@@ -261,7 +254,7 @@
         */
         public function activateEmployee($id, $passwd) {
             $sql = '
-                UPDATE ' . $this->_table . '
+                UPDATE ' . $this->_tables['users'] . '
                 SET passwd = :passwd, status = :status
                 WHERE user_id = :id AND
                       (role = :role_t OR role = :role_a)
@@ -298,7 +291,7 @@
 
              $sql = '
                 SELECT *
-                FROM  ' . $this->_table . '
+                FROM  ' . $this->_tables['users'] . '
                 WHERE login = :login AND
                       passwd = :passwd
             ';
@@ -394,7 +387,8 @@
             return $count > 0;
         }
         
-        public function setExtendedProfile($uid, $profile) {
+        public function setExtendedProfile($uid, $profile) 
+        {
             if (!$this->_updateSNP($uid, $profile['general'])) {
                 return false;
             }
@@ -518,7 +512,7 @@
         protected function _getActiveUserById($id) {
             $sql = '
                 SELECT *
-                FROM ' . $this->_table . '
+                FROM ' . $this->_tables['users'] . '
                 WHERE user_id = ? AND
                       status = ?
             ';
@@ -528,6 +522,44 @@
                            
             return $stmt->fetch(Db_Pdo::FETCH_ASSOC);
         }
+        
+        /**
+        * Получение данных расширенной анкеты слушателя
+        * 
+        * @return array
+        */
+        public function getStudentExtendedProfile($student_id)
+        {
+            $sql = '
+                SELECT a.app_id, a.status, u.name, u.surname, u.patronymic,
+                        contract_filename,
+                       p.title AS program_title,
+                       d.title AS discipline_title
+                FROM ' . $this->_tables['applications'] . ' a
+                
+                LEFT JOIN ' . $this->_tables['programs'] . ' p
+                ON a.type = :type_program AND
+                   p.program_id = a.object_id
+                
+                LEFT JOIN ' . $this->_tables['disciplines'] . ' d
+                ON a.type = :type_discipline AND
+                   d.discipline_id = a.object_id
+                
+                LEFT JOIN ' . $this->_tables['users'] . ' u
+                ON u.user_id = a.user_id 
+            ';
+            $values = array(
+                ':type_program'    => self::TYPE_PROGRAM,
+                ':type_discipline' => self::TYPE_DISCIPLINE
+            );
+            
+            $stmt = $this->prepare($sql);
+            $stmt->execute($values);
+            
+            $apps = $stmt->fetchAll(Db_PdO::FETCH_ASSOC);
+            return $apps;
+        }
+        
     }
 
 ?>

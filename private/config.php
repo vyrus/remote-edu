@@ -14,7 +14,7 @@
         (
             'dsn'     => 'mysql:host=localhost;dbname=remote-edu',
             'user'    => 'root',
-            'passwd'  => 'vjqmysql',
+            'passwd'  => '',
             'options' => array(
                 /* Будет кидать исключения при ошибках */
                 Db_Pdo::ATTR_ERRMODE => Db_Pdo::ERRMODE_EXCEPTION
@@ -54,7 +54,7 @@
 					'action'		=> 'upload',
 				), 
 			),
-			
+
 			array (
 				'type'		=> Mvc_Router::ROUTE_STATIC,
 				'pattern'	=> '/educational_materials/remove',
@@ -324,9 +324,16 @@
         'postman' => array
         (
             /* Адрес отправителя писем */
-            'from_email' => 'robot@remote-edu.localhost',
+            'from_email'    => 'robot@remote-edu.localhost',
             /* Имя отправителя */
-            'from_name'  => 'Робот' 
+            'from_name'     => 'Робот',
+            /* Данные для smtp-авторизации */                        
+            'smtp-authrize' => array
+             (
+                'auth' => 'login',
+                'username' => 'dist',
+                'password' => 'DK4Vh5'
+             ) 
         )
     );
             

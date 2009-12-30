@@ -97,11 +97,13 @@
         * @param  string $from_email Имя отправителя.
         * @return void
         */
-        public function __construct($base_url, $from_email, $from_name) {
+        public function __construct($base_url, $from_email, $from_name, $smtp_authorize) 
+        {
             $this->_mail = new Zend_Mail($this->_charset);
             $this->_mail->setFrom($from_email, $from_name);
             
             $this->_base_url = $base_url;
+            $this->_smtp_authorize = $smtp_authorize;
         }
         
         /**
@@ -112,8 +114,9 @@
         * @param  string $from_email Имя отправителя.
         * @return void
         */
-        public static function create($base_url, $from_email, $from_name) {
-            return new self($base_url, $from_email, $from_name);
+        public static function create($base_url, $from_email, $from_name, $smtp_authorize) 
+        {
+            return new self($base_url, $from_email, $from_name, $smtp_authorize);
         }
         
         /**
@@ -201,8 +204,9 @@
             $this->_mail->setBodyText($message)
                         ->addTo($to)
                         ->setSubject($subject);
-                        
-            return $this->_mail->send();
+
+            $transport = new Zend_Mail_Transport_Smtp('mail.ostu.ru', $this->_smtp_authorize);
+            return $this->_mail->send($transport);        
         }
         
         /**
