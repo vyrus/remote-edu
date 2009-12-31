@@ -956,9 +956,7 @@ class Zend_Mail extends Zend_Mime_Message
         if ($this->_date === null) {
             $this->setDate();
         }
-
         $transport->send($this);
-
         return $this;
     }
 
