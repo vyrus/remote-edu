@@ -133,7 +133,7 @@
 			  <a href="/applications/index_by_student/" title=Авторизация>Мой новый курс</a> и
 			  подать зявку на ещё один учебный курс!';
 
-            $this->flash($msg, '/applications/list_by_student/');
+            $this->flash($msg, '/applications/list_by_student/', 10);
         }
         
         /**

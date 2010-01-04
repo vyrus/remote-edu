@@ -119,7 +119,7 @@
 			  по <a href=/users/login/ title=Авторизация>ссылке</a> и
 			  приступить к обучению!';
 
-            $this->flash($msg, $redirect_link);
+            $this->flash($msg, $redirect_link, 10);
 //			$this->render($redirect_link);
          }
         
