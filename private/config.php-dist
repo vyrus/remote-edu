@@ -7,13 +7,13 @@
         'mode' => 'debug',
         
         /* Базовый адрес */
-        'base_url' => 'http://remote-edu',
+        'base_url' => '',
         
         /* Настройки соединения с БД */
         'db' => array
         (
-            'dsn'     => 'mysql:host=localhost;dbname=remote-edu',
-            'user'    => 'root',
+            'dsn'     => 'mysql:host=localhost;dbname=',
+            'user'    => '',
             'passwd'  => '',
             'options' => array(
                 /* Будет кидать исключения при ошибках */
@@ -25,22 +25,22 @@
         'auth' => array
         (
             /* Случайная последовательность символов для шифрования */
-            'salt' => 'Ix8i8AQrEfFtgi14XupbT4kxHM511ZDFA'
+            'salt' => ''
         ),
         
         /* Настройка отправки почтовых сообщений */
         'postman' => array
         (
             /* Адрес отправителя писем */
-            'from_email'    => 'robot@remote-edu.localhost',
+            'from_email'    => '',
             /* Имя отправителя */
-            'from_name'     => 'Робот',
+            'from_name'     => '',
             /* Данные для smtp-авторизации */                        
             'smtp-authrize' => array
              (
-                'auth' => 'login',
-                'username' => 'dist',
-                'password' => 'DK4Vh5'
+                'auth'     => '',
+                'username' => '',
+                'password' => ''
              ) 
         ),
         
