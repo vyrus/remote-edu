@@ -42,6 +42,20 @@
         const ATTACHMENT_NAME = 'договор об оказани образовательных услуг';
 
         /**
+        * Транспорт для отправки: функция mail().
+        * 
+        * @var const
+        */
+        const TRANSPORT_SENDMAIL = 'sendmail';
+        
+        /**
+        * Транспорт для отправки: SMTP-сервер.
+        * 
+        * @var const
+        */
+        const TRANSPORT_SMTP = 'smtp';
+        
+        /**
         * Заголовки писем по типу.
         * 
         * @var array
@@ -75,6 +89,13 @@
         protected $_mail;
         
         /**
+        * Транспорт, который будет использован для отправки писем.
+        * 
+        * @var Zend_Mail_Transport_Abstract
+        */
+        protected $_transport;
+        
+        /**
         * Базовый адрес сайта (используется для построения правильных ссылок
         * в письме.
         * 
@@ -92,31 +113,46 @@
         /**
         * Метод-конструктор класса.
         * 
-        * @param  string $base_url   Базовый адрес сайта.
-        * @param  string $from_email Адрес отправителя писем.
-        * @param  string $from_email Имя отправителя.
+        * @param  string $base_url Базовый адрес сайта.
+        * @param  string $config   Настройки отправки почты.
         * @return void
         */
-        public function __construct($base_url, $from_email, $from_name, $smtp_authorize) 
+        public function __construct($base_url, $config) 
         {
             $this->_mail = new Zend_Mail($this->_charset);
-            $this->_mail->setFrom($from_email, $from_name);
+            $this->_mail->setFrom($config['from_email'], $config['from_name']);
             
+            /* Выбираем, какой транспорт для отправки почты использовать */
+            switch ($config['transport'])
+            {
+                /* Через заданны SMTP-сервер */
+                case self::TRANSPORT_SMTP:
+                    $smtp = $config['smtp'];
+                    $trans = new Zend_Mail_Transport_Smtp($smtp['host'],
+                                                          $smtp['config']);
+                    break;
+                
+                /* Через стандартную функцию mail() */
+                case self::TRANSPORT_SENDMAIL:
+                default:
+                    $trans = new Zend_Mail_Transport_Sendmail();
+                    break;
+            }
+            
+            $this->_transport = $trans;
             $this->_base_url = $base_url;
-            $this->_smtp_authorize = $smtp_authorize;
         }
         
         /**
         * Создание экземпляра класса.
         * 
-        * @param  string $base_url   Базовый адрес сайта.
-        * @param  string $from_email Адрес отправителя писем.
-        * @param  string $from_email Имя отправителя.
+        * @param  string $base_url Базовый адрес сайта.
+        * @param  string $config   Настройки отправки почты.
         * @return void
         */
-        public static function create($base_url, $from_email, $from_name, $smtp_authorize) 
+        public static function create($base_url, $config) 
         {
-            return new self($base_url, $from_email, $from_name, $smtp_authorize);
+            return new self($base_url, $config);
         }
         
         /**
@@ -204,9 +240,8 @@
             $this->_mail->setBodyText($message)
                         ->addTo($to)
                         ->setSubject($subject);
-
-            $transport = new Zend_Mail_Transport_Smtp('mail.ostu.ru', $this->_smtp_authorize);
-            return $this->_mail->send($transport);        
+            
+            return $this->_mail->send($this->_transport);        
         }
         
         /**

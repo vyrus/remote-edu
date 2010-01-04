@@ -32,16 +32,32 @@
         'postman' => array
         (
             /* Адрес отправителя писем */
-            'from_email'    => '',
+            'from_email' => '',
+            
             /* Имя отправителя */
-            'from_name'     => '',
-            /* Данные для smtp-авторизации */                        
-            'smtp-authrize' => array
-             (
-                'auth'     => '',
-                'username' => '',
-                'password' => ''
-             ) 
+            'from_name' => '',
+            
+            /**
+            * Транспорт для отправки почты:
+            *   Postman::TRANSPORT_SENDMAIL - через стандартную функцию mail(),
+            *   Postman::TRANSPORT_SMTP - через SMTP-сервер (требует указания
+            *                             параметра "smtp").
+            */
+            'transport' => ,
+            
+            /* Данные для SMTP-авторизации */                        
+            'smtp' => array
+            (
+                /* Адрес SMTP-сервера */
+                'host' => '',
+                /* Настройки соединения с сервером */
+                'config' => array
+                (
+                    'auth'     => '',
+                    'username' => '',
+                    'password' => ''
+                )
+            ) 
         ),
         
         /* Маршруты */

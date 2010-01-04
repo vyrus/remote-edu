@@ -32,16 +32,32 @@
         'postman' => array
         (
             /* Адрес отправителя писем */
-            'from_email'    => 'robot@remote-edu.localhost',
+            'from_email' => 'robot@remote-edu.localhost',
+            
             /* Имя отправителя */
-            'from_name'     => 'Робот',
-            /* Данные для smtp-авторизации */                        
-            'smtp-authrize' => array
-             (
-                'auth' => 'login',
-                'username' => 'dist',
-                'password' => 'DK4Vh5'
-             ) 
+            'from_name' => 'Робот',
+            
+            /**
+            * Транспорт для отправки почты:
+            *   Postman::TRANSPORT_SENDMAIL - через стандартную функцию mail(),
+            *   Postman::TRANSPORT_SMTP - через SMTP-сервер (требует указания
+            *                             параметра "smtp").
+            */
+            'transport' => Postman::TRANSPORT_SENDMAIL,
+            
+            /* Данные для SMTP-авторизации */                        
+            'smtp' => array
+            (
+                /* Адрес SMTP-сервера */
+                'host' => '',
+                /* Настройки соединения с сервером */
+                'config' => array
+                (
+                    'auth'     => '',
+                    'username' => '',
+                    'password' => ''
+                )
+            ) 
         ),
         
         /* Маршруты */

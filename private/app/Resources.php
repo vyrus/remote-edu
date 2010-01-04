@@ -82,11 +82,7 @@
         protected function get_postman() {
             $config = $this->_config['postman'];
             
-            $postman = Postman::create(
-                $this->_config['base_url'],
-                $config['from_email'], $config['from_name'],
-                $config['smtp-authrize']
-            );   
+            $postman = Postman::create($this->_config['base_url'], $config);   
             
             return $postman; 
         }
