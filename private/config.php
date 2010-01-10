@@ -313,6 +313,30 @@
                     'controller' => 'ajax',
                     'action'     => 'autocomplete_city'
                 )
+            ),
+            
+            /* Страница с ценами */
+            array(
+                'type' => Mvc_Router::ROUTE_STATIC,
+                'pattern' => '/price',
+                'handler' => array
+                (
+                    'controller' => 'pages',
+                    'action'     => 'display',
+                    'params'     => array('page' => 'price')
+                )     
+            ),
+            
+            /* Страница со способами оплаты */
+            array(
+                'type' => Mvc_Router::ROUTE_STATIC,
+                'pattern' => '/payment',
+                'handler' => array
+                (
+                    'controller' => 'pages',
+                    'action'     => 'display',
+                    'params'     => array('page' => 'payment')
+                )     
             )
         ),
         

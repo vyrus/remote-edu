@@ -5,34 +5,34 @@
         'Главная'  => 'http://dist.uchimvas.ru/',
         //'Ошибки' => 'error'
     );
-	
-	/* ссылки, доступные только админу */	        
+    
+    /* ссылки, доступные только админу */	        
     $admin_elements = array(
-        'Регистрация пользователя'         	=> 'users/index_by_admin/',
-	'Формирование учебных программ'	   	=> 'education_programs/index_by_admin/',		
-	'Загрузка материалов'   	   	=> 'educational_materials/index_by_admin/',
- 	'Заявки на обучение'               	=> 'applications/index_by_admin'
+        'Регистрация пользователя'      => 'users/index_by_admin/',
+        'Формирование учебных программ' => 'education_programs/index_by_admin/',
+        'Загрузка материалов'           => 'educational_materials/index_by_admin/',
+        'Заявки на обучение'            => 'applications/index_by_admin'
     );
-	
-	/* ссылки, доступные только преподу */	        
+    
+    /* ссылки, доступные только преподу */	        
     $teacher_elements = array(
-    'Пользователи'     	=> 'users/index/',
-	'Материалы'	   		=> 'educational_materials/index/'
+        'Пользователи' => 'users/index/',
+        'Материалы'    =>'educational_materials/index/'
     );
-
-	/* ссылки, доступные только слушателю */	        
+    
+    /* ссылки, доступные только слушателю */	        
     $student_elements = array(
-        'Моё меню'         => 'users/instructions_by_user/',
-        'Мои курсы'        => 'education_programs/available/',        
-		//'Материалы'	  => 'educational_materials/index_by_student/',
-        'Мой новый курс'   => 'applications/index_by_student/'
+        'Моё меню'       => 'users/instructions_by_user/',
+        'Мои курсы'      => 'education_programs/available/',        
+        //'Материалы'      => 'educational_materials/index_by_student/',
+        'Мой новый курс' => 'applications/index_by_student/'
     );
 
     /* Дополнительные ссылки */
     $external_links = array(
-        'Прайс на дистанционное обучение'       => 'http://uchimvas.ru/article990',
-        'Как оплатить'                          => 'http://uchimvas.ru/article991',
-        'Форум'                                 => 'http://uchimvas.ru/forum.html'
+        'Прайс на дистанционное обучение' => 'price/',
+        'Как оплатить'                    => 'payment/',
+        'Форум'                           => 'http://uchimvas.ru/forum.html'
     );
     
     /* Карта соответствия ролей пользователей и выводимых пунктов меню */
