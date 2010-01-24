@@ -560,6 +560,31 @@
             return $apps;
         }
         
+		/**
+		* Возвращает полный список преподавателей.
+		*
+		* @return array
+		*/
+		public function getTeachersList() {
+			$sql = 'SELECT `user_id`,`name`,`surname`,`patronymic` FROM `users`
+				WHERE `role`=\'teacher\'';
+            $stmt = $this->prepare($sql);
+            $stmt->execute(array());
+            $teachers = $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
+			$retval = array();
+			
+			if (count($teachers)) {
+				foreach ($teachers as $i => $teacher) {
+					$retval[$teacher['user_id']] = array(
+						'name' => $teacher['name'],
+						'surname' => $teacher['surname'],
+						'patronymic' => $teacher['patronymic'],
+					);
+				}
+			}
+			
+			return $retval;
+		}
     }
 
 ?>

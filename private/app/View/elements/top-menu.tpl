@@ -11,6 +11,7 @@
         'Регистрация пользователя'      => 'users/index_by_admin/',
         'Формирование учебных программ' => 'education_programs/index_by_admin/',
         'Загрузка материалов'           => 'educational_materials/index_by_admin/',
+		'Назначение ответственных'		=> 'assignment',
         'Заявки на обучение'            => 'applications/index_by_admin'
     );
     

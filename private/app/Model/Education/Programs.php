@@ -532,7 +532,81 @@ QUERY;
 				->prepare ($sql)
 				->execute ($params);
 		}
-        
+
+        /**
+        * Назначает ответсвенного за дисциплину.
+        * 
+        * @param  int $disciplineId Идентификатор дисциплины.
+		* @param  int $teacherId Идентификатор преподавателя.
+        * @return void
+        */        
+		public function setDisciplineResponsibleTeacher($disciplineId, $teacherId) {
+			$sql = 'UPDATE `disciplines` SET `responsible_teacher`=:responsible_teacher
+				WHERE `discipline_id`=:discipline_id';
+			$params = array(
+				':responsible_teacher' => $teacherId,
+				':discipline_id' => $disciplineId,
+			);
+			$this->prepare($sql)->execute($params);			
+		}
+		
+		/**
+		* Возвращает список всех дисциплин в совокупности с ответсвенными
+		* за них преподавателями
+		*
+		* @return array
+		*/		
+		public function getDisciplinesResponsibleTeachersList() {
+			$sql = 'SELECT `programs`.`title`,
+				`disciplines`.`discipline_id`,
+				`disciplines`.`title`,
+				`disciplines`.`responsible_teacher`
+			FROM `programs`,`disciplines`
+			WHERE `disciplines`.`program_id`=`programs`.`program_id`';
+            $stmt = $this->prepare($sql);
+            $stmt->execute(array());
+            $retval = $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
+			
+			return $retval;
+		}
+		
+		/**
+		* Возвращает список всех курсов в совокупности с ответсвенными
+		* за них преподавателями
+		*
+		* @return array
+		*/		
+		public function getCoursesResponsibleTeachersList() {
+			$sql = 'SELECT `title`,
+				`program_id`,
+				`responsible_teacher`
+			FROM `programs`			
+			WHERE `edu_type`=\'course\'';
+			
+            $stmt = $this->prepare($sql);
+            $stmt->execute(array());
+            $retval = $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
+			
+			return $retval;
+		}
+				
+		/**
+		* Назначает ответвенного за курсы.
+		*
+		* @param  int $courcesId Идентификатор курсов.
+		* @param  int $teacherId Идентификатор преподавателя.
+		* @return void
+		*/		
+		public function setCoursesResponsibleTeacher($courcesId, $teacherId) {
+			$sql = 'UPDATE `programs` SET `responsible_teacher`=:responsible_teacher
+				WHERE `program_id`=:courcesId AND `edu_type`=\'course\'';
+			$params = array(
+				':responsible_teacher' => $teacherId,
+				':courcesId' => $courcesId,
+			);
+			$this->prepare($sql)->execute($params);			
+		}
+
         /**
         * Возвращает список всех дисциплин, входящих в образовательную
         * программу.

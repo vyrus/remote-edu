@@ -50,8 +50,9 @@ CREATE TABLE `disciplines` (
   `title` varchar(256) DEFAULT NULL,
   `coef` tinyint(4) DEFAULT NULL,
   `labour_intensive` smallint(6) DEFAULT NULL,
+  `responsible_teacher` int(11) DEFAULT NULL,
   PRIMARY KEY (`discipline_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 DROP TABLE IF EXISTS `programs`;
@@ -63,8 +64,10 @@ CREATE TABLE `programs` (
   `labour_intensive` smallint(6) DEFAULT NULL,
   `edu_type` enum('direction','course') DEFAULT NULL,
   `paid_type` enum('free','paid') DEFAULT NULL,
+  `cost` decimal(9,2) unsigned DEFAULT NULL,
+  `responsible_teacher` int(11) DEFAULT NULL,
   PRIMARY KEY (`program_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 SET character_set_client = @saved_cs_client;
 
 -- 

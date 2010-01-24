@@ -18,17 +18,17 @@
 				}
             }
 
-			parent::__construct ($request);
+			parent::__construct($request);
 		}
 
 		public function action_index () {
-            $educationPrograms = Model_Education_Programs::create ();
-            $this->set ('directions',    $educationPrograms->getDirections                 ());
-            $this->set ('courses',         $educationPrograms->getCourses                     ());
-            $this->set ('disciplines',    $educationPrograms->getDirectionsDisciplines     ());
-            $this->set ('sections',     $educationPrograms->getDisciplinesSections         ());
+            $educationPrograms = Model_Education_Programs::create();
+            $this->set('directions', $educationPrograms->getDirections());
+            $this->set('courses', $educationPrograms->getCourses());
+            $this->set('disciplines', $educationPrograms->getDirectionsDisciplines());
+            $this->set('sections', $educationPrograms->getDisciplinesSections());
             
-            $this->render ("education_programs/index");
+            $this->render("education_programs/index");
         }
         
         /**
