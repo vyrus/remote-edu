@@ -391,7 +391,7 @@
 
                 'educational_materials/index_by_student',
                 'education_programs/show_available'
-            ),
+    		),
             
             /* Преподаватель */
             Model_User::ROLE_TEACHER => array

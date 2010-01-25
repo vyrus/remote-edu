@@ -337,7 +337,34 @@
                     'action'     => 'display',
                     'params'     => array('page' => 'payment')
                 )     
-            )
+            ),
+
+			array(
+				'type' => Mvc_Router::ROUTE_STATIC,
+				'pattern' => '/assignment/responsible_teacher',
+				'handler' => array(
+					'controller' => 'assignment',
+					'action' => 'responsible_teacher',
+				),
+			),
+	
+			array(
+				'type' => Mvc_Router::ROUTE_STATIC,
+				'pattern' => '/assignment/students_curator',
+				'handler' => array(
+					'controller' => 'assignment',
+					'action' => 'student_curator',
+				),
+			),
+
+			array(
+				'type' => Mvc_Router::ROUTE_STATIC,
+				'pattern' => '/assignment',
+				'handler' => array(
+					'controller' => 'assignment',
+					'action' => 'index',
+				),
+			),
         ),
         
         /* Права доступа к разделам сайта */
@@ -377,6 +404,10 @@
             /* Администратор */
             Model_User::ROLE_ADMIN => array
             (
+				'/assignment/responsible_teacher',
+				'/assignment/students_curator',
+				'/assignment',	
+	
                 'users/register_employee_by_admin',       // учебные материалы, доступные для слушателя
                                                           
                 'applications/index_by_admin',            // список поданных заявок всех пользователей
