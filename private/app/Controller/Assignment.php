@@ -1,16 +1,33 @@
 <?php
 	class Controller_Assignment extends Mvc_Controller_Abstract {
 		public function action_student_curator() {
-			$this->render('assignment/student_curator');
+			$users = Model_User::create();
+			$request = $this->getRequest ();
+			$method = 'post';
+
+			if (empty($request->$method)) {
+				$this->set('teachers', $users->getTeachersList());
+				$this->set('students', $users->getStudentsList());				
+				$this->render('assignment/student_curator');
+			}
+			else {
+				$requestData = $request->$method;
+				
+				if (count($requestData)) {
+					foreach ($requestData as $i => $value) {
+						$users->setUserCurator($i, $value);
+					}
+				}
+				$this->flash('Кураторы успешно назначены', '/assignment/students_curator', 3);
+			}			
 		}
 		
 		public function action_responsible_teacher() {
 			$programs = Model_Education_Programs::create();
 			$request = $this->getRequest ();
 			$method = 'post';
-			if (empty ($request->$method)) {
-				$users = Model_User::create();
-				
+			if (empty($request->$method)) {
+				$users = Model_User::create();				
 				$this->set('teachers', $users->getTeachersList());
 				$this->set('disciplines', $programs->getDisciplinesResponsibleTeachersList());
 				$this->set('courses', $programs->getCoursesResponsibleTeachersList());

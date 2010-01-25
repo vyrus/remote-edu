@@ -585,6 +585,49 @@
 			
 			return $retval;
 		}
+		
+		/**
+		* Возвращает полный список студентов в совокупности с их кураторами.
+		*
+		* @return array
+		*/
+		public function getStudentsList() {
+			$sql = 'SELECT `user_id`,`name`,`surname`,`patronymic`,`curator`
+				FROM `users` WHERE `role`=\'student\'';
+			$stmt = $this->prepare($sql);
+			$stmt->execute(array());
+			$students = $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
+			$retval = array();
+			
+			if (count($students)) {
+				foreach ($students as $i => $student) {
+					$retval[$student['user_id']] = array(
+						'name' => $student['name'],
+						'surname' => $student['surname'],
+						'patronymic' => $student['patronymic'],
+						'curator' => $student['curator'],
+					);
+				}
+			}
+
+			return $retval;
+		}
+		
+		/**
+		* Назначает куратора студенту.
+		*
+		* @param  $studentId int Идентификатор студента
+		* @param  $teacherId int Идентификатор преподавателя
+		* @return void
+		*/
+		public function setUserCurator($studentId, $teacherId) {
+			$sql = 'UPDATE `users` SET `curator`=:teacher_id WHERE `role`=\'student\' AND `user_id`=:student_id';
+			$params = array(
+				':teacher_id' => $teacherId,
+				':student_id' => $studentId,
+			);
+			$this->prepare($sql)->execute($params);			
+		}
     }
 
 ?>

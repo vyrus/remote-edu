@@ -15,6 +15,7 @@ CREATE TABLE `users` (
   `status` enum('active','inactive') NOT NULL DEFAULT 'inactive',
   PRIMARY KEY  (`user_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+ALTER TABLE `users` ADD `curator` int;
 
 DROP TABLE IF EXISTS `materials`;
 SET @saved_cs_client     = @@character_set_client;
@@ -113,6 +114,7 @@ CREATE TABLE `edu_docs` (
   PRIMARY KEY  (`edu_doc_id`),
   KEY `fk_edu_docs_users` (`user_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+ALTER TABLE `users` ADD `curator` int;
 
 -- --------------------------------------------------------
 

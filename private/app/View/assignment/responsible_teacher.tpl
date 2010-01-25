@@ -1,11 +1,12 @@
 <link type="text/css" href="/css/ui-lightness/jquery-ui-1.7.2.custom.css" rel="stylesheet" />
+<script type="text/javascript" src="/js/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="/js/jquery-ui-1.7.2.custom.min.js"></script>
+
 <?php
 	$teachers = $this->teachers;
 	$disciplines = $this->disciplines;
 	$courses = $this->courses;
 ?>
-<script type="text/javascript" src="/js/jquery-1.3.2.min.js"></script>
-<script type="text/javascript" src="/js/jquery-ui-1.7.2.custom.min.js"></script>
 <script type="text/javascript">
 	var teachers = {
 <?php foreach ($teachers as $i => $teacher): ?>
@@ -120,7 +121,7 @@
 </script>
 <h3>Ответсвенные по дисциплинам/курсам</h3>
 Отображать<select id="filter" onchange="updateResponsibleTeachersSelect();"><option value="courses">Курсы</option><option value="disciplines">Дисциплины</option><option value="all" selected="selected">Все</option></select><br />
-<select id="responsibleTeachers" size="10" onchange="changeButtonCaption()"></select>
+<select id="responsibleTeachers" size="10" onchange="changeButtonCaption()" style="min-width: 200px;"></select>
 <br /><a id="assignButton" href="javascript:showSelectTeacherDialog()">назначить ответсвенного</a>&nbsp;<a href="javascript:submitChanges()">сохранить изменения</a>
 <div id="selectTeacherDialog"><select id="teachersSelect" size="10"></select></div>
 <form id="changesForm" action="/assignment/responsible_teacher" method="post"></form>
