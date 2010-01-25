@@ -114,7 +114,6 @@ CREATE TABLE `edu_docs` (
   PRIMARY KEY  (`edu_doc_id`),
   KEY `fk_edu_docs_users` (`user_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-ALTER TABLE `users` ADD `curator` int;
 
 -- --------------------------------------------------------
 
