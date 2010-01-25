@@ -71,26 +71,26 @@
 		case 'courses':
 			$.each(courses, function (key, value) {responsibleTeachersSelect.append(
 				new Option(value.title + '(' + (value.responsibleTeacher === null ?
-				'teachers ответственный не назначен' : teachers[value.responsibleTeacher].surname + ' ' +
+				'ответственный не назначен' : teachers[value.responsibleTeacher].surname + ' ' +
 				teachers[value.responsibleTeacher].name.substr(0, 1) + '.' +
 				teachers[value.responsibleTeacher].patronymic.substr(0, 1)) + ')', 'course' + key))});				
 			break;
 		case 'disciplines':
 			$.each(disciplines, function (key, value) {responsibleTeachersSelect.append(
 				new Option(value.title + '(' + (value.responsibleTeacher === null ?
-				'teachers ответственный не назначен' : teachers[value.responsibleTeacher].surname + ' ' +
+				'ответственный не назначен' : teachers[value.responsibleTeacher].surname + ' ' +
 				teachers[value.responsibleTeacher].name.substr(0, 1) + '.' +
 				teachers[value.responsibleTeacher].patronymic.substr(0, 1)) + ')', 'discipline' + key))});				
 			break;
 		default:
 			$.each(disciplines, function (key, value) {responsibleTeachersSelect.append(
 				new Option(value.title + '(' + (value.responsibleTeacher === null ?
-				'teachers ответственный не назначен' : teachers[value.responsibleTeacher].surname + ' ' +
+				'ответственный не назначен' : teachers[value.responsibleTeacher].surname + ' ' +
 				teachers[value.responsibleTeacher].name.substr(0, 1) + '.' +
 				teachers[value.responsibleTeacher].patronymic.substr(0, 1)) + ')', 'discipline' + key))});
 			$.each(courses, function (key, value) {responsibleTeachersSelect.append(
 				new Option(value.title + '(' + (value.responsibleTeacher === null ?
-				'teachers ответственный не назначен' : teachers[value.responsibleTeacher].surname + ' ' +
+				'ответственный не назначен' : teachers[value.responsibleTeacher].surname + ' ' +
 				teachers[value.responsibleTeacher].name.substr(0, 1) + '.' +
 				teachers[value.responsibleTeacher].patronymic.substr(0, 1)) + ')', 'course' + key))});				
 			break;
