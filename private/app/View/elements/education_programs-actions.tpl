@@ -5,6 +5,11 @@
 	
 	/* ссылки, доступные только админу*/	        
     $admin_educationProgramsAction = array(
+		'Добавление направлений/дисциплин' => '/education_programs',
+		'Формирование порядка изучения дисциплин' => '#',
+		'Назначение отвественных преподавателей' => '/assignment/responsible_teacher',
+		'Назначение кураторов' => '/assignment/students_curator',
+		'Инструкция' => '#',
     );
 
 	/* ссылки, доступные только преподу*/	        
@@ -18,21 +23,16 @@
     );
 	
     //Wtfi
-    $cur_ctrl = $_SERVER['REQUEST_URI'];
-	$prefix = '/education_programs/';
+    //$cur_ctrl = $_SERVER['REQUEST_URI'];
 
 	$user = Model_User::create();
 	$udata = (object) $user->getAuth();
 	
 	/* вывод общих пунктов меню*/
 		  foreach ($educationProgramsAction as $title => $controller): ?>
-		<?php if ($prefix. $controller == strtolower ($cur_ctrl)): ?>
-			<li class="headli active"><?php echo $title; ?></li>
-		<?php else: ?>
 			<li class="headli">
-				<a href="<?=$prefix.$controller ?>"><?=$title ?></a>
+				<a href="<?=$controller ?>"><?=$title ?></a>
 			</li>
-		<?php endif; ?>
 	<?php endforeach;
 	
 	if (isset($udata->role))
@@ -49,13 +49,9 @@
 		}
 	/* вывод пунктов меню, специфических для залогиненного пользователя */
 		  foreach (${$items} as $title => $controller): ?>
-		<?php if ($controller == strtolower ($cur_ctrl)): ?>
-			<li class="active"><?php echo $title; ?></li>
-		<?php else: ?>
 			<li class="headli">
-				<a href="<?=$prefix.$controller ?>"><?=$title ?></a>
+				<a href="<?=$controller ?>"><?=$title ?></a>
 			</li>
-		<?php endif; ?>
 	<?php endforeach; 	
 }												  
 ?>

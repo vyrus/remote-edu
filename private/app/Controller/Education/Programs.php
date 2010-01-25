@@ -31,9 +31,11 @@
             $this->render("education_programs/index");
         }
         
+		
         /**
         * @todo Remove this placeholder.
         */
+		/*
         public function action_index_by_student () {
 			$this->render();
 		}
@@ -41,6 +43,7 @@
 		public function action_index_by_admin () {
 			$this->action_index ();
 		}
+		*/
 		
 		public function action_add_program ($params) {
 			$this->set ('buttonCaption', 'Добавить');

@@ -1,61 +1,55 @@
 <?php
 	/* ссылки, доступные пользователю, независимо от прав доступа*/	    
-	$assigmentAction = array(
+	$educationProgramsAction = array(
     );
 	
 	/* ссылки, доступные только админу*/	        
-    $admin_assigmentAction = array(
-        'Назначить ответсвенного за дисциплину/курсы' => 'responsible_teacher',
-        'Назанчить кураторов для студентов' => 'students_curator',
+    $admin_educationProgramsAction = array(
+		'Добавление направлений/дисциплин' => '/education_programs',
+		'Формирование порядка изучения дисциплин' => '#',
+		'Назначение отвественных преподавателей' => '/assignment/responsible_teacher',
+		'Назначение кураторов' => '/assignment/students_curator',
+		'Инструкция' => '#',
     );
 
 	/* ссылки, доступные только преподу*/	        
-    $teacher_assigmentAction = array(
+    $teacher_educationProgramsAction = array(
     );
 
 	/* ссылки, доступные только слушателю*/	        
-    $student_assigmentAction = array(
+    $student_educationProgramsAction = array(
     );
 	
     //Wtfi
-    $cur_ctrl = $_SERVER['REQUEST_URI'];
-	$prefix = '/assignment/';
+    //$cur_ctrl = $_SERVER['REQUEST_URI'];
 
 	$user = Model_User::create();
 	$udata = (object) $user->getAuth();
 	
 	/* вывод общих пунктов меню*/
-		  foreach ($assigmentAction as $title => $controller): ?>
-		<?php if ($prefix. $controller == strtolower ($cur_ctrl)): ?>
-			<li class="headli active"><?php echo $title; ?></li>
-		<?php else: ?>
+		  foreach ($educationProgramsAction as $title => $controller): ?>
 			<li class="headli">
-				<a href="<?=$prefix.$controller ?>"><?=$title ?></a>
+				<a href="<?=$controller ?>"><?=$title ?></a>
 			</li>
-		<?php endif; ?>
 	<?php endforeach;
 	
 	if (isset($udata->role))
 	{
 		if (Model_User::ROLE_TEACHER == $udata->role)
 		{
-			$items = 'teacher_assigmentAction';
+			$items = 'teacher_educationProgramsAction';
 		}elseif (Model_User::ROLE_ADMIN == $udata->role)
 		{
-			$items = 'admin_assigmentAction';	
+			$items = 'admin_educationProgramsAction';	
 		}elseif (Model_User::ROLE_STUDENT == $udata->role)
 		{
-			$items = 'student_assigmentAction';	
+			$items = 'student_educationProgramsAction';	
 		}
 	/* вывод пунктов меню, специфических для залогиненного пользователя */
 		  foreach (${$items} as $title => $controller): ?>
-		<?php if ($controller == strtolower ($cur_ctrl)): ?>
-			<li class="active"><?php echo $title; ?></li>
-		<?php else: ?>
 			<li class="headli">
-				<a href="<?=$prefix.$controller ?>"><?=$title ?></a>
+				<a href="<?=$controller ?>"><?=$title ?></a>
 			</li>
-		<?php endif; ?>
 	<?php endforeach; 	
 }												  
 ?>

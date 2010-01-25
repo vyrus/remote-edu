@@ -364,7 +364,17 @@
 					'controller' => 'assignment',
 					'action' => 'index',
 				),
-			),						
+			),
+			
+			array(
+                'type'    => Mvc_Router::ROUTE_STATIC,
+                'pattern' => '/education_programs',
+                'handler' => array
+                (
+                    'controller' => 'education_programs',
+                    'action'     => 'index'
+                )
+            ),						
         ),
         
         /* Права доступа к разделам сайта */
