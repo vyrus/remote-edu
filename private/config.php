@@ -1,14 +1,14 @@
-<?php                               
+<?php
 
     /* $Id$ */
-    
+
     return array(
         /* Режим работы (debug/production) */
         'mode' => 'debug',
-        
+
         /* Базовый адрес */
         'base_url' => 'http://remote-edu',
-        
+
         /* Настройки соединения с БД */
         'db' => array
         (
@@ -20,23 +20,23 @@
                 Db_Pdo::ATTR_ERRMODE => Db_Pdo::ERRMODE_EXCEPTION
             )
         ),
-        
+
         /* Настройки авторизации */
         'auth' => array
         (
             /* Случайная последовательность символов для шифрования */
             'salt' => 'Ix8i8AQrEfFtgi14XupbT4kxHM511ZDFA'
         ),
-        
+
         /* Настройка отправки почтовых сообщений */
         'postman' => array
         (
             /* Адрес отправителя писем */
             'from_email' => 'robot@remote-edu.localhost',
-            
+
             /* Имя отправителя */
             'from_name' => 'Робот',
-            
+
             /**
             * Транспорт для отправки почты:
             *   Postman::TRANSPORT_SENDMAIL - через стандартную функцию mail(),
@@ -44,8 +44,8 @@
             *                             параметра "smtp").
             */
             'transport' => Postman::TRANSPORT_SENDMAIL,
-            
-            /* Данные для SMTP-авторизации */                        
+
+            /* Данные для SMTP-авторизации */
             'smtp' => array
             (
                 /* Адрес SMTP-сервера */
@@ -57,9 +57,9 @@
                     'username' => '',
                     'password' => ''
                 )
-            ) 
+            )
         ),
-        
+
         /* Маршруты */
         /**
         * @todo Сделать покрасивше пути сайта.
@@ -79,7 +79,7 @@
                     'action'     => 'get_material',
                 ),
             ),
-        
+
             array (
                 'type'    => Mvc_Router::ROUTE_STATIC,
                 'pattern' => '/educational_materials/upload',
@@ -87,7 +87,7 @@
                 (
                     'controller' => 'educational_materials',
                     'action'     => 'upload',
-                ), 
+                ),
             ),
 
             array (
@@ -99,7 +99,7 @@
                     'action'     => 'remove',
                 ),
             ),
-    
+
             array (
                 'type'    => Mvc_Router::ROUTE_STATIC,
                 'pattern' => "/education_students",
@@ -109,7 +109,7 @@
                     'action'     => 'index',
                 ),
             ),
-            
+
             array (
                 'type'    => Mvc_Router::ROUTE_REGEX,
                 'pattern' => array
@@ -123,7 +123,7 @@
                     'action'     => 'add_program',
                 ),
             ),
-            
+
             array (
                 'type'   => Mvc_Router::ROUTE_REGEX,
                 'pattern' => array
@@ -137,7 +137,7 @@
                     'action'     => 'add_discipline',
                 )
             ),
-            
+
             array (
                 'type'    => Mvc_Router::ROUTE_REGEX,
                 'pattern' => array
@@ -164,7 +164,7 @@
                     'controller' => 'education_programs',
                     'action'     => 'remove_program',
                 )
-            ),            
+            ),
 
             array (
                 'type'    => Mvc_Router::ROUTE_REGEX,
@@ -178,8 +178,8 @@
                     'controller' => 'education_programs',
                     'action'     => 'remove_discipline',
                 )
-            ),            
-            
+            ),
+
             array (
                 'type'    => Mvc_Router::ROUTE_REGEX,
                 'pattern' => array
@@ -192,7 +192,7 @@
                     'controller' => 'education_programs',
                     'action'     => 'remove_section',
                 )
-            ),            
+            ),
 
             array (
                 'type'    => Mvc_Router::ROUTE_REGEX,
@@ -207,7 +207,7 @@
                     'action'     => 'edit_program',
                 )
             ),
-            
+
             array (
                 'type'    => Mvc_Router::ROUTE_REGEX,
                 'pattern' => array
@@ -226,6 +226,20 @@
                 'type'    => Mvc_Router::ROUTE_REGEX,
                 'pattern' => array
                 (
+                    'regex'  => '/save_discipline_order/',
+                    'params' => array (),
+                ),
+                'handler' => array
+                (
+                    'controller' => 'education_programs',
+                    'action'     => 'save_discipline_order',
+                )
+            ),
+
+            array (
+                'type'    => Mvc_Router::ROUTE_REGEX,
+                'pattern' => array
+                (
                     'regex'  => '/edit_section/([0-9]+)',
                     'params' => array ('section_id'),
                 ),
@@ -235,7 +249,7 @@
                     'action'     => 'edit_section',
                 )
             ),
-            
+
             /* Подача заявки */
             array(
                 'type'    => Mvc_Router::ROUTE_REGEX,
@@ -250,7 +264,7 @@
                     'action'     => 'apply',
                 )
             ),
-            
+
             array(
                 'type'     => Mvc_Router::ROUTE_REGEX,
                 'pattern'  => array
@@ -264,7 +278,7 @@
                     'action'     => 'change_app_status',
                 )
             ),
-    
+
             /* Активация слушателя */
             array(
                 'type'    => Mvc_Router::ROUTE_REGEX,
@@ -279,7 +293,7 @@
                     'action'     => 'activate_student'
                 )
             ),
-            
+
             /* Активация сотрудника */
             array(
                 'type'    => Mvc_Router::ROUTE_REGEX,
@@ -294,7 +308,7 @@
                     'action'     => 'activate_employee'
                 )
             ),
-            
+
             array(
                 'type'    => Mvc_Router::ROUTE_STATIC,
                 'pattern' => '/ajax/autocomplete/region',
@@ -304,7 +318,7 @@
                     'action'     => 'autocomplete_region'
                 )
             ),
-            
+
             array(
                 'type'    => Mvc_Router::ROUTE_STATIC,
                 'pattern' => '/ajax/autocomplete/city',
@@ -314,7 +328,7 @@
                     'action'     => 'autocomplete_city'
                 )
             ),
-            
+
             /* Страница с ценами */
             array(
                 'type' => Mvc_Router::ROUTE_STATIC,
@@ -324,9 +338,9 @@
                     'controller' => 'pages',
                     'action'     => 'display',
                     'params'     => array('page' => 'price')
-                )     
+                )
             ),
-            
+
             /* Страница со способами оплаты */
             array(
                 'type' => Mvc_Router::ROUTE_STATIC,
@@ -336,7 +350,7 @@
                     'controller' => 'pages',
                     'action'     => 'display',
                     'params'     => array('page' => 'payment')
-                )     
+                )
             ),
 
 			array(
@@ -347,7 +361,7 @@
 					'action' => 'responsible_teacher',
 				),
 			),
-		
+
 			array(
 				'type' => Mvc_Router::ROUTE_STATIC,
 				'pattern' => '/assignment/students_curator',
@@ -365,7 +379,7 @@
 					'action' => 'index',
 				),
 			),
-			
+
 			array(
                 'type'    => Mvc_Router::ROUTE_STATIC,
                 'pattern' => '/education_programs',
@@ -374,22 +388,22 @@
                     'controller' => 'education_programs',
                     'action'     => 'index'
                 )
-            ),						
+            ),
         ),
-        
+
         /* Права доступа к разделам сайта */
         'permissions' => array
         (
             /**
             * Здесь перечисляются роли пользователей и пути, к которым у них
-            * есть доступ. Все пути, не перечисленные здесь, считаются 
+            * есть доступ. Все пути, не перечисленные здесь, считаются
             * общедоступными.
-            * 
+            *
             * роль_пользователя => array(
             *   'контроллер/действие'
             * )
-            */ 
-            
+            */
+
             /* Слушатель */
             Model_User::ROLE_STUDENT => array
             (
@@ -402,7 +416,7 @@
                 'educational_materials/index_by_student',
                 'education_programs/show_available'
     		),
-            
+
             /* Преподаватель */
             Model_User::ROLE_TEACHER => array
             (
@@ -410,19 +424,19 @@
 
                 'educational_materials/index_by_teacher'  // учебные материалы, добавленные залогиненным преподавателем
             ),
-            
+
             /* Администратор */
             Model_User::ROLE_ADMIN => array
             (
 				'/assignment/responsible_teacher',
 				'/assignment/students_curator',
 				'/assignment',
-	
+
                 'users/register_employee_by_admin',       // учебные материалы, доступные для слушателя
-                                                          
+
                 'applications/index_by_admin',            // список поданных заявок всех пользователей
                 'applications/delete',
-                
+
                 'payments/add',
 
                 'educational_materials/index_by_admin',
@@ -439,10 +453,10 @@
                 'education_programs/edit_program',
                 'education_programs/edit_discipline',
                 'education_programs/edit_section',
-                
+
                 'education_students/index'
             )
         )
     );
-            
+
 ?>

@@ -1,9 +1,9 @@
 <?php
-	/* ссылки, доступные пользователю, независимо от прав доступа*/	    
+	/* ссылки, доступные пользователю, независимо от прав доступа*/
 	$educationProgramsAction = array(
     );
-	
-	/* ссылки, доступные только админу*/	        
+
+	/* ссылки, доступные только админу*/
     $admin_educationProgramsAction = array(
 		'Добавление направлений/дисциплин' => '/education_programs',
 		'Формирование порядка изучения дисциплин' => '#',
@@ -12,16 +12,16 @@
 		'Инструкция' => '#',
     );
 
-	/* ссылки, доступные только преподу*/	        
+	/* ссылки, доступные только преподу*/
     $teacher_educationProgramsAction = array(
     );
 
-	/* ссылки, доступные только слушателю*/	        
+	/* ссылки, доступные только слушателю*/
     $student_educationProgramsAction = array(
         'Доступные программы'           => 'available/',
         'Инструкция пользователю'	=> 'instructions_by_student/'
     );
-	
+
     //Wtfi
     //$cur_ctrl = $_SERVER['REQUEST_URI'];
 
@@ -34,7 +34,7 @@
 				<a href="<?=$controller ?>"><?=$title ?></a>
 			</li>
 	<?php endforeach;
-	
+
 	if (isset($udata->role))
 	{
 		if (Model_User::ROLE_TEACHER == $udata->role)
@@ -52,6 +52,6 @@
 			<li class="headli">
 				<a href="<?=$controller ?>"><?=$title ?></a>
 			</li>
-	<?php endforeach; 	
-}												  
+	<?php endforeach;
+}
 ?>

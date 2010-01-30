@@ -35,6 +35,6 @@
 
         public static function create($action) {
             return new self($action);
-        }		
+        }
 	}
 ?>

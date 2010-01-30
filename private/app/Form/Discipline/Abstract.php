@@ -3,7 +3,7 @@
 		protected function addSpeciality () {
 			$this
 				->addField ('speciality');
-								
+
 			return $this;
 		}
 
@@ -11,10 +11,10 @@
 			$this
 				->addField('title')
 				->setValidator('/^.{3,256}$/ixu')
-				->setError ('Название дисциплины -- последовательность символов длинной не менее 3 символов и не более 256');      
+				->setError ('Название дисциплины -- последовательность символов длинной не менее 3 символов и не более 256');
             return $this;
 		}
-		
+
 		protected function addLabourIntensive () {
 			$this
 				->addField ('labourIntensive')
@@ -22,16 +22,16 @@
 				->setError ('Общая трудоемкость должна быть задана целым числом');
 			return $this;
 		}
-		
-		protected function addCoef () {			
+
+		protected function addCoef () {
 			$this
 				->addField ('coef')
 				->setValidator ('/^[0-9]+$/ixu')
 				->setError ('Введите коэффициент дисциплины (от 1 до 100)');
 			return $this;
 		}
-		
-		protected function __construct($action) {	
+
+		protected function __construct($action) {
 			$this
                 ->setAction($action)
                 ->setMethod(self::METHOD_POST)
