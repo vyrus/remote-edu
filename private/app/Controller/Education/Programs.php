@@ -104,11 +104,13 @@
                 $this->render ("education_programs/discipline_form");
             }
 
+            $disciplines = $educationPrograms->getDirectionsDisciplines();
 			$educationPrograms->createDiscipline (
 				$form->speciality->value,
 				$form->title->value,
 				$form->coef->value,
-				$form->labourIntensive->value
+				$form->labourIntensive->value,
+                count($disciplines[$form->speciality->value])
 			);
 			$this->flash (
 				'Дисциплина успешно добавлена',

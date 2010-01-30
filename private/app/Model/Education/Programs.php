@@ -147,7 +147,7 @@ QUERY;
 			return ($stmt->fetch () !== FALSE);
 		}
 
-		public function sectionNumberExists  ($id, $number, $checkType = Model_Education_Programs::CHECK_BY_PARENT_ID) {
+		public function sectionNumberExists ($id, $number, $checkType = Model_Education_Programs::CHECK_BY_PARENT_ID) {
 			if ($checkType == Model_Education_Programs::CHECK_BY_OWN_ID) {
 				$sql =
 <<<QUERY
@@ -199,15 +199,16 @@ QUERY;
 				->execute ($params);
 		}
 
-		public function createDiscipline ($programID, $title, $coef, $labourIntensive) {
+		public function createDiscipline ($programID, $title, $coef, $labourIntensive, $serial_number) {
 			$sql =
 <<<QUERY
-INSERT INTO `disciplines` (`program_id`,`title`,`coef`,`labour_intensive`)
-VALUES (:program_id,:title,:coef,:labour_intensive)
+INSERT INTO `disciplines` (`program_id`,`serial_number`,`title`,`coef`,`labour_intensive`)
+VALUES (:program_id,:serial_number,:title,:coef,:labour_intensive)
 QUERY;
 
 			$params = array (
 				':program_id'		=> $programID,
+                ':serial_number'	=> $serial_number,
 				':title'			=> $title,
 				':coef'				=> $coef,
 				':labour_intensive'	=> $labourIntensive,
