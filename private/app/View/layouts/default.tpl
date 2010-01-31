@@ -225,7 +225,7 @@ function seltext () {
                   "border='0' width='88' height='31'><\/a>")
                   //--></script><!--/LiveInternet-->
                   <!-- Yandex.Metrika -->
-                  <script src="mc.yandex.ru/metrika/watch.js" type="text/javascript"></script>
+                  <script src="http://mc.yandex.ru/metrika/watch.js" type="text/javascript"></script>
                   <script type="text/javascript">
                   try { var yaCounter409700 = new Ya.Metrika(409700); } catch(e){}
                 </script>
