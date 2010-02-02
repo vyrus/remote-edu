@@ -196,6 +196,9 @@
                 $this->render();
             }
 
+            /* Создаём модель пользователя - она нужна для валидации формы */
+            $user = Model_User::create();
+            
             /* Если данные не прошли проверку, показываем ошибки */
             if (!$form->validate($request, $user)) {
                 $this->render();
@@ -224,7 +227,8 @@
                 $id, $login, $email, $activation_code
             );
                                                          
-            $this->flash('Новый сотрудник успешно добавлен', $redirect_link);
+            $redirect = '/users/index_by_admin/';
+            $this->flash('Новый сотрудник успешно добавлен', $redirect);
         }
         
         /**
