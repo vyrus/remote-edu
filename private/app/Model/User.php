@@ -124,7 +124,8 @@
                 INSERT INTO ' . $this->_tables['users'] . '
                 (login, passwd, role, email, surname, name, patronymic, status)
                 VALUES
-                (:login, :passwd, :role, :email, :surname, :name, :patronymic, :status)
+                (:login, :passwd, :role, :email, :surname, :name, :patronymic, 
+                :status)
             ';
             
             if (null !== $passwd) {
@@ -141,7 +142,7 @@
                 ':surname'    => $surname,
                 ':name'       => $name,
                 ':patronymic' => $patronymic,
-                ':status'     => self::STATUS_ACTIVE
+                ':status'     => self::STATUS_INACTIVE
             );
             
             $this->prepare($sql)
