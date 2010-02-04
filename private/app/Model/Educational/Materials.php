@@ -5,6 +5,10 @@
 		public function __construct () {
 			parent::__construct ();
 			
+            /**
+            * @todo Oh my... This breaks up all the fun about dynamic directory
+            * structure and dependency injection through Resources class.
+            */
 			$this->storage = new Storage ('../private/materials');
 		}
 		
