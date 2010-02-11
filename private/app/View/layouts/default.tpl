@@ -7,8 +7,14 @@
 <meta name="robots" content="All, Index">
 <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 <link rel="stylesheet" href="/files/css/index.css" type="text/css">
+<link href="/css/autocomplete.css" rel="stylesheet" type="text/css" />
+<link href="/css/ui-lightness/jquery-ui-1.7.2.custom.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript" src="/files/js/prototype.js"></script>
 <script type="text/javascript" src="/files/js/effects.js"></script>
+<script type="text/javascript" src="/js/jquery-1.3.2.min.js"></script> 
+<script type="text/javascript" src="/js/jquery-ui-1.7.2.custom.min.js"></script> 
+<script type="text/javascript" src="/js/ui.datepicker-ru.js"></script> 
+<script type="text/javascript" src="/js/jquery.autocomplete.js"></script> 
 <script type="text/javascript">
 function seltext () {
   loginbox=document.getElementById('login');

@@ -11,7 +11,7 @@
 	$form = $this->form;
 ?>
 <script type="text/javascript">
-	var PROGRAMS			= [];
+    var PROGRAMS			= [];
 	PROGRAMS['direction']	= [<?php $delimiter = ''; foreach ($directions as $i => $direction): echo $delimiter; ?>{'id':<?php echo $direction['program_id']; ?>,'title':'<?php echo $direction["title"]; $delimiter = ","; ?>'}<?php endforeach; ?>];	
 	PROGRAMS['course'] 		= [<?php $delimiter = ''; foreach ($courses as $i => $course): echo $delimiter; ?>{'id':<?php echo $course['program_id']; ?>,'title':'<?php echo $course["title"]; $delimiter = ","; ?>'}<?php endforeach; ?>];
 
@@ -26,101 +26,106 @@
 	
 	function switchProgramsType ()
 	{
-		clearProgramsList 		();
-		clearDisciplinesList 	();
+        $('#programsSelect').empty();
+		$('#disciplinesSelect').empty();
 		
-		for (var i = 0; i < PROGRAMS[programsTypeSelect.value].length; i++) {
-			programsSelect.options[i] = new Option (PROGRAMS[programsTypeSelect.value][i].title, PROGRAMS[programsTypeSelect.value][i].id);
-		}
+        var type = $('#programsTypeSelect').val();
+        
+        $.each(PROGRAMS[type], function(key, program) {
+            $('#programsSelect').append('<option value="' + program.id + '">' + 
+                                         program.title + '</option>');
+        });
 	}
 
-	function clearProgramsList () {
-		while (programsSelect.firstChild) {
-			programsSelect.removeChild (programsSelect.firstChild);
-		}		
-	}
-	
-	function clearDisciplinesList () {
-		while (disciplinesSelect.firstChild) {
-			disciplinesSelect.removeChild (disciplinesSelect.firstChild);
-		}		
-	}
-	
 	function updateDisciplinesList ()
 	{
-		clearDisciplinesList ();
-		
-		var disciplines = DISCIPLINES[programsSelect.options[programsSelect.selectedIndex].value];
-		for (var i = 0; i < disciplines.length; i++) {
-			disciplinesSelect.options[i] = new Option (disciplines[i].title, disciplines[i].id);
-		}
+		$('#disciplinesSelect').empty();
+        
+        var program_id = $('#programsSelect').val();
+        if (undefined === DISCIPLINES[program_id]) return;
+        
+        $.each(DISCIPLINES[program_id], function(key, disc) {
+            $('#disciplinesSelect').append('<option value="' + disc.id + '">' + 
+                                            disc.title + '</option>');
+        });
+        
 		changePhrase('programsSelect');
 	}
 	
 	function changePhrase(choiceType)
 	{
-		delChildren($('appChosen'));
-		if (choiceType == 'disciplinesSelect')
+        if (choiceType == 'disciplinesSelect')
 		{
-			$('programType').value = 'discipline';
-			$('programId').value = disciplinesSelect.options[disciplinesSelect.selectedIndex].value;
-			appChosenStr = document.createTextNode("Для обучения выбрана дисциплина "+
-												   disciplinesSelect.options[disciplinesSelect.selectedIndex].text+"\u00A0");
-		} else
-		{
-			$('programType').value = 'program';
-			$('programId').value = programsSelect.options[programsSelect.selectedIndex].value;
-			appChosenStr = document.createTextNode("Для обучения выбран"+programTypeRus[programsTypeSelect.value]+" "+
-												   programsSelect.options[programsSelect.selectedIndex].text+"\u00A0");
+			$('#programType').val('discipline');
+			$('#programId').val($('#disciplinesSelect').val());
+			
+            appChosenStr = 'Для обучения выбрана дисциплина "' + 
+			               $('#disciplinesSelect option:selected').text() + '"';
 		}
-		$('appChosen').appendChild(appChosenStr);
+        else
+		{
+			$('#programType').val('program');
+			$('#programId').val($('#programsSelect').val());
+			
+            var program_type = $('#programsTypeSelect').val();
+            
+            appChosenStr = 'Для обучения выбран' + 
+                            programTypeRus[program_type] + ' "' + 
+							$('#programsSelect option:selected').text() + '"';
+		}
+        
+		$('#appChosen').text(appChosenStr);
 	}
 	
 	function appApply()
 	{
-		if (($('programsSelect').selectedIndex == -1) && ($('disciplinesSelect').selectedIndex == -1))
+		if (null === $('#programsSelect').val() && 
+            null === $('#disciplinesSelect').val())
 		{
 			alert ('Необходимо выбрать направление/курс или дисциплину');
 			return;
 		}
 		
-		window.location = '/applications/apply/' + $('programType').value + '/' + $('programId').value;
-	}
-	
-	function delChildren(obj)
-	{
-		var child_list = obj.childNodes;
-		for (var ch_i=child_list.length-1; ch_i>=0; ch_i--)
-		{
-			obj.removeChild(child_list.item(0));
-		};
-	}
-
-
+		window.location = '/applications/apply/' + $('#programType').val() + 
+                          '/' + $('#programId').val();
+	}      
 </script>
 <br />
+
 <table cellspacing="0" cellpadding="0">
-<tr><td><select id="programsTypeSelect" onchange="switchProgramsType ();"><option value="direction">Направления</option><option value="course">Курсы</option></select></td><td>Дисциплины</td></tr>
-<tr>
-	<td><select onmouseup="changePhrase(this.id);" id="programsSelect" class="educationProgramItems" size="10" onchange="updateDisciplinesList ();">
-	<?php foreach ($directions as $i => $direction): ?>
-	<option value="<?php echo $direction['program_id']; ?>"><?php echo $direction['title']; ?></option>
-	<?php endforeach; ?>
-	</select></td>
-	<td><select id="disciplinesSelect" class="educationProgramItems" size="10" onmouseup="changePhrase(this.id);"></select></td>
-</tr>
+    <tr>
+        <td>
+            <select id="programsTypeSelect" onchange="switchProgramsType ();">
+                <option value="direction">Направления</option>
+                <option value="course">Курсы</option>
+            </select>
+        </td>
+        
+        <td>Дисциплины</td>
+    </tr>
+
+    <tr>
+	    <td>
+            <select onmouseup="changePhrase(this.id);" id="programsSelect" class="educationProgramItems" size="10" onchange="updateDisciplinesList ();">
+	        <?php foreach ($directions as $i => $direction): ?>
+	            <option value="<?php echo $direction['program_id']; ?>"><?php echo $direction['title']; ?></option>
+	        <?php endforeach; ?>
+	        </select>
+        </td>
+	    
+        <td>
+            <select id="disciplinesSelect" class="educationProgramItems" size="10" onmouseup="changePhrase(this.id);">
+            </select>
+        </td>
+    </tr>
 </table>
+
 <p>
 	<div id="appChosen">Учебная программа не выбрана.<br /></div>
 </p>
+
 <p>
 	<input name="programType" type="hidden" id="programType" /> 
 	<input name="programId" type="hidden" id="programId" /> 
 	<input type="submit" value="Подать заявку" onclick="appApply();" />
 </p>
-
-<script type="text/javascript">
-	var programsTypeSelect	= document.getElementById ('programsTypeSelect');
-	var programsSelect 		= document.getElementById ('programsSelect');
-	var disciplinesSelect 	= document.getElementById ('disciplinesSelect');
-</script>
