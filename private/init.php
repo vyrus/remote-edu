@@ -40,7 +40,8 @@
         ->suppressNotFoundWarnings(true);
     
     /* Загружаем конфигурацию */
-    $config = require_once 'config.php';
+    $config  = require_once 'config.php';
+    $config += require_once 'routes.php';
     
     switch ($config['mode']) {
         /* Если включён режим отладки, то... */
