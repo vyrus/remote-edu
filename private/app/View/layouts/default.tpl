@@ -9,8 +9,6 @@
 <link rel="stylesheet" href="/files/css/index.css" type="text/css">
 <link href="/css/autocomplete.css" rel="stylesheet" type="text/css" />
 <link href="/css/ui-lightness/jquery-ui-1.7.2.custom.css" rel="stylesheet" type="text/css" />
-<script type="text/javascript" src="/files/js/prototype.js"></script>
-<script type="text/javascript" src="/files/js/effects.js"></script>
 <script type="text/javascript" src="/js/jquery-1.3.2.min.js"></script> 
 <script type="text/javascript" src="/js/jquery-ui-1.7.2.custom.min.js"></script> 
 <script type="text/javascript" src="/js/ui.datepicker-ru.js"></script> 
@@ -128,7 +126,7 @@ function seltext () {
               </ul>
               <ul id="accordion">
                 <li class="headli">
-                  <a href="/">Программы профессиональной переподготовки</a>
+                  <a href="#">Программы профессиональной переподготовки</a>
                     <ul>
                       <li class='subli'><a href="http://uchimvas.ru/article988">Программирование</a></li>
                       <li class='subli'><a href="http://uchimvas.ru/article989">Информационные технологии в сфере профессиональных коммуникаций</a></li>
@@ -136,28 +134,14 @@ function seltext () {
                 </li>
               </ul>
               <script type="text/javascript">
-              $$('#accordion > li:not([class="active"]) ul').invoke('setStyle', { display : 'none' }).invoke('addClassName', 'collapsed');
-              $$('#accordion > li[class="active"] ul').invoke('addClassName', 'expanded');
-              $$('#accordion > li > a').invoke(
-                  'observe', 
-                  'click', 
-                  function(e)
-                  {
-                      e.stop();
-                      var el = e.findElement('a');
-                      var ul = el.up('li').down('ul');
-                      if (ul) {
-                          if (ul.hasClassName('collapsed')) {
-                              var c = $$('#accordion ul:not([class="collapsed"])')[0];
-                              if (c) {
-                                  new Effect.BlindUp(c.toggleClassName('collapsed').toggleClassName('expanded'));
-                              }
-                          }
-                          
-                          new Effect.BlindDown(ul.toggleClassName('collapsed').toggleClassName('expanded'));
-                      }
-                  }
-              );
+                  $(document).ready(function() {
+                      $('#accordion li.headli').each(function(e) {
+                          $('a', $(this)).click(function() {
+                              $(this).next().toggle('slow');
+                          });
+                          $('ul', $(this)).hide();
+                      });
+                  });
               </script>
             </div>
           </div>
