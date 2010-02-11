@@ -24,6 +24,14 @@ function seltext () {
     passwdbox.value = "";
   }
 }
+
+$(document).ready(function() {
+    $('#accordion li.headli').each(function(e) {
+        $('a', $(this)).click(function() {
+            $(this).next().toggle('slow');
+        });
+    });
+});
 </script>
 </head>
 
@@ -133,16 +141,6 @@ function seltext () {
                     </ul>
                 </li>
               </ul>
-              <script type="text/javascript">
-                  $(document).ready(function() {
-                      $('#accordion li.headli').each(function(e) {
-                          $('a', $(this)).click(function() {
-                              $(this).next().toggle('slow');
-                          });
-                          $('ul', $(this)).hide();
-                      });
-                  });
-              </script>
             </div>
           </div>
         </div>

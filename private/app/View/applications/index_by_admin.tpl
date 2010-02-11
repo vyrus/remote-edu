@@ -36,9 +36,6 @@
     }
 </style>
 
-<script type="text/javascript" src="/js/jquery-1.3.2.min.js"></script>
-<script type="text/javascript" src="/js/jquery-ui-1.7.2.custom.min.js"></script>
-
 <?php $this->title = 'Заявки' ?>
 <h3>Статусы заявок слушателей</h3><br />
 <table class="materials" border="0" cellspacing="2" cellpadding="0">
@@ -152,6 +149,6 @@
 
 $filename        = invalidMaterialsForms[0]->filename;
 ?>
-filenameRow.innerHtML = <?php echo ((isset ($filename->error)) ? ("'" . $filename->error . "'") : ('null')); 
+filenameRow.innerHTML = <?php echo ((isset ($filename->error)) ? ("'" . $filename->error . "'") : ('null')); 
       endif; ?>
 </script>    

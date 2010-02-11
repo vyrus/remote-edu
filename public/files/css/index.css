@@ -202,13 +202,13 @@ li.subli a:hover {color:#3c9cc2; text-decoration:underline;}*/
 
 #accordion {width: 100%;}
 
-#accordion ul {margin-left: 0;}
+#accordion ul {margin-left: 0; display: none;}
 
 #accordion > li:last-child {border-bottom: 0;}
 
 li.headli {background-color:#dadedf; margin: 0 0 2px 0;	padding: 5px;}
 
-li.headli a {font-weight: bold;	color: #17244d;	text-decoration:none;}
+li.headli a {font-weight: bold; color: #17244d; text-decoration:none;}
 
 li.headli li.subli a, li.subli a:visited {color:#33549d; text-decoration:none;}
 li.headli li.subli a:hover {text-decoration:underline;}

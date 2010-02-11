@@ -47,7 +47,6 @@
 		padding 		: 3px;
 	}
 </style>
-<script type="text/javascript" src="/js/jquery-1.3.2.min.js"></script>
 <script type="text/javascript">
 	var PROGRAMS			= [];
 	PROGRAMS['direction']	= [<?php $delimiter = ''; foreach ($directions as $i => $direction): echo $delimiter; ?>{'id':<?php echo $direction['program_id']; ?>,'title':'<?php echo $direction["title"]; $delimiter = ","; ?>'}<?php endforeach; ?>];	
