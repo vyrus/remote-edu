@@ -12,15 +12,17 @@ VALUES
 -- Дамп данных таблицы `programs`
 -- 
 
-INSERT INTO `programs` VALUES
+INSERT INTO `programs` (`program_id`, `title`, `labour_intensive`, `edu_type`, `paid_type`, `responsible_teacher`, `cost`)
+VALUES
 (1, 'Бесплатное направление', 100, 'direction', 'free', NULL, NULL),
-(2, 'Платное направление', 300, 'direction', 'paid', 100.00, NULL);
+(2, 'Платное направление', 300, 'direction', 'paid', 100, NULL);
 
---
+-- 
 -- Дамп данных таблицы `disciplines`
---
+-- 
 
-INSERT INTO `disciplines` (`discipline_id`, `program_id`, `serial_number`, `title`, `coef`, `labour_intensive`, `responsible_teacher`) VALUES
+INSERT INTO `disciplines` (`discipline_id`, `program_id`, `serial_number`, `title`, `coef`, `labour_intensive`, `responsible_teacher`)
+VALUES
 (1, 1, 1, 'Бесплатная дисциплина 1', 70, 50, NULL),
 (2, 1, 0, 'Бесплатная дисциплина 2', 30, 50, NULL),
 (3, 2, 0, 'Платная дисциплина 1', 10, 100, NULL),
@@ -32,7 +34,8 @@ INSERT INTO `disciplines` (`discipline_id`, `program_id`, `serial_number`, `titl
 -- Дамп данных таблицы `sections`
 -- 
 
-INSERT INTO `sections` VALUES 
+INSERT INTO `sections` (`section_id`, `discipline_id`, `title`, `number`)
+VALUES
 (1, 3, 'Раздел 1', 1),
 (2, 3, 'Раздел 2', 2),
 (3, 3, 'Раздел 3', 3);

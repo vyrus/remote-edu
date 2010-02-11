@@ -31,20 +31,6 @@
             $this->render("education_programs/index");
         }
 
-
-        /**
-        * @todo Remove this placeholder.
-        */
-		/*
-        public function action_index_by_student () {
-			$this->render();
-		}
-
-		public function action_index_by_admin () {
-			$this->action_index ();
-		}
-		*/
-
 		public function action_add_program ($params) {
 			$this->set ('buttonCaption', 'Добавить');
 			$this->set ('programType', $params['program_type']);
@@ -326,51 +312,17 @@
         * Сохранение порядка дисциплин в направлении.
         */
         public function action_save_discipline_order() {
-            //$request = $this->getRequest ();
-            //$request->set ('section', $params['section_id']);
-
-            //$form = Form_Discipline_EditSerialNumber::create ('save_discipline_order');
-            //$this->set ('form', $form);
-            //$method = $form->method ();
-
             $educationPrograms = Model_Education_Programs::create ();
-
-/*            if (empty ($request->$method)) {
-                if (! $form->validateID ($educationPrograms, $request)) {
-                    $this->render ('education_programs/section_form');
-                }
-
-                $educationPrograms->getSection ($params['section_id'], $title, $number);
-
-                $form->setValue ('title', 	$title);
-                $form->setValue ('number', 	$number);
-
-                $this->render ('education_programs/section_form');
-            } */
-
-/*            if (! $form->validate ($request, $educationPrograms)) {
-                $this->render ('education_programs/section_form');
-            } */
+            
             $data = explode(',', $_POST['disciplineOrderInfo']);
-            echo '<pre>';
-            print_r($_POST['disciplineOrderInfo']);
-            echo '</pre>';
+            
             for ($i = 0; $i < count($data); $i++) {
-                //$data[$i] = rawurldecode($data[$i]);
-                //$data[$i] = str_replace("\\", "\\\\", $data[$i]);
-                //$data[$i] = str_replace("\"", "\\\"", $data[$i]);
                 $educationPrograms->editDisciplineSerialNumber (
                     $data[$i],
                     $i
                 );
             }
-            /*
-            foreach ($form->title) {
-                $educationPrograms->editDisciplineSerialNumber (
-                    $form->title->value
-                );
-            }*/
-
+            
             $this->flash (
                 'Порядок дисциплин успешно изменён',
                 '/education_programs/index',
