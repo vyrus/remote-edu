@@ -71,29 +71,13 @@
             }
             
             $user = Model_User::create();
-            $udata = (object) $user->getAuth();
-            if (isset($udata->role))
-            {
-                if (Model_User::ROLE_TEACHER == $udata->role)
-                {
-                    $redirect_link = '/users/index_by_teacher/';
-                }elseif (Model_User::ROLE_ADMIN == $udata->role)
-                {
-                    $redirect_link = '/users/index_by_admin/';
-                }elseif (Model_User::ROLE_STUDENT == $udata->role)
-                {
-                    $redirect_link = '/users/login/';
-                }
-            }else
-            {
-                $redirect_link = '/users/login/';
-            }
             
             /* Если данные не прошли проверку, показываем ошибки */
             if (!$form->validate($request, $user)) {
                 $this->render();
             }
             
+            /* Берём данные из формы */
             $login  = $form->login->value;
             $passwd = $form->passwd->value;
             $email  = $form->email->value;
@@ -103,24 +87,17 @@
                 $login, $passwd, Model_User::ROLE_STUDENT, $email
             );
             
-            /* Генерируем код активации и отправляем на email */
+            /* Генерируем код активации */
             $activation_code = $user->getActivationCode($id);
             
+            /* И его отправляем на email */
             $postman = Resources::getInstance()->postman;
             $postman->sendRegLetterStudent(
                 $id, $login, $email, $activation_code
             );
             
-            $msg = 'Вы успешно зарегистрированы в системе дистанционного обучения.<p>
-			  Через 10 сек. Вас автоматически перенаправят на страницу
-			  <a href=/users/login/ title=Авторизация>авторизации</a>.
-			  <p>
-			  Также, Вы можете, не дожидаясь перенаправления, авторизоваться в системе,
-			  по <a href=/users/login/ title=Авторизация>ссылке</a> и
-			  приступить к обучению!';
-
-            $this->flash($msg, $redirect_link, 10);
-//			$this->render($redirect_link);
+            /* Выводим сообщение об успешной регистрации */
+            $this->render('users/register_student_ok');
          }
         
         /**
@@ -129,55 +106,51 @@
         * @param array $params array(user_id, code).
         */
         public function action_activate_student(array $params = array()) {
-            $user = Model_User::create();
-            $udata = (object) $user->getAuth();
-            if (isset($udata->role))
-            {
-                if (Model_User::ROLE_TEACHER == $udata->role)
-                {
-                    $redirect_link = '/users/index_by_teacher/';
-                }elseif (Model_User::ROLE_ADMIN == $udata->role)
-                {
-                    $redirect_link = '/users/index_by_admin/';
-                }elseif (Model_User::ROLE_STUDENT == $udata->role)
-                {
-                    $redirect_link = '/users/index_by_student/';
-                }
-            }else
-            {
-                $redirect_link = '/index/index/';
-            }
+            /* Шаблон, который выводится при успешной активации */
+            $tpl_ok = 'users/activate_student_ok';
+            /* И шаблон для вывода ошибок */
+            $tpl_error = 'users/activate_student_error';
             
+            $user = Model_User::create();
             $id = $params['user_id'];            
 
             /* Проверяем статус пользователя */
             $status = $user->getStatus($id);
 
             if (false === $status) {
-                $this->flash('Пользователь не найден', $redirect_link);            
+                $this->set('message', 'пользователь не найден');
+                $this->render($tpl_error);            
             }
             
             if (Model_User::STATUS_INACTIVE !== $status) {
-                $this->flash('Аккаунт уже активирован', $redirect_link);            
+                $this->set('message', 'аккаунт уже активирован');
+                $this->render($tpl_error);
             }
             
             /* Проверяем код активации */
             $code = $user->getActivationCode($id);
 
             if ($params['code'] !== $code) {
-                $this->flash('Неправильный код активации', $redirect_link, false);
+                $this->set('message', 'неправильный код активации');
+                $this->render($tpl_error);
             }
             
             /* Активируем слушателя */
             $result = $user->activateStudent($id);
             
-            if ($result) {
-                $msg = 'Аккаунт успешно активирован';
-            } else {
-                $msg = 'Не удалось активировать аккаунт';
+            if (false === $result) {
+                $this->set('message', 'не удалось активировать аккаунт');
+                $this->render($tpl_error);
             }
             
-            $this->flash($msg, $redirect_link, false);
+            /* Сразу же авторизуем пользователя, чтобы не заставлять его 
+            вспоминать свой пароль :) */
+            $auth = Resources::getInstance()->auth;
+            $auth->init()
+                 ->setUserId($id);
+            
+            /* И выводим сообшение об успешной активации */
+            $this->render($tpl_ok);
         }
         
         /**
