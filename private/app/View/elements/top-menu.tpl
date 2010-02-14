@@ -11,13 +11,13 @@
         'Регистрация пользователя'      => 'users/index_by_admin/',
         'Формирование учебных программ' => 'education_programs/index/',
         'Загрузка материалов'           => 'educational_materials/index_by_admin/',		
-        'Заявки на обучение'            => 'applications/index_by_admin'
+        'Заявки на обучение'            => 'applications/index_by_admin',
     );
     
     /* ссылки, доступные только преподу */	        
     $teacher_elements = array(
         'Пользователи' => 'users/index/',
-        'Материалы'    =>'educational_materials/index/'
+        'Материалы' =>'educational_materials/index/',
     );
     
     /* ссылки, доступные только слушателю */	        
@@ -25,7 +25,7 @@
         'Моё меню'       => 'users/instructions_by_user/',
         'Мои курсы'      => 'education_programs/available/',        
         //'Материалы'      => 'educational_materials/index_by_student/',
-        'Мой новый курс' => 'applications/index_by_student/'
+        'Мой новый курс' => 'applications/index_by_student/',
     );
 
     /* Дополнительные ссылки */
@@ -46,6 +46,7 @@
     
     $user = Model_User::create();
     $udata = $user->getAuth();
+    $userId = (false === $udata ? false : $udata['user_id']);
     $role = (false === $udata ? false : $udata['role']);
 
     /* Берём общие для всех пользователей элементы меню */
@@ -53,6 +54,9 @@
     
     /* Если пользователь авторизован, добавляем пункты меню для его роли */
     if (false !== $role) {
+        $unreadMessagesCount = Model_Messages::getUnreadCount($userId); 
+        $messagesCaption = $unreadMessagesCount ? '<b>Сообщения (' . $unreadMessagesCount . ')</b>' : 'Сообщения';
+        $elems[$messagesCaption] = 'messages';
         $elems = array_merge($elems, $_role2elems[$role]);
     }
                                        

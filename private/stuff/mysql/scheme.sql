@@ -201,6 +201,17 @@ CREATE TABLE `payments` (
   KEY `fk_payments_applications` (`app_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+
+CREATE TABLE `message` (
+  `message_id` int(11) NOT NULL AUTO_INCREMENT,
+  `from` int(11) DEFAULT NULL,
+  `to` int(11) DEFAULT NULL,
+  `subject` varchar(255) DEFAULT NULL,
+  `message` text,
+  `read` enum('read','unread') DEFAULT NULL,
+  `time` int(11) DEFAULT NULL,
+  PRIMARY KEY (`message_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 --
 -- Изменяем тип поля, чтобы можно было гарантировать точность чисел. Максимальное
 -- значените для DECIMAL(9, 2) составляет 9999999.99.

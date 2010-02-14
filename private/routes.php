@@ -321,7 +321,85 @@
 					'controller' => 'assignment',
 					'action' => 'index',
 				),
-			)
+			),
+			
+			array(
+			    'type' => Mvc_Router::ROUTE_STATIC,
+			    'pattern' => '/messages',
+			    'handler' => array(
+			        'controller' => 'messages',
+			        'action' => 'index',
+			    ),
+			),
+			
+			array(
+			    'type' => Mvc_Router::ROUTE_STATIC,
+			    'pattern' => '/messages/inbox',
+			    'handler' => array(
+			        'controller' => 'messages',
+			        'action' => 'inbox',
+			    ),
+			),
+
+            array(
+                'type'     => Mvc_Router::ROUTE_REGEX,
+                'pattern'  => array
+                (
+                    'regex'  => '/messages/inbox/([0-9]*)',
+                    'params' => array ('page'),
+                ),
+                'handler' => array
+                (
+                    'controller' => 'messages',
+                    'action'     => 'inbox',
+                )
+            ),
+
+		    array(
+    		    'type' => Mvc_Router::ROUTE_STATIC,
+    		    'pattern' => '/messages/send',
+    		    'handler' => array(
+    		        'controller' => 'messages',
+    		        'action' => 'send',
+    		    ),
+    		),
+			
+            array(
+                'type'     => Mvc_Router::ROUTE_REGEX,
+                'pattern'  => array
+                (
+                    'regex'  => '/messages/send/([0-9]*)',
+                    'params' => array ('to_id'),
+                ),
+                'handler' => array
+                (
+                    'controller' => 'messages',
+                    'action'     => 'send',
+                )
+            ),
+            
+            array(
+                'type' => Mvc_Router::ROUTE_STATIC,
+                'pattern' => '/messages/remove',
+                'handler' => array(
+                    'controller' => 'messages',
+                    'action' => 'remove',
+                ),
+            ),	
+
+            array(
+                'type'     => Mvc_Router::ROUTE_REGEX,
+                'pattern'  => array
+                (
+                    'regex'  => '/messages/([0-9]+)',
+                    'params' => array ('message_id'),
+                ),
+                'handler' => array
+                (
+                    'controller' => 'messages',
+                    'action'     => 'message',
+                )
+            ),	
         ),
 
         /* Права доступа к разделам сайта */
@@ -347,7 +425,7 @@
                 'applications/index_by_student',          // форма для подачи заявки
 
                 'educational_materials/index_by_student',
-                'education_programs/show_available'
+                'education_programs/show_available',
     		),
 
             /* Преподаватель */
@@ -355,7 +433,7 @@
             (
                 'education_students/index',
 
-                'educational_materials/index_by_teacher'  // учебные материалы, добавленные залогиненным преподавателем
+                'educational_materials/index_by_teacher',  // учебные материалы, добавленные залогиненным преподавателем
             ),
 
             /* Администратор */
@@ -387,7 +465,7 @@
                 'education_programs/edit_discipline',
                 'education_programs/edit_section',
 
-                'education_students/index'
+                'education_students/index',
             )
         )
     );
