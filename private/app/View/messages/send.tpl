@@ -16,12 +16,25 @@
 <script type="text/javascript">
     var recipients = {
 <?php foreach ($recipients as $i => $recipient): ?>
-        '<?php echo $recipient['recipient_id']; ?>':'<?php echo $recipient['recipient_name']; ?>',
+        '<?php echo $i; ?>':{'name':'<?php echo $recipient['recipient_name']; ?>','desc':"<?php foreach ($recipient['recipient_description'] as $i => $desc) {echo $desc . '<br />';} ?>"},
 <?php endforeach; ?>        
     };
     
+    function showRecipientDescription() {
+        var recId = recipientsSelect.val();
+        
+        if (recId) {
+            $('#recipientDescription').html(recipients[recId].desc);
+            recipientDescription.dialog('open');
+        }
+    }
+    
+    function hideRecipientDescription() {
+        recipientDescription.dialog('close');
+    }
+    
     function fillRecipientsSelect() {
-		$.each(recipients, function (key, value) {recipientsSelect.append(new Option(value, key));});				    
+		$.each(recipients, function (key, value) {var option = new Option(value.name, key); recipientsSelect.append(option);});				    
     }
     
     function showSelectRecipientDialog() {
@@ -29,7 +42,8 @@
 			'option',
 			'buttons',
 			{
-				'Выбрать': selectRecipient,
+			    'Выбрать': selectRecipient,
+			    'Информация' : showRecipientDescription
 			}
 		);
 		selectRecipientDialog.dialog('open');        
@@ -37,7 +51,7 @@
     
     function selectRecipient() {
         recipientId.val(recipientsSelect.val());
-        selectRecipientButton.text(recipients[recipientsSelect.val()]);
+        selectRecipientButton.text(recipients[recipientsSelect.val()].name);
         selectRecipientDialog.dialog('close');
     }
     
@@ -79,24 +93,37 @@
 <tr><td colspan="2"><input type="button" value="Отправить" onclick="submitForm()" /></td></tr>
 </table>
 </form>
-<div id="selectRecipientDialog"><select id="recipientsSelect" size="10"></select></div>
+<div id="selectRecipientDialog"><select id="recipientsSelect" size="10" style="width: 100%;"></select></div>
+<div id="recipientDescription"></div>
 
 <script type="text/javascript">
     var recipientId = $("#sendMessageForm > :input[name='recipient']");
     var recipientsSelect = $('#recipientsSelect');
 	var selectRecipientDialog = $('#selectRecipientDialog');
 	var selectRecipientButton = $('#selectRecipientButton');
+	var recipientDescription = $('#recipientDescription');
+	
+	recipientDescription.dialog(
+		{
+			autoOpen: false,
+			draggable : false,
+			modal: true,
+			resizable: false,
+			title: 'Информация о пользователе',
+			width: 'auto',
+		}
+	);
 	
 	selectRecipientDialog.dialog(
 		{
 			autoOpen: false,
 			draggable : false,
-			modal: true,
+			modal : true,
 			resizable: false,
 			title: 'Выбор адресата',
 			width: 'auto'
 		}
 	);
 	fillRecipientsSelect();
-	initRecipientField();
+	initRecipientField();	
 </script>

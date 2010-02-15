@@ -96,7 +96,7 @@
 				$form->title->value,
 				$form->coef->value,
 				$form->labourIntensive->value,
-                count($disciplines[$form->speciality->value])
+                isset($disciplines[$form->speciality->value]) ? count($disciplines[$form->speciality->value]) : 0
 			);
 			$this->flash (
 				'Дисциплина успешно добавлена',

@@ -629,6 +629,111 @@
 			);
 			$this->prepare($sql)->execute($params);			
 		}
+		
+		public function getResponsibleTeachers() {		    
+		    $udata = (object) $this->getAuth();
+		    
+            $app = Model_Application::create();
+            $program = Model_Education_Programs::create();
+            $disc = Model_Discipline::create();
+            $payment = Model_Payment::create();
+
+            $availPrograms = array();
+            $availDisciplines = array();
+
+            $programApps = $app->getProcessedAppsForPrograms($udata->user_id);
+
+            foreach ($programApps as $a) {
+                $a = (object) $a;
+
+                if (Model_Education_Programs::PAID_TYPE_FREE == $a->paid_type && Model_Application::STATUS_ACCEPTED == $a->status ||
+                        Model_Education_Programs::PAID_TYPE_PAID == $a->paid_type && Model_Application::STATUS_SIGNED == $a->status) {
+                    $discs = $disc->getAllowed($a->object_id, $a->paid_type, $a->app_id);
+                    $programData = $program->getProgramInfo($a->object_id);
+                    $programData['disciplines'] = $discs;
+
+                    $availPrograms[] = $programData;
+                }
+            }
+
+            $discApp = $app->getProcessedAppsForDisciplines($udata->user_id);
+
+            foreach ($discApp as $a) {
+                $a = (object) $a;
+
+                if (Model_Education_Programs::PAID_TYPE_PAID == $a->paid_type) {
+                    if (Model_Application::STATUS_SIGNED !== $a->status) {
+                        continue;
+                    }
+
+                    $paymentTotal = $payment->getTotal($a->app_id);
+
+                    if (null === $paymentTotal) {
+                        continue;
+                    }
+
+                    $programData = $program->getProgramInfo($a->program_id);
+                    $programCost = $program_data['cost'];
+
+                    $totalCost = round($a->coef / 100, 3) * $programCost;
+
+                    if ($paymentTotal < $totalCost) {
+                        continue;
+                    }
+
+                }
+                elseif (Model_Education_Programs::PAID_TYPE_FREE == $a->paid_type) {
+                    if (Model_Application::STATUS_ACCEPTED !== $a->status)
+                    {
+                        continue;
+                    }
+                }
+
+                $disc = Model_Discipline::create()->get($a->object_id);
+                $availDisciplines[] = $disc;
+            }
+
+            $retval = array();
+            $sql = 'SELECT `name`,`surname`,`patronymic` FROM `users` WHERE `user_id`=:user_id';
+            $stmt = $this->prepare($sql);
+
+            foreach ($availPrograms as $i => $program) {
+                if ($program['edu_type'] == 'course') {
+                    $stmt->execute(array(':user_id' => $program['responsible_teacher']));
+                    $teacher = $stmt->fetch(Db_Pdo::FETCH_ASSOC);
+                    
+                    if (isset($retval[$program['responsible_teacher']])) {
+                        $retval[$program['responsible_teacher']]['recipient_description'][] = 'отвественный за курсы \'' . $program['title'] .  '\',';
+                    }
+                    else {
+                        $retval[$program['responsible_teacher']] = array(
+                            'recipient_name' => $teacher['surname'] . ' ' . mb_substr($teacher['surname'], 0, 1, 'utf-8') . '. ' . mb_substr($teacher['patronymic'], 0, 1, 'utf-8') . '.',
+                            'recipient_description' => array('отвественный за курсы \'' . $program['title'] .  '\''),
+                        );
+                    }
+                }
+                else {
+                    $availDisciplines = array_merge($availDisciplines, $program['disciplines']);
+                }
+            }
+            
+            foreach ($availDisciplines as $i => $disc) {
+                $stmt->execute(array(':user_id' => $disc['responsible_teacher']));
+                $teacher = $stmt->fetch(Db_Pdo::FETCH_ASSOC);
+                
+                if (isset($retval[$disc['responsible_teacher']])) {
+                    $retval[$disc['responsible_teacher']]['recipient_description'][] = 'отвественный за дисциплину \'' . $disc['title'] . '\'';
+                }
+                else {
+                    $retval[$disc['responsible_teacher']] = array(
+                        'recipient_name' => $teacher['surname'] . ' ' . mb_substr($teacher['surname'], 0, 1, 'utf-8') . '. ' . mb_substr($teacher['patronymic'], 0, 1, 'utf-8') . '.',
+                        'recipient_description' => array('отвественный за дисциплину \'' . $disc['title'] .  '\''),
+                    );
+                }                
+            }            
+                
+            return $retval;
+	    }
     }
 
 ?>

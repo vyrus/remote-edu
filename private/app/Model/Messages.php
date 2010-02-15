@@ -152,9 +152,9 @@
             $stmt = $this->prepare($sql);
             $stmt->execute();
             $adminId = $stmt->fetch(Db_Pdo::FETCH_NUM);
-            $retval[] = array(
-                'recipient_id' => $adminId[0],
+            $retval[$adminId[0]] = array(
                 'recipient_name' => 'Администратор',
+                'recipient_description' => array('Администратор'),
             );
             
             switch ($this->userRole) {
@@ -179,11 +179,23 @@
                     $stmt->execute($params);
                     $curator = $stmt->fetch(Db_Pdo::FETCH_ASSOC);
                     
-                    $retval[] = array(
-                        'recipient_id' => $curatorId[0],
-                        'recipient_name' => $curator['surname'] . ' ' . mb_substr($curator['surname'], 0, 1, 'utf-8') . '. ' . mb_substr($curator['patronymic'], 0, 1, 'utf-8') . '.(Куратор)',
+                    $retval[$curatorId[0]] = array(
+                        'recipient_name' => $curator['surname'] . ' ' . mb_substr($curator['surname'], 0, 1, 'utf-8') . '. ' . mb_substr($curator['patronymic'], 0, 1, 'utf-8') . '.',
+                        'recipient_description' => array('Куратор'),
                     );
 
+                    $user = Model_User::create();
+                    $teachers = $user->getResponsibleTeachers();
+                    
+                    foreach ($teachers as $i => $teacher) {
+                        if (isset($retval[$i])) {
+                            array_merge($retval[$i]['recipient_description'], $teacher['recipient_description']);
+                        }
+                        else {
+                            $retval[] = $teacher;
+                        }
+                    }
+                
                     break;
                 }
 
