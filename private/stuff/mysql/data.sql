@@ -15,7 +15,7 @@ VALUES
 INSERT INTO `programs` (`program_id`, `title`, `labour_intensive`, `edu_type`, `paid_type`, `responsible_teacher`, `cost`)
 VALUES
 (1, 'Бесплатное направление', 100, 'direction', 'free', NULL, NULL),
-(2, 'Платное направление', 300, 'direction', 'paid', 100, NULL);
+(2, 'Платное направление', 300, 'direction', 'paid', NULL, 100);
 
 -- 
 -- Дамп данных таблицы `disciplines`
