@@ -1,4 +1,4 @@
-<?php if(!empty($this->programs)) { ?>
+<?php if (!empty($this->programs) || !empty($this->disciplines)): ?>
 <h3>Доступные программы:</h3>
 <ul>
     <?php foreach ($this->programs as $p): ?>
@@ -13,8 +13,7 @@
     </li>
     <?php endforeach; ?>
 </ul> 
-<?php 
-}elseif(!empty($this->disciplines)) { ?>
+
 <br />
 <h3>Доступные дисциплины:</h3>
 <ul>
@@ -22,10 +21,8 @@
     <?php $d = (object) $d ?>
     <li><a href="/educational_materials/show/<?php echo $d->discipline_id ?>/<?php echo $d->app_id ?>/"><?php echo $d->title ?></a></li>
     <?php endforeach; ?>
-</ul>
-<?php
-}else {
-?>
+</ul>          
+<?php else: ?>
 <b>Вами не выбрано ни одной программы для обучения:</b>
 <ol>
     <li>В разделе <a href="/applications/index_by_student/" target=blank>
@@ -37,4 +34,4 @@
     <a href="/education_programs/available/" target=blank>"Мои курсы"</a>.*</li>
 
 </ol>
-<?php } ?>
+<?php endif; ?>

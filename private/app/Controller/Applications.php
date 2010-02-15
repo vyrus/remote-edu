@@ -147,6 +147,10 @@
             * @todo Paginator.
             */
             $app = Model_Application::create();
+            /**
+            * @todo If user is not logged in, then $udata is empty. Avoid it by 
+            * protecting this line with route, allowed only for logged in user.
+            */
             $apps = $app->getAppsInfo($udata->user_id);
             
             $this->set('applications', $apps);
