@@ -1,123 +1,123 @@
 <?php
-    
+
     /* $Id$ */
 
     /**
     * Класс для рассылки почтовых сообщений.
     */
-    class Postman {                      
+    class Postman {
         /**
         * Тип письма: регистрация слушателя.
-        * 
+        *
         * @var const
         */
         const TYPE_REG_STUDENT = 'reg-student';
-        
+
         /**
         * Тип письма: регистрация сотрудника.
-        * 
+        *
         * @var const
         */
         const TYPE_REG_EMPLOYEE = 'reg-employee';
-        
+
         /**
         * Тип письма: договор об обучении.
-        * 
+        *
         * @var const
         */
         const TYPE_CONTRACT = 'contract';
 
         /**
         * Тип прикреплённого файла: документ word.
-        * 
+        *
         * @var const
         */
         const TYPE_ATTACHMENT = 'application/msword';
 
         /**
         * Имя прикреплённого файла.
-        * 
+        *
         * @var const
         */
-        const ATTACHMENT_NAME = 'договор об оказани образовательных услуг';
+        const ATTACHMENT_NAME = 'Договор об оказании образовательных услуг';
 
         /**
         * Транспорт для отправки: функция mail().
-        * 
+        *
         * @var const
         */
         const TRANSPORT_SENDMAIL = 'sendmail';
-        
+
         /**
         * Транспорт для отправки: SMTP-сервер.
-        * 
+        *
         * @var const
         */
         const TRANSPORT_SMTP = 'smtp';
-        
+
         /**
         * Заголовки писем по типу.
-        * 
+        *
         * @var array
-        */         
+        */
         protected $_subjects = array(
             self::TYPE_REG_STUDENT => 'Регистрация',
             self::TYPE_REG_EMPLOYEE => 'Регистрация',
-            self::TYPE_CONTRACT => 'Договор об оказании услуг по дистанционному обучению'			
+            self::TYPE_CONTRACT => 'Договор об оказании услуг по дистанционному обучению'
         );
-        
+
         /**
         * Тексты сообщений по типу.
-        * 
+        *
         * @var array
         */
         protected $_messages = array(
             self::TYPE_REG_STUDENT => 'Вы зарегистрированы под логином %s. Для активации аккаунта пройдите по ссылке %s.',
             self::TYPE_REG_EMPLOYEE => 'Вы зарегистрированы под логином %s. Для активации аккаунта и получения пароля пройдите по ссылке %s.',
-            self::TYPE_CONTRACT => 'Во вложении находиться договор об оказании услуг по дистанционному обучению. Для начала обучения договор необходимо распечатать, подписать и доставить в центр обучения.'			
+            self::TYPE_CONTRACT => 'Во вложении находиться договор об оказании услуг по дистанционному обучению. Для начала обучения договор необходимо распечатать, подписать и доставить в центр обучения.'
         );
-        
+
         /**
         * Объект для отправки писем.
-        * 
+        *
         * @var Zend_Mail
         */
         protected $_mail;
-        
+
         /**
         * Транспорт, который будет использован для отправки писем.
-        * 
+        *
         * @var Zend_Mail_Transport_Abstract
         */
         protected $_transport;
-        
+
         /**
         * Базовый адрес сайта (используется для построения правильных ссылок
         * в письме.
-        * 
+        *
         * @var string
         */
         protected $_base_url;
 
         /**
         * Кодировка сообщений.
-        * 
+        *
         * @var string
         */
         protected $_charset = 'UTF-8';
-        
+
         /**
         * Метод-конструктор класса.
-        * 
+        *
         * @param  string $base_url Базовый адрес сайта.
         * @param  string $config   Настройки отправки почты.
         * @return void
         */
-        public function __construct($base_url, $config) 
+        public function __construct($base_url, $config)
         {
             $this->_mail = new Zend_Mail($this->_charset);
             $this->_mail->setFrom($config['from_email'], $config['from_name']);
-            
+
             /* Выбираем, какой транспорт для отправки почты использовать */
             switch ($config['transport'])
             {
@@ -127,33 +127,33 @@
                     $trans = new Zend_Mail_Transport_Smtp($smtp['host'],
                                                           $smtp['config']);
                     break;
-                
+
                 /* Через стандартную функцию mail() */
                 case self::TRANSPORT_SENDMAIL:
                 default:
                     $trans = new Zend_Mail_Transport_Sendmail();
                     break;
             }
-            
+
             $this->_transport = $trans;
             $this->_base_url = $base_url;
         }
-        
+
         /**
         * Создание экземпляра класса.
-        * 
+        *
         * @param  string $base_url Базовый адрес сайта.
         * @param  string $config   Настройки отправки почты.
         * @return void
         */
-        public static function create($base_url, $config) 
+        public static function create($base_url, $config)
         {
             return new self($base_url, $config);
         }
-        
+
         /**
         * Отправка сообщения о регистрации новому слушателю.
-        * 
+        *
         * @param  int    $id              Идентификатор пользователя.
         * @param  string $login           Логин на сайте.
         * @param  string $email           Email пользователя.
@@ -164,19 +164,19 @@
             /* Создаём ссылку для активации */
             $format = '%s/activate_student/%d/%s/';
             $link = sprintf($format, $this->_base_url, $id, $activation_code);
-            
+
             /* Получаем заголовок и текст письма */
             $subject = $this->_getSubject(self::TYPE_REG_STUDENT);
-            
+
             $params = array($login, $link);
             $message = $this->_getMessage(self::TYPE_REG_STUDENT, $params);
-            
+
             return $this->_send($email, $subject, $message);
         }
-        
+
         /**
         * Отправка сообщения о регистрации новому cотруднику.
-        * 
+        *
         * @param  int    $id              Идентификатор пользователя.
         * @param  string $login           Логин на сайте.
         * @param  string $email           Email пользователя.
@@ -187,29 +187,28 @@
             /* Создаём ссылку для активации */
             $format = '%s/activate_employee/%d/%s/';
             $link = sprintf($format, $this->_base_url, $id, $activation_code);
-            
+
             /* Получаем заголовок и текст письма */
             $subject = $this->_getSubject(self::TYPE_REG_EMPLOYEE);
-            
+
             $params = array($login, $link);
             $message = $this->_getMessage(self::TYPE_REG_EMPLOYEE, $params);
-            
+
             return $this->_send($email, $subject, $message);
         }
 
 
         /**
         * Отправка договора слушателю.
-        * 
+        *
         * @param  string $user_email      Email пользователя.
         * @param  string $attachFilePath  Путь прикрепляемого файла.
         * @return
         */
-        public function sendContractStudent($user_email,$attachFilePath) 
-		{
+        public function sendContractStudent($user_email,$attachFilePath) {
             /* Получаем заголовок и текст письма */
             $subject = $this->_getSubject(self::TYPE_CONTRACT);
-            
+
             $message = $this->_getMessage(self::TYPE_CONTRACT);
 
             if (!empty($attachFilePath) && file_exists($attachFilePath))
@@ -218,15 +217,14 @@
                 $attachment->type        = self::TYPE_ATTACHMENT;
                 $attachment->disposition = Zend_Mime::DISPOSITION_ATTACHMENT;
                 $attachment->filename    = self::ATTACHMENT_NAME;
-            }          
-            
+            }
+
             return $this->_send($user_email, $subject, $message);
         }
 
-       
         /**
         * Отправка письма.
-        * 
+        *
         * @param  string $to      Адрес получателя.
         * @param  string $subject Заголовок письма.
         * @param  string $message Текст сообщения.
@@ -236,13 +234,13 @@
             $this->_mail->setBodyText($message)
                         ->addTo($to)
                         ->setSubject($subject);
-            
-            return $this->_mail->send($this->_transport);        
+
+            return $this->_mail->send($this->_transport);
         }
-        
+
         /**
         * Получение заголовка письма по его типу с подстановкой параметров.
-        * 
+        *
         * @param  mixed $type   Тип письма.
         * @param  array $params Параметры.
         * @return
@@ -250,10 +248,10 @@
         protected function _getSubject($type, array $params = array()) {
             return vsprintf($this->_subjects[$type], $params);
         }
-        
+
         /**
         * Получение текста письма по его типу с подстановкой параметров.
-        * 
+        *
         * @param  mixed $type   Тип письма.
         * @param  array $params Параметры.
         * @return

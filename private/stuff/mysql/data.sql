@@ -39,3 +39,10 @@ VALUES
 (1, 3, 'Раздел 1', 1),
 (2, 3, 'Раздел 2', 2),
 (3, 3, 'Раздел 3', 3);
+
+--
+-- Дамп данных таблицы `materials_states`
+--
+
+INSERT INTO `materials_states` (`student_id`, `material_id`, `state`) VALUES
+(3, 1, 'downloaded');

@@ -179,7 +179,17 @@ CREATE TABLE `apps_history` (
   `modifed` datetime NOT NULL,
   PRIMARY KEY  (`app_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+-- --------------------------------------------------------
 
+--
+-- Структура таблицы `materials_states`
+--
+
+CREATE TABLE IF NOT EXISTS `materials_states` (
+  `student_id` int(11) NOT NULL,
+  `material_id` int(11) NOT NULL,
+  `state` enum('downloaded','studied') DEFAULT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
 -- Удаляем статус заявки "оплачена".
