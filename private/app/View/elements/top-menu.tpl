@@ -17,7 +17,7 @@
     /* ссылки, доступные только преподу */	        
     $teacher_elements = array(
         'Пользователи' => 'users/index/',
-        'Материалы' =>'educational_materials/index/',
+        'Материалы'    => 'educational_materials/index/',
     );
     
     /* ссылки, доступные только слушателю */	        

@@ -1,57 +1,59 @@
 <?php
-	/* ссылки, доступные пользователю, независимо от прав доступа*/
-	$educationProgramsAction = array(
+
+    /* ссылки, доступные пользователю, независимо от прав доступа*/
+    $generic_elements = array(
     );
 
-	/* ссылки, доступные только админу*/
-    $admin_educationProgramsAction = array(
-		'Добавление направлений/дисциплин' => '/education_programs',
-		'Формирование порядка изучения дисциплин' => '#',
-		'Назначение отвественных преподавателей' => '/assignment/responsible_teacher',
-		'Назначение кураторов' => '/assignment/students_curator',
-		'Инструкция' => '#',
+    /* ссылки, доступные только админу */
+    $admin_elements = array(
+        'Добавление направлений/дисциплин'        => 'education_programs/index/',
+        //'Формирование порядка изучения дисциплин' => '#',
+        'Назначение отвественных преподавателей'  => 'assignment/responsible_teacher/',
+        'Назначение кураторов'                    => 'assignment/students_curator/',
+        //'Инструкция'                              => '#',
     );
 
-	/* ссылки, доступные только преподу*/
-    $teacher_educationProgramsAction = array(
+    /* ссылки, доступные только преподу */
+    $teacher_elements = array();
+
+    /* ссылки, доступные только слушателю */
+    $student_elements = array(
+        'Доступные программы'     => 'available/',
+        'Инструкция пользователю' => 'instructions_by_student/'
     );
 
-	/* ссылки, доступные только слушателю*/
-    $student_educationProgramsAction = array(
-        'Доступные программы'           => 'available/',
-        'Инструкция пользователю'	=> 'instructions_by_student/'
+    /* Карта соответствия ролей пользователей и выводимых пунктов меню */
+    $_role2elems = array(
+        Model_User::ROLE_STUDENT => $student_elements,
+        Model_User::ROLE_TEACHER => $teacher_elements,
+        Model_User::ROLE_ADMIN   => $admin_elements
     );
 
-    //Wtfi
-    //$cur_ctrl = $_SERVER['REQUEST_URI'];
+    /* Получаем данные пользователя, если он авторизован */
+    $user = Model_User::create();
+    $udata = $user->getAuth();
+    
+    $userId = (false === $udata ? false : $udata['user_id']);
+    $role   = (false === $udata ? false : $udata['role']);
 
-	$user = Model_User::create();
-	$udata = (object) $user->getAuth();
-	
-	/* вывод общих пунктов меню*/
-		  foreach ($educationProgramsAction as $title => $controller): ?>
-			<li class="headli">
-				<a href="<?=$controller ?>"><?=$title ?></a>
-			</li>
-	<?php endforeach;
-
-	if (isset($udata->role))
-	{
-		if (Model_User::ROLE_TEACHER == $udata->role)
-		{
-			$items = 'teacher_educationProgramsAction';
-		}elseif (Model_User::ROLE_ADMIN == $udata->role)
-		{
-			$items = 'admin_educationProgramsAction';	
-		}elseif (Model_User::ROLE_STUDENT == $udata->role)
-		{
-			$items = 'student_educationProgramsAction';	
-		}
-	/* вывод пунктов меню, специфических для залогиненного пользователя */
-		  foreach (${$items} as $title => $controller): ?>
-			<li class="headli">
-				<a href="<?=$controller ?>"><?=$title ?></a>
-			</li>
-	<?php endforeach;
-}
+    /* Берём общие для всех пользователей элементы меню */
+    $elems = $generic_elements;
+    
+    /* Если пользователь авторизован, добавляем пункты меню для его роли */
+    if (false !== $role) {
+        $elems = array_merge($elems, $_role2elems[$role]);
+    }
+    
 ?>
+    
+<?php foreach ($elems as $title => $link): ?>
+    <?php if (strpos($link, 'http') === 0): ?>
+        <li class="headli">
+            <a href="<?php echo $link ?>"><?php echo $title ?></a>
+        </li>
+    <?php else: ?>
+        <li class="headli">
+            <a href="/<?php echo $link ?>"><?php echo $title ?></a>
+        </li>
+    <?php endif; ?>
+<?php endforeach; ?>
