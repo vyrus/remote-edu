@@ -96,6 +96,20 @@
             $view = Mvc_View::create(VIEWS . DS, LAYOUTS . DS, ELEMENTS . DS);
             return $view;
         }
+        
+        /**
+        * Инициализация менеджера ссылок.
+        * 
+        * @return Mvc_Links
+        */
+        protected function get_links() {
+            $links = Mvc_Links::create();
+            
+            $links->setBaseUrl($this->_config['base_url'])
+                  ->addRoutes($this->_config['routes']);
+            
+            return $links;
+        }
     }
         
 ?>
