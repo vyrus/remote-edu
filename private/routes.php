@@ -9,6 +9,19 @@
         */
         'routes' => array
         (
+            /* Главная страница */
+            array(             
+                'alias'   => 'index',
+                'type'    => Mvc_Router::ROUTE_STATIC,
+                'pattern' => '/',
+                'handler' => array
+                (
+                    'controller' => 'pages',
+                    'action' => 'display',
+                    'params' => array('page' => 'index')
+                )
+            ),
+            
             array (
                 'type'     => Mvc_Router::ROUTE_REGEX,
                 'pattern'  => array
