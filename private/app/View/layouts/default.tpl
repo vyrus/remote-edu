@@ -5,14 +5,14 @@
 <meta name="keywords" content="">
 <meta name="description" content="">
 <meta name="robots" content="All, Index">
-<link rel="icon" href="/favicon.ico" type="image/x-icon" />
-<link rel="stylesheet" href="/files/css/index.css" type="text/css">
-<link href="/css/autocomplete.css" rel="stylesheet" type="text/css" />
-<link href="/css/ui-lightness/jquery-ui-1.7.2.custom.css" rel="stylesheet" type="text/css" />
-<script type="text/javascript" src="/js/jquery-1.3.2.min.js"></script> 
-<script type="text/javascript" src="/js/jquery-ui-1.7.2.custom.min.js"></script> 
-<script type="text/javascript" src="/js/ui.datepicker-ru.js"></script> 
-<script type="text/javascript" src="/js/jquery.autocomplete.js"></script> 
+<link rel="icon" href="<?php echo $this->_links->getPath('/favicon.ico') ?>" type="image/x-icon" />
+<link rel="stylesheet" href="<?php echo $this->_links->getPath('/files/css/index.css') ?>" type="text/css">
+<link href="<?php echo $this->_links->getPath('/css/autocomplete.css') ?>" rel="stylesheet" type="text/css" />
+<link href="<?php echo $this->_links->getPath('/css/ui-lightness/jquery-ui-1.7.2.custom.css') ?>" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="<?php echo $this->_links->getPath('/js/jquery-1.3.2.min.js') ?>"></script> 
+<script type="text/javascript" src="<?php echo $this->_links->getPath('/js/jquery-ui-1.7.2.custom.min.js') ?>"></script> 
+<script type="text/javascript" src="<?php echo $this->_links->getPath('/js/ui.datepicker-ru.js') ?>"></script> 
+<script type="text/javascript" src="<?php echo $this->_links->getPath('/js/jquery.autocomplete.js') ?>"></script> 
 <script type="text/javascript">
 function seltext () {
   loginbox=document.getElementById('login');
@@ -41,11 +41,11 @@ $(document).ready(function() {
         <!-- Header -->
     <div id="topheader2">
       <div id="topmenu">
-		<a href="/" class="tophome"><img src="/files/images/icon_home.gif" alt="" width="11" height="10"></a>
+		<a href="<?php echo $this->_links->get('index') ?>" class="tophome"><img src="<?php echo $this->_links->getPath('/files/images/icon_home.gif') ?>" alt="" width="11" height="10"></a>
 		<a href="http://uchimvas.ru/zapis_na_dist.php">Подать заявку</a>
-		<img src="/files/images/line_topmenu.gif" alt="">
+		<img src="<?php echo $this->_links->getPath('/files/images/line_topmenu.gif') ?>" alt="">
 		<a href="http://uchimvas.ru/pismo">Задать вопрос</a>
-		<img src="/files/images/line_topmenu.gif" alt="">
+		<img src="<?php echo $this->_links->getPath('/files/images/line_topmenu.gif') ?>" alt="">
 		<a href="http://uchimvas.ru/article967">Нормативные документы</a>
 	  </div>
       <div id="topsearch">
@@ -54,7 +54,7 @@ $(document).ready(function() {
     </div>
     <div id="header">
       <div id="logo">
-        <a href="/"><img src="/files/images/logo.jpg" alt="" width="287" height="113"></a>
+        <a href="<?php echo $this->_links->get('index') ?>"><img src="<?php echo $this->_links->getPath('/files/images/logo.jpg') ?>" alt="" width="287" height="113"></a>
       </div>			
       <div class="clr"></div>
       <div id="topcart">
@@ -92,10 +92,8 @@ $(document).ready(function() {
           </div>
           <noindex>
             <div class="allpagenavi">
-<?php if($_SERVER['REQUEST_URI'] != '/applications/list_by_student/') {?>
               <a href="javascript:history.back()">Назад</a>
-<?php } ?>
-              <a href="/" title="Главная">Главная</a>
+              <a href="<?php echo $this->_links->get('index') ?>" title="Главная">Главная</a>
             </div>
           </noindex>
         </div>
@@ -103,15 +101,8 @@ $(document).ready(function() {
 	  
     <div id="leftcolumn">
       <div class="inner">
-<?php
-    $user = Model_User::create();
-    $udata = $user->getAuth();
-    $role = (false === $udata ? false : $udata['role']);
-
-    /* Если пользователь не авторизован, не выводим меню дистанционки */
-    if (false !== $role) {
-?>
-
+<?php /* Если пользователь не авторизован, не выводим меню дистанционки */ ?>
+<?php if (false !== Model_User::create()->getAuth()): ?>
         <div class="leftblock">
           <div class="topic-leftblock"><span><b>Д</b>истанционка</span></div>
             <div class="cntnt-leftblock">
@@ -122,9 +113,7 @@ $(document).ready(function() {
               </div>
             </div>
         </div>
-<?php
-    }
-?>
+<?php endif; ?>
         <div class="leftblock">
           <div class="topic-leftblock"><span><b>Д</b>исциплины</span></div>
           <div class="cntnt-leftblock">
@@ -180,7 +169,7 @@ $(document).ready(function() {
               <div class="cntnt-leftblock">
                 <form name="" action="" method="post" enctype="multipart/form-data">
                 <input name="s" class="txtfld" value="" type="text">
-                <input name="" src="/files/images/icon_search.gif" class="button" type="image"></form>
+                <input name="" src="<?php $this->_links->getPath('/files/images/icon_search.gif') ?>" class="button" type="image"></form>
               </div>
             </div>
         </noindex>	
@@ -218,7 +207,7 @@ $(document).ready(function() {
                   try { var yaCounter409700 = new Ya.Metrika(409700); } catch(e){}
                 </script>
                 <noscript>
-                  <div style="position: absolute;"><img src="mc.yandex.ru/watch/409700" alt="" /></div>
+                  <div style="position: absolute;"><img src="http://mc.yandex.ru/watch/409700" alt="" /></div>
                 </noscript>
                 <!-- /Yandex.Metrika -->
               </noindex>

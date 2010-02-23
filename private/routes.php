@@ -17,8 +17,44 @@
                 'handler' => array
                 (
                     'controller' => 'pages',
-                    'action' => 'display',
-                    'params' => array('page' => 'index')
+                    'action'     => 'display',
+                    'params'     => array('page' => 'index')
+                )
+            ),
+            
+            /* Авторизация */
+            array(             
+                'alias'   => 'login',
+                'type'    => Mvc_Router::ROUTE_STATIC,
+                'pattern' => '/login',
+                'handler' => array
+                (
+                    'controller' => 'users',
+                    'action'     => 'login'
+                )
+            ),
+            
+            /* Выход */
+            array(             
+                'alias'   => 'logout',
+                'type'    => Mvc_Router::ROUTE_STATIC,
+                'pattern' => '/logout',
+                'handler' => array
+                (
+                    'controller' => 'users',
+                    'action'     => 'logout'
+                )
+            ),
+            
+            /* Регистрация слушателя */
+            array(             
+                'alias'   => 'student.register',
+                'type'    => Mvc_Router::ROUTE_STATIC,
+                'pattern' => '/student/register',
+                'handler' => array
+                (
+                    'controller' => 'users',
+                    'action'     => 'register_student'
                 )
             ),
             
@@ -287,7 +323,8 @@
 
             /* Страница с ценами */
             array(
-                'type' => Mvc_Router::ROUTE_STATIC,
+                'alias'   => 'price',
+                'type'    => Mvc_Router::ROUTE_STATIC,
                 'pattern' => '/price',
                 'handler' => array
                 (
@@ -299,7 +336,8 @@
 
             /* Страница со способами оплаты */
             array(
-                'type' => Mvc_Router::ROUTE_STATIC,
+                'alias'   => 'payment',
+                'type'    => Mvc_Router::ROUTE_STATIC,
                 'pattern' => '/payment',
                 'handler' => array
                 (

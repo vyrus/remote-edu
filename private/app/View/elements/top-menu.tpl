@@ -2,7 +2,7 @@
 
 	/* ссылки, доступные пользователю, независимо от прав доступа */	    
     $generic_elements = array(
-        'Главная'  => 'http://dist.uchimvas.ru/',
+        'Главная'  => $this->_links->get('index'),
         //'Ошибки' => 'error'
     );
     
@@ -30,8 +30,8 @@
 
     /* Дополнительные ссылки */
     $external_links = array(
-        'Прайс на дистанционное обучение' => 'price/',
-        'Как оплатить'                    => 'payment/',
+        'Прайс на дистанционное обучение' => $this->_links->get('price'),
+        'Как оплатить'                    => $this->_links->get('payment'),
         'Форум'                           => 'http://uchimvas.ru/forum.html'
     );
     
@@ -74,12 +74,12 @@
     <?php if (strpos($link, 'http') === 0): ?>
         <a href="<?php echo $link ?>"><?php echo $title ?></a>
     <?php elseif ($cur_ctrl == $link): ?>
-        <a href="/<?php echo $link ?>"><?php echo $title ?></a>
+        <a href="<?php echo $link ?>"><?php echo $title ?></a>
     <?php else: ?>
-        <a href="/<?php echo $link ?>"><?php echo $title ?></a>
+        <a href="<?php echo $link ?>"><?php echo $title ?></a>
     <?php endif; ?>
     
     <?php if ($last_key !== $title): ?>
-        <img alt="" src="/files/images/line_navigation.gif" />
+        <img alt="" src="<?php echo $this->_links->getPath('/files/images/line_navigation.gif') ?>" />
     <?php endif; ?>
 <?php endforeach; ?>
