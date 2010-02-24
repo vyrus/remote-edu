@@ -1,4 +1,5 @@
 <?php
+
     /* $Id$ */
 
     /* Определяем текущую директорию */
@@ -39,9 +40,56 @@
         ->suppressNotFoundWarnings(true);
 
     /* Загружаем конфигурацию */
-    $config  = require_once 'config.php';
-    $config += require_once 'routes.php';
-
+    $config = require_once 'config.php';
+    $routes = require_once 'short_routes.php';
+    
+    /* Добавляем в конфиг права доступа */
+    $config['permissions'] = $routes['permissions'];
+    
+    /* Перебираем маршруты и приводим их к полному виду */
+    foreach ($routes['routes'] as $route)
+    {
+        /* Переводи указатель в начало массива */
+        reset($route);
+        
+        /* Бёрем алиас */
+        $alias = array_shift($route);
+        
+        /* Берём тип */
+        $type = array_shift($route);
+        $pattern = null;
+        
+        /* В зависимости от типа выбираем шаблон */
+        switch ($type)
+        {
+            case Mvc_Router::ROUTE_STATIC:
+                $pattern = array_shift($route);
+                break;
+                
+            case Mvc_Router::ROUTE_REGEX:
+                $pattern['regex']  = array_shift($route);
+                $pattern['params'] = array_shift($route);
+                break;
+        }   
+        
+        /* Выбираем параметры обработчика */
+        $handler['controller'] = array_shift($route);
+        $handler['action']     = array_shift($route);
+        
+        /* Если ещё что-нибудь осталось - это параметры запроса */
+        if (!empty($route)) {
+            $handler['params'] = array_shift($route);
+        }
+        
+        /* Сохраняем маршрут в конфиге */
+        $config['routes'][] = array(
+            'alias'   => $alias,
+            'type'    => $type,
+            'pattern' => $pattern,
+            'handler' => $handler
+        );
+    }
+    
     switch ($config['mode']) {
         /* Если включён режим отладки, то... */
         case 'debug':
