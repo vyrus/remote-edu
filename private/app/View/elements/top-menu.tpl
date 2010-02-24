@@ -8,24 +8,30 @@
     
     /* ссылки, доступные только админу */	        
     $admin_elements = array(
-        'Регистрация пользователя'      => 'users/index_by_admin/',
-        'Формирование учебных программ' => 'education_programs/index/',
-        'Загрузка материалов'           => 'educational_materials/index_by_admin/',		
-        'Заявки на обучение'            => 'applications/index_by_admin',
+        'Регистрация пользователя'      => $this->_links->get('employee.register'),
+        'Формирование учебных программ' => $this->_links->get('programs.manage'),
+        'Загрузка материалов'           => $this->_links->get('materials.manage'),
+        'Заявки на обучение'            => $this->_links->get('applications.manage'),
     );
     
     /* ссылки, доступные только преподу */	        
     $teacher_elements = array(
-        'Пользователи' => 'users/index/',
-        'Материалы'    => 'educational_materials/index/',
+        /**
+        * @todo А что здесь за действие должно быть?
+        */
+        'Пользователи' => '#',
+        /**
+        * @todo Broken: Mvc_View_Exception, template not found
+        */
+        'Материалы'    => '/educational_materials/index/',
     );
     
     /* ссылки, доступные только слушателю */	        
     $student_elements = array(
-        'Моё меню'       => 'users/instructions_by_user/',
-        'Мои курсы'      => 'education_programs/available/',        
+        'Моё меню'       => $this->_links->get('student.index'),
+        'Мои курсы'      => $this->_links->get('student.programs'),
         //'Материалы'      => 'educational_materials/index_by_student/',
-        'Мой новый курс' => 'applications/index_by_student/',
+        'Мой новый курс' => $this->_links->get('student.applications')
     );
 
     /* Дополнительные ссылки */
@@ -56,7 +62,8 @@
     if (false !== $role) {
         $unreadMessagesCount = Model_Messages::getUnreadCount($userId); 
         $messagesCaption = $unreadMessagesCount ? '<b>Сообщения (' . $unreadMessagesCount . ')</b>' : 'Сообщения';
-        $elems[$messagesCaption] = 'messages';
+        $elems[$messagesCaption] = $this->_links->get('messages.inbox');
+        
         $elems = array_merge($elems, $_role2elems[$role]);
     }
                                        
