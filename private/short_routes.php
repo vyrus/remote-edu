@@ -33,6 +33,9 @@
             /* Управление учебными материалами */
             array('/admin/materials', 'educational_materials', 'index_by_admin', 'admin.materials', Mvc_Router::ROUTE_STATIC),
             
+            /* Загрузка учебных материалов */
+            array('/admin/materials/upload', 'educational_materials', 'upload', 'admin.materials.upload', Mvc_Router::ROUTE_STATIC),
+            
             /* Управление заявками */
             array('/admin/applications', 'applications', 'index_by_admin', 'admin.applications', Mvc_Router::ROUTE_STATIC),
             
