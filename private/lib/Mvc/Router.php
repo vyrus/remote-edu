@@ -35,35 +35,25 @@
         protected $_routes = array();
         
         /**
-        * Метод-конструктор класса.
-        * 
-        * @param  array $routes Список маршрутов.
-        * @return void
-        */
-        public function __construct(array $routes = array()) {                 
-            $this->addRoutes($routes);
-        }
-        
-        /**
         * Создание экземпляра класса.
         * 
-        * @param  array $routes Список маршрутов.
         * @return Mvc_Router
         */
-        public static function create(array $routes = array()) {
-            return new self($routes);
+        public static function create() {
+            return new self();
         }
         
         /**
         * Добавление списка маршрутов.
         * 
-        * @param  array $routes Список маршрутов.
+        * @param  array   $routes Список маршрутов.
         * @return void
         */
         public function addRoutes(array $routes = array()) {
-            foreach ($routes as $route) {
+            foreach ($routes as $route)
+            {                    
                 $this->addRoute($route['type'], $route['pattern'],
-                                $route['handler']);
+                                                $route['handler']);
             }
         }
         
