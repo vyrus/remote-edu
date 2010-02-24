@@ -46,6 +46,9 @@
     /* Добавляем в конфиг права доступа */
     $config['permissions'] = $routes['permissions'];
     
+    /**
+    * @todo Move to Mvc_Router as static method?
+    */
     /* Перебираем маршруты и приводим их к полному виду */
     foreach ($routes['routes'] as $route)
     {
