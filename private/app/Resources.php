@@ -36,9 +36,9 @@
         * @return Mvc_Router
         */
         protected function get_router() {
-            $config = $this->_config['routes'];
+            $router = Mvc_Router::create();
             
-            $router = Mvc_Router::create($config);
+            $router->addRoutes($this->_config['routes']);
             
             return $router;
         }
