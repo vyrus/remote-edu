@@ -109,11 +109,11 @@
             array('/assignment', 'assignment', 'index', '', Mvc_Router::ROUTE_STATIC),
             
             /* Просмотр входящих сообщений */
-            array('/messages', 'messages', 'inbox', 'messages.inbox', Mvc_Router::ROUTE_STATIC),
+            array('/messages/inbox', 'messages', 'inbox', 'messages.inbox', Mvc_Router::ROUTE_STATIC),
             
             array('/messages/inbox/([0-9]*)', array('page'), 'messages', 'inbox', '', Mvc_Router::ROUTE_REGEX),
             
-            array('/messages/send', 'messages', 'send', '', Mvc_Router::ROUTE_STATIC),
+            array('/messages/send', 'messages', 'send', 'messages.send', Mvc_Router::ROUTE_STATIC),
             
             array('/messages/send/([0-9]*)', array('to_id'), 'messages', 'send', '', Mvc_Router::ROUTE_REGEX),
             

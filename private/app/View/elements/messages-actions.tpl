@@ -1,49 +1,45 @@
 <?php
-	/* ссылки, доступные пользователю, независимо от прав доступа*/
-	$messagesAction = array(
-        'Написать сообщение' => '/messages/send',
-	    'Входящие' => '/messages/inbox',
+
+    /* ссылки, доступные пользователю, независимо от прав доступа*/
+    $generic_elements = array(
+        'Написать сообщение' => $this->_links->get('messages.send'),
+        'Входящие'           => $this->_links->get('messages.inbox')
     );
 
-	/* ссылки, доступные только админу*/
-    $admin_messagesAction = array(
+    /* ссылки, доступные только админу */
+    $admin_elements = array();
+
+    /* ссылки, доступные только преподу */
+    $teacher_elements = array();
+
+    /* ссылки, доступные только слушателю */
+    $student_elements = array();
+
+    /* Карта соответствия ролей пользователей и выводимых пунктов меню */
+    $_role2elems = array(
+        Model_User::ROLE_STUDENT => $student_elements,
+        Model_User::ROLE_TEACHER => $teacher_elements,
+        Model_User::ROLE_ADMIN   => $admin_elements
     );
 
-	/* ссылки, доступные только преподу*/
-    $teacher_messagesAction = array(
-    );
+    /* Получаем данные пользователя, если он авторизован */
+    $user = Model_User::create();
+    $udata = $user->getAuth();
+    
+    $role = (false === $udata ? false : $udata['role']);
 
-	/* ссылки, доступные только слушателю*/
-    $student_messagesAction = array(
-    );
-
-	$user = Model_User::create();
-	$udata = (object) $user->getAuth();
-	
-	/* вывод общих пунктов меню*/
-		  foreach ($messagesAction as $title => $controller): ?>
-			<li class="headli">
-				<a href="<?=$controller ?>"><?=$title ?></a>
-			</li>
-	<?php endforeach;
-
-	if (isset($udata->role))
-	{
-		if (Model_User::ROLE_TEACHER == $udata->role)
-		{
-			$items = 'teacher_messagesAction';
-		}elseif (Model_User::ROLE_ADMIN == $udata->role)
-		{
-			$items = 'admin_messagesAction';	
-		}elseif (Model_User::ROLE_STUDENT == $udata->role)
-		{
-			$items = 'student_messagesAction';	
-		}
-	/* вывод пунктов меню, специфических для залогиненного пользователя */
-		  foreach (${$items} as $title => $controller): ?>
-			<li class="headli">
-				<a href="<?=$controller ?>"><?=$title ?></a>
-			</li>
-	<?php endforeach;
-}
+    /* Берём общие для всех пользователей элементы меню */
+    $elems = $generic_elements;
+    
+    /* Если пользователь авторизован, добавляем пункты меню для его роли */
+    if (false !== $role) {
+        $elems = array_merge($elems, $_role2elems[$role]);
+    }
+    
 ?>
+    
+<?php foreach ($elems as $title => $link): ?>
+    <li class="headli">
+        <a href="<?php echo $link ?>"><?php echo $title ?></a>
+    </li>
+<?php endforeach; ?>
