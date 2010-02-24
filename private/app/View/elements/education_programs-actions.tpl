@@ -1,16 +1,15 @@
 <?php
 
     /* ссылки, доступные пользователю, независимо от прав доступа*/
-    $generic_elements = array(
-    );
+    $generic_elements = array();
 
     /* ссылки, доступные только админу */
     $admin_elements = array(
-        'Добавление направлений/дисциплин'        => 'education_programs/index/',
+        'Добавление направлений/дисциплин'        => $this->_links->get('admin.programs'),
         //'Формирование порядка изучения дисциплин' => '#',
-        'Назначение отвественных преподавателей'  => 'assignment/responsible_teacher/',
-        'Назначение кураторов'                    => 'assignment/students_curator/',
-        //'Инструкция'                              => '#',
+        'Назначение отвественных преподавателей'  => $this->_links->get('admin.responsible-teachers'),
+        'Назначение кураторов'                    => $this->_links->get('admin.curators'),
+        //'Инструкция'                              => '#'
     );
 
     /* ссылки, доступные только преподу */
@@ -18,8 +17,8 @@
 
     /* ссылки, доступные только слушателю */
     $student_elements = array(
-        'Доступные программы'     => 'available/',
-        'Инструкция пользователю' => 'instructions_by_student/'
+        'Доступные программы'     => $this->_links->get('student.programs'),
+        'Инструкция пользователю' => $this->_links->get('student.index')
     );
 
     /* Карта соответствия ролей пользователей и выводимых пунктов меню */
@@ -46,13 +45,7 @@
 ?>
     
 <?php foreach ($elems as $title => $link): ?>
-    <?php if (strpos($link, 'http') === 0): ?>
-        <li class="headli">
-            <a href="<?php echo $link ?>"><?php echo $title ?></a>
-        </li>
-    <?php else: ?>
-        <li class="headli">
-            <a href="/<?php echo $link ?>"><?php echo $title ?></a>
-        </li>
-    <?php endif; ?>
+    <li class="headli">
+        <a href="<?php echo $link ?>"><?php echo $title ?></a>
+    </li>
 <?php endforeach; ?>

@@ -25,7 +25,7 @@
             array('/student/register', 'users', 'register_student', 'student.register', Mvc_Router::ROUTE_STATIC),
             
             /* Регистрация сотрудника */
-            array('/admin/employee/register', 'users', 'index_by_admin', 'employee.register', Mvc_Router::ROUTE_STATIC),
+            array('/admin/employee/register', 'users', 'index_by_admin', 'admin.register-employee', Mvc_Router::ROUTE_STATIC),
             
             /* Управление учебными программами */
             array('/admin/programs', 'education_programs', 'index', 'admin.programs', Mvc_Router::ROUTE_STATIC),
