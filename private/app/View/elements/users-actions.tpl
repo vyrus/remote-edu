@@ -1,69 +1,54 @@
 <?php
-	
-	/* ссылки, доступные только админу*/	        
-    $admin_user_action_elements = array(
-	  'Инструкция'              => 'instructions_by_admin',
-      'Регистрация сотрудника'	=> 'register_employee_by_admin',
-      'Регистрация слушателя' 	=> 'register_student'
-    );
-	
-	/* ссылки, доступные только преподу*/	        
-    $teacher_user_action_elements = array(
+
+    /* ссылки, доступные пользователю, независимо от прав доступа*/
+    $generic_elements = array(
+        'Выйти из системы' => $this->_links->get('logout')
     );
 
-	/* ссылки, доступные только слушателю*/	        
-    $student_user_action_elements = array(
-      //'Регистрация слушателя' 	=> 'register_student',
-      'Подробная анкета слушателя'  => 'profile_extended_by_student',
-	  'Инструкция пользователю'     => 'instructions_by_user'
-    );
-	
-	/* ссылки, доступные пользователю, независимо от прав доступа*/	    
-    $user_action_elements = array(
-	//'Вход'                        => 'login',
-    //'Кто я?'                      => 'whoami',
-      'Выйти из системы'	        => 'logout'
+    /* ссылки, доступные только админу */
+    $admin_elements = array(
+        'Инструкция'             => $this->_links->get('admin.help'),
+        'Регистрация сотрудника' => $this->_links->get('admin.register-employee'),
+        'Регистрация слушателя'  => $this->_links->get('student.register')
     );
 
-    //Wtfi
-    $cur_ctrl = $_SERVER['REQUEST_URI'];
-	$prefix = '/users/';
+    /* ссылки, доступные только преподу */
+    $teacher_elements = array();
 
-	$user = Model_User::create();
-	$udata = (object) $user->getAuth();
-	
-	if (isset($udata->role))
-	{
-		if (Model_User::ROLE_TEACHER == $udata->role)
-		{
-			$items = 'teacher_user_action_elements';
-		}elseif (Model_User::ROLE_ADMIN == $udata->role)
-		{
-			$items = 'admin_user_action_elements';	
-		}elseif (Model_User::ROLE_STUDENT == $udata->role)
-		{
-			$items = 'student_user_action_elements';	
-		}
-	/* вывод пунктов меню, специфических для залогиненного пользователя */
-		  foreach (${$items} as $title => $controller): ?>
-		<?php if ($controller == strtolower ($cur_ctrl)): ?>
-			<li class="active"><?php echo $title; ?></li>
-		<?php else: ?>
-			<li class="headli">
-				<a href="<?=$prefix.$controller ?>"><?=$title ?></a>
-			</li>
-		<?php endif; ?>
-	<?php endforeach; 	
+    /* ссылки, доступные только слушателю */
+    $student_elements = array(
+        'Подробная анкета слушателя'  => $this->_links->get('student.extended-profile'),
+        'Инструкция пользователю'     => $this->_links->get('student.index')
+    );
 
-	/* вывод общих пунктов меню*/
-		  foreach ($user_action_elements as $title => $controller): ?>
-		<?php if ($prefix. $controller == strtolower ($cur_ctrl)): ?>
-			<li class="headli active"><?php echo $title; ?></li>
-		<?php else: ?>
-			<li class="headli">
-				<a href="<?=$prefix.$controller ?>"><?=$title ?></a>
-			</li>
-		<?php endif; ?>
-	<?php endforeach;
-}												  
+    /* Карта соответствия ролей пользователей и выводимых пунктов меню */
+    $_role2elems = array(
+        Model_User::ROLE_STUDENT => $student_elements,
+        Model_User::ROLE_TEACHER => $teacher_elements,
+        Model_User::ROLE_ADMIN   => $admin_elements
+    );
+
+    /* Получаем данные пользователя, если он авторизован */
+    $user = Model_User::create();
+    $udata = $user->getAuth();
+    
+    $role = (false === $udata ? false : $udata['role']);
+
+    /* Список пунктов меню */
+    $elems = array();
+    
+    /* Если пользователь авторизован, добавляем пункты меню для его роли */
+    if (false !== $role) {
+        $elems = array_merge($elems, $_role2elems[$role]);
+    }
+    
+    /* Добавляем общие для всех пользователей элементы меню */
+    $elems = array_merge($elems, $generic_elements);
+    
 ?>
+    
+<?php foreach ($elems as $title => $link): ?>
+    <li class="headli">
+        <a href="<?php echo $link ?>"><?php echo $title ?></a>
+    </li>
+<?php endforeach; ?>
