@@ -9,9 +9,9 @@
     /* ссылки, доступные только админу */	        
     $admin_elements = array(
         'Регистрация пользователя'      => $this->_links->get('employee.register'),
-        'Формирование учебных программ' => $this->_links->get('programs.manage'),
-        'Загрузка материалов'           => $this->_links->get('materials.manage'),
-        'Заявки на обучение'            => $this->_links->get('applications.manage'),
+        'Формирование учебных программ' => $this->_links->get('admin.programs'),
+        'Загрузка материалов'           => $this->_links->get('admin.materials'),
+        'Заявки на обучение'            => $this->_links->get('admin.applications'),
     );
     
     /* ссылки, доступные только преподу */	        

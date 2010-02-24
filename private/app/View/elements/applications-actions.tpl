@@ -5,7 +5,7 @@
 
     /* ссылки, доступные только админу */
     $admin_elements = array(
-        'Список поданных заявок' => $this->_links->get('applications.manage')
+        'Список поданных заявок' => $this->_links->get('admin.applications')
     );
 
     /* ссылки, доступные только преподу */

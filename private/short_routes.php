@@ -28,16 +28,13 @@
             array('/admin/employee/register', 'users', 'index_by_admin', 'employee.register', Mvc_Router::ROUTE_STATIC),
             
             /* Управление учебными программами */
-            array('/admin/programs', 'education_programs', 'index', 'programs.manage', Mvc_Router::ROUTE_STATIC),
+            array('/admin/programs', 'education_programs', 'index', 'admin.programs', Mvc_Router::ROUTE_STATIC),
             
             /* Управление учебными материалами */
-            array('/admin/materials', 'educational_materials', 'index_by_admin', 'materials.manage', Mvc_Router::ROUTE_STATIC),
+            array('/admin/materials', 'educational_materials', 'index_by_admin', 'admin.materials', Mvc_Router::ROUTE_STATIC),
             
-            /**
-            * @todo applications.manage -> admin.applications?
-            */
             /* Управление заявками */
-            array('/admin/applications', 'applications', 'index_by_admin', 'applications.manage', Mvc_Router::ROUTE_STATIC),
+            array('/admin/applications', 'applications', 'index_by_admin', 'admin.applications', Mvc_Router::ROUTE_STATIC),
             
             /* Инструкции для слушателя */
             array('/student', 'users', 'instructions_by_user', 'student.index', Mvc_Router::ROUTE_STATIC),
@@ -100,9 +97,11 @@
             /* Страница со способами оплаты */
             array('/payment', 'pages', 'display', array('page' => 'payment'), 'payment', Mvc_Router::ROUTE_STATIC),
             
-            array('/assignment/responsible_teacher', 'assignment', 'responsible_teacher', '', Mvc_Router::ROUTE_STATIC),
+            /* Назначение преподавателей, ответственных за дисциплины */
+            array('/admin/responsible-teachers', 'assignment', 'responsible_teacher', 'admin.responsible-teachers', Mvc_Router::ROUTE_STATIC),
             
-            array('/assignment/students_curator', 'assignment', 'student_curator', '', Mvc_Router::ROUTE_STATIC),
+            /* Назначение кураторов слушателей */
+            array('/admin/curators', 'assignment', 'student_curator', 'admin.curators', Mvc_Router::ROUTE_STATIC),
             
             array('/assignment', 'assignment', 'index', '', Mvc_Router::ROUTE_STATIC),
             
