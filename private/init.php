@@ -49,15 +49,10 @@
     /* Перебираем маршруты и приводим их к полному виду */
     foreach ($routes['routes'] as $route)
     {
-        /* Переводи указатель в начало массива */
-        reset($route);
-        
-        /* Бёрем алиас */
-        $alias = array_shift($route);
-        
-        /* Берём тип */
-        $type = array_shift($route);
         $pattern = null;
+        
+        /* Берём последний элемент - тип маршрута */
+        $type = array_pop($route); 
         
         /* В зависимости от типа выбираем шаблон */
         switch ($type)
@@ -76,10 +71,13 @@
         $handler['controller'] = array_shift($route);
         $handler['action']     = array_shift($route);
         
-        /* Если ещё что-нибудь осталось - это параметры запроса */
-        if (!empty($route)) {
+        /* Если осталось больше двух элементов, сейчас - параметры запроса */
+        if (sizeof($route) > 1) {
             $handler['params'] = array_shift($route);
         }
+        
+        /* Берём алиас */
+        $alias = array_shift($route);
         
         /* Сохраняем маршрут в конфиге */
         $config['routes'][] = array(

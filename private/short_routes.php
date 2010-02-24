@@ -7,111 +7,111 @@
         'routes' => array
         (
             /* Шаблон статичного маршрута */
-            /* array('алиас', Mvc_Router::ROUTE_STATIC, 'шаблон', 'контроллер', 'действие' [, array('параметр' => 'значение')]); */ 
+            /* array('шаблон', 'контроллер', 'действие', [array('параметр' => 'значение'), ] 'алиас', Mvc_Router::ROUTE_STATIC); */ 
             
             /* Шаблон маршрута на регулярном выражении */
-            /* array('алиас', Mvc_Router::ROUTE_REGEX, 'регекс', array('параметр_1', 'параметр_2'), 'контроллер', 'действие' [, array('параметр' => 'значение')]); */ 
+            /* array('регекс', array('параметры'), 'контроллер', 'действие', [array('параметр' => 'значение'), ] 'алиас', Mvc_Router::ROUTE_REGEX); */ 
             
             /* Главная страница */
-            array('index', Mvc_Router::ROUTE_STATIC, '/', 'pages', 'display', array('page' => 'index')),
+            array('/', 'pages', 'display', array('page' => 'index'), 'index', Mvc_Router::ROUTE_STATIC),
             
             /* Авторизация */
-            array('login', Mvc_Router::ROUTE_STATIC, '/login', 'users', 'login'),
+            array('/login', 'users', 'login', 'login', Mvc_Router::ROUTE_STATIC),
             
             /* Выход */
-            array('logout', Mvc_Router::ROUTE_STATIC, '/logout', 'users', 'logout'),
+            array('/logout', 'users', 'logout', 'logout', Mvc_Router::ROUTE_STATIC),
             
             /* Регистрация слушателя */
-            array('student.register', Mvc_Router::ROUTE_STATIC, '/student/register', 'users', 'register_student'),
+            array('/student/register', 'users', 'register_student', 'student.register', Mvc_Router::ROUTE_STATIC),
             
             /* Регистрация сотрудника */
-            array('employee.register', Mvc_Router::ROUTE_STATIC, '/admin/employee/register', 'users', 'index_by_admin'),
+            array('/admin/employee/register', 'users', 'index_by_admin', 'employee.register', Mvc_Router::ROUTE_STATIC),
             
             /* Управление учебными программами */
-            array('programs.manage', Mvc_Router::ROUTE_STATIC, '/admin/programs', 'education_programs', 'index'),
+            array('/admin/programs', 'education_programs', 'index', 'programs.manage', Mvc_Router::ROUTE_STATIC),
             
             /* Управление учебными материалами */
-            array('materials.manage', Mvc_Router::ROUTE_STATIC, '/admin/materials', 'educational_materials', 'index_by_admin'),
+            array('/admin/materials', 'educational_materials', 'index_by_admin', 'materials.manage', Mvc_Router::ROUTE_STATIC),
             
             /* Управление заявками */
-            array('applications.manage', Mvc_Router::ROUTE_STATIC, '/admin/applications', 'applications', 'index_by_admin'),
+            array('/admin/applications', 'applications', 'index_by_admin', 'applications.manage', Mvc_Router::ROUTE_STATIC),
             
             /* Инструкции для слушателя */
-            array('student.index', Mvc_Router::ROUTE_STATIC, '/student', 'users', 'instructions_by_user'),
+            array('/student', 'users', 'instructions_by_user', 'student.index', Mvc_Router::ROUTE_STATIC),
             
             /* Доступные для слушателя учебные программы */
-            array('student.programs', Mvc_Router::ROUTE_STATIC, '/student/programs', 'education_programs', 'available'),
+            array('/student/programs', 'education_programs', 'available', 'student.programs', Mvc_Router::ROUTE_STATIC),
             
             /* Заявки слушателя */
-            array('student.applications', Mvc_Router::ROUTE_STATIC, '/student/applications', 'applications', 'index_by_student'),
+            array('/student/applications', 'applications', 'index_by_student', 'student.applications', Mvc_Router::ROUTE_STATIC),
             
-            array('', Mvc_Router::ROUTE_REGEX, '/educational_material/([0-9]+)', array('material_id'), 'educational_materials', 'get_material'),
+            array('/educational_material/([0-9]+)', array('material_id'), 'educational_materials', 'get_material', '', Mvc_Router::ROUTE_REGEX),
             
-            array('', Mvc_Router::ROUTE_STATIC, '/educational_materials/upload', 'educational_materials', 'upload'),
+            array('/educational_materials/upload', 'educational_materials', 'upload', '', Mvc_Router::ROUTE_STATIC),
             
-            array('', Mvc_Router::ROUTE_STATIC, '/educational_materials/remove', 'educational_materials', 'remove'),
+            array('/educational_materials/remove', 'educational_materials', 'remove', '', Mvc_Router::ROUTE_STATIC),
             
-            array('', Mvc_Router::ROUTE_STATIC, '/education_students', 'education_students', 'index'),
+            array('/education_students', 'education_students', 'index', '', Mvc_Router::ROUTE_STATIC),
             
-            array('', Mvc_Router::ROUTE_REGEX, '/add_program/(direction|course)', array('program_type'), 'education_programs', 'add_program'),
+            array('/add_program/(direction|course)', array('program_type'), 'education_programs', 'add_program', '', Mvc_Router::ROUTE_REGEX),
             
-            array('', Mvc_Router::ROUTE_REGEX, '/add_discipline/([0-9]+)', array('speciality_id'), 'education_programs', 'add_discipline'),
+            array('/add_discipline/([0-9]+)', array('speciality_id'), 'education_programs', 'add_discipline', '', Mvc_Router::ROUTE_REGEX),
             
-            array('', Mvc_Router::ROUTE_REGEX, '/add_section/([0-9]+)', array('discipline_id'), 'education_programs', 'add_section'),
+            array('/add_section/([0-9]+)', array('discipline_id'), 'education_programs', 'add_section', '', Mvc_Router::ROUTE_REGEX),
             
-            array('', Mvc_Router::ROUTE_REGEX, '/remove_program/(direction|course)/([0-9]+)', array('program_type', 'program_id'), 'education_programs', 'remove_program'),
+            array('/remove_program/(direction|course)/([0-9]+)', array('program_type', 'program_id'), 'education_programs', 'remove_program', '', Mvc_Router::ROUTE_REGEX),
             
-            array('', Mvc_Router::ROUTE_REGEX, '/remove_discipline/([0-9]+)', array('discipline_id'), 'education_programs', 'remove_discipline'),
+            array('/remove_discipline/([0-9]+)', array('discipline_id'), 'education_programs', 'remove_discipline', '', Mvc_Router::ROUTE_REGEX),
             
-            array('', Mvc_Router::ROUTE_REGEX, '/remove_section/([0-9]+)', array('section_id'), 'education_programs', 'remove_section'),
+            array('/remove_section/([0-9]+)', array('section_id'), 'education_programs', 'remove_section', '', Mvc_Router::ROUTE_REGEX),
             
-            array('', Mvc_Router::ROUTE_REGEX, '/edit_program/(direction|course)/([0-9]+)', array('program_type', 'program_id'), 'education_programs', 'edit_program'),
+            array('/edit_program/(direction|course)/([0-9]+)', array('program_type', 'program_id'), 'education_programs', 'edit_program', '', Mvc_Router::ROUTE_REGEX),
             
-            array('', Mvc_Router::ROUTE_REGEX, '/edit_discipline/([0-9]+)', array('discipline_id'), 'education_programs', 'edit_discipline'),
+            array('/edit_discipline/([0-9]+)', array('discipline_id'), 'education_programs', 'edit_discipline', '', Mvc_Router::ROUTE_REGEX),
             
-            array('', Mvc_Router::ROUTE_REGEX, '/save_discipline_order/', array(), 'education_programs', 'save_discipline_order'),
+            array('/save_discipline_order/', array(), 'education_programs', 'save_discipline_order', '', Mvc_Router::ROUTE_REGEX),
             
-            array('', Mvc_Router::ROUTE_REGEX, '/edit_section/([0-9]+)', array('section_id'), 'education_programs', 'edit_section'),
+            array('/edit_section/([0-9]+)', array('section_id'), 'education_programs', 'edit_section', '', Mvc_Router::ROUTE_REGEX),
             
             /* Подача заявки */
-            array('', Mvc_Router::ROUTE_REGEX, '/applications/apply/(discipline|program)/([0-9]+)', array('program_type', 'program_id'), 'applications', 'apply'),
+            array('/applications/apply/(discipline|program)/([0-9]+)', array('program_type', 'program_id'), 'applications', 'apply', '', Mvc_Router::ROUTE_REGEX),
             
-            array('', Mvc_Router::ROUTE_REGEX, '/applications/change_app_status/(accepted|declined|signed)/([0-9]+)', array('new_status', 'app_id'), 'applications', 'change_app_status'),
+            array('/applications/change_app_status/(accepted|declined|signed)/([0-9]+)', array('new_status', 'app_id'), 'applications', 'change_app_status', '', Mvc_Router::ROUTE_REGEX),
             
             /* Активация слушателя */
-            array('', Mvc_Router::ROUTE_REGEX, '/activate_student/([0-9]+)/([0-9a-z]{32}).*', array('user_id', 'code'), 'users', 'activate_student'),
+            array('/activate_student/([0-9]+)/([0-9a-z]{32}).*', array('user_id', 'code'), 'users', 'activate_student', '', Mvc_Router::ROUTE_REGEX),
             
             /* Активация сотрудника */
-            array('', Mvc_Router::ROUTE_REGEX, '/activate_employee/([0-9]+)/([0-9a-z]{32}).*', array('user_id', 'code'), 'users', 'activate_employee'),
+            array('/activate_employee/([0-9]+)/([0-9a-z]{32}).*', array('user_id', 'code'), 'users', 'activate_employee', '', Mvc_Router::ROUTE_REGEX),
             
-            array('', Mvc_Router::ROUTE_STATIC, '/ajax/autocomplete/region', 'ajax', 'autocomplete_region'),
+            array('/ajax/autocomplete/region', 'ajax', 'autocomplete_region', '', Mvc_Router::ROUTE_STATIC),
             
-            array('', Mvc_Router::ROUTE_STATIC, '/ajax/autocomplete/city', 'ajax', 'autocomplete_city'),
+            array('/ajax/autocomplete/city', 'ajax', 'autocomplete_city', '', Mvc_Router::ROUTE_STATIC),
             
             /* Страница с ценами */
-            array('price', Mvc_Router::ROUTE_STATIC, '/price', 'pages', 'display', array('page' => 'price')),
+            array('/price', 'pages', 'display', array('page' => 'price'), 'price', Mvc_Router::ROUTE_STATIC),
             
             /* Страница со способами оплаты */
-            array('payment', Mvc_Router::ROUTE_STATIC, '/payment', 'pages', 'display', array('page' => 'payment')),
+            array('/payment', 'pages', 'display', array('page' => 'payment'), 'payment', Mvc_Router::ROUTE_STATIC),
             
-            array('', Mvc_Router::ROUTE_STATIC, '/assignment/responsible_teacher', 'assignment', 'responsible_teacher'),
+            array('/assignment/responsible_teacher', 'assignment', 'responsible_teacher', '', Mvc_Router::ROUTE_STATIC),
             
-            array('', Mvc_Router::ROUTE_STATIC, '/assignment/students_curator', 'assignment', 'student_curator'),
+            array('/assignment/students_curator', 'assignment', 'student_curator', '', Mvc_Router::ROUTE_STATIC),
             
-            array('', Mvc_Router::ROUTE_STATIC, '/assignment', 'assignment', 'index'),
+            array('/assignment', 'assignment', 'index', '', Mvc_Router::ROUTE_STATIC),
             
             /* Просмотр входящих сообщений */
-            array('messages.inbox', Mvc_Router::ROUTE_STATIC, '/messages', 'messages', 'inbox'),
+            array('/messages', 'messages', 'inbox', 'messages.inbox', Mvc_Router::ROUTE_STATIC),
             
-            array('', Mvc_Router::ROUTE_REGEX, '/messages/inbox/([0-9]*)', array('page'), 'messages', 'inbox'),
+            array('/messages/inbox/([0-9]*)', array('page'), 'messages', 'inbox', '', Mvc_Router::ROUTE_REGEX),
             
-            array('', Mvc_Router::ROUTE_STATIC, '/messages/send', 'messages', 'send'),
+            array('/messages/send', 'messages', 'send', '', Mvc_Router::ROUTE_STATIC),
             
-            array('', Mvc_Router::ROUTE_REGEX, '/messages/send/([0-9]*)', array('to_id'), 'messages', 'send'),
+            array('/messages/send/([0-9]*)', array('to_id'), 'messages', 'send', '', Mvc_Router::ROUTE_REGEX),
             
-            array('', Mvc_Router::ROUTE_STATIC, '/messages/remove', 'messages', 'remove'),
+            array('/messages/remove', 'messages', 'remove', '', Mvc_Router::ROUTE_STATIC),
             
-            array('', Mvc_Router::ROUTE_REGEX, '/messages/([0-9]+)', array('message_id'), 'messages', 'message')
+            array('/messages/([0-9]+)', array('message_id'), 'messages', 'message', '', Mvc_Router::ROUTE_REGEX)
         ),
 
         /* Права доступа к разделам сайта */
