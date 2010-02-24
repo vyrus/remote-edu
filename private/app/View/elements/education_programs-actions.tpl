@@ -33,8 +33,7 @@
     $user = Model_User::create();
     $udata = $user->getAuth();
     
-    $userId = (false === $udata ? false : $udata['user_id']);
-    $role   = (false === $udata ? false : $udata['role']);
+    $role = (false === $udata ? false : $udata['role']);
 
     /* Берём общие для всех пользователей элементы меню */
     $elems = $generic_elements;
