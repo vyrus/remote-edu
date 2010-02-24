@@ -31,7 +31,7 @@
         'Моё меню'       => $this->_links->get('student.index'),
         'Мои курсы'      => $this->_links->get('student.programs'),
         //'Материалы'      => 'educational_materials/index_by_student/',
-        'Мой новый курс' => $this->_links->get('student.applications')
+        'Мой новый курс' => $this->_links->get('student.apply')
     );
 
     /* Дополнительные ссылки */

@@ -1,12 +1,11 @@
 <?php
 
     /* ссылки, доступные пользователю, независимо от прав доступа*/
-    $generic_elements = array(
-    );
+    $generic_elements = array();
 
     /* ссылки, доступные только админу */
     $admin_elements = array(
-        'Список поданных заявок' => 'index_by_admin'
+        'Список поданных заявок' => $this->_links->get('applications.manage')
     );
 
     /* ссылки, доступные только преподу */
@@ -14,8 +13,8 @@
 
     /* ссылки, доступные только слушателю */
     $student_elements = array(
-        'Подать заявку' => 'index_by_student',
-        'Мои заявки'    => 'list_by_student'
+        'Подать заявку' => $this->_links->get('student.apply'),
+        'Мои заявки'    => $this->_links->get('student.applications')
     );
 
     /* Карта соответствия ролей пользователей и выводимых пунктов меню */
@@ -42,13 +41,7 @@
 ?>
     
 <?php foreach ($elems as $title => $link): ?>
-    <?php if (strpos($link, 'http') === 0): ?>
-        <li class="headli">
-            <a href="<?php echo $link ?>"><?php echo $title ?></a>
-        </li>
-    <?php else: ?>
-        <li class="headli">
-            <a href="/<?php echo $link ?>"><?php echo $title ?></a>
-        </li>
-    <?php endif; ?>
+    <li class="headli">
+        <a href="<?php echo $link ?>"><?php echo $title ?></a>
+    </li>
 <?php endforeach; ?>

@@ -33,6 +33,9 @@
             /* Управление учебными материалами */
             array('/admin/materials', 'educational_materials', 'index_by_admin', 'materials.manage', Mvc_Router::ROUTE_STATIC),
             
+            /**
+            * @todo applications.manage -> admin.applications?
+            */
             /* Управление заявками */
             array('/admin/applications', 'applications', 'index_by_admin', 'applications.manage', Mvc_Router::ROUTE_STATIC),
             
@@ -43,7 +46,10 @@
             array('/student/programs', 'education_programs', 'available', 'student.programs', Mvc_Router::ROUTE_STATIC),
             
             /* Заявки слушателя */
-            array('/student/applications', 'applications', 'index_by_student', 'student.applications', Mvc_Router::ROUTE_STATIC),
+            array('/student/applications', 'applications', 'list_by_student', 'student.applications', Mvc_Router::ROUTE_STATIC),
+            
+            /* Подача заявки слушателем */
+            array('/student/apply', 'applications', 'index_by_student', 'student.apply', Mvc_Router::ROUTE_STATIC),
             
             array('/educational_material/([0-9]+)', array('material_id'), 'educational_materials', 'get_material', '', Mvc_Router::ROUTE_REGEX),
             
