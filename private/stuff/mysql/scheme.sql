@@ -238,4 +238,10 @@ ALTER TABLE `programs` ADD `cost` DECIMAL(9, 2) UNSIGNED DEFAULT NULL;
 --
 ALTER TABLE `disciplines` ADD `serial_number` INT NOT NULL AFTER `program_id`;
 
+--
+-- Изменяем тип поля `state`. Статус последнего скачанного материала = 'last'
+-- вместо 'studied'
+--
+ALTER TABLE `materials_states` CHANGE `state` `state` enum('downloaded','last') DEFAULT NULL;
+
 SET character_set_client = @saved_cs_client;

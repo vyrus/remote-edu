@@ -105,66 +105,94 @@ QUERY;
             return $stmt->fetchAll (PDO::FETCH_ASSOC);
         }
 
-        public function getMaterial ($materialID) {
-            $sql =
-<<<QUERY
-SELECT
-    `original_filename`,`mime_type`,`filename`
-FROM
-    `materials`
-WHERE
-    `id`=?
-QUERY;
+        public function getMaterial ($material_id) {
+            $sql = '
+                SELECT  `original_filename`, `mime_type`, `filename`
+                FROM    ' . $this->_tables['materials'] . '
+                WHERE   `id` = ?
+            ';
+            $stmt = $this->prepare($sql);
+            $stmt->execute(array($material_id));
+            $fileInfo = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            $stmt = $this->prepare ($sql);
-            $stmt->execute (array ($materialID));
-            $fileInfo = $stmt->fetchAll (PDO::FETCH_ASSOC);
+            $sql = '
+                SELECT  `state`
+                FROM    ' . $this->_tables['materials_states'] . '
+                WHERE   material_id = :material_id AND
+                        student_id = :student_id
+            ';
+            $udata = (object) Model_User::create()->getAuth();
+            $params = array(
+                ':material_id' => $material_id,
+                ':student_id' => $udata->user_id
+            );
+            $stmt = $this->prepare($sql);
+            $stmt->execute($params);
+            $material_state = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            if (empty($material_state[0]['state'])) {
+                $sql = '
+                    UPDATE  ' . $this->_tables['materials_states'] . '
+                    SET     `state` = :new_state
+                    WHERE   `student_id` = :student_id AND
+                            `state` = :old_state
+                ';
+                $params = array(
+                    ':student_id' => $udata->user_id,
+                    ':old_state' => 'last',
+                    ':new_state' => 'downloaded'
+                );
+                $stmt = $this->prepare($sql);
+                $stmt->execute($params);
+
+                $sql = '
+                    UPDATE  ' . $this->_tables['materials_states'] . '
+                    SET     `state` = :new_state
+                    WHERE   material_id = :material_id AND
+                            student_id = :student_id
+                ';
+                $params = array(
+                    ':material_id' => $material_id,
+                    ':student_id' => $udata->user_id,
+                    ':new_state' => 'last'
+                );
+                $stmt = $this->prepare($sql);
+                $stmt->execute($params);
+            }
 
             header('Content-Disposition: attachment; filename="' . $fileInfo[0]['original_filename']);
             header('Content-Type: ' . $fileInfo[0]['mime_type']);
 
-            echo $this->storage->getFileContent ($fileInfo[0]['filename']);
+            echo $this->storage->getFileContent($fileInfo[0]['filename']);
         }
 
         /**
-        * Получение всех материалов по идентификатором разделов.
+        * Получение всех материалов по идентификаторам разделов.
         *
         * @param  array $section_ids Список идентификаторов разделов.
         * @return array Список вида array($section_id => array($material, ...)).
         */
         public function getAllBySections(array $section_ids) {
             $sql = '
-                SELECT *
-                FROM ' . $this->_tables['materials'] . '
-                WHERE section = ?';
-
-            $stmt = $this->prepare($sql);
-
-            $sql2 = '
-                SELECT `state`
-                FROM ' . $this->_tables['materials_states'] . '
-                WHERE `student_id`=:student_id AND `material_id`=:material_id';
+                SELECT  *
+                FROM    ' . $this->_tables['materials'] . ' m, 
+                        ' . $this->_tables['materials_states'] . ' ms
+                WHERE   m.section = :section_id AND
+                        ms.student_id = :student_id AND
+                        ms.material_id = m.id
+            ';
 
             $materials = array();
+            $udata = (object) Model_User::create()->getAuth();
 
             foreach ($section_ids as $id) {
-                $stmt->execute(array($id));
-                $material = $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
-
-                $udata = (object) Model_User::create()->getAuth();
-                $i = 0;
-                foreach ($material as $material_data) {
                     $params = array(
-                        ':material_id' => $material_data['id'],
+                        ':section_id' => $id,
                         ':student_id' => $udata->user_id
                     );
-                    $stmt2 = $this->prepare($sql2);
-                    $stmt2->execute($params);
-                    $material_state = $stmt2->fetchAll(Db_Pdo::FETCH_ASSOC);
-
-                    $materials[$id][] = $material[$i] + $material_state[$i];
-                    $i++;
-                }
+                    $stmt = $this->prepare($sql);
+                    $stmt->execute($params);
+                    $materials[$id] = $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
             }
 
             return $materials;

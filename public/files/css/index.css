@@ -235,11 +235,11 @@ li.headli_no a {font-weight: bold; color: #17244d; text-decoration:none;}
 
 
 div .leftblock ol, div .leftblock ul {
-   margin:0;
-  padding:0;
-   border:0;
-   outline:0;
-   }
+    margin:0;
+    padding:0;
+    border:0;
+    outline:0;
+}
 
    div.clear{
 border:3px solid #cdcdcd; clear: both;
@@ -258,5 +258,28 @@ div#content .dist{width: 264px;height: 102px;background: url(../images/nachalo_b
 div#content .dist2{width: 264px;height: 102px;background: url(../images/vopros_button.gif) 0 0 no-repeat;}
 div#content .dist a, div#content  .dist2 a{color:#FFFFFF;text-decoration:none;font-family: verdana, sans-serif;font-size: 18px;}
 div#content .dist a:hover, div#content  .dist2 a:hover{text-decoration: none;}
-div#content  .dist div {padding: 30px 0px 30px 70px;}
+div#content .dist div {padding: 30px 0px 30px 70px;}
 div#content .dist2 div {padding: 20px 0px 20px 70px;}
+
+/*-----------------------------------------------
+/educational_materials/show/
+-----------------------------------------------*/
+
+h1.title_discipline,
+h2.title_section,
+h3.title_materials
+{
+    font-family: sans-serif;
+    margin-bottom: 0.5em;
+}
+
+h3.title_materials
+{
+    margin-left: 1em;
+}
+
+ul.materials li
+{
+    margin: 0.5em 0;
+    padding: 0.5em;
+}

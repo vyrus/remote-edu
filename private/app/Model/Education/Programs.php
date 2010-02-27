@@ -308,7 +308,7 @@ QUERY;
 <<<QUERY
 SELECT *
 FROM `sections`
-ORDER BY `discipline_id`
+ORDER BY `number`, `section_id`, `discipline_id`
 QUERY;
 				$this->_cache['sections'] = $this->query ($sql)->fetchAll (PDO::FETCH_ASSOC);
 			}

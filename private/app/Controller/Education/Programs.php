@@ -363,7 +363,7 @@
 
                 if
                 (
-                    /* Если программы бесплатная */
+                    /* Если программа бесплатная */
                     Model_Education_Programs::PAID_TYPE_FREE == $a->paid_type &&
                     /* и заявка принята администратором, */
                     Model_Application::STATUS_ACCEPTED == $a->status

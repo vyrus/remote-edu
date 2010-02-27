@@ -163,9 +163,7 @@
                 disciplineOrder += ',';
             }
             disciplineOrder += disciplinesSelect.options[i].value;
-            //disciplinesSelect.options[i].text = i;
         }
-        //document.forms[0].action = '/save_discipline_order/' + programsSelect.options[programsSelect.selectedIndex].value;
         document.forms[0].disciplineOrderInfo.value = disciplineOrder;
         document.forms[0].action = '/save_discipline_order/';
         document.forms[0].submit();
