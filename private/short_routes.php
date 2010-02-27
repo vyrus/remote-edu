@@ -91,6 +91,10 @@
             array('/applications/change_app_status/(accepted|declined|signed)/([0-9]+)', array('new_status', 'app_id'), 'applications', 'change_app_status', '', Mvc_Router::ROUTE_REGEX),
             
             /* Активация слушателя */
+            /**
+            * @todo Маршруты и так теперь нечувствительны к слешу на конце 
+            * адреса, .* больше не нужно ставить.
+            */
             array('/activate_student/([0-9]+)/([0-9a-z]{32}).*', array('user_id', 'code'), 'users', 'activate_student', '', Mvc_Router::ROUTE_REGEX),
             
             /* Активация сотрудника */
