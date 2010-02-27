@@ -16,20 +16,21 @@
             return new self();
         }
 
-        public function addMaterial ($description, $section, $originalFileInfo) {
-            $filename = $this->storage->storeFile ($originalFileInfo['tmp_name']);
+        public function addMaterial ($description, $section, $type, $originalFileInfo) {
+            $filename = $this->storage->storeFile($originalFileInfo['tmp_name']);
 
             $sql =
 <<<QUERY
-INSERT INTO `materials`(`description`,`original_filename`,`mime_type`,`filename`,`section`)
-VALUES (:description,:original_filename,:mime_type,:filename,:section)
+INSERT INTO `materials`(`description`,`original_filename`,`mime_type`,`filename`,`section`,`type`)
+VALUES (:description,:original_filename,:mime_type,:filename,:section,:type)
 QUERY;
             $params = array (
-                'description'		=> $description,
-                'original_filename'	=> $originalFileInfo['name'],
-                'mime_type'			=> $originalFileInfo['type'],
-                'filename'			=> $filename,
-                'section'			=> $section,
+                'description' => $description,
+                'original_filename' => $originalFileInfo['name'],
+                'mime_type' => $originalFileInfo['type'],
+                'filename' => $filename,
+                'section' => $section,
+                'type' => $type,
             );
 
             $this->prepare ($sql)
@@ -62,7 +63,7 @@ QUERY;
             $sql =
 <<<QUERY
 SELECT
-    `materials`.`id` as `id`,`materials`.`description` as `description`
+    `materials`.`id` as `id`,`materials`.`description` as `description`,`materials`.`type` AS `type`
 FROM
     `materials`
 QUERY;

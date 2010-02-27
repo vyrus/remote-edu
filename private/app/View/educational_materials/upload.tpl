@@ -65,6 +65,12 @@
 	<?php endforeach; ?>
 	};
 	
+	var MATERIALS = [
+	    {'caption':'Лекционный материал','value':'lecture'},
+	    {'caption':'Практические занятия','value':'practice'},
+	    {'caption':'Контрольная точка','value':'check'}
+	];
+	
 	/*----------------------------------------------------*/
 	/* Функции для работы группы select'ов выбора раздела */
 	/*----------------------------------------------------*/
@@ -188,30 +194,35 @@
 	__EducationalMaterial = [];
 	
 	function EducationalMaterial () {
-		this.id 						= __EducationalMaterial.length;
-		__EducationalMaterial[this.id] 	= this;
+		this.id = __EducationalMaterial.length;
+		__EducationalMaterial[this.id] = this;
 	}
 		
-	EducationalMaterial.prototype.create = function (
-		descriptionValue, 
-		sectionValue, 
-		descriptionErrorText, 
-		filenameErrorText, 
-		sectionErrorText
-	) {
-		var description					= document.createElement ('input');
-		description.type				= 'text';
-		description.name				= 'material[' + this.id + '][description]';
-		description.value				= ((descriptionValue) ? (descriptionValue) : (''));
+	EducationalMaterial.prototype.create = function(descriptionValue, sectionValue, typeValue, descriptionErrorText, filenameErrorText, sectionErrorText) {
+		var description = document.createElement ('input');
+		description.type = 'text';
+		description.name = 'material[' + this.id + '][description]';
+		description.value = ((descriptionValue) ? (descriptionValue) : (''));
 		
-		var fileReference				= document.createElement ('input');
-		fileReference.type				= 'file';
-		fileReference.name				= 'fileReference' + this.id;
+		var fileReference = document.createElement ('input');
+		fileReference.type = 'file';
+		fileReference.name = 'fileReference' + this.id;
 		
-		this.section					= document.createElement ('input');
-		this.section.type				= 'hidden';
-		this.section.name				= 'material[' + this.id + '][section]';
-		this.section.value				= ((sectionValue) ? (sectionValue) : (''));
+		this.section = document.createElement ('input');
+		this.section.type = 'hidden';
+		this.section.name = 'material[' + this.id + '][section]';
+		this.section.value = ((sectionValue) ? (sectionValue) : (''));
+		
+		this.materialType = document.createElement("select");
+		this.materialType.name = 'material[' + this.id + '][type]';
+		
+		for (var i = 0; i < MATERIALS.length; i++) {
+            this.materialType.options[i] = new Option(MATERIALS[i].caption, MATERIALS[i].value);
+            
+            if (typeValue && MATERIALS[i].value == typeValue) {
+                this.materialType.options[i].selected = 'selected';
+            }
+	    }
 		
 		this.container = document.createElement ('div').appendChild (
 			document.createElement ('table').appendChild (
@@ -252,6 +263,16 @@
 				).parentNode.appendChild (
 					document.createElement ('tr').appendChild (
 						document.createElement ('td').appendChild (
+							document.createTextNode ('Тип')
+						).parentNode
+					).parentNode.appendChild (
+						document.createElement ('td').appendChild (
+                            this.materialType
+						).parentNode
+					).parentNode
+				).parentNode.appendChild (
+					document.createElement ('tr').appendChild (
+						document.createElement ('td').appendChild (
 							document.createElement ('a').appendChild (
 								document.createTextNode ('отмена')
 							).parentNode
@@ -265,34 +286,30 @@
 				
 		document.getElementById ('educationalMaterials').appendChild (this.container);
 
-		if (
-			(this.section.value != '') &&
-			(sectionErrorText === null)
-		) {
-			$ ('tr:eq(2) td:last-child a', this.container).text (getFullSectionDescription (this.section.value));
+		if ((this.section.value != '') && (sectionErrorText === null)) {
+			$('tr:eq(2) td:last-child a', this.container).text(getFullSectionDescription (this.section.value));
 		}		
-		$ ('tr:eq(2) td:last-child a'	, this.container).attr		('href', 'javascript:__EducationalMaterial[' + this.id + '].openSectionSelectDialog()');
-		$ ('tr:lt(3) td:first-child'	, this.container).addClass	('caption');
-		$ ('tr:lt(3) td:last-child'		, this.container).addClass	('field');
-		$ ('tr:eq(3) td'				, this.container).attr		('colspan', '2');
-		$ ('tr:eq(3) td'				, this.container).addClass	('cancel');
-		$ ('tr:eq(3) td a'				, this.container).attr		('href', 'javascript:__EducationalMaterial[' + this.id + '].destroy()');
+		$('tr:eq(2) td:last-child a', this.container).attr('href', 'javascript:__EducationalMaterial[' + this.id + '].openSectionSelectDialog()');
+		$('tr:lt(4) td:first-child', this.container).addClass('caption');
+		$('tr:lt(4) td:last-child', this.container).addClass('field');
+		$('tr:eq(4) td', this.container).attr('colspan', '2');
+		$('tr:eq(4) td', this.container).addClass('cancel');
+		$('tr:eq(4) td a', this.container).attr('href', 'javascript:__EducationalMaterial[' + this.id + '].destroy()');
 	
-		var descriptionRow	= $ ('tr:eq(0)', this.container);
-		var filenameRow		= $ ('tr:eq(1)', this.container);
-		var sectionRow		= $ ('tr:eq(2)', this.container);
-
+		var descriptionRow = $('tr:eq(0)', this.container);
+		var filenameRow	= $('tr:eq(1)', this.container);
+		var sectionRow = $('tr:eq(2)', this.container);
 	
 		if (descriptionErrorText !== null) {
-			$ (descriptionRow).after (this.createErrorMessage (descriptionErrorText))
+			$(descriptionRow).after(this.createErrorMessage(descriptionErrorText))
 		}
 
 		if (filenameErrorText !== null) {
-			$ (filenameRow).after (this.createErrorMessage (filenameErrorText))
+			$(filenameRow).after(this.createErrorMessage(filenameErrorText))
 		}
 
 		if (sectionErrorText !== null) {
-			$ (sectionRow).after (this.createErrorMessage (sectionErrorText))
+			$(sectionRow).after(this.createErrorMessage(sectionErrorText))
 		}
 	}
 	
@@ -307,9 +324,9 @@
 			).parentNode
 		).parentNode;
 		
-		$ ('div'			, errorMessage).addClass ('error');
-		$ ('td:first-child'	, errorMessage).addClass ('caption');
-		$ ('td:last-child'	, errorMessage).addClass ('field');
+		$('div', errorMessage).addClass ('error');
+		$('td:first-child', errorMessage).addClass ('caption');
+		$('td:last-child', errorMessage).addClass ('field');
 		
 		return errorMessage;
 	}	
@@ -348,8 +365,8 @@
 		this.container.parentNode.removeChild (this.container);
 	}
 	
-	function createEducationalMaterial (descriptionValue, sectionValue, descriptionErrorText, filenameErrorText, sectionErrorText) {
-		(new EducationalMaterial ()).create (descriptionValue, sectionValue, descriptionErrorText, filenameErrorText, sectionErrorText);		
+	function createEducationalMaterial (descriptionValue, sectionValue, typeValue, descriptionErrorText, filenameErrorText, sectionErrorText) {
+		(new EducationalMaterial ()).create (descriptionValue, sectionValue, typeValue, descriptionErrorText, filenameErrorText, sectionErrorText);		
 	}
 </script>
 
@@ -371,39 +388,41 @@
 <h3>Загрузить материалы</h3>
 <form id="educationalMaterials" name="educationalMaterials" method="post" action="/educational_materials/upload" enctype="multipart/form-data">
 </form>
-<a href="javascript:createEducationalMaterial(null, null, null, null, null)">добавить материал</a>
+<a href="javascript:createEducationalMaterial(null, null, null, null, null, null)">добавить материал</a>
 <a href="javascript:document.educationalMaterials.submit()">загрузить</a>
 
 <script type="text/javascript">
-	var programsTypeSelect	= $ ('#programsTypeSelect');
-	var programsSelect 		= $ ('#programsSelect');
-	var disciplinesSelect 	= $ ('#disciplinesSelect');
-	var sectionsSelect 		= $ ('#sectionsSelect');
+	var programsTypeSelect = $('#programsTypeSelect');
+	var programsSelect = $('#programsSelect');
+	var disciplinesSelect = $('#disciplinesSelect');
+	var sectionsSelect = $('#sectionsSelect');
 
-	var selectSectionDialog	= $ ('#sectionSelectDialog');
+	var selectSectionDialog	= $('#sectionSelectDialog');
 	selectSectionDialog.dialog (
 		{
-			autoOpen	: false,
-			draggable 	: false,
-			modal		: true,
-			resizable	: false,
-			title 		: 'Выбор раздела',
-			width 		: 'auto'
+			autoOpen : false,
+			draggable : false,
+			modal : true,
+			resizable : false,
+			title : 'Выбор раздела',
+			width : 'auto'
 		}
 	);
 
 <?php if (empty ($invalidMaterialsForms)): ?>
-	createEducationalMaterial (null, null, null, null, null);
+	createEducationalMaterial(null, null, null, null, null, null);
 <?php else: ?>
 <?php foreach ($invalidMaterialsForms as $i => $form): ?>
 <?php
-	$description	= $form->description;
-	$filename		= $form->filename;
-	$section		= $form->section;
+	$description = $form->description;
+	$filename = $form->filename;
+	$section = $form->section;
+	$type = $form->type;
 ?>
 	createEducationalMaterial (
 		'<?php echo $description->value; ?>', 
-		<?php echo (($section->value) ? ($section->value) : ("''")); ?>, 
+		<?php echo (($section->value) ? ($section->value) : ("''")); ?>,
+		'<?php echo $type->value; ?>',
 		<?php echo ((isset ($description->error)) ? ("'" . $description->error . "'") : ('null')); ?>, 
 		<?php echo ((isset ($filename->error)) ? ("'" . $filename->error . "'") : ('null')); ?>, 
 		<?php echo ((isset ($section->error)) ? ("'" . $section->error . "'") : ('null')); ?>

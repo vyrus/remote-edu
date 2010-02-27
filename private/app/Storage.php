@@ -7,18 +7,18 @@
 		}
 		
 		public function storeFile () {
-			$args = func_get_args ();
-			$path = array_shift ($args);
-			if (count ($args)) {
-				$filename = array_shift ($args);
+			$args = func_get_args();
+			$path = array_shift($args);
+			if (count($args)) {
+				$filename = array_shift($args);
 			}
 			else {
 				do {
-					$filename = md5 ($path . rand (0, 0xFFFFFF));
-				} while (file_exists ($this->directory . '/' . $filename)); 
+					$filename = md5($path . rand (0, 0xFFFFFF));
+				} while (file_exists($this->directory . '/' . $filename)); 
 			}
 			
-			if (@move_uploaded_file ($path, $this->directory . '/' . $filename) === FALSE) {
+			if (@move_uploaded_file($path, $this->directory . '/' . $filename) === FALSE) {
 				throw new Exception ('Невозможно сохранить файл на сервере');
 			}
 			

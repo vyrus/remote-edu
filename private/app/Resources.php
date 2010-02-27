@@ -56,7 +56,7 @@
                 $config['options']
             );
             
-            $db->exec('SET NAMES utf8');
+            //$db->exec('SET NAMES utf8');
             
             return $db;
         }

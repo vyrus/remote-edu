@@ -43,9 +43,10 @@
 			$this
                 ->setAction($action)
                 ->setMethod(self::METHOD_POST)
-				->addDescription ()
-				->addFileInfo ()
-				->addField ('section');				
+				->addDescription()
+				->addFileInfo()
+				->addField('section')
+				->addField('type');				
         }
 		
 		public static function create ($action) {

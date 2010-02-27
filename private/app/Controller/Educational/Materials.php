@@ -100,9 +100,10 @@
                     $request->set (
                         'get',
                         array (
-                            'description'	=> $material['description'],
-                            'section'		=> $material['section'],
-                            'filename'		=> $request->files['fileReference' . $i]['name'],
+                            'description' => $material['description'],
+                            'section' => $material['section'],
+                            'filename' => $request->files['fileReference' . $i]['name'],
+                            'type' => $material['type'],
                         )
                     );
 
@@ -112,14 +113,14 @@
                         $invalidMaterialsForms[] = $materialForm;
                     }
                     else {
-                        $educationalMaterials->addMaterial ($material['description'], $material['section'], $request->files['fileReference' . $i]);
+                        $educationalMaterials->addMaterial($material['description'], $material['section'], $material['type'], $request->files['fileReference' . $i]);
                     }
                 }
             }
 
             if (! empty ($invalidMaterialsForms)) {
-                $this->set		('invalidMaterialsForms', $invalidMaterialsForms);
-                $this->render	('educational_materials/upload');
+                $this->set('invalidMaterialsForms', $invalidMaterialsForms);
+                $this->render('educational_materials/upload');
             }
 
             $this->flash (

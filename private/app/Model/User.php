@@ -630,7 +630,7 @@
 			$this->prepare($sql)->execute($params);			
 		}
 		
-		public function getResponsibleTeachers() {		    
+		public function getStudentResponsibleTeachers() {		    
 		    $udata = (object) $this->getAuth();
 		    
             $app = Model_Application::create();
