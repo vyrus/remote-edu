@@ -21,6 +21,32 @@
             parent::__construct ($request);
         }
 
+        public function action_edit($params) {
+            $form = Form_Materials_Edit::create('/educational_materials/edit/' . $params['material_id']); 
+            $educationalMaterials = Model_Educational_Materials::create ();
+            $this->set('form', $form);            
+            $request = $this->getRequest();            
+            $method = $form->method();
+            $requestData = $request->$method;
+            
+            if (empty($requestData)) {                
+                $materialInfo = $educationalMaterials->getMaterialInfo($params['material_id']);
+                $form->setValue('description', $materialInfo['description']);
+                $form->setValue('type', $materialInfo['type']);                
+            }
+            else if ($form->validate($request)) {
+                $materialInfo = array(
+                    'id' => $params['material_id'],
+                    'description' => $requestData['description'],
+                    'type' => $requestData['type'],
+                );
+                $educationalMaterials->updateMaterialInfo($materialInfo);
+                $this->flash('Данные материала были успешно изменены', '/educational_materials/index', 5);
+            }
+            
+            $this->render('educational_materials/edit');
+        }
+
         public function action_index () {
             $educationPrograms = Model_Education_Programs::create ();
             $this->set ('directions',	$educationPrograms->getDirections 				());
@@ -56,19 +82,19 @@
         }
 
         public function action_remove () {
-            $request		= $this->getRequest ();
-            $requestData	= $request->post;
+            $request = $this->getRequest ();
+            $requestData = $request->post;
 
-            $educationalMaterials	= Model_Educational_Materials::create ();
-            if (! empty ($requestData)) {
+            $educationalMaterials = Model_Educational_Materials::create ();
+            if (!empty($requestData)) {
                 foreach ($requestData as $materialID => $value) {
                     if ($materialID != 'all') {
-                        $educationalMaterials->removeMaterial ($materialID);
+                        $educationalMaterials->removeMaterial($materialID);
                     }
                 }
             }
 
-            $this->flash (
+            $this->flash(
                 'Материалы успешно удалены',
                 '/educational_materials/index' . $this->templatesPostfix,
                 3

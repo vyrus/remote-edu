@@ -1,5 +1,15 @@
 <?php
-    class Model_Educational_Materials extends Model_Base {
+    class Model_Educational_Materials extends Model_Base {        
+        const MATERIAL_TYPE_LECTURE = 'lecture';
+        const MATERIAL_TYPE_PRACTICE = 'practice';
+        const MATERIAL_TYPE_CHECK = 'check';
+        
+        public static $MATERIAL_TYPES_CAPTIONS = array(
+            self::MATERIAL_TYPE_LECTURE => 'Лекционный материал',
+            self::MATERIAL_TYPE_PRACTICE => 'Практическое занятие',
+            self::MATERIAL_TYPE_CHECK => 'Контрольный материал',            
+        );
+        
         private $storage;
 
         public function __construct () {
@@ -104,6 +114,25 @@ QUERY;
             $stmt->execute ($queryParams);
 
             return $stmt->fetchAll (PDO::FETCH_ASSOC);
+        }
+        
+        public function getMaterialInfo($materialId) {
+            $sql = 'SELECT `description`,`type` FROM `materials` WHERE `id`=:material_id';
+            $params = array(':material_id' => $materialId);
+            $stmt = $this->prepare($sql);            
+            $stmt->execute($params);
+            
+            return $stmt->fetch(Db_Pdo::FETCH_ASSOC);
+        }
+        
+        public function updateMaterialInfo($materialInfo) {
+            $sql = 'UPDATE `materials` SET `description`=:description,`type`=:type WHERE `id`=:material_id';
+            $params = array(
+                ':material_id' => $materialInfo['id'],
+                ':description' => $materialInfo['description'],
+                ':type' => $materialInfo['type'],
+            );
+            $this->prepare($sql)->execute($params);
         }
 
         public function getMaterial ($material_id) {

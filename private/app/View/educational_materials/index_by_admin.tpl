@@ -1,8 +1,8 @@
 <?php
-	$directions 	= $this->directions;
-	$courses		= $this->courses;
-	$disciplines	= $this->disciplines;
-	$sections		= $this->sections;
+	$directions = $this->directions;
+	$courses = $this->courses;
+	$disciplines = $this->disciplines;
+	$sections = $this->sections;
 	
 	foreach ($sections as $i => $disciplineSections) {
 		foreach ($disciplineSections as $j => $section) {
@@ -10,10 +10,11 @@
 		}
 	}
 	
-	$programID		= $this->programID;
-	$disciplineID	= $this->disciplineID;
-	$sectionID		= $this->sectionID;
-	$materials 		= $this->materials;
+	$programID = $this->programID;
+	$disciplineID = $this->disciplineID;
+	$sectionID = $this->sectionID;
+	$materials = $this->materials;
+	$materialTypes = Model_Educational_Materials::$MATERIAL_TYPES_CAPTIONS;	
 ?>
 <style type="text/css">
 	tr.odd, th.odd {
@@ -46,6 +47,12 @@
 		text-align		: center;
 		padding 		: 3px;
 	}
+	
+	.materials td.edit, .materials td.type,
+	.materials th.edit, .materials th.type {
+	    text-align: center;
+	    padding: 2px 15px;
+    }
 </style>
 <script type="text/javascript">
 	var PROGRAMS			= [];
@@ -126,10 +133,10 @@
 </nobr>
 <form id="deleteMaterials" name="deleteMaterials" action="/educational_materials/remove" method="post">
 <table class="materials" border="0" cellspacing="2" cellpadding="0">
-<tr class="odd"><td class="checkbox"><input name="all" type="checkbox" onclick="setAllCheckboxesStatus ('deleteMaterials')" /></th><th class="description">Название</th></tr>
+<tr class="odd"><td class="checkbox"><input name="all" type="checkbox" onclick="setAllCheckboxesStatus ('deleteMaterials')" /></th><th class="description">Название</th><th class="type">Тип материала</th><th class="edit"></th></tr>
 <?php if (! empty ($materials)): ?>
 <?php foreach ($materials as $i => $material): ?>
-<tr<?php if ($i % 2): ?> class="odd"<?php else: ?> class="even"<?php endif; ?>><td class="checkbox"><input name="<?php echo $material['id']; ?>" type="checkbox" /></td><td class="description"><a href="/educational_material/<?php echo $material['id']; ?>"><?php echo $material['description']; ?></a></td></tr>
+<tr<?php if ($i % 2): ?> class="odd"<?php else: ?> class="even"<?php endif; ?>><td class="checkbox"><input name="<?php echo $material['id']; ?>" type="checkbox" /></td><td class="description"><a href="/educational_material/<?php echo $material['id']; ?>"><?php echo $material['description']; ?></a></td><td class="type"><?php echo $materialTypes[$material['type']]; ?></td><td class="edit"><a href="/educational_materials/edit/<?php echo $material['id']; ?>">редактировать</a></td></tr>
 <?php endforeach; ?>
 <?php endif; ?>
 </table>
@@ -137,8 +144,8 @@
 <a href="javascript:document.deleteMaterials.submit()">удалить выделенные</a>
 
 <script type="text/javascript">
-	var programsTypeSelect	= $ ('#programsTypeSelect');
-	var programsSelect 		= $ ('#programsSelect');
-	var disciplinesSelect 	= $ ('#disciplinesSelect');
-	var sectionsSelect 		= $ ('#sectionsSelect');
+	var programsTypeSelect = $('#programsTypeSelect');
+	var programsSelect = $('#programsSelect');
+	var disciplinesSelect = $('#disciplinesSelect');
+	var sectionsSelect = $('#sectionsSelect');
 </script>

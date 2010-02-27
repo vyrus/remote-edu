@@ -66,9 +66,9 @@
 	};
 	
 	var MATERIALS = [
-	    {'caption':'Лекционный материал','value':'lecture'},
-	    {'caption':'Практические занятия','value':'practice'},
-	    {'caption':'Контрольная точка','value':'check'}
+	    <?php $materialTypes = Model_Educational_Materials::$MATERIAL_TYPES_CAPTIONS; foreach ($materialTypes as $value => $caption): ?>
+	    {'caption':'<?php echo $caption; ?>','value':'<?php echo $value; ?>'},    
+        <?php endforeach; ?>		    
 	];
 	
 	/*----------------------------------------------------*/

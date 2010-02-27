@@ -399,7 +399,21 @@
                     'controller' => 'messages',
                     'action'     => 'message',
                 )
-            ),	
+            ),
+            
+            array(
+                'type'     => Mvc_Router::ROUTE_REGEX,
+                'pattern'  => array
+                (
+                    'regex'  => '/educational_materials/edit/([0-9]+)',
+                    'params' => array ('material_id'),
+                ),
+                'handler' => array
+                (
+                    'controller' => 'educational_materials',
+                    'action'     => 'edit',
+                )
+            ),            	
         ),
 
         /* Права доступа к разделам сайта */
@@ -452,6 +466,7 @@
 
                 'educational_materials/index_by_admin',
                 'educational_materials/upload',
+                'educational_materials/edit',                
                 'educational_materials/remove',
 
                 'education_programs/index',
