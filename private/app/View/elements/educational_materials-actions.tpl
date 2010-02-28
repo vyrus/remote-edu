@@ -5,20 +5,22 @@
 	
 	/* ссылки, доступные только админу*/	        
     $admin_educationMaterialsAction = array(
-        'Список материалов'		=> 'index_by_admin',
-        'Загрузить материалы' 	=> 'upload'
+        'Список материалов'		=> 'index',
+        'Загрузить материалы' 	=> 'upload',
     );
 
 	/* ссылки, доступные только преподу*/	        
     $teacher_educationMaterialsAction = array(
+        'Список материалов'		=> 'index',
+        'Загрузить материалы' 	=> 'upload',        
     );
 
 	/* ссылки, доступные только слушателю*/	        
     $student_educationMaterialsAction = array(
 
         //'Список материалов'		=> 'index_by_student'
-        'Доступные программы'           => 'available/',
-        'Инструкция пользователю'	=> 'instructions_by_student/'
+        'Доступные программы' => 'available/',
+        'Инструкция пользователю' => 'instructions_by_student/'
     );
 	
     //Wtfi

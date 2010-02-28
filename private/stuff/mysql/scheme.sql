@@ -243,6 +243,8 @@ ALTER TABLE `disciplines` ADD `serial_number` INT NOT NULL AFTER `program_id`;
 -- вместо 'studied'
 --
 ALTER TABLE `materials_states` CHANGE `state` `state` enum('downloaded','last') DEFAULT NULL;
+
 alter table materials add type enum('lecture','practice','check') default 'lecture';
+alter table `materials` add uploader int;
 
 SET character_set_client = @saved_cs_client;

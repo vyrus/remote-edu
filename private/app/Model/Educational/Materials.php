@@ -28,19 +28,17 @@
 
         public function addMaterial ($description, $section, $type, $originalFileInfo) {
             $filename = $this->storage->storeFile($originalFileInfo['tmp_name']);
-
-            $sql =
-<<<QUERY
-INSERT INTO `materials`(`description`,`original_filename`,`mime_type`,`filename`,`section`,`type`)
-VALUES (:description,:original_filename,:mime_type,:filename,:section,:type)
-QUERY;
+            $sql = 'INSERT INTO `materials`(`description`,`original_filename`,`mime_type`,`filename`,`section`,`type`,`uploader`) VALUES (:description,:original_filename,:mime_type,:filename,:section,:type,:uploader)';
+            $user = Model_User::create();
+            $udata = (object) $user->getAuth();            
             $params = array (
-                'description' => $description,
-                'original_filename' => $originalFileInfo['name'],
-                'mime_type' => $originalFileInfo['type'],
-                'filename' => $filename,
-                'section' => $section,
-                'type' => $type,
+                ':description' => $description,
+                ':original_filename' => $originalFileInfo['name'],
+                ':mime_type' => $originalFileInfo['type'],
+                ':filename' => $filename,
+                ':section' => $section,
+                ':type' => $type,
+                ':uploader' => $udata->user_id,
             );
 
             $this->prepare ($sql)
@@ -48,67 +46,74 @@ QUERY;
         }
 
         public function removeMaterial ($materialID) {
-            $sql =
-<<<QUERY
-SELECT `filename`
-FROM `materials`
-WHERE `id`=?
-QUERY;
-            $stmt = $this->prepare ($sql);
-            $stmt->execute (array ($materialID));
-            $filename = $stmt->fetchAll (PDO::FETCH_ASSOC);
+            $user = Model_User::create();
+            $udata = (object) $user->getAuth();            
+            $sql = 'SELECT `filename` FROM `materials` WHERE `id`=:material_id AND `uploader`=:uploader_id';
+            $stmt = $this->prepare($sql);
+            $params = array(
+                ':material_id' => $materialID,
+                ':uploader_id' => $udata->user_id,
+            );
+            $stmt->execute($params);
+            
+            if (($filename = $stmt->fetch(PDO::FETCH_ASSOC)) === FALSE) {
+                return FALSE;
+            }
 
-            $this->storage->removeFile ($filename[0]['filename']);
+            $this->storage->removeFile($filename['filename']);
 
-            $sql =
-<<<QUERY
-DELETE FROM `materials`
-WHERE `id`=?
-QUERY;
-            $this->prepare ($sql)
-                ->execute (array ($materialID));
+            $sql = 'DELETE FROM `materials` WHERE `id`=?';
+            $this->prepare($sql)
+                ->execute(array($materialID));
+                
+            return TRUE;
         }
 
         public function getMaterials ($filter) {
-            $sql =
-<<<QUERY
-SELECT
-    `materials`.`id` as `id`,`materials`.`description` as `description`,`materials`.`type` AS `type`
-FROM
-    `materials`
-QUERY;
+            $sql = 'SELECT `materials`.`id` as `id`,`materials`.`description` as `description`,`materials`.`type` AS `type`
+                FROM `materials`';
+            $user = Model_User::create();
+            $udata = (object) $user->getAuth();
+            $queryParams = array(
+                ':uploader_id' => $udata->user_id,
+            );            
 
             do {
                 if ((empty ($filter)) || ($filter['programsSelect'] == -1)) {
-                    $tables			= '';
-                    $condition		= '';
-                    $queryParams	= array ();
-
+                    $tables = '';
+                    $condition = '';
                     break;
                 }
 
                 if ($filter['disciplinesSelect'] == -1) {
-                    $tables 		= ',`disciplines`,`sections`';
-                    $condition		= '`materials`.`section`=`sections`.`section_id` AND `sections`.`discipline_id`=`disciplines`.`discipline_id` AND `disciplines`.`program_id`=?';
-                    $queryParams	= array ($filter['programsSelect']);
-
+                    $tables = ',`disciplines`,`sections`';
+                    $condition = '`materials`.`section`=`sections`.`section_id` AND `sections`.`discipline_id`=`disciplines`.`discipline_id` AND `disciplines`.`program_id`=:program_id';
+                    $queryParams = array_merge($queryParams, array(
+                            ':program_id' => $filter['programsSelect'],
+                        )
+                    );
                     break;
                 }
 
                 if ($filter['sectionsSelect'] == -1) {
-                    $tables 		= ',`sections`';
-                    $condition		= '`materials`.`section`=`sections`.`section_id` AND `sections`.`discipline_id`=?';
-                    $queryParams	= array ($filter['disciplinesSelect']);
-
+                    $tables = ',`sections`';
+                    $condition = '`materials`.`section`=`sections`.`section_id` AND `sections`.`discipline_id`=:discipline_id';
+                    $queryParams = array_merge($queryParams, array(
+                            ':discipline_id' => $filter['disciplinesSelect'],
+                        )
+                    );
                     break;
                 }
 
-                $tables 		= '';
-                $condition		= '`materials`.`section`=?';
-                $queryParams	= array ($filter['sectionsSelect']);
-            } while (0);
-
-            $sql .= $tables . (($condition != '') ? (' WHERE ' . $condition) : (''));
+                $tables = '';
+                $condition = '`materials`.`section`=:section_id';
+                $queryParams = array_merge($queryParams, array(
+                        ':section_id' => $filter['sectionsSelect'],
+                    )
+                );
+            } while(0);
+            
+            $sql .= $tables . 'WHERE `uploader`=:uploader_id' . (($condition != '') ? (' AND ' . $condition) : (''));
 
             $stmt = $this->prepare ($sql);
             $stmt->execute ($queryParams);
@@ -117,8 +122,13 @@ QUERY;
         }
         
         public function getMaterialInfo($materialId) {
-            $sql = 'SELECT `description`,`type` FROM `materials` WHERE `id`=:material_id';
-            $params = array(':material_id' => $materialId);
+            $user = Model_User::create();
+            $udata = (object) $user->getAuth();            
+            $sql = 'SELECT `description`,`type` FROM `materials` WHERE `id`=:material_id AND `uploader`=:uploader_id';
+            $params = array(
+                ':material_id' => $materialId,
+                ':uploader_id' => $udata->user_id,
+            );
             $stmt = $this->prepare($sql);            
             $stmt->execute($params);
             
@@ -126,11 +136,14 @@ QUERY;
         }
         
         public function updateMaterialInfo($materialInfo) {
-            $sql = 'UPDATE `materials` SET `description`=:description,`type`=:type WHERE `id`=:material_id';
+            $user = Model_User::create();
+            $udata = (object) $user->getAuth();            
+            $sql = 'UPDATE `materials` SET `description`=:description,`type`=:type WHERE `id`=:material_id AND `uploader`=:uploader_id';
             $params = array(
                 ':material_id' => $materialInfo['id'],
                 ':description' => $materialInfo['description'],
                 ':type' => $materialInfo['type'],
+                ':uploader_id' => $udata->user_id,
             );
             $this->prepare($sql)->execute($params);
         }

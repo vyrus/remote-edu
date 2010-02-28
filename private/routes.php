@@ -440,6 +440,7 @@
 
                 'educational_materials/index_by_student',
                 'education_programs/show_available',
+                
     		),
 
             /* Преподаватель */
@@ -448,6 +449,10 @@
                 'education_students/index',
 
                 'educational_materials/index_by_teacher',  // учебные материалы, добавленные залогиненным преподавателем
+                'educational_materials/upload',
+                'educational_materials/edit',                
+                'educational_materials/remove',                
+
             ),
 
             /* Администратор */

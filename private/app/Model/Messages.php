@@ -211,9 +211,9 @@
                     $students = $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
                     
                     foreach ($students as $i => $student) {
-                        $retval[] = array(
-                            'recipient_id' => $student['user_id'],
+                        $retval[$student['user_id']] = array(
                             'recipient_name' => $student['surname'] . ' ' . mb_substr($student['surname'], 0, 1, 'utf-8') . '. ' . mb_substr($student['patronymic'], 0, 1, 'utf-8') . '.',                           
+                            'recipient_description' => array(),
                         );
                     }
                     

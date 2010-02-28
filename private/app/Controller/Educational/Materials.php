@@ -8,7 +8,7 @@
 
             if (isset($udata->role)) {
                 if (Model_User::ROLE_TEACHER == $udata->role) {
-                    $this->templatePostfix = '_by_teacher';
+                    $this->templatePostfix = '_by_admin';
                 }
                 elseif (Model_User::ROLE_ADMIN == $udata->role) {
                     $this->templatePostfix = '_by_admin';
@@ -30,7 +30,10 @@
             $requestData = $request->$method;
             
             if (empty($requestData)) {                
-                $materialInfo = $educationalMaterials->getMaterialInfo($params['material_id']);
+                if (($materialInfo = $educationalMaterials->getMaterialInfo($params['material_id'])) === FALSE) {
+                    $this->flash('Учебный материал не существует или был загружен не Вами', '/educational_materials/index', 5);
+                }
+                
                 $form->setValue('description', $materialInfo['description']);
                 $form->setValue('type', $materialInfo['type']);                
             }
@@ -49,32 +52,25 @@
 
         public function action_index () {
             $educationPrograms = Model_Education_Programs::create ();
-            $this->set ('directions',	$educationPrograms->getDirections 				());
-            $this->set ('courses', 		$educationPrograms->getCourses 					());
-            $this->set ('disciplines',	$educationPrograms->getDirectionsDisciplines 	());
-            $this->set ('sections', 	$educationPrograms->getDisciplinesSections 		());
-            $this->set ('invalidMaterialsForms', array ());
+            $this->set('directions', $educationPrograms->getDirections());
+            $this->set('courses', $educationPrograms->getCourses());
+            $this->set('disciplines', $educationPrograms->getDirectionsDisciplines());
+            $this->set('sections', $educationPrograms->getDisciplinesSections());
+            $this->set('invalidMaterialsForms', array ());
 
-            $request				= $this->getRequest ();
-            $requestData			= $request->post;
-            $educationalMaterials	= Model_Educational_Materials::create ();
+            $request = $this->getRequest ();
+            $requestData = $request->post;
+            $educationalMaterials = Model_Educational_Materials::create ();
 
-            $this->set		('programID', 		(isset ($requestData['programsSelect'])) ? ($requestData['programsSelect']) : (-1));
-            $this->set		('disciplineID',	(isset ($requestData['disciplinesSelect'])) ? ($requestData['disciplinesSelect']) : (-1));
-            $this->set		('sectionID',		(isset ($requestData['sectionsSelect'])) ? ($requestData['sectionsSelect']) : (-1));
-            $this->set		('materials',		$educationalMaterials->getMaterials ($requestData));
-            $this->render	('educational_materials/index' . $this->templatePostfix);
+            $this->set('programID', (isset ($requestData['programsSelect'])) ? ($requestData['programsSelect']) : (-1));
+            $this->set('disciplineID', (isset ($requestData['disciplinesSelect'])) ? ($requestData['disciplinesSelect']) : (-1));
+            $this->set('sectionID',	(isset ($requestData['sectionsSelect'])) ? ($requestData['sectionsSelect']) : (-1));
+            $this->set('materials',	$educationalMaterials->getMaterials ($requestData));
+            $this->render('educational_materials/index' . $this->templatePostfix);
         }
 
         public function action_index_by_admin () {
             $this->action_index ();
-        }
-
-        public function action_index_by_teacher () {
-            $msg = 'Тут будут учебные материалы, добавленные залогиненным преподавателем';
-            $this->flash($msg, '/educational_materials/index_by_teacher/');
-
-            $this->render();
         }
 
         public function action_index_by_student () {
@@ -84,21 +80,18 @@
         public function action_remove () {
             $request = $this->getRequest ();
             $requestData = $request->post;
-
             $educationalMaterials = Model_Educational_Materials::create ();
+            $removeSuccess = TRUE;
+            
             if (!empty($requestData)) {
                 foreach ($requestData as $materialID => $value) {
                     if ($materialID != 'all') {
-                        $educationalMaterials->removeMaterial($materialID);
+                        $removeSuccess = $removeSuccess && $educationalMaterials->removeMaterial($materialID);
                     }
                 }
             }
 
-            $this->flash(
-                'Материалы успешно удалены',
-                '/educational_materials/index' . $this->templatesPostfix,
-                3
-            );
+            $this->flash($removeSuccess ? 'Материалы успешно удалены' : 'Некоторые материалы не были удалены(возможно, Вы предприняли попытку удалить материал, который не был загружен Вами)', '/educational_materials/index' . $this->templatesPostfix, 10);
         }
 
         public function action_upload () {

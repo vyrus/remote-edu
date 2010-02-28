@@ -8,16 +8,20 @@
     
     /* ссылки, доступные только админу */	        
     $admin_elements = array(
-        'Регистрация пользователя'      => 'users/index_by_admin/',
+        'Регистрация пользователя' => 'users/index_by_admin/',
         'Формирование учебных программ' => 'education_programs/index/',
-        'Загрузка материалов'           => 'educational_materials/index_by_admin/',		
-        'Заявки на обучение'            => 'applications/index_by_admin',
+        //'Загрузка материалов' => 'educational_materials/index_by_admin/',		
+        'Заявки на обучение' => 'applications/index_by_admin',
     );
     
     /* ссылки, доступные только преподу */	        
     $teacher_elements = array(
+        'Мои курсы' => 'teacher_courses/index',
+        'Мои слушатели' => 'teacher_students/index',
+        /*
         'Пользователи' => 'users/index/',
         'Материалы'    => 'educational_materials/index/',
+        */
     );
     
     /* ссылки, доступные только слушателю */	        
@@ -60,8 +64,8 @@
         $elems = array_merge($elems, $_role2elems[$role]);
     }
                                        
-    /* Если пользователь - не администратор, то добавляем внешние ссылки */
-    if (Model_User::ROLE_ADMIN !== $role) {
+    /* Если пользователь - слушатель, то добавляем внешние ссылки */
+    if (Model_User::ROLE_STUDENT === $role) {
         $elems = array_merge($elems, $external_links);
     }
     

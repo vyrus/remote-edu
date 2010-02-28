@@ -59,7 +59,7 @@
         var recId = recipientId.val();
         
         if (recId) {
-            selectRecipientButton.text(recipients[recId]);
+            selectRecipientButton.text(recipients[recId].name);
         }
     }
     
