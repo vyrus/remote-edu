@@ -8,7 +8,6 @@
 	$directions 	= $this->directions;
 	$courses		= $this->courses;
 	$disciplines	= $this->disciplines;
-	$form = $this->form;
 ?>
 <script type="text/javascript">
     var PROGRAMS			= [];

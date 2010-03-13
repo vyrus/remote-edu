@@ -15,11 +15,6 @@
             $this->set ('courses', 		$educationPrograms->getCourses 					());
             $this->set ('disciplines',	$educationPrograms->getDirectionsDisciplines 	());
 
-            /* Создаём объект формы с полями первичной регистрации */
-            $action = '/applications/apply/';
-            $form = Form_Profile_Student_Registration::create($action);
-            $this->set('form', $form);
-
             $this->render();
         }
 
@@ -49,7 +44,7 @@
             $request	= $this->getRequest ();
             $requestData	= $request->files;
             if (empty ($requestData)) {
-                $this->render ('/applications/index_by_admin');
+                $this->render ('applications/index_by_admin');
             }
         // [ загрузка договора
             $invalidMaterialsForms = array ();
@@ -176,11 +171,7 @@
 
             $this->render();
         }
-
-        public function action_upload_agreement ()
-        {
-        }
-
+        
         /**
         * Удаление заявки из базы данных.
         *
@@ -202,7 +193,6 @@
 
             $this->flash($msg, self::RETURN_URL);
         }
-
     }
 
 ?>
