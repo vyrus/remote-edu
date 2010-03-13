@@ -39,6 +39,15 @@
             /* Управление заявками */
             array('/admin/applications', 'applications', 'index_by_admin', 'admin.applications', Mvc_Router::ROUTE_STATIC),
             
+            /* Изменение статусы заявки администратором */
+            array('/admin/applications/change-status/(accepted|declined|signed)/([0-9]+)', array('new_status', 'app_id'), 'applications', 'change_app_status', 'admin.applications.change-status', Mvc_Router::ROUTE_REGEX),
+            
+            /* Удаление заявки администратором */
+            array('/admin/applications/delete/([0-9]+)', array('app_id'), 'applications', 'delete', 'admin.applications.delete', Mvc_Router::ROUTE_REGEX),
+            
+            /* Изменение статусы заявки администратором */
+            array('/admin/payments/add/([0-9]+)', array('app_id'), 'payments', 'add', 'admin.payments.add', Mvc_Router::ROUTE_REGEX),
+            
             /* Инструкции для администратора */
             array('/admin/help', 'users', 'instructions_by_admin', 'admin.help', Mvc_Router::ROUTE_STATIC),
             
@@ -54,8 +63,14 @@
             /* Подача заявки слушателем */
             array('/student/apply', 'applications', 'index_by_student', 'student.apply', Mvc_Router::ROUTE_STATIC),
             
+            /* Отправка слушателем заявки на выбранную программу */
+            array('/student/apply/(discipline|program)/([0-9]+)', array('program_type', 'program_id'), 'applications', 'apply', 'student.applications.apply', Mvc_Router::ROUTE_REGEX),
+            
             /* Расширенный профиль слушателя */
             array('/student/extended-profile', 'users', 'profile_extended_by_student', 'student.extended-profile', Mvc_Router::ROUTE_STATIC),
+            
+            /* Страничка помощи слушателю - как начать обучение */
+            array('/student/help/how-to-start', 'users', 'howtostart', 'student.help.how-to-start', Mvc_Router::ROUTE_STATIC),
             
             array('/educational_material/([0-9]+)', array('material_id'), 'educational_materials', 'get_material', '', Mvc_Router::ROUTE_REGEX),
             
@@ -84,11 +99,6 @@
             array('/save_discipline_order/', array(), 'education_programs', 'save_discipline_order', '', Mvc_Router::ROUTE_REGEX),
             
             array('/edit_section/([0-9]+)', array('section_id'), 'education_programs', 'edit_section', '', Mvc_Router::ROUTE_REGEX),
-            
-            /* Подача заявки */
-            array('/applications/apply/(discipline|program)/([0-9]+)', array('program_type', 'program_id'), 'applications', 'apply', '', Mvc_Router::ROUTE_REGEX),
-            
-            array('/applications/change_app_status/(accepted|declined|signed)/([0-9]+)', array('new_status', 'app_id'), 'applications', 'change_app_status', '', Mvc_Router::ROUTE_REGEX),
             
             /* Активация слушателя */
             /**

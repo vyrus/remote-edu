@@ -3,8 +3,6 @@
     /* $Id$ */
 
     class Controller_Applications extends Mvc_Controller_Abstract {
-        const RETURN_URL = '/applications/index_by_admin/';
-
         /**
         * форма для подачи заявки слушателем.
         */
@@ -84,9 +82,11 @@
                 $this->render	('educational_materials/upload');
             }
 
+            $links = Resources::getInstance()->links;
+            
             $this->flash (
                 'Договор успешно загружен',
-                '/applications/index_by_admin',
+                $links->get('admin.applications'),
                 3
             );
         }
@@ -99,6 +99,8 @@
             $user = Model_User::create();
             $udata = (object) $user->getAuth();
 
+            $links = Resources::getInstance()->links;
+            
             /**
             * @todo Раскоментировать когда поправится подключение js-функций,
             * подгружающих списки городов/областей.
@@ -107,8 +109,7 @@
             if (!$user->isExtendedProfileSet($udata->user_id))
             {
                 $msg = 'Заполните, пожалуйста, свой профиль';
-                $link = '/users/profile_extended_by_student/';
-                $this->flash($msg, $link);
+                $this->flash($msg, $links->get('student.extended-profile'));
             }
             */
 
@@ -120,16 +121,18 @@
 
             $app = Model_Application::create();
             $app->apply($udata->user_id, $object_id, $type);
-
+            
+            $return_url = $links->get('student.applications');                        
+            
             $msg = 'Вы успешно подали заявку на учебный курс.<p>
               Через 10 сек. Вас автоматически перенаправят на страницу просмотра
-              поданых Вами <a href="/applications/list_by_student/" title=Мои заявки> заявок</a>.
+              поданых Вами <a href="' . $return_url . '" title=Мои заявки> заявок</a>.
               <p>
               Также, Вы можете, не дожидаясь перенаправления, перейти на страницу
-              <a href="/applications/index_by_student/" title=Авторизация>Мой новый курс</a> и
+              <a href="' . $links->get('student.apply') . '" title=Авторизация>Мой новый курс</a> и
               подать зявку на ещё один учебный курс!';
 
-            $this->flash($msg, '/applications/list_by_student/', 10);
+            $this->flash($msg, $return_url, 10);
         }
 
         /**
@@ -157,6 +160,8 @@
 
         public function action_change_app_status($params)
         {
+            $links = Resources::getInstance()->links;
+            
             $user = Model_User::create();
             $udata = (object) $user->getAuth();
 
@@ -167,7 +172,8 @@
             $app->setAppStatus($new_status, $app_id);
 
             $map = Model_Application::getStatusMap();
-            $this->flash('Заявка ' . $map[$new_status], '/applications/index_by_admin/');
+            $this->flash('Заявка ' . $map[$new_status], 
+                         $links->get('admin.applications'));
 
             $this->render();
         }
@@ -178,11 +184,14 @@
         * @todo Удалять ли платежи из базы при удалении заявки?
         */
         public function action_delete(array $params = array()) {
-            if (!isset($params[0])) {
-                $this->flash('Не указан номер заявки', self::RETURN_URL);
+            $links = Resources::getInstance()->links;
+            $return_url = $links->get('admin.applications');
+            
+            if (empty($params)) {
+                $this->flash('Не указан номер заявки', $return_url);
             }
 
-            $app_id = intval($params[0]);
+            $app_id = intval(array_shift($params));
             $app = Model_Application::create();
 
             if (!$app->delete($app_id)) {
@@ -191,7 +200,7 @@
                 $msg = 'Заявка успешно удалена';
             }
 
-            $this->flash($msg, self::RETURN_URL);
+            $this->flash($msg, $return_url);
         }
     }
 

@@ -12,12 +12,12 @@
         public function action_add(array $params = array()) {
             $request = $this->getRequest();
             
-            if (!isset($params[0])) {
+            if (empty($params)) {
                 $this->flash('Не указан идентификатор заявки',
                              '/applications/index_by_admin');
             }
             
-            $app_id = intval($params[0]);
+            $app_id = intval(array_shift($params));
             
             /* Используем REDIRECT_URI, т.к. движок работает под mod_rewrite */
             $action = $request->server['REDIRECT_URL'];
