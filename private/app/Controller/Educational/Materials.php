@@ -138,20 +138,21 @@
         * Отображение доступных материалов.
         */
         public function action_show(array $params = array()) {
-            if (!isset($params[0]) || is_int ($params[0]))
+            if (!isset($params['discipline_id']) ||
+                is_int ($params['discipline_id']))
             {
                 $this->flash('Не указан идентификатор дисциплины',
                              '/education_programs/available/');
             }
 
-            if (!isset($params[1]) || is_int($params[1]))
+            if (!isset($params['app_id']) || is_int($params['app_id']))
             {
                 $this->flash('Не указан идентификатор заявки',
                              '/education_programs/available/');
             }
 
-            $disc_id = intval($params[0]);
-            $app_id  = intval($params[1]);
+            $disc_id = intval($params['discipline_id']);
+            $app_id  = intval($params['app_id']);
 
             /**
             * @todo Сделать проверку на доступность дисциплины.

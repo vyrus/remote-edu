@@ -1,1 +1,1 @@
-Просмотр доступных программ <a href="/education_programs/available/">&rarr;</a>
+Просмотр доступных программ <a href="<?php echo $this->_links->get('student.programs') ?>">&rarr;</a>
