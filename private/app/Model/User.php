@@ -734,6 +734,34 @@
                 
             return $retval;
 	    }
-    }
-
+	    
+	    public function getUsersList() {
+            $sql = 'SELECT `user_id`,`login`,`role`,`name`,`surname`,`patronymic`
+                FROM `users`';
+            $stmt = $this->prepare($sql);
+            $stmt->execute();
+            
+            return $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
+        }
+        
+        public function getUserInfo($userId) {
+            $sql = 'SELECT `role`,`name`,`surname`,`patronymic`
+                FROM `users`
+                WHERE `user_id`=:user_id';
+            $stmt = $this->prepare($sql);
+            $params = array(
+                'user_id' => $userId,
+            );
+            $stmt->execute($params);
+            
+            return $stmt->fetch(Db_Pdo::FETCH_ASSOC);
+        }
+        
+        public function setUserInfo($userInfo) {
+            $sql = 'UPDATE `users`
+                SET `name`=:name,`surname`=:surname,`patronymic`=:patronymic,`role`=:role
+                WHERE `user_id`=:user_id';
+            $this->prepare($sql)->execute($userInfo);
+        }
+    }   
 ?>

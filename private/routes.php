@@ -413,7 +413,30 @@
                     'controller' => 'educational_materials',
                     'action'     => 'edit',
                 )
-            ),            	
+            ),
+            
+            array(
+                'type' => Mvc_Router::ROUTE_STATIC,
+                'pattern' => '/users/users_list',
+                'handler' => array(
+                    'controller' => 'users',
+                    'action' => 'users_list',
+                ),
+            ),  
+            
+            array(
+                'type'     => Mvc_Router::ROUTE_REGEX,
+                'pattern'  => array
+                (
+                    'regex'  => '/users/edit_account/([0-9]+)',
+                    'params' => array ('user_id'),
+                ),
+                'handler' => array
+                (
+                    'controller' => 'users',
+                    'action'     => 'edit_account',
+                )
+            ),                   	
         ),
 
         /* Права доступа к разделам сайта */
@@ -463,6 +486,8 @@
 				'/assignment',
 
                 'users/register_employee_by_admin',       // учебные материалы, доступные для слушателя
+                'users/users_list',
+                'users/edit_account',
 
                 'applications/index_by_admin',            // список поданных заявок всех пользователей
                 'applications/delete',

@@ -16,6 +16,12 @@
             'admin'   => Model_User::ROLE_ADMIN
         );
 
+        protected $_roles_captions = array(
+            Model_User::ROLE_TEACHER => 'Преподаватель',
+            Model_User::ROLE_STUDENT => 'Слушатель',
+            Model_User::ROLE_ADMIN => 'Администратор',
+        );
+
         /**
         * Инструкции для слушателя.
         */
@@ -370,6 +376,13 @@
             $this->flash($msg, $redirect_link, false);
         }
 
+        public function action_users_list() {
+            $users = Model_User::create();
+            $this->set('users', $users->getUsersList());
+            $this->set('rolesCaptions', $this->_roles_captions);
+            $this->render('users/users_list');
+        }
+        
         public function action_profile_extended_by_student() {
             $user = Model_User::create();
             $udata = (object) $user->getAuth();
@@ -507,6 +520,39 @@
             $this->render('users/instructions');
         }        
 
-    }
+        public function action_edit_account($params) {            
+            $form = Form_Profile_Edit::create('/users/edit_account/' . $params['user_id']); 
+            $users = Model_User::create();
+            $this->set('form', $form);
+            $this->set('rolesCaptions', $this->_roles_captions);
+            $request = $this->getRequest();            
+            $method = $form->method();
+            $requestData = $request->$method;
 
+            
+            if (empty($requestData)) {
+                if (($userInfo = $users->getUserInfo($params['user_id'])) === FALSE) {
+                    $this->flash('Пользователь не существует', '/users/users_list', 10);
+                }
+                
+                $form->setValue('surname', $userInfo['surname']);
+                $form->setValue('name', $userInfo['name']);
+                $form->setValue('patronymic', $userInfo['patronymic']);
+                $form->setValue('role', $userInfo['role']);
+            }
+            else if ($form->validate($request)) {
+                $userInfo = array(
+                    'name' => $requestData['name'],
+                    'surname' => $requestData['surname'],
+                    'patronymic' => $requestData['patronymic'],
+                    'role' => $requestData['role'],
+                    'user_id' => $params['user_id'],
+                );
+                $users->setUserInfo($userInfo);
+                $this->flash('Данные пользователя успешно изменены', '/users/users_list', 10);
+            }
+            
+            $this->render('users/edit_account');
+        }
+    }
 ?>

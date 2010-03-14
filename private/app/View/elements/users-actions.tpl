@@ -4,7 +4,8 @@
     $admin_user_action_elements = array(
 	  'Инструкция'              => 'instructions_by_admin',
       'Регистрация сотрудника'	=> 'register_employee_by_admin',
-      'Регистрация слушателя' 	=> 'register_student'
+      'Регистрация слушателя' 	=> 'register_student',
+      'Список пользователей'    => 'users_list',
     );
 	
 	/* ссылки, доступные только преподу*/	        
