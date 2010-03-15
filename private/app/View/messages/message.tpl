@@ -23,4 +23,4 @@
 <tr><td class="caption">Дата:</td><td class="field"><?php echo date('d-m-Y H:i',$message['time']); ?></td></tr>
 <tr><td class="caption" valign="top">Сообщение:</td><td class="field" valign="top"><?php echo nl2br($message['message']); ?></td></tr>
 </table>
-<a href="/messages/send/<?php echo $message['from']; ?>">ответить</a>&nbsp;<a href="/messages/inbox">вернуться к входящим</a>
+<a href="<?php echo $this->_links->get('messages.send', array('to_id' => $message['from'])) ?>">ответить</a>&nbsp;<a href="<?php echo $this->_links->get('messages.inbox') ?>">вернуться к входящим</a>

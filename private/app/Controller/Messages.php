@@ -1,11 +1,14 @@
 <?php
     class Controller_Messages extends Mvc_Controller_Abstract {
         public function action_send() {
+            $links = Resources::getInstance()->links;
+            
             $args = func_get_args();
             
             $request = $this->getRequest();            
 			
-			$form = new Form_Message_Send('/messages/send');
+            $action = $links->get('messages.send');
+			$form = new Form_Message_Send($action);
 			
 			if (count($args)) {
 		        $form->setValue('recipient', $args[0]['to_id']);
@@ -28,7 +31,8 @@
             * fields to protect them from XSS.
             */
 			$messages->sendMessage($requestData['recipient'], htmlspecialchars($requestData['subject']), htmlspecialchars($requestData['message']));
-			$this->flash('Сообщение отправлено', '/messages/inbox', 3);
+			$this->flash('Сообщение отправлено',
+                         $links->get('messages.inbox'), 3);
         }
         
 		public function action_inbox() {
@@ -56,7 +60,8 @@
                 $messages->removeMessage($i);
             }
             
-            $this->flash('Сообщения удалены', '/messages/inbox', 3);
+            $links = Resources::getInstance()->links;
+            $this->flash('Сообщения удалены', $links->get('messages.inbox'), 3);
 	    }
 	    
 	    public function action_message($params) {
@@ -64,7 +69,9 @@
             $message = array();
             
             if (($message = $messages->getMessage($params['message_id'])) === FALSE) {
-                $this->flash('Сообщение не найдено или же Вы не являетесь его адресатом', '/messages/inbox', 3);
+                $links = Resources::getInstance()->links;
+                $this->flash('Сообщение не найдено или же Вы не являетесь его адресатом', 
+                             $links->get('messages.inbox'), 3);
             }
             
             $this->set('message', $message);

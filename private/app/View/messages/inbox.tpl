@@ -43,11 +43,11 @@
 </script>
 
 <div>
-<form id="removeMessagesForm" action="/messages/remove" method="post">
+<form id="removeMessagesForm" action="<?php echo $this->_links->get('messages.remove') ?>" method="post">
 <table cellspacing="0" cellpadding="0">
 <tr class="odd"><th><input name="all" type="checkbox" onclick="setAllCheckboxesStatus('removeMessagesForm')" /></th><th class="subject">Тема</th><th class="author">Автор</th><th class="time">Дата</th></tr>
 <?php foreach ($inbox as $i => $message): ?>
-<tr class="<?php echo ($i % 2 ? 'odd' : 'even') . ($message['read'] == 'unread' ? ' unread' : ''); ?>"><td class="checkbox"><input type="checkbox" name="messages[<?php echo $message['message_id']; ?>]" /></td><td class="subject"><a href="/messages/<?php echo $message['message_id']; ?>"><?php echo $message['subject']; ?></a></td><td class="author"><?php echo $message['author']; ?></td><td class="time"><?php echo date('d-m-Y H:i', $message['time']); ?></td></tr>
+<tr class="<?php echo ($i % 2 ? 'odd' : 'even') . ($message['read'] == 'unread' ? ' unread' : ''); ?>"><td class="checkbox"><input type="checkbox" name="messages[<?php echo $message['message_id']; ?>]" /></td><td class="subject"><a href="<?php echo $this->_links->get('messages.read', array('message_id' => $message['message_id'])) ?>"><?php echo $message['subject']; ?></a></td><td class="author"><?php echo $message['author']; ?></td><td class="time"><?php echo date('d-m-Y H:i', $message['time']); ?></td></tr>
 <?php endforeach; ?>
 </table>
 <a href="javascript:submitForm()">Удалить выделенные сообщения</a>
@@ -60,7 +60,7 @@
             echo '[' . ($i + 1) . ']&nbsp;';            
         }
         else {
-            echo '<a href="/messages/inbox/' . $i . '">' . ($i + 1) . '</a>&nbsp;';
+            echo '<a href="' . $this->_links->get('messages.inbox', array('page' => $i)) . '">' . ($i + 1) . '</a>&nbsp;';
         }
     }
 ?>
