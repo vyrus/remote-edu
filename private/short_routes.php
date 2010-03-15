@@ -82,6 +82,9 @@
             array('/admin/payments/add/([0-9]+)', array('app_id'), 'payments', 'add', 'admin.payments.add', Mvc_Router::ROUTE_REGEX),
             
             /* Инструкции для администратора */
+            /**
+            * @todo Приделать инструкцию.
+            */
             array('/admin/help', 'users', 'instructions_by_admin', 'admin.help', Mvc_Router::ROUTE_STATIC),
             
             /* Инструкции для слушателя */
