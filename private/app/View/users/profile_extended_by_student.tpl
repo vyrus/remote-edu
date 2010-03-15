@@ -38,7 +38,7 @@
         });
         
         $('#region').autocomplete({
-            serviceUrl: '/ajax/autocomplete/region/',
+            serviceUrl: '<?php echo $this->_links->get('ajax.autocomplete-region') ?>',
             params: {
                 timestamp: time
             },
@@ -49,7 +49,7 @@
         });
         
         $('#city').autocomplete({
-            serviceUrl: '/ajax/autocomplete/city/',
+            serviceUrl: '<?php echo $this->_links->get('ajax.autocomplete-city') ?>',
             params: {
                 region_id: getRegionId,
                 timestamp: time

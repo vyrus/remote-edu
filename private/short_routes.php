@@ -21,11 +21,11 @@
             /* Выход */
             array('/logout', 'users', 'logout', 'users.logout', Mvc_Router::ROUTE_STATIC),
             
-            /* Регистрация слушателя */
-            array('/student/register', 'users', 'register_student', 'student.register', Mvc_Router::ROUTE_STATIC),
+            /* Управление пользователями */
+            array('/admin/users', 'users', 'index_by_admin', 'admin.users', Mvc_Router::ROUTE_STATIC),
             
             /* Регистрация сотрудника */
-            array('/admin/employee/register', 'users', 'register_employee_by_admin', 'admin.register-employee', Mvc_Router::ROUTE_STATIC),
+            array('/admin/employee/register', 'users', 'register_employee_by_admin', 'employee.register', Mvc_Router::ROUTE_STATIC),
             
             /* Управление учебными программами */
             array('/admin/programs', 'education_programs', 'index', 'admin.programs', Mvc_Router::ROUTE_STATIC),
@@ -60,7 +60,7 @@
             /* Удаление разделов */
             array('/admin/sections/remove/([0-9]+)', array('section_id'), 'education_programs', 'remove_section', 'sections.remove', Mvc_Router::ROUTE_REGEX),
             
-            /* Управление учебными материалами */
+            /* Управление учебными материалами администратором */
             array('/admin/materials', 'educational_materials', 'index_by_admin', 'admin.materials', Mvc_Router::ROUTE_STATIC),
             
             /* Загрузка учебных материалов */
@@ -90,8 +90,24 @@
             */
             array('/admin/help', 'users', 'instructions_by_admin', 'admin.help', Mvc_Router::ROUTE_STATIC),
             
+            /* Управление учебными материалами преподавателем */
+            array('/teacher/materials', 'educational_materials', 'index_by_teacher', 'teacher.materials', Mvc_Router::ROUTE_STATIC),
+            
             /* Инструкции для слушателя */
             array('/student', 'pages', 'display', array('page' => 'help/instructions'), 'student.index', Mvc_Router::ROUTE_STATIC),
+            
+            /* Регистрация слушателя */
+            array('/student/register', 'users', 'register_student', 'student.register', Mvc_Router::ROUTE_STATIC),
+            
+            /* Активация слушателя */
+            /**
+            * @todo Маршруты и так теперь нечувствительны к слешу на конце 
+            * адреса, .* больше не нужно ставить.
+            */
+            array('/student/activate/([0-9]+)/([0-9a-z]{32})', array('user_id', 'code'), 'users', 'activate_student', 'student.activate', Mvc_Router::ROUTE_REGEX),
+            
+            /* Активация сотрудника */
+            array('/employee/activate/([0-9]+)/([0-9a-z]{32})', array('user_id', 'code'), 'users', 'activate_employee', 'employee.activate', Mvc_Router::ROUTE_REGEX),
             
             /* Расширенный профиль слушателя */
             array('/student/extended-profile', 'users', 'profile_extended_by_student', 'student.extended-profile', Mvc_Router::ROUTE_STATIC),
@@ -119,20 +135,6 @@
             
             /* Страничка помощи слушателю - как начать обучение */
             array('/student/help/how-to-start', 'pages', 'display', array('page' => 'help/how-to-start'), 'help.how-to-start', Mvc_Router::ROUTE_STATIC),
-            
-            /* Активация слушателя */
-            /**
-            * @todo Маршруты и так теперь нечувствительны к слешу на конце 
-            * адреса, .* больше не нужно ставить.
-            */
-            array('/activate_student/([0-9]+)/([0-9a-z]{32}).*', array('user_id', 'code'), 'users', 'activate_student', '', Mvc_Router::ROUTE_REGEX),
-            
-            /* Активация сотрудника */
-            array('/activate_employee/([0-9]+)/([0-9a-z]{32}).*', array('user_id', 'code'), 'users', 'activate_employee', '', Mvc_Router::ROUTE_REGEX),
-            
-            array('/ajax/autocomplete/region', 'ajax', 'autocomplete_region', '', Mvc_Router::ROUTE_STATIC),
-            
-            array('/ajax/autocomplete/city', 'ajax', 'autocomplete_city', '', Mvc_Router::ROUTE_STATIC),
             
             /* Страница с ценами */
             array('/price', 'pages', 'display', array('page' => 'price'), 'price', Mvc_Router::ROUTE_STATIC),
@@ -163,6 +165,11 @@
             /* Удаление выбранного сообщения */
             array('/messages/remove', 'messages', 'remove', 'messages.remove', Mvc_Router::ROUTE_STATIC),
             
+            /* Автодополнение при выборе региона */
+            array('/ajax/autocomplete/region', 'ajax', 'autocomplete_region', 'ajax.autocomplete-region', Mvc_Router::ROUTE_STATIC),
+            
+            /* Автодополнение при выборе города */
+            array('/ajax/autocomplete/city', 'ajax', 'autocomplete_city', 'ajax.autocomplete-city', Mvc_Router::ROUTE_STATIC),
         ),
 
         /* Права доступа к разделам сайта */

@@ -92,14 +92,6 @@
         protected $_transport;
 
         /**
-        * Базовый адрес сайта (используется для построения правильных ссылок
-        * в письме.
-        *
-        * @var string
-        */
-        protected $_base_url;
-
-        /**
         * Кодировка сообщений.
         *
         * @var string
@@ -109,11 +101,10 @@
         /**
         * Метод-конструктор класса.
         *
-        * @param  string $base_url Базовый адрес сайта.
-        * @param  string $config   Настройки отправки почты.
+        * @param  string $config Настройки отправки почты.
         * @return void
         */
-        public function __construct($base_url, $config)
+        public function __construct($config)
         {
             $this->_mail = new Zend_Mail($this->_charset);
             $this->_mail->setFrom($config['from_email'], $config['from_name']);
@@ -136,35 +127,35 @@
             }
 
             $this->_transport = $trans;
-            $this->_base_url = $base_url;
         }
 
         /**
         * Создание экземпляра класса.
         *
-        * @param  string $base_url Базовый адрес сайта.
-        * @param  string $config   Настройки отправки почты.
+        * @param  string $config Настройки отправки почты.
         * @return void
         */
-        public static function create($base_url, $config)
+        public static function create($config)
         {
-            return new self($base_url, $config);
+            return new self($config);
         }
 
         /**
         * Отправка сообщения о регистрации новому слушателю.
         *
-        * @param  int    $id              Идентификатор пользователя.
-        * @param  string $login           Логин на сайте.
-        * @param  string $email           Email пользователя.
-        * @param  string $activation_code Код активации.
+        * @param  int    $id    Идентификатор пользователя.
+        * @param  string $login Логин на сайте.
+        * @param  string $email Email пользователя.
+        * @param  string $code  Код активации.
         * @return
         */
-        public function sendRegLetterStudent($id, $login, $email, $activation_code) {
+        public function sendRegLetterStudent($id, $login, $email, $code) {
             /* Создаём ссылку для активации */
-            $format = '%s/activate_student/%d/%s/';
-            $link = sprintf($format, $this->_base_url, $id, $activation_code);
-
+            $links = Resources::getInstance()->links;
+            $link = $links->getSiteUrl() . 
+                    $links->get('student.activate', array('user_id' => $id,
+                                                          'code'    => $code));
+            
             /* Получаем заголовок и текст письма */
             $subject = $this->_getSubject(self::TYPE_REG_STUDENT);
 
@@ -177,16 +168,18 @@
         /**
         * Отправка сообщения о регистрации новому cотруднику.
         *
-        * @param  int    $id              Идентификатор пользователя.
-        * @param  string $login           Логин на сайте.
-        * @param  string $email           Email пользователя.
-        * @param  string $activation_code Код активации.
+        * @param  int    $id    Идентификатор пользователя.
+        * @param  string $login Логин на сайте.
+        * @param  string $email Email пользователя.
+        * @param  string $code  Код активации.
         * @return
         */
-        public function sendRegLetterEmployee($id, $login, $email, $activation_code) {
+        public function sendRegLetterEmployee($id, $login, $email, $code) {
             /* Создаём ссылку для активации */
-            $format = '%s/activate_employee/%d/%s/';
-            $link = sprintf($format, $this->_base_url, $id, $activation_code);
+            $links = Resources::getInstance()->links;
+            $link = $links->getSiteUrl() .
+                    $links->get('employee.activate', array('user_id' => $id,
+                                                           'code'    => $code));
 
             /* Получаем заголовок и текст письма */
             $subject = $this->_getSubject(self::TYPE_REG_EMPLOYEE);

@@ -1,21 +1,5 @@
 <?php $this->title = 'Вход' ?>
 <?php $form = $this->form ?>
-<?php
-    $user = Model_User::create();
-    $udata = (object) $user->getAuth();
-    if (isset($udata->role)) {
-      if (Model_User::ROLE_TEACHER == $udata->role) {
-        $link = 'users/index_by_teacher';
-        header('Location: http://dist.uchimvas.ru/' . $link);
-      }elseif (Model_User::ROLE_ADMIN == $udata->role) {
-        $link = 'users/index_by_admin';
-        header('Location: http://dist.uchimvas.ru/' . $link);
-      }elseif (Model_User::ROLE_STUDENT == $udata->role) {
-        $link = 'users/instructions_by_user';
-        header('Location: http://dist.uchimvas.ru/' . $link);
-      }
-    }
-?>
 <h3>Вход в систему дистанционного обучения</h3>
 <br>
 <br>
@@ -26,7 +10,7 @@
     <?php endif; ?>
 
     Укажите, пожалуйста, имя пользователя и пароль, или 
-    <a href="/users/register_student/" title="Регистрация">зарегистрируйтесь</a>.
+    <a href="<?php echo $this->_links->get('student.register') ?>" title="Регистрация">зарегистрируйтесь</a>.
     <p>
     <div class="field">
       <input name="<?php echo $form->login->name ?>" type="text" id="login" value="<?php echo $form->login->value ?>" />
