@@ -103,7 +103,7 @@
 </script>
 <h3>Список материалов</h3>
 <nobr>
-<form name="filter" method="post" action="/educational_materials/index">
+<form name="filter" method="post" action="<?php echo $this->_links->get('admin.materials') ?>">
 <select id="programsSelect" name="programsSelect" class="educationProgramItems" onchange="updateSelect (programsSelect, disciplinesSelect, DISCIPLINES, [disciplinesSelect, sectionsSelect]);"><option value="-1" selected="selected">--Любое направление--</option>
 <?php foreach ($directions as $i => $direction): ?><option value="<?php echo $direction['program_id']; ?>"<?php if ($direction['program_id'] == $programID): ?> selected="selected"<?php endif; ?>><?php echo $direction['title']; ?></option><?php endforeach; ?>
 </select>
@@ -124,12 +124,12 @@
 <input type="submit" value="отфильтровать" />
 </form>
 </nobr>
-<form id="deleteMaterials" name="deleteMaterials" action="/educational_materials/remove" method="post">
+<form id="deleteMaterials" name="deleteMaterials" action="<?php echo $this->_links->get('materials.remove') ?>" method="post">
 <table class="materials" border="0" cellspacing="2" cellpadding="0">
 <tr class="odd"><td class="checkbox"><input name="all" type="checkbox" onclick="setAllCheckboxesStatus ('deleteMaterials')" /></th><th class="description">Название</th></tr>
 <?php if (! empty ($materials)): ?>
 <?php foreach ($materials as $i => $material): ?>
-<tr<?php if ($i % 2): ?> class="odd"<?php else: ?> class="even"<?php endif; ?>><td class="checkbox"><input name="<?php echo $material['id']; ?>" type="checkbox" /></td><td class="description"><a href="/educational_material/<?php echo $material['id']; ?>"><?php echo $material['description']; ?></a></td></tr>
+<tr<?php if ($i % 2): ?> class="odd"<?php else: ?> class="even"<?php endif; ?>><td class="checkbox"><input name="<?php echo $material['id']; ?>" type="checkbox" /></td><td class="description"><a href="<?php echo $this->_links->get('materials.download', array('material_id' => $material['id'])) ?>"><?php echo $material['description']; ?></a></td></tr>
 <?php endforeach; ?>
 <?php endif; ?>
 </table>

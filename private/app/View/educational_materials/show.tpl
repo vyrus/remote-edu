@@ -10,11 +10,11 @@
         <ul class="materials">
         <?php foreach ($this->materials[$s->section_id] as $m): ?>
             <?php if ('last' == $m['state']): ?>
-            <li style="background-color: #cfc;"><a href="/educational_material/<?php echo $m['id'] ?>"><?php echo $m['description'] ?></a>
+            <li style="background-color: #cfc;"><a href="<?php echo $this->_links->get('materials.download', array('material_id' => $m['id'])) ?>"><?php echo $m['description'] ?></a>
             <?php elseif ('downloaded' == $m['state']): ?>
-            <li style="background-color: #ccc;"><a href="/educational_material/<?php echo $m['id'] ?>"><?php echo $m['description'] ?></a>
+            <li style="background-color: #ccc;"><a href="<?php echo $this->_links->get('materials.download', array('material_id' => $m['id'])) ?>"><?php echo $m['description'] ?></a>
             <?php else: ?>
-            <li><a href="/educational_material/<?php echo $m['id'] ?>"><?php echo $m['description'] ?></a>
+            <li><a href="<?php echo $this->_links->get('materials.download', array('material_id' => $m['id'])) ?>"><?php echo $m['description'] ?></a>
             <?php endif; ?>
             <?php endforeach; ?>
         </ul>
