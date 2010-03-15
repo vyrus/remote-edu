@@ -117,8 +117,6 @@
             
             array('/educational_materials/remove', 'educational_materials', 'remove', '', Mvc_Router::ROUTE_STATIC),
             
-            array('/education_students', 'education_students', 'index', '', Mvc_Router::ROUTE_STATIC),
-            
             /* Активация слушателя */
             /**
             * @todo Маршруты и так теперь нечувствительны к слешу на конце 
@@ -190,8 +188,6 @@
             /* Преподаватель */
             Model_User::ROLE_TEACHER => array
             (
-                'education_students/index',
-
                 'educational_materials/index_by_teacher',  // учебные материалы, добавленные залогиненным преподавателем
             ),
 
@@ -223,8 +219,6 @@
                 'education_programs/edit_program',
                 'education_programs/edit_discipline',
                 'education_programs/edit_section',
-
-                'education_students/index',
             )
         )
     );
