@@ -23,6 +23,10 @@
 				$this->render('messages/send');
 			}
 						
+            /**
+            * @todo Form_Abstract automatically processes values for all defined 
+            * fields to protect them from XSS.
+            */
 			$messages->sendMessage($requestData['recipient'], htmlspecialchars($requestData['subject']), htmlspecialchars($requestData['message']));
 			$this->flash('Сообщение отправлено', '/messages/inbox', 3);
         }
