@@ -63,6 +63,9 @@
             $retval = $stmt->fetchAll(Db_PdO::FETCH_ASSOC);
             
             $messagesTotalNumber = count($retval);
+            /**
+            * @todo Take use of SQL's LIMIT clause instead of array_slice().
+            */
             $retval = array_slice($retval, $page * self::INBOX_MESSAGES_ON_PAGE, self::INBOX_MESSAGES_ON_PAGE);
             
             foreach ($retval as $i => $message) {
