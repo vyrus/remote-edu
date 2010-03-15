@@ -73,16 +73,13 @@
             array('/admin/applications', 'applications', 'index_by_admin', 'admin.applications', Mvc_Router::ROUTE_STATIC),
             
             /* Изменение статусы заявки администратором */
-            array('/admin/applications/change-status/(accepted|declined|signed)/([0-9]+)', array('new_status', 'app_id'), 'applications', 'change_app_status', 'admin.applications.change-status', Mvc_Router::ROUTE_REGEX),
+            array('/admin/applications/change-status/(accepted|declined|signed)/([0-9]+)', array('new_status', 'app_id'), 'applications', 'change_app_status', 'applications.change-status', Mvc_Router::ROUTE_REGEX),
             
             /* Удаление заявки администратором */
-            /**
-            * @todo Отвязка алиасов маршрутов от ролей юзеров.
-            */
-            array('/admin/applications/delete/([0-9]+)', array('app_id'), 'applications', 'delete', 'admin.applications.delete', Mvc_Router::ROUTE_REGEX),
+            array('/admin/applications/delete/([0-9]+)', array('app_id'), 'applications', 'delete', 'applications.delete', Mvc_Router::ROUTE_REGEX),
             
             /* Изменение статусы заявки администратором */
-            array('/admin/payments/add/([0-9]+)', array('app_id'), 'payments', 'add', 'admin.payments.add', Mvc_Router::ROUTE_REGEX),
+            array('/admin/payments/add/([0-9]+)', array('app_id'), 'payments', 'add', 'payments.add', Mvc_Router::ROUTE_REGEX),
             
             /* Инструкции для администратора */
             /**
@@ -100,10 +97,6 @@
             array('/student/register', 'users', 'register_student', 'student.register', Mvc_Router::ROUTE_STATIC),
             
             /* Активация слушателя */
-            /**
-            * @todo Маршруты и так теперь нечувствительны к слешу на конце 
-            * адреса, .* больше не нужно ставить.
-            */
             array('/student/activate/([0-9]+)/([0-9a-z]{32})', array('user_id', 'code'), 'users', 'activate_student', 'student.activate', Mvc_Router::ROUTE_REGEX),
             
             /* Активация сотрудника */
@@ -147,11 +140,6 @@
             
             /* Назначение кураторов слушателей */
             array('/admin/curators', 'assignment', 'student_curator', 'admin.curators', Mvc_Router::ROUTE_STATIC),
-            
-            /**
-            * @todo Deprecated?
-            */
-            array('/assignment', 'assignment', 'index', '', Mvc_Router::ROUTE_STATIC),
             
             /* Просмотр входящих сообщений */
             array('/messages/inbox/([0-9]+)?', array('page'), 'messages', 'inbox', 'messages.inbox', Mvc_Router::ROUTE_REGEX),

@@ -22,7 +22,7 @@
             $app_id = intval(array_shift($params));
             
             $opts = array('app_id' => $app_id);
-            $action = $links->get('admin.payments.add', $opts);
+            $action = $links->get('payments.add', $opts);
             
             $form = Form_Payment_Add::create($action);
             $this->set('form', $form);

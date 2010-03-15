@@ -20,9 +20,6 @@
         * @todo А что здесь за действие должно быть?
         */
         'Пользователи' => '#',
-        /**
-        * @todo Broken: Mvc_View_Exception, template not found
-        */
         'Материалы'    => $this->_links->get('teacher.materials'),
     );
     
