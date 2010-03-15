@@ -143,6 +143,9 @@
             /* Назначение кураторов слушателей */
             array('/admin/curators', 'assignment', 'student_curator', 'admin.curators', Mvc_Router::ROUTE_STATIC),
             
+            /**
+            * @todo Deprecated?
+            */
             array('/assignment', 'assignment', 'index', '', Mvc_Router::ROUTE_STATIC),
             
             /* Просмотр входящих сообщений */
