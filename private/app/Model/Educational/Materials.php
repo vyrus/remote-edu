@@ -160,7 +160,7 @@ QUERY;
                 $stmt->execute($params);
             }
 
-            header('Content-Disposition: attachment; filename="' . $fileInfo[0]['original_filename']);
+            header('Content-Disposition: attachment; filename="' . $fileInfo[0]['original_filename']) . '"';
             header('Content-Type: ' . $fileInfo[0]['mime_type']);
 
             echo $this->storage->getFileContent($fileInfo[0]['filename']);
