@@ -6,14 +6,14 @@
     /* Если не пользователь авторизован, выводим форму логина */
     if (false !== $role) {
 ?>
-        <a href="<?php echo $this->_links->get('logout') ?>" title="Выход">
+        <a href="<?php echo $this->_links->get('users.logout') ?>" title="Выход">
         <font color=#fff>
             ВЫХОД
         </font>
     </a>
 <?php
     } else {
-        $action = $this->_links->get('login');
+        $action = $this->_links->get('users.login');
         $form = Form_Profile_Login::create($action);
 ?>
     <form action="<?php echo $form->action() ?>" method="<?php echo $form->method() ?>">

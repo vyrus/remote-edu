@@ -16,10 +16,10 @@
             array('/', 'pages', 'display', array('page' => 'index'), 'index', Mvc_Router::ROUTE_STATIC),
             
             /* Авторизация */
-            array('/login', 'users', 'login', 'login', Mvc_Router::ROUTE_STATIC),
+            array('/login', 'users', 'login', 'users.login', Mvc_Router::ROUTE_STATIC),
             
             /* Выход */
-            array('/logout', 'users', 'logout', 'logout', Mvc_Router::ROUTE_STATIC),
+            array('/logout', 'users', 'logout', 'users.logout', Mvc_Router::ROUTE_STATIC),
             
             /* Регистрация слушателя */
             array('/student/register', 'users', 'register_student', 'student.register', Mvc_Router::ROUTE_STATIC),
