@@ -139,9 +139,9 @@
                 $recipients = $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
                 
                 foreach ($recipients as $i => $recipient) {
-                    $retval[] = array(
-                        'recipient_id' => $recipient['user_id'],
-                        'recipient_name' => $recipient['surname'] . ' ' . mb_substr($recipient['surname'], 0, 1, 'utf-8') . '. ' . mb_substr($recipient['patronymic'], 0, 1, 'utf-8') . '.',                           
+                    $retval[$recipient['user_id']] = array(
+                        'recipient_name' => $recipient['surname'] . ' ' . mb_substr($recipient['surname'], 0, 1, 'utf-8') . '. ' . mb_substr($recipient['patronymic'], 0, 1, 'utf-8') . '.',
+                        'recipient_description' => array(),
                     );
                 }
 
@@ -185,7 +185,7 @@
                     );
 
                     $user = Model_User::create();
-                    $teachers = $user->getResponsibleTeachers();
+                    $teachers = $user->getStudentResponsibleTeachers();
                     
                     foreach ($teachers as $i => $teacher) {
                         if (isset($retval[$i])) {
@@ -211,9 +211,9 @@
                     $students = $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
                     
                     foreach ($students as $i => $student) {
-                        $retval[] = array(
-                            'recipient_id' => $student['user_id'],
+                        $retval[$student['user_id']] = array(
                             'recipient_name' => $student['surname'] . ' ' . mb_substr($student['surname'], 0, 1, 'utf-8') . '. ' . mb_substr($student['patronymic'], 0, 1, 'utf-8') . '.',                           
+                            'recipient_description' => array(),
                         );
                     }
                     

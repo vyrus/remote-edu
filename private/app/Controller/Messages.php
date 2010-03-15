@@ -66,5 +66,9 @@
             $this->set('message', $message);
             $this->render('/messages/message');
         }
+		
+		public function action_index() {
+	        $this->action_inbox();
+	    }
 	}
 ?>
