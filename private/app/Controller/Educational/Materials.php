@@ -2,25 +2,25 @@
     class Controller_Educational_Materials extends Mvc_Controller_Abstract {
         public function action_edit($params) {
             $links = Resources::getInstance()->links;
-            
+
             $opts = array('material_id' => $params['material_id']);
             $action = $links->get('materials.edit', $opts);
-            $form = Form_Materials_Edit::create($action); 
-            
+            $form = Form_Materials_Edit::create($action);
+
             $educationalMaterials = Model_Educational_Materials::create ();
-            $this->set('form', $form);            
-            $request = $this->getRequest();            
+            $this->set('form', $form);
+            $request = $this->getRequest();
             $method = $form->method();
             $requestData = $request->$method;
-            
-            if (empty($requestData)) {                
+
+            if (empty($requestData)) {
                 if (($materialInfo = $educationalMaterials->getMaterialInfo($params['material_id'])) === FALSE) {
-                    $this->flash('Учебный материал не существует или был загружен не Вами', 
+                    $this->flash('Учебный материал не существует или был загружен не Вами',
                                  $links->get('admin.materials'), 5);
                 }
-                
+
                 $form->setValue('description', $materialInfo['description']);
-                $form->setValue('type', $materialInfo['type']);                
+                $form->setValue('type', $materialInfo['type']);
             }
             else if ($form->validate($request)) {
                 $materialInfo = array(
@@ -29,10 +29,10 @@
                     'type' => $requestData['type'],
                 );
                 $educationalMaterials->updateMaterialInfo($materialInfo);
-                $this->flash('Данные материала были успешно изменены', 
+                $this->flash('Данные материала были успешно изменены',
                              $links->get('admin.materials'), 5);
             }
-            
+
             $this->render('educational_materials/edit');
         }
 
@@ -68,7 +68,7 @@
             $requestData = $request->post;
             $educationalMaterials = Model_Educational_Materials::create ();
             $removeSuccess = TRUE;
-            
+
             if (!empty($requestData)) {
                 foreach ($requestData as $materialID => $value) {
                     if ($materialID != 'all') {
@@ -78,11 +78,11 @@
             }
 
             $links = Resources::getInstance()->links;
-            
+
             $this->flash(
-                $removeSuccess ? 
-                    'Материалы успешно удалены' : 
-                    'Некоторые материалы не были удалены(возможно, Вы предприняли попытку удалить материал, который не был загружен Вами)', 
+                $removeSuccess ?
+                    'Материалы успешно удалены' :
+                    'Некоторые материалы не были удалены(возможно, Вы предприняли попытку удалить материал, который не был загружен Вами)',
                 $links->get('admin.materials'), 10
             );
         }
@@ -90,14 +90,14 @@
         public function action_upload () {
             $educationPrograms = Model_Education_Programs::create ();
             $this->set ('directions',	$educationPrograms->getDirections 				());
-            $this->set ('courses', 		$educationPrograms->getCourses 					());
-            $this->set ('disciplines',	$educationPrograms->getDirectionsDisciplines 	());
-            $this->set ('sections', 	$educationPrograms->getDisciplinesSections 		());
+            $this->set ('courses',		$educationPrograms->getCourses 					());
+            $this->set ('disciplines',	$educationPrograms->getDirectionsDisciplines	());
+            $this->set ('sections', 	$educationPrograms->getDisciplinesSections		());
             $this->set ('invalidMaterialsForms', array ());
 
-            
+
             $links = Resources::getInstance()->links;
-            
+
             $action = $links->get('materials.upload');
             $form = Form_Materials_Upload::create ($action);
 
@@ -140,7 +140,7 @@
             }
 
             $links = Resources::getInstance()->links;
-            
+
             $this->flash (
                 'Все материалы успешно загружены',
                 $links->get('admin.materials'),
@@ -158,7 +158,7 @@
         */
         public function action_show(array $params = array()) {
             $links = Resources::getInstance()->links;
-            
+
             if (!isset($params['discipline_id']) ||
                 is_int ($params['discipline_id']))
             {

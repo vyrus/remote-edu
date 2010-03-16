@@ -1,15 +1,15 @@
 <?php
-    class Model_Educational_Materials extends Model_Base {        
+    class Model_Educational_Materials extends Model_Base {
         const MATERIAL_TYPE_LECTURE = 'lecture';
         const MATERIAL_TYPE_PRACTICE = 'practice';
         const MATERIAL_TYPE_CHECK = 'check';
-        
+
         public static $MATERIAL_TYPES_CAPTIONS = array(
             self::MATERIAL_TYPE_LECTURE => 'Лекционный материал',
             self::MATERIAL_TYPE_PRACTICE => 'Практическое занятие',
-            self::MATERIAL_TYPE_CHECK => 'Контрольный материал',            
+            self::MATERIAL_TYPE_CHECK => 'Контрольный материал',
         );
-        
+
         private $storage;
 
         public function __construct () {
@@ -28,9 +28,9 @@
 
         public function addMaterial ($description, $section, $type, $originalFileInfo) {
             $filename = $this->storage->storeFile($originalFileInfo['tmp_name']);
-            $sql = 'INSERT INTO `materials`(`description`,`original_filename`,`mime_type`,`filename`,`section`,`type`,`uploader`) VALUES (:description,:original_filename,:mime_type,:filename,:section,:type,:uploader)';
+            $sql = 'INSERT INTO ' . $this->_tables['materials'] . ' (`description`, `original_filename`, `mime_type`, `filename`, `section`, `type`, `uploader`) VALUES (:description, :original_filename, :mime_type, :filename, :section, :type, :uploader)';
             $user = Model_User::create();
-            $udata = (object) $user->getAuth();            
+            $udata = (object) $user->getAuth();
             $params = array (
                 ':description' => $description,
                 ':original_filename' => $originalFileInfo['name'],
@@ -38,7 +38,7 @@
                 ':filename' => $filename,
                 ':section' => $section,
                 ':type' => $type,
-                ':uploader' => $udata->user_id,
+                ':uploader' => $udata->user_id
             );
 
             $this->prepare ($sql)
@@ -47,7 +47,7 @@
 
         public function removeMaterial ($materialID) {
             $user = Model_User::create();
-            $udata = (object) $user->getAuth();            
+            $udata = (object) $user->getAuth();
             $sql = 'SELECT `filename` FROM `materials` WHERE `id`=:material_id AND `uploader`=:uploader_id';
             $stmt = $this->prepare($sql);
             $params = array(
@@ -55,7 +55,7 @@
                 ':uploader_id' => $udata->user_id,
             );
             $stmt->execute($params);
-            
+
             if (($filename = $stmt->fetch(PDO::FETCH_ASSOC)) === FALSE) {
                 return FALSE;
             }
@@ -65,7 +65,7 @@
             $sql = 'DELETE FROM `materials` WHERE `id`=?';
             $this->prepare($sql)
                 ->execute(array($materialID));
-                
+
             return TRUE;
         }
 
@@ -76,7 +76,7 @@
             $udata = (object) $user->getAuth();
             $queryParams = array(
                 ':uploader_id' => $udata->user_id,
-            );            
+            );
 
             do {
                 if ((empty ($filter)) || ($filter['programsSelect'] == -1)) {
@@ -112,7 +112,7 @@
                     )
                 );
             } while(0);
-            
+
             $sql .= $tables . 'WHERE `uploader`=:uploader_id' . (($condition != '') ? (' AND ' . $condition) : (''));
 
             $stmt = $this->prepare ($sql);
@@ -120,24 +120,24 @@
 
             return $stmt->fetchAll (PDO::FETCH_ASSOC);
         }
-        
+
         public function getMaterialInfo($materialId) {
             $user = Model_User::create();
-            $udata = (object) $user->getAuth();            
+            $udata = (object) $user->getAuth();
             $sql = 'SELECT `description`,`type` FROM `materials` WHERE `id`=:material_id AND `uploader`=:uploader_id';
             $params = array(
                 ':material_id' => $materialId,
                 ':uploader_id' => $udata->user_id,
             );
-            $stmt = $this->prepare($sql);            
+            $stmt = $this->prepare($sql);
             $stmt->execute($params);
-            
+
             return $stmt->fetch(Db_Pdo::FETCH_ASSOC);
         }
-        
+
         public function updateMaterialInfo($materialInfo) {
             $user = Model_User::create();
-            $udata = (object) $user->getAuth();            
+            $udata = (object) $user->getAuth();
             $sql = 'UPDATE `materials` SET `description`=:description,`type`=:type WHERE `id`=:material_id AND `uploader`=:uploader_id';
             $params = array(
                 ':material_id' => $materialInfo['id'],
@@ -218,11 +218,11 @@
         public function getAllBySections(array $section_ids) {
             $sql = '
                 SELECT  *
-                FROM    ' . $this->_tables['materials'] . ' m, 
-                        ' . $this->_tables['materials_states'] . ' ms
-                WHERE   m.section = :section_id AND
-                        ms.student_id = :student_id AND
-                        ms.material_id = m.id
+                FROM    ' . $this->_tables['materials'] . ' m 
+                LEFT JOIN ' . $this->_tables['materials_states'] . ' ms 
+                ON      m.id = ms.material_id AND
+                        ms.student_id = :student_id
+                WHERE   m.section = :section_id
             ';
 
             $materials = array();

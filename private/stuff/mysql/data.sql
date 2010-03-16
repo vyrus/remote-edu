@@ -52,11 +52,11 @@ VALUES
 -- Дамп данных таблицы `materials`
 --
 
-INSERT INTO `materials` (`id`, `description`, `original_filename`, `mime_type`, `filename`, `section`)
+INSERT INTO `materials` (`id`, `description`, `original_filename`, `mime_type`, `filename`, `section`, `type`, `uploader`)
 VALUES
-(1, 'Классификация WEB-сайтов', 'material_1.txt', 'text/plain', '219c24c250800f9affaa6cd0679f0095', 5),
-(2, 'Этапы проектирования WEB-сайтов', 'material_2.txt', 'text/plain', '70fb3bb2ca4b2ee5ce3d00253baca285', 5),
-(3, 'Обзор средств, используемых в сайтостроении', 'material_3.txt', 'text/plain', '5de2ad87f44b00204c347c1e77471bbc', 5);
+(1, 'Классификация WEB-сайтов', 'material_1.txt', 'text/plain', '219c24c250800f9affaa6cd0679f0095', 5, 'lecture', 2),
+(2, 'Этапы проектирования WEB-сайтов', 'material_2.txt', 'text/plain', '70fb3bb2ca4b2ee5ce3d00253baca285', 5, 'lecture', 2),
+(3, 'Обзор средств, используемых в сайтостроении', 'material_3.txt', 'text/plain', '5de2ad87f44b00204c347c1e77471bbc', 5, 'lecture', 2);
 
 --
 -- Дамп данных таблицы `materials_states`
@@ -64,9 +64,9 @@ VALUES
 
 INSERT INTO `materials_states` (`student_id`, `material_id`, `state`)
 VALUES
-(3, 1, ''),
-(3, 2, ''),
-(3, 3, '');
+(3, 1, NULL),
+(3, 2, NULL),
+(3, 3, NULL);
 
 --
 -- Дамп данных таблицы `applications`
@@ -82,3 +82,6 @@ VALUES
 (1, 'applied', '2010-02-15 19:29:34'),
 (2, 'applied', '2010-02-15 20:20:08');
 
+INSERT INTO `payments` (`payment_id`, `app_id`, `amount`, `created`)
+VALUES
+(NULL ,  '2',  '13000', NOW());
