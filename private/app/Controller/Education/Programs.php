@@ -11,13 +11,18 @@
         }
 
         public function action_add_program ($params) {
+            $links = Resources::getInstance()->links;
+            
             $this->set ('buttonCaption', 'Добавить');
             $this->set ('programType', $params['program_type']);
 
             $request = $this->getRequest ();
             $request->set ('program_type', $params['program_type']);
 
-            $form = Form_Program_Add::create('/add_program/' . $params['program_type']);
+            $opts = array('program_type' => $params['program_type']);
+            $action = $links->get('programs.add', $opts);
+            
+            $form = Form_Program_Add::create($action);
             $this->set ('form', $form);
             $method = $form->method ();
             if (empty ($request->$method)) {
@@ -43,18 +48,23 @@
                     ('Направление успешно добавлено') :
                     ('Курсы успешно добавлены')
                 ),
-                '/education_programs/index',
+                $links->get('admin.programs'),
                 3
             );
         }
 
         public function action_add_discipline ($params) {
+            $links = Resources::getInstance()->links;
+            
             $this->set ('buttonCaption', 'Добавить');
 
             $request = $this->getRequest ();
             $request->set ('speciality', $params['speciality_id']);
 
-            $form = Form_Discipline_Add::create ('/add_discipline/' . $params['speciality_id']);
+            $opts = array('speciality_id' => $params['speciality_id']);
+            $action = $links->get('disciplines.add', $opts);
+            
+            $form = Form_Discipline_Add::create ($action);
             $this->set ('form', $form);
             $method = $form->method ();
             $form->setValue ('speciality', $params['speciality_id']);
@@ -79,18 +89,23 @@
             );
             $this->flash (
                 'Дисциплина успешно добавлена',
-                '/education_programs/index',
+                $links->get('admin.programs'),
                 3
             );
         }
 
         public function action_add_section ($params) {
+            $links = Resources::getInstance()->links;
+            
             $this->set ('buttonCaption', 'Добавить');
 
             $request = $this->getRequest ();
             $request->set ('discipline', $params['discipline_id']);
 
-            $form = Form_Section_Add::create ('/add_section/' . $params['discipline_id']);
+            $opts = array('discipline_id' => $params['discipline_id']);
+            $action = $links->get('sections.add', $opts);
+            
+            $form = Form_Section_Add::create ($action);
             $this->set ('form', $form);
             $method = $form->method ();
             if (empty ($request->$method)) {
@@ -110,7 +125,7 @@
             );
             $this->flash (
                 'Раздел успешно добавлен',
-                '/education_programs/index',
+                $links->get('admin.programs'),
                 3
             );
         }
@@ -119,13 +134,15 @@
             $educationPrograms = Model_Education_Programs::create ();
             $educationPrograms->removeProgram ($params['program_id'], $params['program_type']);
 
+            $links = Resources::getInstance()->links;
+            
             $this->flash (
                 (
                     ($params['program_type'] == 'direction') ?
                     ('Направление успешно удалено') :
                     ('Курсы успешно удалены')
                 ),
-                '/education_programs/index',
+                $links->get('admin.programs'),
                 3
             );
         }
@@ -133,10 +150,12 @@
         public function action_remove_discipline ($params) {
             $educationPrograms = Model_Education_Programs::create ();
             $educationPrograms->removeDiscipline ($params['discipline_id']);
-
+            
+            $links = Resources::getInstance()->links;
+            
             $this->flash (
                 'Дисциплина успешно удалена',
-                '/education_programs/index',
+                $links->get('admin.programs'),
                 3
             );
         }
@@ -145,14 +164,18 @@
             $educationPrograms = Model_Education_Programs::create ();
             $educationPrograms->removeSection ($params['section_id']);
 
+            $links = Resources::getInstance()->links;
+            
             $this->flash (
                 'Раздел успешно удален',
-                '/education_programs/index',
+                $links->get('admin.programs'),
                 3
             );
         }
 
         public function action_edit_program ($params) {
+            $links = Resources::getInstance()->links;
+            
             $this->set ('buttonCaption', 'Сохранить');
             $this->set ('programType', $params['program_type']);
 
@@ -160,7 +183,11 @@
             $request->set ('program', $params['program_id']);
             $request->set ('program_type', $params['program_type']);
 
-            $form = Form_Program_Edit::create('/edit_program/' . $params['program_type'] . '/' . $params['program_id']);
+            $opts = array('program_type' => $params['program_type'],
+                          'program_id'   => $params['program_id']);
+            $action = $links->get('programs.edit', $opts);
+            
+            $form = Form_Program_Edit::create($action);
             $this->set ('form', $form);
             $method = $form->method ();
 
@@ -196,18 +223,23 @@
 
             $this->flash (
                 'Данные по ' . (($params['program_type'] == 'direction') ? ('направлению') : ('курсам')) . ' успешно изменены',
-                '/education_programs/index',
+                $links->get('admin.programs'),
                 3
             );
         }
 
         public function action_edit_discipline ($params) {
+            $links = Resources::getInstance()->links;
+            
             $this->set ('buttonCaption', 'Сохранить');
 
             $request = $this->getRequest ();
             $request->set ('discipline', $params['discipline_id']);
 
-            $form = Form_Discipline_Edit::create ('/edit_discipline/' . $params['discipline_id']);
+            $opts = array('discipline_id' => $params['discipline_id']);
+            $action = $links->get('disciplines.edit', $opts);
+            
+            $form = Form_Discipline_Edit::create ($action);
             $this->set ('form', $form);
             $method = $form->method ();
 
@@ -240,18 +272,23 @@
 
             $this->flash (
                 'Данные по дисциплине успешно изменены',
-                '/education_programs/index',
+                $links->get('admin.programs'),
                 3
             );
         }
 
         public function action_edit_section ($params) {
+            $links = Resources::getInstance()->links;
+            
             $this->set ('buttonCaption', 'Сохранить');
 
             $request = $this->getRequest ();
             $request->set ('section', $params['section_id']);
 
-            $form = Form_Section_Edit::create ('/edit_section/' . $params['section_id']);
+            $opts = array('section_id' => $params['section_id']);
+            $action = $links->get('sections.edit', $opts);
+            
+            $form = Form_Section_Edit::create ($action);
             $this->set ('form', $form);
             $method = $form->method ();
 
@@ -282,7 +319,7 @@
 
             $this->flash (
                 'Данные по разделу успешно изменены',
-                '/education_programs/index',
+                $links->get('admin.programs'),
                 3
             );
         }
@@ -301,10 +338,12 @@
                     $i
                 );
             }
-
+                  
+            $links = Resources::getInstance()->links;
+            
             $this->flash (
                 'Порядок дисциплин успешно изменён',
-                '/education_programs/index',
+                $links->get('admin.programs'),
                 3
             );
         }
@@ -333,6 +372,10 @@
             */
 
             /* Получаем список заявок на образовательные программы */
+            /**
+            * @todo Disallow this action to non-authorized users in order to 
+            * prevent usage of undefined property $user_id here.
+            */
             $program_apps = $app->getProcessedAppsForPrograms($udata->user_id);
 
             /* Перебираем его */

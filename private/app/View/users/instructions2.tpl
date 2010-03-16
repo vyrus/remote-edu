@@ -2,22 +2,22 @@
 <b>Инструкция как пользоваться материлами:</b>
 
 <ol>
-    <li>Заполнить <a href="/users/profile_extended_by_student/" target=blank>
+    <li>Заполнить <a href="<?php echo $this->_links->get('student.extended-profile') ?>" target=blank>
 "Подробную анкету слушателя"</a>;</li>
-    <li>В разделе <a href="/applications/index_by_student/" target=blank>
+    <li>В разделе <a href="<?php echo $this->_links->get('student.apply') ?>" target=blank>
 "Новый курс"</a> выбрать интересующую Вас учебную программу;</li>
     <li>Нажав кнопку "Подать заявку", подать заявку на обучение по выбранной программе.<br>
     Статус заявки на обучение по выбранному направлению, можно посмотреть в разделе
-    <a href=/applications/list_by_student/" target=blank>Мои заявки</a>.</li>
+    <a href="<?php echo $this->_links->get('student.applications') ?>" target=blank>Мои заявки</a>.</li>
     <li>После этого Вы сможете получить доступ к интересующим Вас материалам в разделе
-    <a href="/education_programs/available/" target=blank>"Мои курсы"</a>.*</li>
+    <a href="<?php echo $this->_links->get('student.programs') ?>" target=blank>"Мои курсы"</a>.*</li>
 
 </ol>
 <p>
 <p>
   Если же Вы уже подавали заявку на обучение, и Ваша заявка была подтверждена,
   Вы можете сразу перейти к изучению материалов 
-<a href="/education_programs/available/" target=blank>"Мои курсы"</a>.
+<a href="<?php echo $this->_links->get('student.programs') ?>" target=blank>"Мои курсы"</a>.
 
 <br>
 <br>
@@ -34,6 +34,6 @@
     <li>После подписания договора, Вам необходимо произвести оплату за обучение (квитанцию можно скачать на сайте
 в соответствующем разделе);</li>
     <li>При подтверждении оплаты Вам станут доступны материалы выбранной Вами учебной
-    программы в пункте <a href="/education_programs/available/" target=blank>"Мои курсы"</a>.</li>
+    программы в пункте <a href="<?php echo $this->_links->get('student.programs') ?>" target=blank>"Мои курсы"</a>.</li>
 </ol>
 </font>

@@ -30,6 +30,36 @@
             /* Управление учебными программами */
             array('/admin/programs', 'education_programs', 'index', 'admin.programs', Mvc_Router::ROUTE_STATIC),
             
+            /* Добавление учебных программ */
+            array('/admin/programs/add/(direction|course)', array('program_type'), 'education_programs', 'add_program', 'programs.add', Mvc_Router::ROUTE_REGEX),
+            
+            /* Редактирование учебных программ */
+            array('/admin/programs/edit/(direction|course)/([0-9]+)', array('program_type', 'program_id'), 'education_programs', 'edit_program', 'programs.edit', Mvc_Router::ROUTE_REGEX),             
+            
+            /* Удаление учебных программ */
+            array('/admin/programs/remove/(direction|course)/([0-9]+)', array('program_type', 'program_id'), 'education_programs', 'remove_program', 'programs.remove', Mvc_Router::ROUTE_REGEX),
+            
+            /* Добавление дисциплин */
+            array('/admin/disciplines/add/([0-9]+)', array('speciality_id'), 'education_programs', 'add_discipline', 'disciplines.add', Mvc_Router::ROUTE_REGEX),
+            
+            /* Редактирование дисциплин */
+            array('/admin/disciplines/edit/([0-9]+)', array('discipline_id'), 'education_programs', 'edit_discipline', 'disciplines.edit', Mvc_Router::ROUTE_REGEX),
+            
+            /* Удаление дисциплин */
+            array('/admin/disciplines/remove/([0-9]+)', array('discipline_id'), 'education_programs', 'remove_discipline', 'disciplines.remove', Mvc_Router::ROUTE_REGEX),            
+            
+            /* Сохранение порядка дисциплин */
+            array('/admin/disciplines/save-order', array(), 'education_programs', 'save_discipline_order', 'disciplines.save-order', Mvc_Router::ROUTE_REGEX),
+            
+            /* Добавление разделов */
+            array('/admin/sections/add/([0-9]+)', array('discipline_id'), 'education_programs', 'add_section', 'sections.add', Mvc_Router::ROUTE_REGEX),
+            
+            /* Редактирование разделов */
+            array('/admin/sections/edit/([0-9]+)', array('section_id'), 'education_programs', 'edit_section', 'sections.edit', Mvc_Router::ROUTE_REGEX),
+            
+            /* Удаление разделов */
+            array('/admin/sections/remove/([0-9]+)', array('section_id'), 'education_programs', 'remove_section', 'sections.remove', Mvc_Router::ROUTE_REGEX),
+            
             /* Управление учебными материалами */
             array('/admin/materials', 'educational_materials', 'index_by_admin', 'admin.materials', Mvc_Router::ROUTE_STATIC),
             
@@ -57,8 +87,8 @@
             /* Инструкции для слушателя */
             array('/student', 'users', 'instructions_by_user', 'student.index', Mvc_Router::ROUTE_STATIC),
             
-            /* Доступные для слушателя учебные программы */
-            array('/student/programs', 'education_programs', 'available', 'student.programs', Mvc_Router::ROUTE_STATIC),
+            /* Расширенный профиль слушателя */
+            array('/student/extended-profile', 'users', 'profile_extended_by_student', 'student.extended-profile', Mvc_Router::ROUTE_STATIC),
             
             /* Заявки слушателя */
             array('/student/applications', 'applications', 'list_by_student', 'student.applications', Mvc_Router::ROUTE_STATIC),
@@ -69,8 +99,11 @@
             /* Отправка слушателем заявки на выбранную программу */
             array('/student/apply/(discipline|program)/([0-9]+)', array('program_type', 'program_id'), 'applications', 'apply', 'student.applications.apply', Mvc_Router::ROUTE_REGEX),
             
-            /* Расширенный профиль слушателя */
-            array('/student/extended-profile', 'users', 'profile_extended_by_student', 'student.extended-profile', Mvc_Router::ROUTE_STATIC),
+            /* Доступные для слушателя учебные программы */
+            array('/student/programs', 'education_programs', 'available', 'student.programs', Mvc_Router::ROUTE_STATIC),
+            
+            /* Отображение слушателю доступных материалов */
+            array('/student/materials/show/([0-9]+)/([0-9]+)', array('discipline_id', 'app_id'), 'educational_materials', 'show', 'materials.show', Mvc_Router::ROUTE_REGEX),
             
             /* Страничка помощи слушателю - как начать обучение */
             array('/student/help/how-to-start', 'users', 'howtostart', 'student.help.how-to-start', Mvc_Router::ROUTE_STATIC),
@@ -82,26 +115,6 @@
             array('/educational_materials/remove', 'educational_materials', 'remove', '', Mvc_Router::ROUTE_STATIC),
             
             array('/education_students', 'education_students', 'index', '', Mvc_Router::ROUTE_STATIC),
-            
-            array('/add_program/(direction|course)', array('program_type'), 'education_programs', 'add_program', '', Mvc_Router::ROUTE_REGEX),
-            
-            array('/add_discipline/([0-9]+)', array('speciality_id'), 'education_programs', 'add_discipline', '', Mvc_Router::ROUTE_REGEX),
-            
-            array('/add_section/([0-9]+)', array('discipline_id'), 'education_programs', 'add_section', '', Mvc_Router::ROUTE_REGEX),
-            
-            array('/remove_program/(direction|course)/([0-9]+)', array('program_type', 'program_id'), 'education_programs', 'remove_program', '', Mvc_Router::ROUTE_REGEX),
-            
-            array('/remove_discipline/([0-9]+)', array('discipline_id'), 'education_programs', 'remove_discipline', '', Mvc_Router::ROUTE_REGEX),
-            
-            array('/remove_section/([0-9]+)', array('section_id'), 'education_programs', 'remove_section', '', Mvc_Router::ROUTE_REGEX),
-            
-            array('/edit_program/(direction|course)/([0-9]+)', array('program_type', 'program_id'), 'education_programs', 'edit_program', '', Mvc_Router::ROUTE_REGEX),
-            
-            array('/edit_discipline/([0-9]+)', array('discipline_id'), 'education_programs', 'edit_discipline', '', Mvc_Router::ROUTE_REGEX),
-            
-            array('/save_discipline_order/', array(), 'education_programs', 'save_discipline_order', '', Mvc_Router::ROUTE_REGEX),
-            
-            array('/edit_section/([0-9]+)', array('section_id'), 'education_programs', 'edit_section', '', Mvc_Router::ROUTE_REGEX),
             
             /* Активация слушателя */
             /**

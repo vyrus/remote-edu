@@ -36,7 +36,8 @@
     }
 
     function addProgram () {
-        window.location = '/add_program/' + programsTypeSelect.value;
+        window.location = '<?php echo $this->_links->get('programs.add') ?>' +
+                          programsTypeSelect.value + '/';
     }
 
     function removeProgram () {
@@ -45,7 +46,9 @@
             return;
         }
 
-        window.location = '/remove_program/' + programsTypeSelect.value + '/' + programsSelect.options[programsSelect.selectedIndex].value;
+        window.location = '<?php echo $this->_links->get('programs.remove') ?>' + 
+                          programsTypeSelect.value + '/' + 
+                          programsSelect.options[programsSelect.selectedIndex].value + '/';
     }
 
     function editProgram () {
@@ -54,7 +57,9 @@
             return;
         }
 
-        window.location = '/edit_program/' + programsTypeSelect.value + '/' + programsSelect.options[programsSelect.selectedIndex].value;
+        window.location = '<?php echo $this->_links->get('programs.edit') ?>' + 
+                          programsTypeSelect.value + '/' + 
+                          programsSelect.options[programsSelect.selectedIndex].value + '/';
     }
 
     function addDiscipline () {
@@ -68,7 +73,8 @@
             return;
         }
 
-        window.location = '/add_discipline/' + programsSelect.options[programsSelect.selectedIndex].value;
+        window.location = '<?php echo $this->_links->get('disciplines.add') ?>' + 
+                           programsSelect.options[programsSelect.selectedIndex].value + '/';
     }
 
     function removeDiscipline () {
@@ -77,7 +83,8 @@
             return;
         }
 
-        window.location = '/remove_discipline/' + disciplinesSelect.options[disciplinesSelect.selectedIndex].value;
+        window.location = '<?php echo $this->_links->get('disciplines.remove') ?>' + 
+                          disciplinesSelect.options[disciplinesSelect.selectedIndex].value + '/';
     }
 
     function editDiscipline () {
@@ -86,7 +93,8 @@
             return;
         }
 
-        window.location = '/edit_discipline/' + disciplinesSelect.options[disciplinesSelect.selectedIndex].value;
+        window.location = '<?php echo $this->_links->get('disciplines.edit') ?>' + 
+                          disciplinesSelect.options[disciplinesSelect.selectedIndex].value + '/';
     }
 
     function addSection () {
@@ -95,7 +103,8 @@
             return;
         }
 
-        window.location = '/add_section/' + disciplinesSelect.options[disciplinesSelect.selectedIndex].value;
+        window.location = '<?php echo $this->_links->get('sections.add') ?>' + 
+                          disciplinesSelect.options[disciplinesSelect.selectedIndex].value + '/';
     }
 
     function removeSection () {
@@ -104,7 +113,8 @@
             return;
         }
 
-        window.location = '/remove_section/' + sectionsSelect.options[sectionsSelect.selectedIndex].value;
+        window.location = '<?php echo $this->_links->get('sections.remove') ?>' + 
+                          sectionsSelect.options[sectionsSelect.selectedIndex].value + '/';
     }
 
     function editSection () {
@@ -113,7 +123,8 @@
             return;
         }
 
-        window.location = '/edit_section/' + sectionsSelect.options[sectionsSelect.selectedIndex].value;
+        window.location = '<?php echo $this->_links->get('sections.edit') ?>' + 
+                          sectionsSelect.options[sectionsSelect.selectedIndex].value + '/';
     }
 
     function clearSelect (select) {
@@ -165,7 +176,7 @@
             disciplineOrder += disciplinesSelect.options[i].value;
         }
         document.forms[0].disciplineOrderInfo.value = disciplineOrder;
-        document.forms[0].action = '/save_discipline_order/';
+        document.forms[0].action = '<?php echo $this->_links->get('disciplines.save-order') ?>';
         document.forms[0].submit();
     }
 </script>
