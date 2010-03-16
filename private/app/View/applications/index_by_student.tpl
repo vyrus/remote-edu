@@ -85,8 +85,9 @@
 			return;
 		}
 		
-		window.location = '/applications/apply/' + $('#programType').val() + 
-                          '/' + $('#programId').val();
+		window.location = '<?echo $this->_links->get('student.applications.apply') ?>' + 
+                          $('#programType').val() + '/' + 
+                          $('#programId').val() + '/';
 	}      
 </script>
 <br />

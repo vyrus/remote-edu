@@ -125,18 +125,18 @@
     
     function changeStatus(newStatus,appId)
     {
-        window.location = '/applications/change_app_status/' + newStatus + '/' + appId;
+        window.location = '<?php echo $this->_links->get('admin.applications.change-status') ?>' + newStatus + '/' + appId + '/';
     }
     
     function addPayment(appId) {
-        window.location = '/payments/add/' + appId + '/';
+        window.location = '<?php echo $this->_links->get('admin.payments.add') ?>' + appId + '/';
     }
 
     function deleteApp(appId) {
         var question = 'Вы действительно хотите удалить заявку?';
         
         if (confirm(question)) { 
-            window.location = '/applications/delete/' + appId + '/';
+            window.location = '<?php echo $this->_links->get('admin.applications.delete') ?>' + appId + '/';
         }
     }
     
