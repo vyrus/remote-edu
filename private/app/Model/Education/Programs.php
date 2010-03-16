@@ -427,8 +427,6 @@ QUERY;
 		}
 
 		public function editProgram ($programID, $type, $title, $labourIntensive, $paidType, $cost) {
-			var_dump ($cost);
-
 			$sql =
 <<<QUERY
 UPDATE `programs`

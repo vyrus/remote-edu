@@ -43,6 +43,9 @@
             array('/admin/applications/change-status/(accepted|declined|signed)/([0-9]+)', array('new_status', 'app_id'), 'applications', 'change_app_status', 'admin.applications.change-status', Mvc_Router::ROUTE_REGEX),
             
             /* Удаление заявки администратором */
+            /**
+            * @todo Отвязка алиасов маршрутов от ролей юзеров.
+            */
             array('/admin/applications/delete/([0-9]+)', array('app_id'), 'applications', 'delete', 'admin.applications.delete', Mvc_Router::ROUTE_REGEX),
             
             /* Изменение статусы заявки администратором */

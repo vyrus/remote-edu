@@ -1,26 +1,5 @@
 <?php
     class Controller_Education_Programs extends Mvc_Controller_Abstract {
-        private $templatesPostfix = '';
-
-        public function __construct (Http_Request $request) {
-            $user = Model_User::create();
-            $udata = (object) $user->getAuth();
-
-            if (isset($udata->role)) {
-                if (Model_User::ROLE_TEACHER == $udata->role) {
-                    $this->templatePostfix = '_by_teacher';
-                }
-                elseif (Model_User::ROLE_ADMIN == $udata->role) {
-                    $this->templatePostfix = '_by_admin';
-                }
-                elseif (Model_User::ROLE_STUDENT == $udata->role) {
-                    $this->templatePostfix = '_by_student';
-                }
-            }
-
-            parent::__construct($request);
-        }
-
         public function action_index () {
             $educationPrograms = Model_Education_Programs::create();
             $this->set('directions', $educationPrograms->getDirections());
@@ -392,6 +371,10 @@
             }
 
             /* Получаем список заявок на отдельные дисциплины */
+            /**
+            * @todo Disallow this action to non-authorized users in order to 
+            * prevent usage of undefined property $user_id here.
+            */
             $disc_app = $app->getProcessedAppsForDisciplines($udata->user_id);
 
             /* Перебираем его */
