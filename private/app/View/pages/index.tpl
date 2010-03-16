@@ -2,7 +2,7 @@
 <p>					
 <div class="dist3">
 <div class="dist2"><a href="<?php echo $this->_links->get('help.how-to-start') ?>"><div>Как начать обучение?</div></a></div>
-<div class="dist"><a href="<?php echo $this->_links->get('login') ?>"><div>Начать обучение</div></a></div>
+<div class="dist"><a href="<?php echo $this->_links->get('users.login') ?>"><div>Начать обучение</div></a></div>
 </div>
 
 <div class="content-topic"><span>&nbsp;Дистанционное обучение. Преимущества и возможности</span></div>

@@ -16,10 +16,10 @@
             array('/', 'pages', 'display', array('page' => 'index'), 'index', Mvc_Router::ROUTE_STATIC),
             
             /* Авторизация */
-            array('/login', 'users', 'login', 'login', Mvc_Router::ROUTE_STATIC),
+            array('/login', 'users', 'login', 'users.login', Mvc_Router::ROUTE_STATIC),
             
             /* Выход */
-            array('/logout', 'users', 'logout', 'logout', Mvc_Router::ROUTE_STATIC),
+            array('/logout', 'users', 'logout', 'users.logout', Mvc_Router::ROUTE_STATIC),
             
             /* Регистрация слушателя */
             array('/student/register', 'users', 'register_student', 'student.register', Mvc_Router::ROUTE_STATIC),
@@ -82,6 +82,9 @@
             array('/admin/payments/add/([0-9]+)', array('app_id'), 'payments', 'add', 'admin.payments.add', Mvc_Router::ROUTE_REGEX),
             
             /* Инструкции для администратора */
+            /**
+            * @todo Приделать инструкцию.
+            */
             array('/admin/help', 'users', 'instructions_by_admin', 'admin.help', Mvc_Router::ROUTE_STATIC),
             
             /* Инструкции для слушателя */
@@ -117,8 +120,6 @@
             
             array('/educational_materials/remove', 'educational_materials', 'remove', '', Mvc_Router::ROUTE_STATIC),
             
-            array('/education_students', 'education_students', 'index', '', Mvc_Router::ROUTE_STATIC),
-            
             /* Активация слушателя */
             /**
             * @todo Маршруты и так теперь нечувствительны к слешу на конце 
@@ -145,6 +146,9 @@
             /* Назначение кураторов слушателей */
             array('/admin/curators', 'assignment', 'student_curator', 'admin.curators', Mvc_Router::ROUTE_STATIC),
             
+            /**
+            * @todo Deprecated?
+            */
             array('/assignment', 'assignment', 'index', '', Mvc_Router::ROUTE_STATIC),
             
             /* Просмотр входящих сообщений */
@@ -190,8 +194,6 @@
             /* Преподаватель */
             Model_User::ROLE_TEACHER => array
             (
-                'education_students/index',
-
                 'educational_materials/index_by_teacher',  // учебные материалы, добавленные залогиненным преподавателем
             ),
 
@@ -223,8 +225,6 @@
                 'education_programs/edit_program',
                 'education_programs/edit_discipline',
                 'education_programs/edit_section',
-
-                'education_students/index',
             )
         )
     );

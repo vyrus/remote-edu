@@ -177,16 +177,6 @@
             ),
 
             array (
-                'type'    => Mvc_Router::ROUTE_STATIC,
-                'pattern' => "/education_students",
-                'handler' => array
-                (
-                    'controller' => "education_students",
-                    'action'     => 'index',
-                ),
-            ),
-
-            array (
                 'type'    => Mvc_Router::ROUTE_REGEX,
                 'pattern' => array
                 (
@@ -559,8 +549,6 @@
             /* Преподаватель */
             Model_User::ROLE_TEACHER => array
             (
-                'education_students/index',
-
                 'educational_materials/index_by_teacher',  // учебные материалы, добавленные залогиненным преподавателем
             ),
 
@@ -592,8 +580,6 @@
                 'education_programs/edit_program',
                 'education_programs/edit_discipline',
                 'education_programs/edit_section',
-
-                'education_students/index',
             )
         )
     );
