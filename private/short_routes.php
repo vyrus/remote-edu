@@ -145,17 +145,17 @@
             array('/assignment', 'assignment', 'index', '', Mvc_Router::ROUTE_STATIC),
             
             /* Просмотр входящих сообщений */
-            array('/messages/inbox', 'messages', 'inbox', 'messages.inbox', Mvc_Router::ROUTE_STATIC),
+            array('/messages/inbox/([0-9]+)?', array('page'), 'messages', 'inbox', 'messages.inbox', Mvc_Router::ROUTE_REGEX),
             
-            array('/messages/inbox/([0-9]*)', array('page'), 'messages', 'inbox', '', Mvc_Router::ROUTE_REGEX),
+            /* Оправка сообщения */
+            array('/messages/send/([0-9]+)?', array('to_id'), 'messages', 'send', 'messages.send', Mvc_Router::ROUTE_REGEX),
             
-            array('/messages/send', 'messages', 'send', 'messages.send', Mvc_Router::ROUTE_STATIC),
+            /* Чтение сообщения */
+            array('/messages/read/([0-9]+)', array('message_id'), 'messages', 'message', 'messages.read', Mvc_Router::ROUTE_REGEX),
             
-            array('/messages/send/([0-9]*)', array('to_id'), 'messages', 'send', '', Mvc_Router::ROUTE_REGEX),
+            /* Удаление выбранного сообщения */
+            array('/messages/remove', 'messages', 'remove', 'messages.remove', Mvc_Router::ROUTE_STATIC),
             
-            array('/messages/remove', 'messages', 'remove', '', Mvc_Router::ROUTE_STATIC),
-            
-            array('/messages/([0-9]+)', array('message_id'), 'messages', 'message', '', Mvc_Router::ROUTE_REGEX)
         ),
 
         /* Права доступа к разделам сайта */
