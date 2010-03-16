@@ -16,13 +16,13 @@
     
     /* ссылки, доступные только преподу */	        
     $teacher_elements = array(
-        'Мои курсы' => 'teacher_courses/index',
-        'Мои слушатели' => 'teacher_students/index',
+        'Мои курсы'     => '/teacher_courses/index',
+        'Мои слушатели' => '/teacher_students/index',
         /**
         * @todo А что здесь за действие должно быть?
         */
         'Пользователи' => '#',
-        'Материалы'    => $this->_links->get('teacher.materials'),
+        'Материалы'    => $this->_links->get('admin.materials'),
     );
     
     /* ссылки, доступные только слушателю */	        

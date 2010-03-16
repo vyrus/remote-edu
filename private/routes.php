@@ -67,7 +67,7 @@
             array('/admin/sections/remove/([0-9]+)', array('section_id'), 'education_programs', 'remove_section', 'sections.remove', Mvc_Router::ROUTE_REGEX),
             
             /* Управление учебными материалами администратором */
-            array('/admin/materials', 'educational_materials', 'index_by_admin', 'admin.materials', Mvc_Router::ROUTE_STATIC),
+            array('/admin/materials', 'educational_materials', 'index', 'admin.materials', Mvc_Router::ROUTE_STATIC),
             
             /* Редактирование материалов администратором */
             array('/admin/materials/edit/([0-9]+)', array('material_id'), 'educational_materials', 'edit', 'materials.edit', Mvc_Router::ROUTE_REGEX),
@@ -90,14 +90,17 @@
             /* Изменение статусы заявки администратором */
             array('/admin/payments/add/([0-9]+)', array('app_id'), 'payments', 'add', 'payments.add', Mvc_Router::ROUTE_REGEX),
             
+            /* Назначение преподавателей, ответственных за дисциплины */
+            array('/admin/responsible-teachers', 'assignment', 'responsible_teacher', 'admin.responsible-teachers', Mvc_Router::ROUTE_STATIC),
+            
+            /* Назначение кураторов слушателей */
+            array('/admin/curators', 'assignment', 'student_curator', 'admin.curators', Mvc_Router::ROUTE_STATIC),
+            
             /* Инструкции для администратора */
             /**
             * @todo Приделать инструкцию.
             */
             array('/admin/help', 'users', 'instructions_by_admin', 'admin.help', Mvc_Router::ROUTE_STATIC),
-            
-            /* Управление учебными материалами преподавателем */
-            array('/teacher/materials', 'educational_materials', 'index_by_teacher', 'teacher.materials', Mvc_Router::ROUTE_STATIC),
             
             /* Инструкции для слушателя */
             array('/student', 'pages', 'display', array('page' => 'help/instructions'), 'student.index', Mvc_Router::ROUTE_STATIC),
@@ -143,12 +146,6 @@
             
             /* Страница со способами оплаты */
             array('/payment', 'pages', 'display', array('page' => 'payment'), 'payment', Mvc_Router::ROUTE_STATIC),
-            
-            /* Назначение преподавателей, ответственных за дисциплины */
-            array('/admin/responsible-teachers', 'assignment', 'responsible_teacher', 'admin.responsible-teachers', Mvc_Router::ROUTE_STATIC),
-            
-            /* Назначение кураторов слушателей */
-            array('/admin/curators', 'assignment', 'student_curator', 'admin.curators', Mvc_Router::ROUTE_STATIC),
             
             /* Просмотр входящих сообщений */
             array('/messages/inbox/([0-9]+)?', array('page'), 'messages', 'inbox', 'messages.inbox', Mvc_Router::ROUTE_REGEX),
@@ -198,11 +195,10 @@
             /* Преподаватель */
             Model_User::ROLE_TEACHER => array
             (
-                'educational_materials/index_by_teacher',  // учебные материалы, добавленные залогиненным преподавателем
+                'educational_materials/index',  // учебные материалы, добавленные залогиненным преподавателем
                 'educational_materials/upload',
                 'educational_materials/edit',                
                 'educational_materials/remove',                
-
             ),
 
             /* Администратор */

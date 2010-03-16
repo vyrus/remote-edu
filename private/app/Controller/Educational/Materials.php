@@ -1,7 +1,12 @@
 <?php
     class Controller_Educational_Materials extends Mvc_Controller_Abstract {
         public function action_edit($params) {
-            $form = Form_Materials_Edit::create('/educational_materials/edit/' . $params['material_id']); 
+            $links = Resources::getInstance()->links;
+            
+            $opts = array('material_id' => $params['material_id']);
+            $action = $links->get('materials.edit', $opts);
+            $form = Form_Materials_Edit::create($action); 
+            
             $educationalMaterials = Model_Educational_Materials::create ();
             $this->set('form', $form);            
             $request = $this->getRequest();            
@@ -10,7 +15,8 @@
             
             if (empty($requestData)) {                
                 if (($materialInfo = $educationalMaterials->getMaterialInfo($params['material_id'])) === FALSE) {
-                    $this->flash('Учебный материал не существует или был загружен не Вами', '/educational_materials/index', 5);
+                    $this->flash('Учебный материал не существует или был загружен не Вами', 
+                                 $links->get('admin.materials'), 5);
                 }
                 
                 $form->setValue('description', $materialInfo['description']);
@@ -23,7 +29,8 @@
                     'type' => $requestData['type'],
                 );
                 $educationalMaterials->updateMaterialInfo($materialInfo);
-                $this->flash('Данные материала были успешно изменены', '/educational_materials/index', 5);
+                $this->flash('Данные материала были успешно изменены', 
+                             $links->get('admin.materials'), 5);
             }
             
             $this->render('educational_materials/edit');
@@ -76,7 +83,7 @@
                 $removeSuccess ? 
                     'Материалы успешно удалены' : 
                     'Некоторые материалы не были удалены(возможно, Вы предприняли попытку удалить материал, который не был загружен Вами)', 
-                $lins->get('admin.materials'), 10
+                $links->get('admin.materials'), 10
             );
         }
 

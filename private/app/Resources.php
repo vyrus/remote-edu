@@ -55,9 +55,9 @@
                 $config['dsn'], $config['user'], $config['passwd'],
                 $config['options']
             );
-
+            
             $db->exec('SET NAMES utf8');
-
+            
             return $db;
         }
 
