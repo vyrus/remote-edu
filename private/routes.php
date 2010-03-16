@@ -4,567 +4,169 @@
 
     return array(
         /* Маршруты */
-        /**
-        * @todo Сделать покрасивше пути сайта.
-        */
         'routes' => array
         (
+            /* Шаблон статичного маршрута */
+            /* array('шаблон', 'контроллер', 'действие', [array('параметр' => 'значение'), ] 'алиас', Mvc_Router::ROUTE_STATIC); */ 
+            
+            /* Шаблон маршрута на регулярном выражении */
+            /* array('регекс', array('параметры'), 'контроллер', 'действие', [array('параметр' => 'значение'), ] 'алиас', Mvc_Router::ROUTE_REGEX); */ 
+            
             /* Главная страница */
-            array(             
-                'alias'   => 'index',
-                'type'    => Mvc_Router::ROUTE_STATIC,
-                'pattern' => '/',
-                'handler' => array
-                (
-                    'controller' => 'pages',
-                    'action'     => 'display',
-                    'params'     => array('page' => 'index')
-                )
-            ),
+            array('/', 'pages', 'display', array('page' => 'index'), 'index', Mvc_Router::ROUTE_STATIC),
             
             /* Авторизация */
-            array(             
-                'alias'   => 'login',
-                'type'    => Mvc_Router::ROUTE_STATIC,
-                'pattern' => '/login',
-                'handler' => array
-                (
-                    'controller' => 'users',
-                    'action'     => 'login'
-                )
-            ),
+            array('/login', 'users', 'login', 'users.login', Mvc_Router::ROUTE_STATIC),
             
             /* Выход */
-            array(             
-                'alias'   => 'logout',
-                'type'    => Mvc_Router::ROUTE_STATIC,
-                'pattern' => '/logout',
-                'handler' => array
-                (
-                    'controller' => 'users',
-                    'action'     => 'logout'
-                )
-            ),
+            array('/logout', 'users', 'logout', 'users.logout', Mvc_Router::ROUTE_STATIC),
             
-            /* Регистрация слушателя */
-            array(             
-                'alias'   => 'student.register',
-                'type'    => Mvc_Router::ROUTE_STATIC,
-                'pattern' => '/student/register',
-                'handler' => array
-                (
-                    'controller' => 'users',
-                    'action'     => 'register_student'
-                )
-            ),
+            /* Управление пользователями */
+            array('/admin/users', 'users', 'index_by_admin', 'admin.users', Mvc_Router::ROUTE_STATIC),
             
-            /* Регистрация сотрудников */
-            array(             
-                'alias'   => 'employee.register',
-                'type'    => Mvc_Router::ROUTE_STATIC,
-                'pattern' => '/admin/employee/register',
-                'handler' => array
-                (
-                    'controller' => 'users',
-                    'action'     => 'index_by_admin'
-                )
-            ),
+            /* Управление пользователями */
+            array('/admin/users', 'users', 'index_by_admin', 'admin.users', Mvc_Router::ROUTE_STATIC),
+            
+            /* Список пользователей */
+            array('/admin/users/list', 'users', 'users_list', 'users.list', Mvc_Router::ROUTE_STATIC),
+            
+            /* Регистрация сотрудника */
+            array('/admin/employee/register', 'users', 'register_employee_by_admin', 'employee.register', Mvc_Router::ROUTE_STATIC),
             
             /* Управление учебными программами */
-            array(             
-                'alias'   => 'programs.manage',
-                'type'    => Mvc_Router::ROUTE_STATIC,
-                'pattern' => '/admin/programs',
-                'handler' => array
-                (
-                    'controller' => 'education_programs',
-                    'action'     => 'index'
-                )
-            ),
+            array('/admin/programs', 'education_programs', 'index', 'admin.programs', Mvc_Router::ROUTE_STATIC),
             
-            /* Управление учебными материалами */
-            array(             
-                'alias'   => 'materials.manage',
-                'type'    => Mvc_Router::ROUTE_STATIC,
-                'pattern' => '/admin/materials',
-                'handler' => array
-                (
-                    'controller' => 'educational_materials',
-                    'action'     => 'index_by_admin'
-                )
-            ),
+            /* Добавление учебных программ */
+            array('/admin/programs/add/(direction|course)', array('program_type'), 'education_programs', 'add_program', 'programs.add', Mvc_Router::ROUTE_REGEX),
+            
+            /* Редактирование учебных программ */
+            array('/admin/programs/edit/(direction|course)/([0-9]+)', array('program_type', 'program_id'), 'education_programs', 'edit_program', 'programs.edit', Mvc_Router::ROUTE_REGEX),             
+            
+            /* Удаление учебных программ */
+            array('/admin/programs/remove/(direction|course)/([0-9]+)', array('program_type', 'program_id'), 'education_programs', 'remove_program', 'programs.remove', Mvc_Router::ROUTE_REGEX),
+            
+            /* Добавление дисциплин */
+            array('/admin/disciplines/add/([0-9]+)', array('speciality_id'), 'education_programs', 'add_discipline', 'disciplines.add', Mvc_Router::ROUTE_REGEX),
+            
+            /* Редактирование дисциплин */
+            array('/admin/disciplines/edit/([0-9]+)', array('discipline_id'), 'education_programs', 'edit_discipline', 'disciplines.edit', Mvc_Router::ROUTE_REGEX),
+            
+            /* Удаление дисциплин */
+            array('/admin/disciplines/remove/([0-9]+)', array('discipline_id'), 'education_programs', 'remove_discipline', 'disciplines.remove', Mvc_Router::ROUTE_REGEX),            
+            
+            /* Сохранение порядка дисциплин */
+            array('/admin/disciplines/save-order', array(), 'education_programs', 'save_discipline_order', 'disciplines.save-order', Mvc_Router::ROUTE_REGEX),
+            
+            /* Добавление разделов */
+            array('/admin/sections/add/([0-9]+)', array('discipline_id'), 'education_programs', 'add_section', 'sections.add', Mvc_Router::ROUTE_REGEX),
+            
+            /* Редактирование разделов */
+            array('/admin/sections/edit/([0-9]+)', array('section_id'), 'education_programs', 'edit_section', 'sections.edit', Mvc_Router::ROUTE_REGEX),
+            
+            /* Удаление разделов */
+            array('/admin/sections/remove/([0-9]+)', array('section_id'), 'education_programs', 'remove_section', 'sections.remove', Mvc_Router::ROUTE_REGEX),
+            
+            /* Управление учебными материалами администратором */
+            array('/admin/materials', 'educational_materials', 'index_by_admin', 'admin.materials', Mvc_Router::ROUTE_STATIC),
+            
+            /* Редактирование материалов администратором */
+            array('/admin/materials/edit/([0-9]+)', array('material_id'), 'educational_materials', 'edit', 'materials.edit', Mvc_Router::ROUTE_REGEX),
+            
+            /* Загрузка учебных материалов */
+            array('/admin/materials/upload', 'educational_materials', 'upload', 'materials.upload', Mvc_Router::ROUTE_STATIC),
+                      
+            /* Загрузка учебных материалов */
+            array('/admin/materials/remove', 'educational_materials', 'remove', 'materials.remove', Mvc_Router::ROUTE_STATIC),
             
             /* Управление заявками */
-            array(             
-                'alias'   => 'applications.manage',
-                'type'    => Mvc_Router::ROUTE_STATIC,
-                'pattern' => '/admin/applications',
-                'handler' => array
-                (
-                    'controller' => 'applications',
-                    'action'     => 'index_by_admin'
-                )
-            ),
+            array('/admin/applications', 'applications', 'index_by_admin', 'admin.applications', Mvc_Router::ROUTE_STATIC),
+            
+            /* Изменение статусы заявки администратором */
+            array('/admin/applications/change-status/(accepted|declined|signed)/([0-9]+)', array('new_status', 'app_id'), 'applications', 'change_app_status', 'applications.change-status', Mvc_Router::ROUTE_REGEX),
+            
+            /* Удаление заявки администратором */
+            array('/admin/applications/delete/([0-9]+)', array('app_id'), 'applications', 'delete', 'applications.delete', Mvc_Router::ROUTE_REGEX),
+            
+            /* Изменение статусы заявки администратором */
+            array('/admin/payments/add/([0-9]+)', array('app_id'), 'payments', 'add', 'payments.add', Mvc_Router::ROUTE_REGEX),
+            
+            /* Инструкции для администратора */
+            /**
+            * @todo Приделать инструкцию.
+            */
+            array('/admin/help', 'users', 'instructions_by_admin', 'admin.help', Mvc_Router::ROUTE_STATIC),
+            
+            /* Управление учебными материалами преподавателем */
+            array('/teacher/materials', 'educational_materials', 'index_by_teacher', 'teacher.materials', Mvc_Router::ROUTE_STATIC),
             
             /* Инструкции для слушателя */
-            array(             
-                'alias'   => 'student.index',
-                'type'    => Mvc_Router::ROUTE_STATIC,
-                'pattern' => '/student',
-                'handler' => array
-                (
-                    'controller' => 'users',
-                    'action'     => 'instructions_by_user'
-                )
-            ),
+            array('/student', 'pages', 'display', array('page' => 'help/instructions'), 'student.index', Mvc_Router::ROUTE_STATIC),
             
-            /* Доступные для слушателя учебные программы */
-            array(             
-                'alias'   => 'student.programs',
-                'type'    => Mvc_Router::ROUTE_STATIC,
-                'pattern' => '/student/programs',
-                'handler' => array
-                (
-                    'controller' => 'education_programs',
-                    'action'     => 'available'
-                )
-            ),
+            /* Регистрация слушателя */
+            array('/student/register', 'users', 'register_student', 'student.register', Mvc_Router::ROUTE_STATIC),
+            
+            /* Активация слушателя */
+            array('/student/activate/([0-9]+)/([0-9a-z]{32})', array('user_id', 'code'), 'users', 'activate_student', 'student.activate', Mvc_Router::ROUTE_REGEX),
+            
+            /* Активация сотрудника */
+            array('/employee/activate/([0-9]+)/([0-9a-z]{32})', array('user_id', 'code'), 'users', 'activate_employee', 'employee.activate', Mvc_Router::ROUTE_REGEX),
+            
+            /* Расширенный профиль слушателя */
+            array('/student/extended-profile', 'users', 'profile_extended_by_student', 'student.extended-profile', Mvc_Router::ROUTE_STATIC),
             
             /* Заявки слушателя */
-            array(             
-                'alias'   => 'student.applications',
-                'type'    => Mvc_Router::ROUTE_STATIC,
-                'pattern' => '/student/applications',
-                'handler' => array
-                (
-                    'controller' => 'applications',
-                    'action'     => 'index_by_student'
-                )
-            ),
+            array('/student/applications', 'applications', 'list_by_student', 'student.applications', Mvc_Router::ROUTE_STATIC),
             
-            array (
-                'type'     => Mvc_Router::ROUTE_REGEX,
-                'pattern'  => array
-                (
-                    'regex'  => '/educational_material/([0-9]+)',
-                    'params' => array ('material_id'),
-                ),
-                'handler' => array
-                (
-                    'controller' => 'educational_materials',
-                    'action'     => 'get_material',
-                ),
-            ),
-
-            array (
-                'type'    => Mvc_Router::ROUTE_STATIC,
-                'pattern' => '/educational_materials/upload',
-                'handler' => array
-                (
-                    'controller' => 'educational_materials',
-                    'action'     => 'upload',
-                ),
-            ),
-
-            array (
-                'type'    => Mvc_Router::ROUTE_STATIC,
-                'pattern' => '/educational_materials/remove',
-                'handler' => array
-                (
-                    'controller' => 'educational_materials',
-                    'action'     => 'remove',
-                ),
-            ),
-
-            array (
-                'type'    => Mvc_Router::ROUTE_STATIC,
-                'pattern' => "/education_students",
-                'handler' => array
-                (
-                    'controller' => "education_students",
-                    'action'     => 'index',
-                ),
-            ),
-
-            array (
-                'type'    => Mvc_Router::ROUTE_REGEX,
-                'pattern' => array
-                (
-                    'regex'  => '/add_program/(direction|course)',
-                    'params' => array ('program_type'),
-                ),
-                'handler' => array
-                (
-                    'controller' => "education_programs",
-                    'action'     => 'add_program',
-                ),
-            ),
-
-            array (
-                'type'   => Mvc_Router::ROUTE_REGEX,
-                'pattern' => array
-                (
-                    'regex'  => '/add_discipline/([0-9]+)',
-                    'params' => array ('speciality_id'),
-                ),
-                'handler' => array
-                (
-                    'controller' => 'education_programs',
-                    'action'     => 'add_discipline',
-                )
-            ),
-
-            array (
-                'type'    => Mvc_Router::ROUTE_REGEX,
-                'pattern' => array
-                (
-                    'regex'  => '/add_section/([0-9]+)',
-                    'params' => array ('discipline_id'),
-                ),
-                'handler' => array
-                (
-                    'controller' => 'education_programs',
-                    'action'     => 'add_section',
-                )
-            ),
-
-            array (
-                'type'    => Mvc_Router::ROUTE_REGEX,
-                'pattern' => array
-                (
-                    'regex'  => '/remove_program/(direction|course)/([0-9]+)',
-                    'params' => array ('program_type', 'program_id'),
-                ),
-                'handler' => array
-                (
-                    'controller' => 'education_programs',
-                    'action'     => 'remove_program',
-                )
-            ),
-
-            array (
-                'type'    => Mvc_Router::ROUTE_REGEX,
-                'pattern' => array
-                (
-                    'regex'  => '/remove_discipline/([0-9]+)',
-                    'params' => array ('discipline_id'),
-                ),
-                'handler' => array
-                (
-                    'controller' => 'education_programs',
-                    'action'     => 'remove_discipline',
-                )
-            ),
-
-            array (
-                'type'    => Mvc_Router::ROUTE_REGEX,
-                'pattern' => array
-                (
-                    'regex'  => '/remove_section/([0-9]+)',
-                    'params' => array ('section_id'),
-                ),
-                'handler' => array
-                (
-                    'controller' => 'education_programs',
-                    'action'     => 'remove_section',
-                )
-            ),
-
-            array (
-                'type'    => Mvc_Router::ROUTE_REGEX,
-                'pattern' => array
-                (
-                    'regex'  => '/edit_program/(direction|course)/([0-9]+)',
-                    'params' => array ('program_type','program_id'),
-                ),
-                'handler' => array
-                (
-                    'controller' => 'education_programs',
-                    'action'     => 'edit_program',
-                )
-            ),
-
-            array (
-                'type'    => Mvc_Router::ROUTE_REGEX,
-                'pattern' => array
-                (
-                    'regex'  => '/edit_discipline/([0-9]+)',
-                    'params' => array ('discipline_id'),
-                ),
-                'handler' => array
-                (
-                    'controller' => 'education_programs',
-                    'action'     => 'edit_discipline',
-                )
-            ),
-
-            array (
-                'type'    => Mvc_Router::ROUTE_REGEX,
-                'pattern' => array
-                (
-                    'regex'  => '/save_discipline_order/',
-                    'params' => array (),
-                ),
-                'handler' => array
-                (
-                    'controller' => 'education_programs',
-                    'action'     => 'save_discipline_order',
-                )
-            ),
-
-            array (
-                'type'    => Mvc_Router::ROUTE_REGEX,
-                'pattern' => array
-                (
-                    'regex'  => '/edit_section/([0-9]+)',
-                    'params' => array ('section_id'),
-                ),
-                'handler' => array
-                (
-                    'controller' => 'education_programs',
-                    'action'     => 'edit_section',
-                )
-            ),
-
-            /* Подача заявки */
-            array(
-                'type'    => Mvc_Router::ROUTE_REGEX,
-                'pattern' => array
-                (
-                    'regex'  => '/applications/apply/(discipline|program)/([0-9]+)',
-                    'params' => array ('program_type', 'program_id'),
-                ),
-                'handler' => array
-                (
-                    'controller' => 'applications',
-                    'action'     => 'apply',
-                )
-            ),
-
-            array(
-                'type'     => Mvc_Router::ROUTE_REGEX,
-                'pattern'  => array
-                (
-                    'regex'  => '/applications/change_app_status/(accepted|declined|signed)/([0-9]+)',
-                    'params' => array ('new_status', 'app_id'),
-                ),
-                'handler' => array
-                (
-                    'controller' => 'applications',
-                    'action'     => 'change_app_status',
-                )
-            ),
-
-            /* Активация слушателя */
-            array(
-                'type'    => Mvc_Router::ROUTE_REGEX,
-                'pattern' => array
-                (
-                    'regex'  => '/activate_student/([0-9]+)/([0-9a-z]{32}).*',
-                    'params' => array('user_id', 'code')
-                ),
-                'handler' => array
-                (
-                    'controller' => 'users',
-                    'action'     => 'activate_student'
-                )
-            ),
-
-            /* Активация сотрудника */
-            array(
-                'type'    => Mvc_Router::ROUTE_REGEX,
-                'pattern' => array
-                (
-                    'regex'  => '/activate_employee/([0-9]+)/([0-9a-z]{32}).*',
-                    'params' => array('user_id', 'code')
-                ),
-                'handler' => array
-                (
-                    'controller' => 'users',
-                    'action'     => 'activate_employee'
-                )
-            ),
-
-            array(
-                'type'    => Mvc_Router::ROUTE_STATIC,
-                'pattern' => '/ajax/autocomplete/region',
-                'handler' => array
-                (
-                    'controller' => 'ajax',
-                    'action'     => 'autocomplete_region'
-                )
-            ),
-
-            array(
-                'type'    => Mvc_Router::ROUTE_STATIC,
-                'pattern' => '/ajax/autocomplete/city',
-                'handler' => array
-                (
-                    'controller' => 'ajax',
-                    'action'     => 'autocomplete_city'
-                )
-            ),
-
+            /* Подача заявки слушателем */
+            array('/student/apply', 'applications', 'index_by_student', 'student.apply', Mvc_Router::ROUTE_STATIC),
+            
+            /* Отправка слушателем заявки на выбранную программу */
+            array('/student/apply/(discipline|program)/([0-9]+)', array('program_type', 'program_id'), 'applications', 'apply', 'student.applications.apply', Mvc_Router::ROUTE_REGEX),
+            
+            /* Доступные для слушателя учебные программы */
+            array('/student/programs', 'education_programs', 'available', 'student.programs', Mvc_Router::ROUTE_STATIC),
+            
+            /* Отображение слушателю доступных материалов */
+            array('/student/materials/show/([0-9]+)/([0-9]+)', array('discipline_id', 'app_id'), 'educational_materials', 'show', 'materials.show', Mvc_Router::ROUTE_REGEX),
+                                 
+            /* Скачивание материалов */
+            array('/student/materials/download/([0-9]+)', array('material_id'), 'educational_materials', 'get_material', 'materials.download', Mvc_Router::ROUTE_REGEX),
+                                    
+            /* Страничка помощи слушателю - как пользоваться материлами */
+            array('/student/help/materials', 'pages', 'display', array('page' => 'help/materials'), 'help.materials', Mvc_Router::ROUTE_STATIC),
+            
+            /* Страничка помощи слушателю - как начать обучение */
+            array('/student/help/how-to-start', 'pages', 'display', array('page' => 'help/how-to-start'), 'help.how-to-start', Mvc_Router::ROUTE_STATIC),
+            
             /* Страница с ценами */
-            array(
-                'alias'   => 'price',
-                'type'    => Mvc_Router::ROUTE_STATIC,
-                'pattern' => '/price',
-                'handler' => array
-                (
-                    'controller' => 'pages',
-                    'action'     => 'display',
-                    'params'     => array('page' => 'price')
-                )
-            ),
-
+            array('/price', 'pages', 'display', array('page' => 'price'), 'price', Mvc_Router::ROUTE_STATIC),
+            
             /* Страница со способами оплаты */
-            array(
-                'alias'   => 'payment',
-                'type'    => Mvc_Router::ROUTE_STATIC,
-                'pattern' => '/payment',
-                'handler' => array
-                (
-                    'controller' => 'pages',
-                    'action'     => 'display',
-                    'params'     => array('page' => 'payment')
-                )
-            ),
-
-			array(
-				'type' => Mvc_Router::ROUTE_STATIC,
-				'pattern' => '/assignment/responsible_teacher',
-				'handler' => array(
-					'controller' => 'assignment',
-					'action' => 'responsible_teacher',
-				),
-			),
-
-			array(
-				'type' => Mvc_Router::ROUTE_STATIC,
-				'pattern' => '/assignment/students_curator',
-				'handler' => array(
-					'controller' => 'assignment',
-					'action' => 'student_curator',
-				),
-			),
-
-			array(
-				'type' => Mvc_Router::ROUTE_STATIC,
-				'pattern' => '/assignment',
-				'handler' => array(
-					'controller' => 'assignment',
-					'action' => 'index',
-				),
-			),
-			
+            array('/payment', 'pages', 'display', array('page' => 'payment'), 'payment', Mvc_Router::ROUTE_STATIC),
+            
+            /* Назначение преподавателей, ответственных за дисциплины */
+            array('/admin/responsible-teachers', 'assignment', 'responsible_teacher', 'admin.responsible-teachers', Mvc_Router::ROUTE_STATIC),
+            
+            /* Назначение кураторов слушателей */
+            array('/admin/curators', 'assignment', 'student_curator', 'admin.curators', Mvc_Router::ROUTE_STATIC),
+            
             /* Просмотр входящих сообщений */
-			array(
-                'alias' => 'messages.inbox',
-			    'type' => Mvc_Router::ROUTE_STATIC,
-			    'pattern' => '/messages',
-			    'handler' => array(
-			        'controller' => 'messages',
-			        'action' => 'inbox',
-			    ),
-			),
-			
-            array(
-                'type'     => Mvc_Router::ROUTE_REGEX,
-                'pattern'  => array
-                (
-                    'regex'  => '/messages/inbox/([0-9]*)',
-                    'params' => array ('page'),
-                ),
-                'handler' => array
-                (
-                    'controller' => 'messages',
-                    'action'     => 'inbox',
-                )
-            ),
-
-		    array(
-    		    'type' => Mvc_Router::ROUTE_STATIC,
-    		    'pattern' => '/messages/send',
-    		    'handler' => array(
-    		        'controller' => 'messages',
-    		        'action' => 'send',
-    		    ),
-    		),
-			
-            array(
-                'type'     => Mvc_Router::ROUTE_REGEX,
-                'pattern'  => array
-                (
-                    'regex'  => '/messages/send/([0-9]*)',
-                    'params' => array ('to_id'),
-                ),
-                'handler' => array
-                (
-                    'controller' => 'messages',
-                    'action'     => 'send',
-                )
-            ),
+            array('/messages/inbox/([0-9]+)?', array('page'), 'messages', 'inbox', 'messages.inbox', Mvc_Router::ROUTE_REGEX),
             
-            array(
-                'type' => Mvc_Router::ROUTE_STATIC,
-                'pattern' => '/messages/remove',
-                'handler' => array(
-                    'controller' => 'messages',
-                    'action' => 'remove',
-                ),
-            ),	
-
-            array(
-                'type'     => Mvc_Router::ROUTE_REGEX,
-                'pattern'  => array
-                (
-                    'regex'  => '/messages/([0-9]+)',
-                    'params' => array ('message_id'),
-                ),
-                'handler' => array
-                (
-                    'controller' => 'messages',
-                    'action'     => 'message',
-                )
-            ),
+            /* Оправка сообщения */
+            array('/messages/send/([0-9]+)?', array('to_id'), 'messages', 'send', 'messages.send', Mvc_Router::ROUTE_REGEX),
             
-            array(
-                'type'     => Mvc_Router::ROUTE_REGEX,
-                'pattern'  => array
-                (
-                    'regex'  => '/educational_materials/edit/([0-9]+)',
-                    'params' => array ('material_id'),
-                ),
-                'handler' => array
-                (
-                    'controller' => 'educational_materials',
-                    'action'     => 'edit',
-                )
-            ),
+            /* Чтение сообщения */
+            array('/messages/read/([0-9]+)', array('message_id'), 'messages', 'message', 'messages.read', Mvc_Router::ROUTE_REGEX),
             
-            array(
-                'type' => Mvc_Router::ROUTE_STATIC,
-                'pattern' => '/users/users_list',
-                'handler' => array(
-                    'controller' => 'users',
-                    'action' => 'users_list',
-                ),
-            ),  
+            /* Удаление выбранного сообщения */
+            array('/messages/remove', 'messages', 'remove', 'messages.remove', Mvc_Router::ROUTE_STATIC),
             
-            array(
-                'type'     => Mvc_Router::ROUTE_REGEX,
-                'pattern'  => array
-                (
-                    'regex'  => '/users/edit_account/([0-9]+)',
-                    'params' => array ('user_id'),
-                ),
-                'handler' => array
-                (
-                    'controller' => 'users',
-                    'action'     => 'edit_account',
-                )
-            ),                   	
+            /* Автодополнение при выборе региона */
+            array('/ajax/autocomplete/region', 'ajax', 'autocomplete_region', 'ajax.autocomplete-region', Mvc_Router::ROUTE_STATIC),
+            
+            /* Автодополнение при выборе города */
+            array('/ajax/autocomplete/city', 'ajax', 'autocomplete_city', 'ajax.autocomplete-city', Mvc_Router::ROUTE_STATIC),
         ),
 
         /* Права доступа к разделам сайта */
@@ -591,14 +193,11 @@
 
                 'educational_materials/index_by_student',
                 'education_programs/show_available',
-                
-    		),
+            ),
 
             /* Преподаватель */
             Model_User::ROLE_TEACHER => array
             (
-                'education_students/index',
-
                 'educational_materials/index_by_teacher',  // учебные материалы, добавленные залогиненным преподавателем
                 'educational_materials/upload',
                 'educational_materials/edit',                
@@ -609,9 +208,9 @@
             /* Администратор */
             Model_User::ROLE_ADMIN => array
             (
-				'/assignment/responsible_teacher',
-				'/assignment/students_curator',
-				'/assignment',
+                '/assignment/responsible_teacher',
+                '/assignment/students_curator',
+                '/assignment',
 
                 'users/register_employee_by_admin',       // учебные материалы, доступные для слушателя
                 'users/users_list',
@@ -637,10 +236,8 @@
                 'education_programs/edit_program',
                 'education_programs/edit_discipline',
                 'education_programs/edit_section',
-
-                'education_students/index',
             )
         )
     );
 
-?>
+?> 

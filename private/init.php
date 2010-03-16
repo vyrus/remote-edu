@@ -41,57 +41,12 @@
 
     /* Загружаем конфигурацию */
     $config = require_once 'config.php';
-    $routes = require_once 'short_routes.php';
+    $routes = require_once 'routes.php';
     
+    /* Приводим маршруты к полном виду */
+    $config['routes'] = Mvc_Router::expandRoutes($routes['routes']);
     /* Добавляем в конфиг права доступа */
     $config['permissions'] = $routes['permissions'];
-    
-    /**
-    * @todo Move to Mvc_Router as static method?
-    */
-    /* Перебираем маршруты и приводим их к полному виду */
-    foreach ($routes['routes'] as $route)
-    {
-        /* Очищаем переменные, чтобы не осталось данных от других маршрутов */
-        $pattern = null;
-        $handler = null;
-        
-        /* Берём последний элемент - тип маршрута */
-        $type = array_pop($route); 
-        
-        /* В зависимости от типа выбираем шаблон */
-        switch ($type)
-        {
-            case Mvc_Router::ROUTE_STATIC:
-                $pattern = array_shift($route);
-                break;
-                
-            case Mvc_Router::ROUTE_REGEX:
-                $pattern['regex']  = array_shift($route);
-                $pattern['params'] = array_shift($route);
-                break;
-        }   
-        
-        /* Выбираем параметры обработчика */
-        $handler['controller'] = array_shift($route);
-        $handler['action']     = array_shift($route);
-        
-        /* Если осталось больше двух элементов, сейчас - параметры запроса */
-        if (sizeof($route) > 1) {
-            $handler['params'] = array_shift($route);
-        }
-        
-        /* Берём алиас */
-        $alias = array_shift($route);
-        
-        /* Сохраняем маршрут в конфиге */
-        $config['routes'][] = array(
-            'alias'   => $alias,
-            'type'    => $type,
-            'pattern' => $pattern,
-            'handler' => $handler
-        );
-    }
     
     switch ($config['mode']) {
         /* Если включён режим отладки, то... */
