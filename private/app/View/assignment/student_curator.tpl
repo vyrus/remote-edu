@@ -118,7 +118,7 @@
 <select id="students" size="10" onchange="changeButtonCaption()" style="min-width: 200px;"></select>
 <div id="selectTeacherDialog"><select id="teachersSelect" size="10"></select></div>
 <br /><a id="assignButton" href="javascript:showSelectTeacherDialog()">назначить куратора</a>&nbsp;<a href="javascript:submitChanges()">сохранить изменения</a>
-<form id="changesForm" action="/assignment/students_curator" method="post"></form>
+<form id="changesForm" action="<?php echo $this->_links->get('admin.curators') ?>" method="post"></form>
 <script type="text/javascript">
 	var studentsSelect = $('#students');
 	var selectTeacherDialog	= $('#selectTeacherDialog');

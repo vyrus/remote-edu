@@ -125,7 +125,7 @@
 <select id="responsibleTeachers" size="10" onchange="changeButtonCaption()" style="min-width: 200px;"></select>
 <br /><a id="assignButton" href="javascript:showSelectTeacherDialog()">назначить ответсвенного</a>&nbsp;<a href="javascript:submitChanges()">сохранить изменения</a>
 <div id="selectTeacherDialog"><select id="teachersSelect" size="10"></select></div>
-<form id="changesForm" action="/assignment/responsible_teacher" method="post"></form>
+<form id="changesForm" action="<?php echo $this->_links->get('admin.responsible-teachers') ?>" method="post"></form>
 <script type="text/javascript">
 	var responsibleTeachersSelect = $('#responsibleTeachers');
 	var teachersSelect = $('#teachersSelect');

@@ -18,7 +18,10 @@
 						$users->setUserCurator($i, $value);
 					}
 				}
-				$this->flash('Кураторы успешно назначены', '/assignment/students_curator', 3);
+                
+                $links = Resources::getInstance()->links;
+				$this->flash('Кураторы успешно назначены', 
+                             $links->get('admin.curators'), 3);
 			}			
 		}
 		
@@ -34,6 +37,9 @@
 				$this->render('assignment/responsible_teacher');
 			}
 			else {
+                /**
+                * @todo Переделать для использования Form_Abstract.
+                */
 				$requestData = $request->$method;
 				
 				if (isset($requestData['courses'])) {
@@ -48,7 +54,9 @@
 					}
 				}
 				
-				$this->flash('Ответсвенные преподаватели успешно назначены', '/assignment/responsible_teacher', 3);
+                $links = Resources::getInstance()->links;
+				$this->flash('Ответсвенные преподаватели успешно назначены', 
+                             $links->get('admin.responsible-teachers'), 3);
 			}
 		}
 				
