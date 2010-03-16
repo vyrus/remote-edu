@@ -23,7 +23,7 @@
     */
     $student_elements = array(
         'Доступные программы'     => $this->_links->get('student.programs'),
-        'Инструкция пользователю' => $this->_links->get('student.index')
+        'Инструкция пользователю' => $this->_links->get('help.materials')
     );
 
     /* Карта соответствия ролей пользователей и выводимых пунктов меню */

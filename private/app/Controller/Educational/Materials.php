@@ -199,11 +199,6 @@
 
             $this->render();
         }
-
-        // Функция завода на инструкции
-        public function action_instructions_by_student()
-        {
-            $this->render('users/instructions2');
-        }
     }
+
 ?>

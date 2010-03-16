@@ -85,7 +85,7 @@
             array('/admin/help', 'users', 'instructions_by_admin', 'admin.help', Mvc_Router::ROUTE_STATIC),
             
             /* Инструкции для слушателя */
-            array('/student', 'users', 'instructions_by_user', 'student.index', Mvc_Router::ROUTE_STATIC),
+            array('/student', 'pages', 'display', array('page' => 'help/instructions'), 'student.index', Mvc_Router::ROUTE_STATIC),
             
             /* Расширенный профиль слушателя */
             array('/student/extended-profile', 'users', 'profile_extended_by_student', 'student.extended-profile', Mvc_Router::ROUTE_STATIC),
@@ -105,8 +105,11 @@
             /* Отображение слушателю доступных материалов */
             array('/student/materials/show/([0-9]+)/([0-9]+)', array('discipline_id', 'app_id'), 'educational_materials', 'show', 'materials.show', Mvc_Router::ROUTE_REGEX),
             
+            /* Страничка помощи слушателю - как пользоваться материлами */
+            array('/student/help/materials', 'pages', 'display', array('page' => 'help/materials'), 'help.materials', Mvc_Router::ROUTE_STATIC),
+            
             /* Страничка помощи слушателю - как начать обучение */
-            array('/student/help/how-to-start', 'users', 'howtostart', 'student.help.how-to-start', Mvc_Router::ROUTE_STATIC),
+            array('/student/help/how-to-start', 'pages', 'display', array('page' => 'help/how-to-start'), 'help.how-to-start', Mvc_Router::ROUTE_STATIC),
             
             array('/educational_material/([0-9]+)', array('material_id'), 'educational_materials', 'get_material', '', Mvc_Router::ROUTE_REGEX),
             

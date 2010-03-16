@@ -1,20 +1,20 @@
 <?php $this->title = 'Личный кабинет';?>
 <b>Для того чтобы начать обучение Вам всего лишь нужно:</b>
 <ol>
-    <li>В разделе <a href="/applications/index_by_student/" target=blank>
+    <li>В разделе <a href="<?php echo $this->_links->get('student.apply') ?>" target=blank>
 "Новый курс"</a> выбрать интересующую Вас учебную программу;</li>
     <li>Нажав кнопку "Подать заявку", подать заявку на обучение по выбранной демонстрационной программе.<br>
     Статус заявки на обучение по выбранному направлению, можно посмотреть в разделе
-    <a href=/applications/list_by_student/" target=blank>"Мои заявки"</a>;</li>
+    <a href="<?php echo $this->_links->get('student.applications') ?>" target=blank>"Мои заявки"</a>;</li>
     <li>После этого Вы сможете получить доступ к интересующим Вас материалам в разделе
-    <a href="/education_programs/available/" target=blank>"Мои курсы"</a>.*</li>
+    <a href="<?php echo $this->_links->get('student.programs') ?>" target=blank>"Мои курсы"</a>.*</li>
 
 </ol>
 <p>
 <p>
   Если же Вы уже подавали заявку на обучение, и Ваша заявка была подтверждена,
   Вы можете сразу перейти к изучению материалов 
-<a href="/education_programs/available/" target=blank>"Мои курсы"</a>.
+<a href="<?php echo $this->_links->get('student.programs') ?>" target=blank>"Мои курсы"</a>.
 
 <br>
 <br>
@@ -25,9 +25,9 @@
 *В случае, если выбранная учебная программа - демонстрационная. Чтобы получить доступ к
 полной учебной программе потребуется:
 <ol>
-    <li>Заполнить <a href="/users/profile_extended_by_student/" target="blank">
+    <li>Заполнить <a href="<?php echo $this->_links->get('student.extended-profile') ?>" target="blank">
 "Подробную анкету слушателя"</a>;</li>
-    <li><a href="/applications/list_by_student/" target="blank">Подать заявку</a> на учебную программу;</li>
+    <li><a href="<?php echo $this->_links->get('student.applications') ?>" target="blank">Подать заявку</a> на учебную программу;</li>
     <li>Ваша заявка будет рассмотрена нашими
     <a href="http://uchimvas.ru/article899" target="blank">преподавателями</a>
     и, в случае положительного решения будет сформирован договор на обучение;</li>
@@ -37,6 +37,6 @@
     <li>После подписания договора, Вам необходимо произвести оплату за обучение
       воспользовавшись <a href="http://uchimvas.ru/article991" target="blank">квитанцией оплаты</a>;</li>
     <li>При подтверждении оплаты Вам станут доступны материалы выбранной Вами учебной
-    программы в пункте <a href="/education_programs/available/" target="blank">"Мои курсы"</a>.</li>
+    программы в пункте <a href="<?php echo $this->_links->get('student.programs') ?>" target="blank">"Мои курсы"</a>.</li>
 </ol>
 </font>

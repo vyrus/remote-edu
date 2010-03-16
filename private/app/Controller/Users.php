@@ -330,7 +330,7 @@
                     $redirect_link = 'users/index_by_admin';
                 }elseif (Model_User::ROLE_STUDENT == $udata->role)
                 {
-                    $redirect_link = 'users/instructions';
+                    $redirect_link = 'pages/help/instructions';
                 }
             }else
             {
@@ -340,6 +340,9 @@
             /* Если всё удачно, выводим сообщение об успешной авторизации 
             $msg = 'Вы успешно авторизованы';
             $this->flash($msg, $redirect_link);                           */
+            /**
+            * @todo Let's do normal redirects, ha? :)
+            */
             $this->render($redirect_link);              
         }
 
@@ -508,18 +511,6 @@
             $this->render($redirect_link);//$this->flash('Авторизация потеряна', $redirect_link);
         }   
 
-		// Функция завода на страницу "Как начать обучение?"
-        public function action_howtostart() 
-        {
-            $this->render('index/howtostart');
-        }
-
-		// Функция завода на инструкции
- 		public function action_instructions_by_user() 
-        {
-            $this->render('users/instructions');
-        }        
-
         public function action_edit_account($params) {            
             $form = Form_Profile_Edit::create('/users/edit_account/' . $params['user_id']); 
             $users = Model_User::create();
@@ -528,7 +519,6 @@
             $request = $this->getRequest();            
             $method = $form->method();
             $requestData = $request->$method;
-
             
             if (empty($requestData)) {
                 if (($userInfo = $users->getUserInfo($params['user_id'])) === FALSE) {

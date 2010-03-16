@@ -2,8 +2,8 @@
 <div class="distobzag">Дистанционное образование</div> 
                     
 <div class="dist3"> 
-<div class="dist2"><a href="http://dist.uchimvas.ru/users/howtostart/"><div>Как начать обучение?</div></a></div> 
-<div class="dist"><a href="http://dist.uchimvas.ru/users/login/"><div>Начать обучение</div></a></div> 
+<div class="dist2"><a href="<?php echo $this->_links->get('help.how-to-start') ?>"><div>Как начать обучение?</div></a></div> 
+<div class="dist"><a href="<?php echo $this->_links->get('login') ?>"><div>Начать обучение</div></a></div> 
 </div> 
  
 <div class="content-topic"><span>&nbsp;Прайс на дистанционное обучение</span></div> 
