@@ -1,67 +1,56 @@
 <?php
-	/* ссылки, доступные пользователю, независимо от прав доступа*/	    
-	$educationMaterialsAction = array(
-    );
-	
-	/* ссылки, доступные только админу*/	        
-    $admin_educationMaterialsAction = array(
-        'Список материалов'		=> 'index',
-        'Загрузить материалы' 	=> 'upload',
-    );
 
-	/* ссылки, доступные только преподу*/	        
-    $teacher_educationMaterialsAction = array(
-        'Список материалов'		=> 'index',
-        'Загрузить материалы' 	=> 'upload',        
+    /* ссылки, доступные пользователю, независимо от прав доступа*/
+    $generic_elements = array();
+
+    /* ссылки, доступные только админу */
+    $admin_elements = array(
+        'Список материалов'   => $this->_links->get('admin.materials'),
+        'Загрузить материалы' => $this->_links->get('admin.materials.upload')
     );
 
-	/* ссылки, доступные только слушателю*/	        
-    $student_educationMaterialsAction = array(
-
-        //'Список материалов'		=> 'index_by_student'
-        'Доступные программы' => 'available/',
-        'Инструкция пользователю' => 'instructions_by_student/'
+    /* ссылки, доступные только преподу */
+    $teacher_elements = array(
+        'Список материалов'    => 'index',
+        'Загрузить материалы'  => 'upload'
     );
-	
-    //Wtfi
-    $cur_ctrl = $_SERVER['REQUEST_URI'];
-	$prefix = '/educational_materials/';
 
-	$user = Model_User::create();
-	$udata = (object) $user->getAuth();
-	
-	/* вывод общих пунктов меню*/
-		  foreach ($educationMaterialsAction as $title => $controller): ?>
-		<?php if ($prefix. $controller == strtolower ($cur_ctrl)): ?>
-			<li class="headli active"><?php echo $title; ?></li>
-		<?php else: ?>
-			<li class="headli">
-				<a href="<?=$prefix.$controller ?>"><?=$title ?></a>
-			</li>
-		<?php endif; ?>
-	<?php endforeach;
-	
-	if (isset($udata->role))
-	{
-		if (Model_User::ROLE_TEACHER == $udata->role)
-		{
-			$items = 'teacher_educationMaterialsAction';
-		}elseif (Model_User::ROLE_ADMIN == $udata->role)
-		{
-			$items = 'admin_educationMaterialsAction';	
-		}elseif (Model_User::ROLE_STUDENT == $udata->role)
-		{
-			$items = 'student_educationMaterialsAction';	
-		}
-	/* вывод пунктов меню, специфических для залогиненного пользователя */
-		  foreach (${$items} as $title => $controller): ?>
-		<?php if ($controller == strtolower ($cur_ctrl)): ?>
-			<li class="active"><?php echo $title; ?></li>
-		<?php else: ?>
-			<li class="headli">
-				<a href="<?=$prefix.$controller ?>"><?=$title ?></a>
-			</li>
-		<?php endif; ?>
-	<?php endforeach; 	
-}												  
+    /* ссылки, доступные только слушателю */
+    /**
+    * @todo Разве слушатель когда-нибудь увидит эти действия из контроллера 
+    * материалов? Для слушателя этот контроллер даёт только файлы для скачивания
+    *  и всё. Кажется... :)
+    */
+    $student_elements = array(
+        'Доступные программы'     => $this->_links->get('student.programs'),
+        'Инструкция пользователю' => $this->_links->get('student.index')
+    );
+
+    /* Карта соответствия ролей пользователей и выводимых пунктов меню */
+    $_role2elems = array(
+        Model_User::ROLE_STUDENT => $student_elements,
+        Model_User::ROLE_TEACHER => $teacher_elements,
+        Model_User::ROLE_ADMIN   => $admin_elements
+    );
+
+    /* Получаем данные пользователя, если он авторизован */
+    $user = Model_User::create();
+    $udata = $user->getAuth();
+    
+    $role = (false === $udata ? false : $udata['role']);
+
+    /* Берём общие для всех пользователей элементы меню */
+    $elems = $generic_elements;
+    
+    /* Если пользователь авторизован, добавляем пункты меню для его роли */
+    if (false !== $role) {
+        $elems = array_merge($elems, $_role2elems[$role]);
+    }
+    
 ?>
+    
+<?php foreach ($elems as $title => $link): ?>
+    <li class="headli">
+        <a href="<?php echo $link ?>"><?php echo $title ?></a>
+    </li>
+<?php endforeach; ?>

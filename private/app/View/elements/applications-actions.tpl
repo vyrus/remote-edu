@@ -1,62 +1,47 @@
 <?php
-	/* ссылки, доступные пользователю, независимо от прав доступа*/	    
-	$application_action_elements = array(
-    );
-	
-	/* ссылки, доступные только админу*/	        
-    $admin_application_action_elements = array(
-        'Список поданных заявок'	=> 'index_by_admin'
-    );
-	
-	/* ссылки, доступные только преподу*/	        
-    $teacher_application_action_elements = array(
+
+    /* ссылки, доступные пользователю, независимо от прав доступа*/
+    $generic_elements = array();
+
+    /* ссылки, доступные только админу */
+    $admin_elements = array(
+        'Список поданных заявок' => $this->_links->get('admin.applications')
     );
 
-	/* ссылки, доступные только слушателю*/	        
-    $student_application_action_elements = array(
-        'Подать заявку' 	=> 'index_by_student',
-        'Мои заявки'       => 'list_by_student'
-    );
-	
-    //Wtfi
-    $cur_ctrl = $_SERVER['REQUEST_URI'];
-	$prefix = '/applications/';
+    /* ссылки, доступные только преподу */
+    $teacher_elements = array();
 
-	$user = Model_User::create();
-	$udata = (object) $user->getAuth();
-	
-	/* вывод общих пунктов меню*/
-		  foreach ($application_action_elements as $title => $controller): ?>
-		<?php if ($prefix. $controller == strtolower ($cur_ctrl)): ?>
-			<li class="headli active"><?php echo $title; ?></li>
-		<?php else: ?>
-			<li class="headli">
-				<a href="<?=$prefix.$controller ?>"><?=$title ?></a>
-			</li>
-		<?php endif; ?>
-	<?php endforeach;
-	
-	if (isset($udata->role))
-	{
-		if (Model_User::ROLE_TEACHER == $udata->role)
-		{
-			$items = 'teacher_application_action_elements';
-		}elseif (Model_User::ROLE_ADMIN == $udata->role)
-		{
-			$items = 'admin_application_action_elements';	
-		}elseif (Model_User::ROLE_STUDENT == $udata->role)
-		{
-			$items = 'student_application_action_elements';	
-		}
-	/* вывод пунктов меню, специфических для залогиненного пользователя */
-		  foreach (${$items} as $title => $controller): ?>
-		<?php if ($controller == strtolower ($cur_ctrl)): ?>
-			<li class="headli active"><?php echo $title; ?></li>
-		<?php else: ?>
-			<li class="headli">
-				<a href="<?=$prefix.$controller ?>"><?=$title ?></a>
-			</li>
-		<?php endif; ?>
-	<?php endforeach; 	
-}												  
+    /* ссылки, доступные только слушателю */
+    $student_elements = array(
+        'Подать заявку' => $this->_links->get('student.apply'),
+        'Мои заявки'    => $this->_links->get('student.applications')
+    );
+
+    /* Карта соответствия ролей пользователей и выводимых пунктов меню */
+    $_role2elems = array(
+        Model_User::ROLE_STUDENT => $student_elements,
+        Model_User::ROLE_TEACHER => $teacher_elements,
+        Model_User::ROLE_ADMIN   => $admin_elements
+    );
+
+    /* Получаем данные пользователя, если он авторизован */
+    $user = Model_User::create();
+    $udata = $user->getAuth();
+    
+    $role = (false === $udata ? false : $udata['role']);
+
+    /* Берём общие для всех пользователей элементы меню */
+    $elems = $generic_elements;
+    
+    /* Если пользователь авторизован, добавляем пункты меню для его роли */
+    if (false !== $role) {
+        $elems = array_merge($elems, $_role2elems[$role]);
+    }
+    
 ?>
+    
+<?php foreach ($elems as $title => $link): ?>
+    <li class="headli">
+        <a href="<?php echo $link ?>"><?php echo $title ?></a>
+    </li>
+<?php endforeach; ?>

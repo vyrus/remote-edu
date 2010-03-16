@@ -25,16 +25,19 @@
             array('/student/register', 'users', 'register_student', 'student.register', Mvc_Router::ROUTE_STATIC),
             
             /* Регистрация сотрудника */
-            array('/admin/employee/register', 'users', 'index_by_admin', 'employee.register', Mvc_Router::ROUTE_STATIC),
+            array('/admin/employee/register', 'users', 'index_by_admin', 'admin.register-employee', Mvc_Router::ROUTE_STATIC),
             
             /* Управление учебными программами */
-            array('/admin/programs', 'education_programs', 'index', 'programs.manage', Mvc_Router::ROUTE_STATIC),
+            array('/admin/programs', 'education_programs', 'index', 'admin.programs', Mvc_Router::ROUTE_STATIC),
             
             /* Управление учебными материалами */
-            array('/admin/materials', 'educational_materials', 'index_by_admin', 'materials.manage', Mvc_Router::ROUTE_STATIC),
+            array('/admin/materials', 'educational_materials', 'index_by_admin', 'admin.materials', Mvc_Router::ROUTE_STATIC),
+            
+            /* Загрузка учебных материалов */
+            array('/admin/materials/upload', 'educational_materials', 'upload', 'admin.materials.upload', Mvc_Router::ROUTE_STATIC),
             
             /* Управление заявками */
-            array('/admin/applications', 'applications', 'index_by_admin', 'applications.manage', Mvc_Router::ROUTE_STATIC),
+            array('/admin/applications', 'applications', 'index_by_admin', 'admin.applications', Mvc_Router::ROUTE_STATIC),
             
             /* Инструкции для слушателя */
             array('/student', 'users', 'instructions_by_user', 'student.index', Mvc_Router::ROUTE_STATIC),
@@ -43,7 +46,10 @@
             array('/student/programs', 'education_programs', 'available', 'student.programs', Mvc_Router::ROUTE_STATIC),
             
             /* Заявки слушателя */
-            array('/student/applications', 'applications', 'index_by_student', 'student.applications', Mvc_Router::ROUTE_STATIC),
+            array('/student/applications', 'applications', 'list_by_student', 'student.applications', Mvc_Router::ROUTE_STATIC),
+            
+            /* Подача заявки слушателем */
+            array('/student/apply', 'applications', 'index_by_student', 'student.apply', Mvc_Router::ROUTE_STATIC),
             
             array('/educational_material/([0-9]+)', array('material_id'), 'educational_materials', 'get_material', '', Mvc_Router::ROUTE_REGEX),
             
@@ -94,18 +100,20 @@
             /* Страница со способами оплаты */
             array('/payment', 'pages', 'display', array('page' => 'payment'), 'payment', Mvc_Router::ROUTE_STATIC),
             
-            array('/assignment/responsible_teacher', 'assignment', 'responsible_teacher', '', Mvc_Router::ROUTE_STATIC),
+            /* Назначение преподавателей, ответственных за дисциплины */
+            array('/admin/responsible-teachers', 'assignment', 'responsible_teacher', 'admin.responsible-teachers', Mvc_Router::ROUTE_STATIC),
             
-            array('/assignment/students_curator', 'assignment', 'student_curator', '', Mvc_Router::ROUTE_STATIC),
+            /* Назначение кураторов слушателей */
+            array('/admin/curators', 'assignment', 'student_curator', 'admin.curators', Mvc_Router::ROUTE_STATIC),
             
             array('/assignment', 'assignment', 'index', '', Mvc_Router::ROUTE_STATIC),
             
             /* Просмотр входящих сообщений */
-            array('/messages', 'messages', 'inbox', 'messages.inbox', Mvc_Router::ROUTE_STATIC),
+            array('/messages/inbox', 'messages', 'inbox', 'messages.inbox', Mvc_Router::ROUTE_STATIC),
             
             array('/messages/inbox/([0-9]*)', array('page'), 'messages', 'inbox', '', Mvc_Router::ROUTE_REGEX),
             
-            array('/messages/send', 'messages', 'send', '', Mvc_Router::ROUTE_STATIC),
+            array('/messages/send', 'messages', 'send', 'messages.send', Mvc_Router::ROUTE_STATIC),
             
             array('/messages/send/([0-9]*)', array('to_id'), 'messages', 'send', '', Mvc_Router::ROUTE_REGEX),
             
