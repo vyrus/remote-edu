@@ -200,8 +200,8 @@
             (
                 'educational_materials/index',  // учебные материалы, добавленные залогиненным преподавателем
                 'educational_materials/upload',
-                'educational_materials/edit',                
-                'educational_materials/remove',                
+                'educational_materials/edit',
+                'educational_materials/remove',
             ),
 
             /* Администратор */
@@ -220,9 +220,9 @@
 
                 'payments/add',
 
-                'educational_materials/index_by_admin',
+                'educational_materials/index',
                 'educational_materials/upload',
-                'educational_materials/edit',                
+                'educational_materials/edit',
                 'educational_materials/remove',
 
                 'education_programs/index',
