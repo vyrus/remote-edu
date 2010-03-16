@@ -30,6 +30,9 @@
             /* Список пользователей */
             array('/admin/users/list', 'users', 'users_list', 'users.list', Mvc_Router::ROUTE_STATIC),
             
+            /* Редактирование аккаунтов */
+            array('/admin/users/edit/([0-9]+)', array('user_id'), 'users', 'edit_account', 'users.edit', Mvc_Router::ROUTE_REGEX),
+            
             /* Регистрация сотрудника */
             array('/admin/employee/register', 'users', 'register_employee_by_admin', 'employee.register', Mvc_Router::ROUTE_STATIC),
             

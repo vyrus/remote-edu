@@ -444,8 +444,13 @@
             $date = date('Y-m-d', strtotime($date));
         }
 
-        public function action_edit_account($params) {            
-            $form = Form_Profile_Edit::create('/users/edit_account/' . $params['user_id']); 
+        public function action_edit_account($params) { 
+            $links = Resources::getInstance()->links;
+            
+            $opts = array('user_id' => $params['user_id']);
+            $action = $links->get('users.edit', $opts);           
+            $form = Form_Profile_Edit::create($action);
+             
             $users = Model_User::create();
             $this->set('form', $form);
             $this->set('rolesCaptions', $this->_roles_captions);
@@ -455,7 +460,8 @@
             
             if (empty($requestData)) {
                 if (($userInfo = $users->getUserInfo($params['user_id'])) === FALSE) {
-                    $this->flash('Пользователь не существует', '/users/users_list', 10);
+                    $this->flash('Пользователь не существует', 
+                                 $links->get('users.list'), 10);
                 }
                 
                 $form->setValue('surname', $userInfo['surname']);
@@ -472,7 +478,8 @@
                     'user_id' => $params['user_id'],
                 );
                 $users->setUserInfo($userInfo);
-                $this->flash('Данные пользователя успешно изменены', '/users/users_list', 10);
+                $this->flash('Данные пользователя успешно изменены', 
+                             $links->get('users.list'), 10);
             }
             
             $this->render('users/edit_account');

@@ -10,7 +10,7 @@
         'Инструкция'             => $this->_links->get('admin.help'),
         'Регистрация сотрудника' => $this->_links->get('employee.register'),
         'Регистрация слушателя'  => $this->_links->get('student.register'),
-        'Список пользователей'   => '/users/users_list',
+        'Список пользователей'   => $this->_links->get('users.list'),
     );
 
     /* ссылки, доступные только преподу */
