@@ -25,7 +25,7 @@
             array('/student/register', 'users', 'register_student', 'student.register', Mvc_Router::ROUTE_STATIC),
             
             /* Регистрация сотрудника */
-            array('/admin/employee/register', 'users', 'index_by_admin', 'admin.register-employee', Mvc_Router::ROUTE_STATIC),
+            array('/admin/employee/register', 'users', 'register_employee_by_admin', 'admin.register-employee', Mvc_Router::ROUTE_STATIC),
             
             /* Управление учебными программами */
             array('/admin/programs', 'education_programs', 'index', 'admin.programs', Mvc_Router::ROUTE_STATIC),
@@ -39,6 +39,9 @@
             /* Управление заявками */
             array('/admin/applications', 'applications', 'index_by_admin', 'admin.applications', Mvc_Router::ROUTE_STATIC),
             
+            /* Инструкции для администратора */
+            array('/admin/help', 'users', 'instructions_by_admin', 'admin.help', Mvc_Router::ROUTE_STATIC),
+            
             /* Инструкции для слушателя */
             array('/student', 'users', 'instructions_by_user', 'student.index', Mvc_Router::ROUTE_STATIC),
             
@@ -50,6 +53,9 @@
             
             /* Подача заявки слушателем */
             array('/student/apply', 'applications', 'index_by_student', 'student.apply', Mvc_Router::ROUTE_STATIC),
+            
+            /* Расширенный профиль слушателя */
+            array('/student/extended-profile', 'users', 'profile_extended_by_student', 'student.extended-profile', Mvc_Router::ROUTE_STATIC),
             
             array('/educational_material/([0-9]+)', array('material_id'), 'educational_materials', 'get_material', '', Mvc_Router::ROUTE_REGEX),
             
@@ -85,6 +91,10 @@
             array('/applications/change_app_status/(accepted|declined|signed)/([0-9]+)', array('new_status', 'app_id'), 'applications', 'change_app_status', '', Mvc_Router::ROUTE_REGEX),
             
             /* Активация слушателя */
+            /**
+            * @todo Маршруты и так теперь нечувствительны к слешу на конце 
+            * адреса, .* больше не нужно ставить.
+            */
             array('/activate_student/([0-9]+)/([0-9a-z]{32}).*', array('user_id', 'code'), 'users', 'activate_student', '', Mvc_Router::ROUTE_REGEX),
             
             /* Активация сотрудника */
