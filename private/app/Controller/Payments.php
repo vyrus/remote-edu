@@ -10,17 +10,20 @@
         * Добавление нового платежа
         */
         public function action_add(array $params = array()) {
-            $request = $this->getRequest();
+            $links = Resources::getInstance()->links;
             
+            $request = $this->getRequest();
+                         
             if (empty($params)) {
                 $this->flash('Не указан идентификатор заявки',
-                             '/applications/index_by_admin');
+                             $links->get('admin.applications'));
             }
             
             $app_id = intval(array_shift($params));
             
-            /* Используем REDIRECT_URI, т.к. движок работает под mod_rewrite */
-            $action = $request->server['REDIRECT_URL'];
+            $opts = array('app_id' => $app_id);
+            $action = $links->get('admin.payments.add', $opts);
+            
             $form = Form_Payment_Add::create($action);
             $this->set('form', $form);
             
@@ -42,7 +45,7 @@
                 $msg = 'Платёж успешно добавлен';
             }
             
-            $this->flash($msg, '/applications/index_by_admin');
+            $this->flash($msg, $links->get('admin.applications'));
         }                       
     }
 
