@@ -81,10 +81,10 @@
         */
         protected function get_postman() {
             $config = $this->_config['postman'];
-
-            $postman = Postman::create($this->_config['base_url'], $config);
-
-            return $postman;
+            
+            $postman = Postman::create($config);   
+            
+            return $postman; 
         }
 
         /**

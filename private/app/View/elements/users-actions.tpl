@@ -8,7 +8,7 @@
     /* ссылки, доступные только админу */
     $admin_elements = array(
         'Инструкция'             => $this->_links->get('admin.help'),
-        'Регистрация сотрудника' => $this->_links->get('admin.register-employee'),
+        'Регистрация сотрудника' => $this->_links->get('employee.register'),
         'Регистрация слушателя'  => $this->_links->get('student.register'),
         'Список пользователей'   => '/users/users_list',
     );

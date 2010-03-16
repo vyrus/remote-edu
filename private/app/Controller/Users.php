@@ -23,50 +23,27 @@
         );
 
         /**
-        * Инструкции для слушателя.
-        */
-/*
-        public function action_index_by_student() {
-            $msg = 'После регистрации и оформления договора вы можете подать заявку.
-				Для этого в пункте меню "заявки" выберите интересующее вас направление.';
-            $this->flash($msg, '/users/index_by_student/');
-
-            $this->render();
-        }
-*/
-        /**
-        * Инструкции для преподавателя.
-        */
-        public function action_index_by_teacher() {
-            $msg = 'В пункте "учебные материалы" вы можете управлять загруженными материалами и
-                    добавлять новые';
-            $this->flash($msg, '/users/index_by_teacher/');
-
-            $this->render();
-        }
-
-        /**
         * Инструкции для админа.
         */
         public function action_index_by_admin() {
+            $links = Resources::getInstance()->links;
             $msg = 'В пункте "зарегистрированные слушатели" можно просмотреть пользователей,
                     находящихся на стадии:<br />
                     "зарегистрирован",
                     "обучается",
                     и тд';
-            $this->flash($msg, '/users/index_by_admin/');
-
-            $this->render();
+            $this->flash($msg, $links->get('admin.users'));
         }
         
         /**
         * Регистрация нового слушателя (первичная).
         */
         public function action_register_student() {
+            $links = Resources::getInstance()->links;
             $request = $this->getRequest();
             
             /* Создаём объект формы с полями первичной регистрации */
-            $action = '/users/register_student/';
+            $action = $links->get('student.register');
             $form = Form_Profile_Student_Registration::create($action);
             $this->set('form', $form);
             
@@ -163,12 +140,14 @@
         * Регистрация сотрудника (преподавателя/администратора).
         */
         public function action_register_employee_by_admin() {
+            $links = Resources::getInstance()->links;
             $request = $this->getRequest();
             
             /* Создаём объект формы с полями первичной регистрации */
-            $action = '/users/register_employee_by_admin/';
+            $action = $links->get('employee.register');
             $form = Form_Profile_Employee_Registration::create($action);
             $this->set('form', $form);
+            
             /* Если данных от формы нет, предлагаем заполнить */
             $method = $form->method();
             if (empty($request->$method)) {
@@ -206,8 +185,8 @@
                 $id, $login, $email, $activation_code
             );
                                                          
-            $redirect = '/users/index_by_admin/';
-            $this->flash('Новый сотрудник успешно добавлен', $redirect);
+            $this->flash('Новый сотрудник успешно добавлен', 
+                         $links->get('admin.users'));
         }
         
         /**
@@ -216,28 +195,12 @@
         * @param array $params array(user_id, code).
         */
         public function action_activate_employee(array $params = array()) {
+            $links = Resources::getInstance()->links;
+            
             $user = Model_User::create();
-            $udata = (object) $user->getAuth();
-            if (isset($udata->role))
-            {
-                if (Model_User::ROLE_TEACHER == $udata->role)
-                {
-                    $redirect_link = '/users/index_by_teacher/';
-                }elseif (Model_User::ROLE_ADMIN == $udata->role)
-                {
-                    $redirect_link = '/users/index_by_admin/';
-                }elseif (Model_User::ROLE_STUDENT == $udata->role)
-                {
-                    $redirect_link = '/users/index_by_student/';
-                }
-            }else
-            {
-                $redirect_link = '/index/index/';
-            }
-
             $id = $params['user_id'];
             
-            /* Проверяем текущйи статус */
+            /* Проверяем текущий статус */
             $status = $user->getStatus($id);
 
             if (false === $status) {
@@ -267,18 +230,20 @@
                 $msg = 'Не удалось активировать аккаунт';
             }
             
-            $this->flash($msg, $redirect_link, false);
+            $this->flash($msg, $links->get('users.login'), false);
         }
         
         /**
         * Авторизация пользователя.
         */
         public function action_login() {
+            $links = Resources::getInstance()->links;
+            
             /* Получаем объект запроса */
             $request = $this->getRequest();
             
             /* Инициализируем обработчик формы */
-            $action = '/users/login/';
+            $action = $links->get('users.login');
             $form = Form_Profile_Login::create($action);
             $this->set('form', $form);
             
@@ -319,31 +284,25 @@
                 $this->render();
             }
             
-            $udata = (object) $user->getAuth();
-            if (isset($udata->role))
-            {
-                if (Model_User::ROLE_TEACHER == $udata->role)
-                {
-                    $redirect_link = 'users/index_by_teacher';
-                }elseif (Model_User::ROLE_ADMIN == $udata->role)
-                {
-                    $redirect_link = 'users/index_by_admin';
-                }elseif (Model_User::ROLE_STUDENT == $udata->role)
-                {
-                    $redirect_link = 'pages/help/instructions';
-                }
-            }else
-            {
-                $redirect_link = 'index/index';
-            }
+            /**
+            * @todo Куда редиректить-то надо?
+            */
+            $role2alias = array(
+                Model_User::ROLE_STUDENT => 'student.index',
+                Model_User::ROLE_TEACHER => 'index',
+                Model_User::ROLE_ADMIN   => 'admin.users'
+            );
+            
+            $udata = (object) $result;
+            $alias = $role2alias[$udata->role];
+            $link  = $links->get($alias);
 
-            /* Если всё удачно, выводим сообщение об успешной авторизации 
             $msg = 'Вы успешно авторизованы';
-            $this->flash($msg, $redirect_link);                           */
+            $this->flash($msg, $link, 0);
             /**
             * @todo Let's do normal redirects, ha? :)
             */
-            $this->render($redirect_link);              
+            //$this->render($redirect_link);              
         }
 
         /**
@@ -351,23 +310,7 @@
         */
         public function action_whoami() {
             $user = Model_User::create();
-            $udata = (object) $user->getAuth();
-            if (isset($udata->role))
-            {
-                if (Model_User::ROLE_TEACHER == $udata->role)
-                {
-                    $redirect_link = '/users/index_by_teacher/';
-                }elseif (Model_User::ROLE_ADMIN == $udata->role)
-                {
-                    $redirect_link = '/users/index_by_admin/';
-                }elseif (Model_User::ROLE_STUDENT == $udata->role)
-                {
-                    $redirect_link = '/users/index_by_student/';
-                }
-            }else
-            {
-                $redirect_link = '/index/index/';   
-            }
+            
             if (false === ($udata = $user->getAuth())) {                               
                 $this->flash('Вы не авторизованы', $redirect_link);
             }
@@ -376,7 +319,7 @@
                 'Вы авторизованы как %s (%s)',
                 $udata['login'], $udata['role']
             );
-            $this->flash($msg, $redirect_link, false);
+            $this->flash($msg, '#', false);
         }
 
         public function action_users_list() {
@@ -387,16 +330,19 @@
         }
         
         public function action_profile_extended_by_student() {
+            $links = Resources::getInstance()->links;
+            
             $user = Model_User::create();
             $udata = (object) $user->getAuth();
             
             if ($user->isExtendedProfileSet($udata->user_id)) {
-                $this->flash('Ваш профиль уже заполнен', '/users/index_by_student/');
+                $this->flash('Ваш профиль уже заполнен', 
+                             $links->get('student.index'));
             }
             
             $request = $this->getRequest();
             
-            $action = '/users/profile_extended_by_student/';
+            $action = $links->get('student.extended-profile');
             $form = Form_Profile_Student_Extended::create($action);
             $this->set('form', $form);
             
@@ -462,20 +408,18 @@
                 }
             }
             
-            function _toMysqlDate(& $date) {
-                $date = date('Y-m-d', strtotime($date));
-            }
-            
-            _toMysqlDate($profile['passport']['birthday']);
-            _toMysqlDate($profile['passport']['given_date']);
+            self::_toMysqlDate($profile['passport']['birthday']);
+            self::_toMysqlDate($profile['passport']['given_date']);
             
             if (!$user->setExtendedProfile($udata->user_id, $profile)) {
-                $this->render('users/profile_extended_by_student');
-				//$this->flash('Ошибка при сохранении профиля', '/users/index_by_student/');
+				$this->flash('Ошибка при сохранении профиля', 
+                             $links->get('student.extended-profile'), false);
             }
-
-            $this->render('applications/index_by_student');    
-            //$this->flash('Ваш профиль успешно обновлён', '/users/index_by_student/');
+                               
+            
+            $this->flash('Ваш профиль успешно обновлён', 
+                         $links->get('student.apply'), false);
+            //$this->render('applications/index_by_student');    
         }
 
         public function action_view_profile_extended($user_id) 
@@ -489,27 +433,16 @@
         */
         public function action_logout() {
             $user = Model_User::create();
-            
             $user->resetAuth();
-            $udata = (object) $user->getAuth();
-            if (isset($udata->role))
-            {
-                if (Model_User::ROLE_TEACHER == $udata->role)
-                {
-                    $redirect_link = '/users/index_by_teacher/';
-                }elseif (Model_User::ROLE_ADMIN == $udata->role)
-                {
-                    $redirect_link = '/users/index_by_admin/';
-                }elseif (Model_User::ROLE_STUDENT == $udata->role)
-                {
-                    $redirect_link = '/users/index_by_student/';
-                }
-            }else
-            {
-                $redirect_link = 'index/index';
-            }            
-            $this->render($redirect_link);//$this->flash('Авторизация потеряна', $redirect_link);
-        }   
+                     
+            $links = Resources::getInstance()->links;
+            $this->flash('Авторизация потеряна', $links->get('index'), 0);
+            //$this->render($redirect_link);
+        }    
+        
+        protected static function _toMysqlDate(& $date) {
+            $date = date('Y-m-d', strtotime($date));
+        }
 
         public function action_edit_account($params) {            
             $form = Form_Profile_Edit::create('/users/edit_account/' . $params['user_id']); 
