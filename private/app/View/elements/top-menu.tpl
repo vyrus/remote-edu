@@ -2,40 +2,44 @@
 
 	/* ссылки, доступные пользователю, независимо от прав доступа */	    
     $generic_elements = array(
-        'Главная'  => 'http://dist.uchimvas.ru/',
+        'Главная'  => $this->_links->get('index'),
         //'Ошибки' => 'error'
     );
     
     /* ссылки, доступные только админу */	        
     $admin_elements = array(
-        'Регистрация пользователя' => 'users/index_by_admin/',
-        'Формирование учебных программ' => 'education_programs/index/',
-        //'Загрузка материалов' => 'educational_materials/index_by_admin/',		
-        'Заявки на обучение' => 'applications/index_by_admin',
+        'Регистрация пользователя'      => $this->_links->get('employee.register'),
+        'Формирование учебных программ' => $this->_links->get('programs.manage'),
+        'Загрузка материалов'           => $this->_links->get('materials.manage'),
+        'Заявки на обучение'            => $this->_links->get('applications.manage'),
     );
     
     /* ссылки, доступные только преподу */	        
     $teacher_elements = array(
         'Мои курсы' => 'teacher_courses/index',
         'Мои слушатели' => 'teacher_students/index',
-        /*
-        'Пользователи' => 'users/index/',
-        'Материалы'    => 'educational_materials/index/',
+        /**
+        * @todo А что здесь за действие должно быть?
         */
+        //'Пользователи' => '#',
+        /**
+        * @todo Broken: Mvc_View_Exception, template not found
+        */
+        //'Материалы'    => '/educational_materials/index/',
     );
     
     /* ссылки, доступные только слушателю */	        
     $student_elements = array(
-        'Моё меню'       => 'users/instructions_by_user/',
-        'Мои курсы'      => 'education_programs/available/',        
+        'Моё меню'       => $this->_links->get('student.index'),
+        'Мои курсы'      => $this->_links->get('student.programs'),
         //'Материалы'      => 'educational_materials/index_by_student/',
-        'Мой новый курс' => 'applications/index_by_student/',
+        'Мой новый курс' => $this->_links->get('student.applications')
     );
 
     /* Дополнительные ссылки */
     $external_links = array(
-        'Прайс на дистанционное обучение' => 'price/',
-        'Как оплатить'                    => 'payment/',
+        'Прайс на дистанционное обучение' => $this->_links->get('price'),
+        'Как оплатить'                    => $this->_links->get('payment'),
         'Форум'                           => 'http://uchimvas.ru/forum.html'
     );
     
@@ -60,7 +64,8 @@
     if (false !== $role) {
         $unreadMessagesCount = Model_Messages::getUnreadCount($userId); 
         $messagesCaption = $unreadMessagesCount ? '<b>Сообщения (' . $unreadMessagesCount . ')</b>' : 'Сообщения';
-        $elems[$messagesCaption] = 'messages';
+        $elems[$messagesCaption] = $this->_links->get('messages.inbox');
+        
         $elems = array_merge($elems, $_role2elems[$role]);
     }
                                        
@@ -78,12 +83,12 @@
     <?php if (strpos($link, 'http') === 0): ?>
         <a href="<?php echo $link ?>"><?php echo $title ?></a>
     <?php elseif ($cur_ctrl == $link): ?>
-        <a href="/<?php echo $link ?>"><?php echo $title ?></a>
+        <a href="<?php echo $link ?>"><?php echo $title ?></a>
     <?php else: ?>
-        <a href="/<?php echo $link ?>"><?php echo $title ?></a>
+        <a href="<?php echo $link ?>"><?php echo $title ?></a>
     <?php endif; ?>
     
     <?php if ($last_key !== $title): ?>
-        <img alt="" src="/files/images/line_navigation.gif" />
+        <img alt="" src="<?php echo $this->_links->getPath('/files/images/line_navigation.gif') ?>" />
     <?php endif; ?>
 <?php endforeach; ?>

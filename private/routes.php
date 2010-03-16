@@ -9,6 +9,139 @@
         */
         'routes' => array
         (
+            /* Главная страница */
+            array(             
+                'alias'   => 'index',
+                'type'    => Mvc_Router::ROUTE_STATIC,
+                'pattern' => '/',
+                'handler' => array
+                (
+                    'controller' => 'pages',
+                    'action'     => 'display',
+                    'params'     => array('page' => 'index')
+                )
+            ),
+            
+            /* Авторизация */
+            array(             
+                'alias'   => 'login',
+                'type'    => Mvc_Router::ROUTE_STATIC,
+                'pattern' => '/login',
+                'handler' => array
+                (
+                    'controller' => 'users',
+                    'action'     => 'login'
+                )
+            ),
+            
+            /* Выход */
+            array(             
+                'alias'   => 'logout',
+                'type'    => Mvc_Router::ROUTE_STATIC,
+                'pattern' => '/logout',
+                'handler' => array
+                (
+                    'controller' => 'users',
+                    'action'     => 'logout'
+                )
+            ),
+            
+            /* Регистрация слушателя */
+            array(             
+                'alias'   => 'student.register',
+                'type'    => Mvc_Router::ROUTE_STATIC,
+                'pattern' => '/student/register',
+                'handler' => array
+                (
+                    'controller' => 'users',
+                    'action'     => 'register_student'
+                )
+            ),
+            
+            /* Регистрация сотрудников */
+            array(             
+                'alias'   => 'employee.register',
+                'type'    => Mvc_Router::ROUTE_STATIC,
+                'pattern' => '/admin/employee/register',
+                'handler' => array
+                (
+                    'controller' => 'users',
+                    'action'     => 'index_by_admin'
+                )
+            ),
+            
+            /* Управление учебными программами */
+            array(             
+                'alias'   => 'programs.manage',
+                'type'    => Mvc_Router::ROUTE_STATIC,
+                'pattern' => '/admin/programs',
+                'handler' => array
+                (
+                    'controller' => 'education_programs',
+                    'action'     => 'index'
+                )
+            ),
+            
+            /* Управление учебными материалами */
+            array(             
+                'alias'   => 'materials.manage',
+                'type'    => Mvc_Router::ROUTE_STATIC,
+                'pattern' => '/admin/materials',
+                'handler' => array
+                (
+                    'controller' => 'educational_materials',
+                    'action'     => 'index_by_admin'
+                )
+            ),
+            
+            /* Управление заявками */
+            array(             
+                'alias'   => 'applications.manage',
+                'type'    => Mvc_Router::ROUTE_STATIC,
+                'pattern' => '/admin/applications',
+                'handler' => array
+                (
+                    'controller' => 'applications',
+                    'action'     => 'index_by_admin'
+                )
+            ),
+            
+            /* Инструкции для слушателя */
+            array(             
+                'alias'   => 'student.index',
+                'type'    => Mvc_Router::ROUTE_STATIC,
+                'pattern' => '/student',
+                'handler' => array
+                (
+                    'controller' => 'users',
+                    'action'     => 'instructions_by_user'
+                )
+            ),
+            
+            /* Доступные для слушателя учебные программы */
+            array(             
+                'alias'   => 'student.programs',
+                'type'    => Mvc_Router::ROUTE_STATIC,
+                'pattern' => '/student/programs',
+                'handler' => array
+                (
+                    'controller' => 'education_programs',
+                    'action'     => 'available'
+                )
+            ),
+            
+            /* Заявки слушателя */
+            array(             
+                'alias'   => 'student.applications',
+                'type'    => Mvc_Router::ROUTE_STATIC,
+                'pattern' => '/student/applications',
+                'handler' => array
+                (
+                    'controller' => 'applications',
+                    'action'     => 'index_by_student'
+                )
+            ),
+            
             array (
                 'type'     => Mvc_Router::ROUTE_REGEX,
                 'pattern'  => array
@@ -274,7 +407,8 @@
 
             /* Страница с ценами */
             array(
-                'type' => Mvc_Router::ROUTE_STATIC,
+                'alias'   => 'price',
+                'type'    => Mvc_Router::ROUTE_STATIC,
                 'pattern' => '/price',
                 'handler' => array
                 (
@@ -286,7 +420,8 @@
 
             /* Страница со способами оплаты */
             array(
-                'type' => Mvc_Router::ROUTE_STATIC,
+                'alias'   => 'payment',
+                'type'    => Mvc_Router::ROUTE_STATIC,
                 'pattern' => '/payment',
                 'handler' => array
                 (
@@ -323,24 +458,17 @@
 				),
 			),
 			
+            /* Просмотр входящих сообщений */
 			array(
+                'alias' => 'messages.inbox',
 			    'type' => Mvc_Router::ROUTE_STATIC,
 			    'pattern' => '/messages',
-			    'handler' => array(
-			        'controller' => 'messages',
-			        'action' => 'index',
-			    ),
-			),
-			
-			array(
-			    'type' => Mvc_Router::ROUTE_STATIC,
-			    'pattern' => '/messages/inbox',
 			    'handler' => array(
 			        'controller' => 'messages',
 			        'action' => 'inbox',
 			    ),
 			),
-
+			
             array(
                 'type'     => Mvc_Router::ROUTE_REGEX,
                 'pattern'  => array

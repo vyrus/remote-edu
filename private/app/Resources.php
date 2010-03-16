@@ -36,10 +36,10 @@
         * @return Mvc_Router
         */
         protected function get_router() {
-            $config = $this->_config['routes'];
-
-            $router = Mvc_Router::create($config);
-
+            $router = Mvc_Router::create();
+            
+            $router->addRoutes($this->_config['routes']);
+            
             return $router;
         }
 
@@ -95,6 +95,20 @@
         protected function get_view() {
             $view = Mvc_View::create(VIEWS . DS, LAYOUTS . DS, ELEMENTS . DS);
             return $view;
+        }
+        
+        /**
+        * Инициализация менеджера ссылок.
+        * 
+        * @return Mvc_Links
+        */
+        protected function get_links() {
+            $links = Mvc_Links::create();
+            
+            $links->setBaseUrl($this->_config['base_url'])
+                  ->addRoutes($this->_config['routes']);
+            
+            return $links;
         }
     }
 
