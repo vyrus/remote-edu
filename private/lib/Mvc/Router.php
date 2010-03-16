@@ -35,35 +35,25 @@
         protected $_routes = array();
         
         /**
-        * Метод-конструктор класса.
-        * 
-        * @param  array $routes Список маршрутов.
-        * @return void
-        */
-        public function __construct(array $routes = array()) {                 
-            $this->addRoutes($routes);
-        }
-        
-        /**
         * Создание экземпляра класса.
         * 
-        * @param  array $routes Список маршрутов.
         * @return Mvc_Router
         */
-        public static function create(array $routes = array()) {
-            return new self($routes);
+        public static function create() {
+            return new self();
         }
         
         /**
         * Добавление списка маршрутов.
         * 
-        * @param  array $routes Список маршрутов.
+        * @param  array   $routes Список маршрутов.
         * @return void
         */
         public function addRoutes(array $routes = array()) {
-            foreach ($routes as $route) {
+            foreach ($routes as $route)
+            {                    
                 $this->addRoute($route['type'], $route['pattern'],
-                                $route['handler']);
+                                                $route['handler']);
             }
         }
         
@@ -86,10 +76,11 @@
         * В соответствии с заданными маршрутами определяет, какому обработчику
         * надо передать управление.
         * 
-        * @param  Http_Request $request Объект запроса.
+        * @param  Http_Request $request   Объект запроса.
+        * @param  string       $base_path
         * @return array|false Указатель на обработчик либо false.
         */
-        public function dispatch(Http_Request $request) {
+        public function dispatch(Http_Request $request, $base_path) {
             /**
             * @todo Делать urldecode?
             */
@@ -97,6 +88,10 @@
             $server = $request->server;
             if (isset($server['REDIRECT_URL'])) {
                 $path = strtolower($server['REDIRECT_URL']);
+                
+                /* Удаляем базовую часть пути */
+                $base_len = strlen($base_path);
+                $path = substr($path, $base_len);
             } else {
                 $path = '/';
             }
@@ -175,8 +170,9 @@
             */
             $params = array();
             
-            /* Обрезаем с конца строки запроса символ разделителя */
+            /* Обрезаем с конца запроса и шаблона символ разделителя */
             $path = rtrim($path, self::URL_DELIMITER);
+            $pattern = rtrim($pattern, self::URL_DELIMITER);
             
             /* Если запрос совпадает с шаблоном, то... */
             if ($path == $pattern) {
@@ -202,7 +198,7 @@
         )
         {
             /* Сравниваем регулярное выражение со строкой запроса */
-            $regex = '#^' . $regex . '$#i';
+            $regex = '#^' . $regex . '(?:/)?$#i';
             $num_matches = preg_match($regex, $path, $matches);
             
             /* Если строка запроса не совпала с регулярным выражением, то... */
