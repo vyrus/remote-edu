@@ -6,7 +6,7 @@
     /* ссылки, доступные только админу */
     $admin_elements = array(
         'Список материалов'   => $this->_links->get('admin.materials'),
-        'Загрузить материалы' => $this->_links->get('admin.materials.upload')
+        'Загрузить материалы' => $this->_links->get('materials.upload')
     );
 
     /* ссылки, доступные только преподу */

@@ -64,7 +64,10 @@
             array('/admin/materials', 'educational_materials', 'index_by_admin', 'admin.materials', Mvc_Router::ROUTE_STATIC),
             
             /* Загрузка учебных материалов */
-            array('/admin/materials/upload', 'educational_materials', 'upload', 'admin.materials.upload', Mvc_Router::ROUTE_STATIC),
+            array('/admin/materials/upload', 'educational_materials', 'upload', 'materials.upload', Mvc_Router::ROUTE_STATIC),
+                      
+            /* Загрузка учебных материалов */
+            array('/admin/materials/remove', 'educational_materials', 'remove', 'materials.remove', Mvc_Router::ROUTE_STATIC),
             
             /* Управление заявками */
             array('/admin/applications', 'applications', 'index_by_admin', 'admin.applications', Mvc_Router::ROUTE_STATIC),
@@ -107,18 +110,15 @@
             
             /* Отображение слушателю доступных материалов */
             array('/student/materials/show/([0-9]+)/([0-9]+)', array('discipline_id', 'app_id'), 'educational_materials', 'show', 'materials.show', Mvc_Router::ROUTE_REGEX),
-            
+                                 
+            /* Скачивание материалов */
+            array('/student/materials/download/([0-9]+)', array('material_id'), 'educational_materials', 'get_material', 'materials.download', Mvc_Router::ROUTE_REGEX),
+                                    
             /* Страничка помощи слушателю - как пользоваться материлами */
             array('/student/help/materials', 'pages', 'display', array('page' => 'help/materials'), 'help.materials', Mvc_Router::ROUTE_STATIC),
             
             /* Страничка помощи слушателю - как начать обучение */
             array('/student/help/how-to-start', 'pages', 'display', array('page' => 'help/how-to-start'), 'help.how-to-start', Mvc_Router::ROUTE_STATIC),
-            
-            array('/educational_material/([0-9]+)', array('material_id'), 'educational_materials', 'get_material', '', Mvc_Router::ROUTE_REGEX),
-            
-            array('/educational_materials/upload', 'educational_materials', 'upload', '', Mvc_Router::ROUTE_STATIC),
-            
-            array('/educational_materials/remove', 'educational_materials', 'remove', '', Mvc_Router::ROUTE_STATIC),
             
             /* Активация слушателя */
             /**

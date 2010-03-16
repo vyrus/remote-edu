@@ -386,7 +386,7 @@
 </div>
 
 <h3>Загрузить материалы</h3>
-<form id="educationalMaterials" name="educationalMaterials" method="post" action="/educational_materials/upload" enctype="multipart/form-data">
+<form id="educationalMaterials" name="educationalMaterials" method="post" action="<?php echo $this->_links->get('materials.upload') ?>" enctype="multipart/form-data">
 </form>
 <a href="javascript:createEducationalMaterial(null, null, null, null, null, null)">добавить материал</a>
 <a href="javascript:document.educationalMaterials.submit()">загрузить</a>

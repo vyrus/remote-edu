@@ -1,26 +1,5 @@
 <?php
     class Controller_Educational_Materials extends Mvc_Controller_Abstract {
-        private $templatesPostfix = '';
-
-        public function __construct (Http_Request $request) {
-            $user = Model_User::create();
-            $udata = (object) $user->getAuth();
-
-            if (isset($udata->role)) {
-                if (Model_User::ROLE_TEACHER == $udata->role) {
-                    $this->templatePostfix = '_by_admin';
-                }
-                elseif (Model_User::ROLE_ADMIN == $udata->role) {
-                    $this->templatePostfix = '_by_admin';
-                }
-                elseif (Model_User::ROLE_STUDENT == $udata->role) {
-                    $this->templatePostfix = '_by_student';
-                }
-            }
-
-            parent::__construct ($request);
-        }
-
         public function action_edit($params) {
             $form = Form_Materials_Edit::create('/educational_materials/edit/' . $params['material_id']); 
             $educationalMaterials = Model_Educational_Materials::create ();
@@ -66,7 +45,7 @@
             $this->set('disciplineID', (isset ($requestData['disciplinesSelect'])) ? ($requestData['disciplinesSelect']) : (-1));
             $this->set('sectionID',	(isset ($requestData['sectionsSelect'])) ? ($requestData['sectionsSelect']) : (-1));
             $this->set('materials',	$educationalMaterials->getMaterials ($requestData));
-            $this->render('educational_materials/index' . $this->templatePostfix);
+            $this->render('educational_materials/index_by_admin');
         }
 
         public function action_index_by_admin () {
@@ -91,7 +70,14 @@
                 }
             }
 
-            $this->flash($removeSuccess ? 'Материалы успешно удалены' : 'Некоторые материалы не были удалены(возможно, Вы предприняли попытку удалить материал, который не был загружен Вами)', '/educational_materials/index' . $this->templatesPostfix, 10);
+            $links = Resources::getInstance()->links;
+            
+            $this->flash(
+                $removeSuccess ? 
+                    'Материалы успешно удалены' : 
+                    'Некоторые материалы не были удалены(возможно, Вы предприняли попытку удалить материал, который не был загружен Вами)', 
+                $lins->get('admin.materials'), 10
+            );
         }
 
         public function action_upload () {
@@ -102,9 +88,13 @@
             $this->set ('sections', 	$educationPrograms->getDisciplinesSections 		());
             $this->set ('invalidMaterialsForms', array ());
 
-            $request	= $this->getRequest ();
-            $form 		= Form_Materials_Upload::create ('/educational_materials/upload');
+            
+            $links = Resources::getInstance()->links;
+            
+            $action = $links->get('materials.upload');
+            $form = Form_Materials_Upload::create ($action);
 
+            $request        = $this->getRequest ();
             $method 		= $form->method ();
             $requestData	= $request->$method;
             if (empty ($requestData)) {
@@ -142,9 +132,11 @@
                 $this->render('educational_materials/upload');
             }
 
+            $links = Resources::getInstance()->links;
+            
             $this->flash (
                 'Все материалы успешно загружены',
-                '/educational_materials/index' . $this->templatesPostfix,
+                $links->get('admin.materials'),
                 3
             );
         }
@@ -158,17 +150,19 @@
         * Отображение доступных материалов.
         */
         public function action_show(array $params = array()) {
+            $links = Resources::getInstance()->links;
+            
             if (!isset($params['discipline_id']) ||
                 is_int ($params['discipline_id']))
             {
                 $this->flash('Не указан идентификатор дисциплины',
-                             '/education_programs/available/');
+                             $links->get('student.programs'));
             }
 
             if (!isset($params['app_id']) || is_int($params['app_id']))
             {
                 $this->flash('Не указан идентификатор заявки',
-                             '/education_programs/available/');
+                             $links->get('student.programs'));
             }
 
             $disc_id = intval($params['discipline_id']);
