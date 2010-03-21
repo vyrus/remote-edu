@@ -3,51 +3,51 @@
 	$courses = $this->courses;
 	$disciplines = $this->disciplines;
 	$sections = $this->sections;
-	
+
 	foreach ($sections as $i => $disciplineSections) {
 		foreach ($disciplineSections as $j => $section) {
 			$sections[$i][$j]['title'] = 'Раздел ' . $section['number'] . ': ' . $section['title'];
 		}
 	}
-	
+
 	$programID = $this->programID;
 	$disciplineID = $this->disciplineID;
 	$sectionID = $this->sectionID;
 	$materials = $this->materials;
-	$materialTypes = Model_Educational_Materials::$MATERIAL_TYPES_CAPTIONS;	
+	$materialTypes = Model_Educational_Materials::$MATERIAL_TYPES_CAPTIONS;
 ?>
 <style type="text/css">
 	tr.odd, th.odd {
 		background-color: #ECECEC;
 	}
-	
+
 	tr.even, th.even {
 		background-color: #FFFFFF;
 	}
-	
+
 	th {
 		font-weight 	: bold;
 	}
-	
+
 	td.description, th.description {
 		width 			: 300px;
 	}
-	
+
 	.materials th,
 	.materials td {
 		padding 		: 2px 0px;
 	}
-	
+
 	.materials td {
 		padding-left 	: 15px;
 	}
-	
+
 	.materials td.checkbox,
 	.materials th.checkbox {
 		text-align		: center;
 		padding 		: 3px;
 	}
-	
+
 	.materials td.edit, .materials td.type,
 	.materials th.edit, .materials th.type {
 	    text-align: center;
@@ -56,7 +56,7 @@
 </style>
 <script type="text/javascript">
 	var PROGRAMS			= [];
-	PROGRAMS['direction']	= [<?php $delimiter = ''; foreach ($directions as $i => $direction): echo $delimiter; ?>{'id':<?php echo $direction['program_id']; ?>,'title':'<?php echo $direction["title"]; $delimiter = ","; ?>'}<?php endforeach; ?>];	
+	PROGRAMS['direction']	= [<?php $delimiter = ''; foreach ($directions as $i => $direction): echo $delimiter; ?>{'id':<?php echo $direction['program_id']; ?>,'title':'<?php echo $direction["title"]; $delimiter = ","; ?>'}<?php endforeach; ?>];
 	PROGRAMS['course'] 		= [<?php $delimiter = ''; foreach ($courses as $i => $course): echo $delimiter; ?>{'id':<?php echo $course['program_id']; ?>,'title':'<?php echo $course["title"]; $delimiter = ","; ?>'}<?php endforeach; ?>];
 
 	var DISCIPLINES = {
@@ -70,31 +70,31 @@
 	<?php echo $sectionsGroupsDelimiter; $sectionsGroupsDelimiter = ','; ?>"<?php echo $disciplineSection[0]['discipline_id']; ?>": [<?php $delimiter = ""; foreach ($disciplineSection as $j => $section): echo $delimiter ?>{"id":<?php echo $section['section_id']; ?>,"title":"<?php echo $section['title']; ?>","parentID":<?php echo $disciplineSection[0]['discipline_id']; ?>}<?php ; $delimiter =","; endforeach; ?>]
 	<?php endforeach; ?>
 	};
-	
+
 	function switchProgramsType () {
 		clearSelect (programsSelect);
 		clearSelect (disciplinesSelect);
 		clearSelect (sectionsSelect);
-		
+
 		for (var i = 0; i < PROGRAMS[programsTypeSelect.val ()].length; i++) {
 			programsSelect.append ('<option value="' + PROGRAMS[programsTypeSelect.val ()][i].id + '">' + PROGRAMS[programsTypeSelect.val ()][i].title + '</option>');
 		}
 	}
-	
+
 	function clearSelect (select) {
 		$ ('option:gt(0)', select).remove ();
 	}
-	
+
 	function updateSelect (parentSelect, select, items, clear) {
 		for (var i = 0; i < clear.length; i++) {
 			clearSelect (clear[i]);
 			$ (clear[i]).attr ('disabled', 'disabled');
 		}
-		
+
 		if (($ (parentSelect).val () != -1) && (clear.length)) {
 			$ (clear[0]).attr ('disabled', '');
 		}
-		
+
 		var parentSelectOptions	= $ (parentSelect).attr ('options');
 		var selectItems 		= items[parentSelectOptions[$ (parentSelect).attr ('selectedIndex')].value];
 		if (selectItems) {
@@ -103,10 +103,10 @@
 			}
 		}
 	}
-	
+
 	function setAllCheckboxesStatus (form) {
 		$ ('#' + form + ' :checkbox').attr ('checked', $ ("#" + form + " :checkbox[name='all']").attr ('checked'));
-	}	
+	}
 </script>
 <h3>Список материалов</h3>
 <nobr>

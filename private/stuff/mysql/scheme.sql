@@ -247,4 +247,14 @@ ALTER TABLE `materials_states` CHANGE `state` `state` enum('downloaded','last') 
 alter table materials add type enum('lecture','practice','check') default 'lecture';
 alter table `materials` add uploader int;
 
+--
+-- Добавляем структуру таблицы `checkpoints`
+--
+
+CREATE TABLE IF NOT EXISTS `checkpoints` (
+  `section_id` int(11) NOT NULL,
+  `student_id` int(11) NOT NULL,
+  PRIMARY KEY (`section_id`,`student_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
 SET character_set_client = @saved_cs_client;

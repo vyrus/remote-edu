@@ -59,16 +59,6 @@ VALUES
 (3, 'Обзор средств, используемых в сайтостроении', 'material_3.txt', 'text/plain', '5de2ad87f44b00204c347c1e77471bbc', 5, 'lecture', 2);
 
 --
--- Дамп данных таблицы `materials_states`
---
-
-INSERT INTO `materials_states` (`student_id`, `material_id`, `state`)
-VALUES
-(3, 1, NULL),
-(3, 2, NULL),
-(3, 3, NULL);
-
---
 -- Дамп данных таблицы `applications`
 --
 
@@ -85,3 +75,20 @@ VALUES
 INSERT INTO `payments` (`payment_id`, `app_id`, `amount`, `created`)
 VALUES
 (NULL ,  '2',  '13000', NOW());
+
+--
+-- Дамп данных таблицы `checkpoints` для проверки работы контрольных точек
+-- (на ограничение доступа студентов к материалам)
+--
+
+INSERT INTO `checkpoints` (`section_id`, `student_id`) VALUES
+(6, 3);
+
+--
+-- Дополнительные данные таблицы `materials` для проверки работы контрольных точек
+--
+
+INSERT INTO `materials` (`id`, `description`, `original_filename`, `mime_type`, `filename`, `section`, `type`, `uploader`) VALUES
+(4, 'Структура HTML-документа', 'Структура HTML-документа.txt', 'text/plain', '1682638d372b60e2a5b621ab7284aa66', 6, 'lecture', 1),
+(5, 'Основы форматирования HTML-документа', 'Основы форматирования HTML-документа..txt', 'text/plain', '48f3cfad682de5dfefb875c050068ef4', 6, 'lecture', 1),
+(6, 'Пространственные отношения', 'Пространственные отношения.txt', 'text/plain', '30a3bfb92a1cbfc1d76d5869b31dfce9', 7, 'lecture', 1);

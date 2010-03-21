@@ -4,9 +4,9 @@
 <?php foreach ($this->sections as $s): ?>
     <?php $i++; ?>
     <?php $s = (object) $s; ?>
-    <h2 class="title_section">Раздел <?php echo $i .'. ' . $s->title ?></h2>
+    <h2 class="title_section">Раздел <?php echo $i . '. ' . $s->title ?></h2>
+    <?php if (empty($this->materials[$s->section_id])) continue; ?>
     <h3 class="title_materials">Лекционный материал</h3>
-    <?php if (!isset($this->materials[$s->section_id])) continue; ?>
         <ul class="materials">
         <?php foreach ($this->materials[$s->section_id] as $m): ?>
             <?php if ('last' == $m['state']): ?>
@@ -16,6 +16,6 @@
             <?php else: ?>
             <li><a href="<?php echo $this->_links->get('materials.download', array('material_id' => $m['id'])) ?>"><?php echo $m['description'] ?></a>
             <?php endif; ?>
-            <?php endforeach; ?>
+        <?php endforeach; ?>
         </ul>
 <?php endforeach; ?>

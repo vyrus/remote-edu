@@ -6,13 +6,14 @@
         protected $_tables = array(
             'applications'      => 'applications',
             'apps_history'      => 'apps_history',
-            'programs'          => 'programs',
+            'checkpoints'       => 'checkpoints',
             'disciplines'       => 'disciplines',
-            'users'             => 'users',
-            'payments'          => 'payments',
-            'sections'          => 'sections',
             'materials'         => 'materials',
-            'materials_states'  => 'materials_states'
+            'materials_states'  => 'materials_states',
+            'payments'          => 'payments',
+            'programs'          => 'programs',
+            'sections'          => 'sections',
+            'users'             => 'users',
         );
     }
 

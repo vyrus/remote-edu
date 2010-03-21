@@ -185,22 +185,21 @@
                     ':old_state' => 'last',
                     ':new_state' => 'downloaded'
                 );
-                $stmt = $this->prepare($sql);
-                $stmt->execute($params);
+                $this->prepare($sql)
+                    ->execute($params);
 
                 $sql = '
-                    UPDATE  ' . $this->_tables['materials_states'] . '
-                    SET     `state` = :new_state
-                    WHERE   material_id = :material_id AND
-                            student_id = :student_id
+                    INSERT INTO ' . $this->_tables['materials_states'] . '
+                    (`student_id`, `material_id`, `state`)
+                    VALUES (:student_id, :material_id, :state)
                 ';
                 $params = array(
-                    ':material_id' => $material_id,
                     ':student_id' => $udata->user_id,
-                    ':new_state' => 'last'
+                    ':material_id' => $material_id,
+                    ':state' => 'last'
                 );
-                $stmt = $this->prepare($sql);
-                $stmt->execute($params);
+                $this->prepare($sql)
+                    ->execute($params);
             }
 
             header('Content-Disposition: attachment; filename="' . $fileInfo[0]['original_filename']) . '"';
@@ -218,8 +217,8 @@
         public function getAllBySections(array $section_ids) {
             $sql = '
                 SELECT  *
-                FROM    ' . $this->_tables['materials'] . ' m 
-                LEFT JOIN ' . $this->_tables['materials_states'] . ' ms 
+                FROM    ' . $this->_tables['materials'] . ' m
+                LEFT JOIN ' . $this->_tables['materials_states'] . ' ms
                 ON      m.id = ms.material_id AND
                         ms.student_id = :student_id
                 WHERE   m.section = :section_id
@@ -238,6 +237,42 @@
                     $materials[$id] = $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
             }
 
+            return $materials;
+        }
+
+        /**
+        * Получение списка доступных материалов по идентификатору дисциплины.
+        *
+        * @param  int $disc_id Идентификатор дисциплины.
+        * @return array
+        */
+        public function getAllByDiscipline($disc_id) {
+            $sql = '
+                SELECT section, number, id, description, state
+                FROM ' . $this->_tables['sections'] . ' s
+                LEFT JOIN ' . $this->_tables['checkpoints'] . ' c
+                    ON  s.section_id = c.section_id
+                LEFT JOIN ' . $this->_tables['materials'] . ' m
+                    ON  s.section_id = m.section
+                LEFT JOIN ' . $this->_tables['materials_states'] . ' ms
+                    ON  m.id = ms.material_id
+                WHERE   discipline_id = :discipline_id AND (
+                        c.student_id = :student_id OR
+                        s.number = 1)
+                ORDER BY number ASC
+            ';
+
+//`section_id`, `number`
+
+            $udata = (object) Model_User::create()->getAuth();
+            $params = array(
+                ':discipline_id' => $disc_id,
+                ':student_id' => $udata->user_id
+            );
+            $stmt = $this->prepare($sql);
+            $stmt->execute($params);
+
+            $materials = $stmt->fetchAll(Db_Pdo::FETCH_GROUP|Db_Pdo::FETCH_ASSOC);
             return $materials;
         }
     }

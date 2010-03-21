@@ -192,7 +192,7 @@
             }
 
             $material = Model_Educational_Materials::create();
-            $materials = $material->getAllBySections($section_ids);
+            $materials = $material->getAllByDiscipline($disc_id);
 
             $this->set('discipline', $disc_data);
             $this->set('sections', $sections);
