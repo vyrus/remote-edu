@@ -673,7 +673,7 @@
                     }
 
                     $programData = $program->getProgramInfo($a->program_id);
-                    $programCost = $program_data['cost'];
+                    $programCost = $programData['cost'];
 
                     $totalCost = round($a->coef / 100, 3) * $programCost;
 
