@@ -1,5 +1,6 @@
 <?php $this->title = $this->discipline['title'] ?>
 <h1 class="title_discipline"><?php echo $this->discipline['title'] ?></h1>
+<p style="margin: 1em 0;"><a href="<?php echo $this->_links->get('messages.send') . $this->discipline['responsible_teacher']; ?>">Написать сообщение преподавателю</a></p>
 <?php $i = 0; ?>
 <?php foreach ($this->sections as $s): ?>
     <?php $i++; ?>

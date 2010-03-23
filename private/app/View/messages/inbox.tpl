@@ -8,24 +8,24 @@
     tr.odd {
         background-color: #ECECEC;
     }
-    
+
     tr.even {
         background-color: #FFFFFF;
     }
-    
+
     tr.unread {
         font-weight: bold;
     }
-    
+
     td.subject, th.subject {
         width: 200px;
     }
-    
+
     td.author, th.author {
         width: 150px;
         text-align: center;
     }
-    
+
     td.time, th.time {
         width: 125px;
         text-align: center;
@@ -34,9 +34,9 @@
 
 <script type="text/javascript">
     function setAllCheckboxesStatus(form) {
-    	$('#' + form + ' :checkbox').attr('checked', $("#" + form + " :checkbox[name='all']").attr('checked'));
+        $('#' + form + ' :checkbox').attr('checked', $("#" + form + " :checkbox[name='all']").attr('checked'));
     }
-    
+
     function submitForm() {
         $('#removeMessagesForm').submit();
     }
@@ -54,10 +54,10 @@
 </form>
 <?php
     $pagesNumber = floor($messagesTotalNumber / Model_Messages::INBOX_MESSAGES_ON_PAGE) + ($messagesTotalNumber % Model_Messages::INBOX_MESSAGES_ON_PAGE ? 1 : 0);
-    
+
     for ($i = 0; $i < $pagesNumber; $i++) {
         if ($i == $page) {
-            echo '[' . ($i + 1) . ']&nbsp;';            
+            echo '[' . ($i + 1) . ']&nbsp;';
         }
         else {
             echo '<a href="' . $this->_links->get('messages.inbox', array('page' => $i)) . '">' . ($i + 1) . '</a>&nbsp;';

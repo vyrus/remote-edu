@@ -6,11 +6,11 @@
     td.caption {
         text-align: right;
     }
-    
+
     td.field {
         max-width: 400px;
     }
-    
+
     td.cation, td.field {
         vertical-align: top;
     }

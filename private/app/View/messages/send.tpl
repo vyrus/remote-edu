@@ -7,7 +7,7 @@
     td.caption {
         text-align: right;
     }
-    
+
     td.cation, td.field {
         vertical-align: top;
     }
@@ -17,58 +17,58 @@
     var recipients = {
 <?php foreach ($recipients as $i => $recipient): ?>
         '<?php echo $i; ?>':{'name':'<?php echo $recipient['recipient_name']; ?>','desc':"<?php foreach ($recipient['recipient_description'] as $i => $desc) {echo $desc . '<br />';} ?>"},
-<?php endforeach; ?>        
+<?php endforeach; ?>
     };
-    
+
     function showRecipientDescription() {
         var recId = recipientsSelect.val();
-        
+
         if (recId) {
             $('#recipientDescription').html(recipients[recId].desc);
             recipientDescription.dialog('open');
         }
     }
-    
+
     function hideRecipientDescription() {
         recipientDescription.dialog('close');
     }
-    
+
     function fillRecipientsSelect() {
-		$.each(recipients, function (key, value) {var option = new Option(value.name, key); recipientsSelect.append(option);});				    
+        $.each(recipients, function (key, value) {var option = new Option(value.name, key); recipientsSelect.append(option);});
     }
-    
+
     function showSelectRecipientDialog() {
-		selectRecipientDialog.dialog(
-			'option',
-			'buttons',
-			{
-			    'Выбрать': selectRecipient,
-			    'Информация' : showRecipientDescription
-			}
-		);
-		selectRecipientDialog.dialog('open');        
+        selectRecipientDialog.dialog(
+            'option',
+            'buttons',
+            {
+                'Выбрать': selectRecipient,
+                'Информация' : showRecipientDescription
+            }
+        );
+        selectRecipientDialog.dialog('open');
     }
-    
+
     function selectRecipient() {
         recipientId.val(recipientsSelect.val());
         selectRecipientButton.text(recipients[recipientsSelect.val()].name);
         selectRecipientDialog.dialog('close');
     }
-    
+
     function initRecipientField() {
         var recId = recipientId.val();
-        
+
         if (recId) {
             selectRecipientButton.text(recipients[recId].name);
         }
     }
-    
+
     function submitForm() {
         if (!recipientId.val()) {
             alert('Не выбран адресат');
             return;
         }
-        
+
         $('#sendMessageForm').submit();
     }
 </script>
@@ -99,31 +99,31 @@
 <script type="text/javascript">
     var recipientId = $("#sendMessageForm > :input[name='recipient']");
     var recipientsSelect = $('#recipientsSelect');
-	var selectRecipientDialog = $('#selectRecipientDialog');
-	var selectRecipientButton = $('#selectRecipientButton');
-	var recipientDescription = $('#recipientDescription');
-	
-	recipientDescription.dialog(
-		{
-			autoOpen: false,
-			draggable : false,
-			modal: true,
-			resizable: false,
-			title: 'Информация о пользователе',
-			width: 'auto',
-		}
-	);
-	
-	selectRecipientDialog.dialog(
-		{
-			autoOpen: false,
-			draggable : false,
-			modal : true,
-			resizable: false,
-			title: 'Выбор адресата',
-			width: 'auto'
-		}
-	);
-	fillRecipientsSelect();
-	initRecipientField();	
+    var selectRecipientDialog = $('#selectRecipientDialog');
+    var selectRecipientButton = $('#selectRecipientButton');
+    var recipientDescription = $('#recipientDescription');
+
+    recipientDescription.dialog(
+        {
+            autoOpen: false,
+            draggable : false,
+            modal: true,
+            resizable: false,
+            title: 'Информация о пользователе',
+            width: 'auto',
+        }
+    );
+
+    selectRecipientDialog.dialog(
+        {
+            autoOpen: false,
+            draggable : false,
+            modal : true,
+            resizable: false,
+            title: 'Выбор адресата',
+            width: 'auto'
+        }
+    );
+    fillRecipientsSelect();
+    initRecipientField();
 </script>
