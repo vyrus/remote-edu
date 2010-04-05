@@ -99,11 +99,11 @@
             /* Назначение кураторов слушателей */
             array('/admin/curators', 'assignment', 'student_curator', 'admin.curators', Mvc_Router::ROUTE_STATIC),
             
-            /* Инструкции для администратора */
-            /**
-            * @todo Приделать инструкцию.
-            */
-            array('/admin/help', 'users', 'instructions_by_admin', 'admin.help', Mvc_Router::ROUTE_STATIC),
+            /* Инструкции для администратора по регистрации пользователей */
+            array('/admin/help/registration', 'pages', 'display',  array('page' => 'help/registration'), 'help.registration', Mvc_Router::ROUTE_STATIC),
+            
+            /* Инструкции для администратора по формированию программ  */
+            array('/admin/help/programs', 'pages', 'display',  array('page' => 'help/programs'), 'help.programs', Mvc_Router::ROUTE_STATIC),
             
             /* Инструкции для слушателя */
             array('/student', 'pages', 'display', array('page' => 'help/instructions'), 'student.index', Mvc_Router::ROUTE_STATIC),

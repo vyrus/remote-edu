@@ -283,3 +283,15 @@ ul.materials li
     margin: 0.5em 0;
     padding: 0.5em;
 }
+
+/* Help pages */
+
+.help h1, h2, h3 {
+    color: #000;
+}
+
+.help p {
+    color: #000;
+    font: 13.34px helvetica,arial,freesans,clean,sans-serif;
+    line-height: 1.3em !important;
+}

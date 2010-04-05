@@ -7,10 +7,10 @@
 
     /* ссылки, доступные только админу */
     $admin_elements = array(
-        'Инструкция'             => $this->_links->get('admin.help'),
         'Регистрация сотрудника' => $this->_links->get('employee.register'),
         'Регистрация слушателя'  => $this->_links->get('student.register'),
         'Список пользователей'   => $this->_links->get('users.list'),
+        'Инструкция'             => $this->_links->get('help.registration')
     );
 
     /* ссылки, доступные только преподу */
