@@ -83,7 +83,7 @@
             }
 
             $links = Resources::getInstance()->links;
-            
+
             $this->flash (
                 'Договор успешно загружен',
                 $links->get('admin.applications'),
@@ -100,7 +100,7 @@
             $udata = (object) $user->getAuth();
 
             $links = Resources::getInstance()->links;
-            
+
             /**
             * @todo Раскоментировать когда поправится подключение js-функций,
             * подгружающих списки городов/областей.
@@ -121,9 +121,9 @@
 
             $app = Model_Application::create();
             $app->apply($udata->user_id, $object_id, $type);
-            
-            $return_url = $links->get('student.applications');                        
-            
+
+            $return_url = $links->get('student.applications');
+
             $msg = 'Вы успешно подали заявку на учебный курс.<p>
               Через 10 сек. Вас автоматически перенаправят на страницу просмотра
               поданых Вами <a href="' . $return_url . '" title=Мои заявки> заявок</a>.
@@ -147,7 +147,7 @@
             */
             $app = Model_Application::create();
             /**
-            * @todo If user is not logged in, then $udata is empty. Avoid it by 
+            * @todo If user is not logged in, then $udata is empty. Avoid it by
             * protecting this line with route, allowed only for logged in user.
             */
             $apps = $app->getAppsInfo($udata->user_id);
@@ -161,7 +161,7 @@
         public function action_change_app_status($params)
         {
             $links = Resources::getInstance()->links;
-            
+
             $user = Model_User::create();
             $udata = (object) $user->getAuth();
 
@@ -172,12 +172,12 @@
             $app->setAppStatus($new_status, $app_id);
 
             $map = Model_Application::getStatusMap();
-            $this->flash('Заявка ' . $map[$new_status], 
+            $this->flash('Заявка ' . $map[$new_status],
                          $links->get('admin.applications'));
 
             $this->render();
         }
-        
+
         /**
         * Удаление заявки из базы данных.
         *
@@ -186,7 +186,7 @@
         public function action_delete(array $params = array()) {
             $links = Resources::getInstance()->links;
             $return_url = $links->get('admin.applications');
-            
+
             if (empty($params)) {
                 $this->flash('Не указан номер заявки', $return_url);
             }
