@@ -169,7 +169,7 @@ $(document).ready(function() {
               <div class="cntnt-leftblock">
                 <form name="" action="" method="post" enctype="multipart/form-data">
                 <input name="s" class="txtfld" value="" type="text">
-                <input name="" src="<?php $this->_links->getPath('/files/images/icon_search.gif') ?>" class="button" type="image"></form>
+                <input name="" src="<?php echo $this->_links->getPath('/files/images/icon_search.gif') ?>" class="button" type="image"></form>
               </div>
             </div>
         </noindex>	
