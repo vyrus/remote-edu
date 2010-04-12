@@ -100,25 +100,36 @@
             $udata = (object) $user->getAuth();
 
             $links = Resources::getInstance()->links;
-
-            /**
-            * @todo Раскоментировать когда поправится подключение js-функций,
-            * подгружающих списки городов/областей.
-            */
-            /*
-            if (!$user->isExtendedProfileSet($udata->user_id))
-            {
-                $msg = 'Заполните, пожалуйста, свой профиль';
-                $this->flash($msg, $links->get('student.extended-profile'));
-            }
-            */
-
-            /**
-            * Получение данных от браузера.
-            */
+            
+            /* Получаем параметры программы */
             $object_id = $params['program_id'];
             $type = $params['program_type'];
-
+            
+            /* Если подаётся заявка на дисциплину, */
+            if (Model_Application::TYPE_DISCIPLINE === $type) {
+                /* то получаем идентификатор программы по дисциплине */
+                $disc = Model_Discipline::create();
+                $info = $disc->get($object_id);
+                $program_id = $info['program_id'];
+            } else {
+                /* Если же заявка на программу, то берём её идентификатор */
+                $program_id = $object_id;
+            }
+            
+            /* Получаем данные программы */
+            $program = Model_Education_Programs::create();
+            $info = (object) $program->getProgramInfo($program_id);
+            
+            /* Если программы платная и не заполнен расширенный профиль, то */
+            if (
+                Model_Education_Programs::PAID_TYPE_PAID === $info->paid_type &&
+                !$user->isExtendedProfileSet($udata->user_id)
+            ) {
+                /* просим пользователя его заполнить */
+                $msg = 'Заполните, пожалуйста, подробную анкету слушателя';
+                $this->flash($msg, $links->get('student.extended-profile'));
+            }
+            
             $app = Model_Application::create();
             $app->apply($udata->user_id, $object_id, $type);
 
