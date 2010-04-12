@@ -374,10 +374,22 @@
                  ->unsetUserId();
         }
 
+        /**
+        * Проверяет, заполнен ли расширенный профиль слушателя.
+        * 
+        * @param  int $id Идентификатор пользователя.
+        * @return boolean
+        */
         public function isExtendedProfileSet($id) {
+            /**
+            * Проверяем, чтобы были заданы паспортные данные. Если они есть - 
+            * значит и профиль заполнен (так как паспортные данные - 
+            * обязательные поля профиля).
+            */
+            
             $sql = '
                 SELECT COUNT(*)
-                FROM passports
+                FROM ' . $this->_tables['passports'] . '
                 WHERE user_id = ?
             ';
 
@@ -388,43 +400,25 @@
             return $count > 0;
         }
 
-        public function setExtendedProfile($uid, $profile)
-        {
-            if (!$this->_updateSNP($uid, $profile['general'])) {
-                return false;
-            }
-
-            if (!$this->_savePassport($uid, $profile['passport'])) {
-                return false;
-            }
-
-            if (!empty($profile['edu_doc']['type']) &&
-                !$this->_saveEduDoc($uid, $profile['edu_doc']))
-            {
-                return false;
-            }
-
-            if (!empty($profile['phones']['mobile']) ||
-                !empty($profile['phones']['stationary']))
-            {
-                if (!$this->_savePhones($uid, $profile['phones'])) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        protected function _updateSNP($uid, $snp) {
+        /**
+        * Обновление фамилии-имени-отчества в записи пользователя. Если 
+        * передаются такие же значение, какие сейчас хранятся в базе, то метод 
+        * вернёт false.
+        * 
+        * @param  int      $uid Идентификатор пользователя.
+        * @param  stdClass $snp Объект с новыми значениями.
+        * @return boolean  Была ли обновлена запись в базе.
+        */
+        public function updateSNP($uid, $snp) {
             $sql = '
                 UPDATE users
                 SET surname = :surname, name = :name, patronymic = :patronymic
                 WHERE user_id = :user_id
+                LIMIT 1
             ';
 
             $stmt = $this->prepare($sql);
 
-            $snp = (object) $snp;
             $stmt->bindParam(':surname',    $snp->surname);
             $stmt->bindParam(':name',       $snp->name);
             $stmt->bindParam(':patronymic', $snp->patronymic);
@@ -436,7 +430,18 @@
             return $affected > 0;
         }
 
-        protected function _savePassport($uid, $passport) {
+        /**
+        * Сохранение паспортных данных.
+        * 
+        * @param  int                 $uid      Идентификатор пользователя.
+        * @param  Model_User_Passport $passport Контейнер с данными.
+        * @return boolean
+        */
+        public function savePassport($uid, Model_User_Passport $passport) {
+            /* Удаляем старую запись (если есть) */
+            $this->deletePassport($uid);
+            
+            /* И добавляем новую */
             $sql = '
                 INSERT INTO passports
                 (
@@ -449,58 +454,139 @@
 
             $stmt = $this->prepare($sql);
 
-            $passport = (object) $passport;
             $stmt->bindParam(1,  $uid);
             $stmt->bindParam(2,  $passport->series);
             $stmt->bindParam(3,  $passport->number);
             $stmt->bindParam(4,  $passport->birthday);
-            $stmt->bindParam(5,  $passport->given_by);
-            $stmt->bindParam(6,  $passport->given_date);
-            $stmt->bindParam(7,  $passport->region_id);
-            $stmt->bindParam(8,  $passport->city_id);
+            $stmt->bindParam(5,  $passport->givenBy);
+            $stmt->bindParam(6,  $passport->givenDate);
+            $stmt->bindParam(7,  $passport->regionId);
+            $stmt->bindParam(8,  $passport->cityId);
             $stmt->bindParam(9,  $passport->street);
             $stmt->bindParam(10, $passport->house);
             $stmt->bindParam(11, $passport->flat);
 
             return $stmt->execute();
         }
-
-        protected function _saveEduDoc($uid, $doc) {
+        
+        /**
+        * Удаление записи о паспортных данных пользователя.
+        * 
+        * @param  int $uid Идентификатор пользователя.
+        * @return boolean Была ли удалена запись.
+        */
+        public function deletePassport($uid) {
             $sql = '
-                INSERT INTO edu_docs
-                (user_id, type, custom_type, number, exit_year, speciality, qualification)
+                DELETE FROM ' . $this->_tables['passports'] . '
+                WHERE user_id = ?
+                LIMIT 1
+            ';
+            
+            $stmt = $this->prepare($sql);
+            $stmt->execute(array($uid));
+            
+            $affected = $stmt->rowCount();
+            return $affected;
+        }
+
+        /**
+        * Сохранение данных о документе об образовании.
+        * 
+        * @param  int               $uid Идентификатор пользователя.
+        * @param  Model_User_EduDoc $doc Контейнер с данными.
+        * @return boolean
+        */
+        public function saveEduDoc($uid, Model_User_EduDoc $doc) {
+            /* Удаляем старую запись (если есть) */
+            $this->deleteEduDoc($uid);
+            
+            /* И добавляем новую */
+            $sql = '
+                INSERT INTO edu_docs (
+                    user_id, type, custom_type, number, exit_year, speciality, 
+                    qualification
+                )
                 VALUES (?, ?, ?, ?, ?, ?, ?)
             ';
 
             $stmt = $this->prepare($sql);
 
-            $doc = (object) $doc;
             $stmt->bindParam(1, $uid);
             $stmt->bindParam(2, $doc->type);
-            $stmt->bindParam(3, $doc->custom_type);
+            $stmt->bindParam(3, $doc->customType);
             $stmt->bindParam(4, $doc->number);
-            $stmt->bindParam(5, $doc->exit_year);
+            $stmt->bindParam(5, $doc->exitYear);
             $stmt->bindParam(6, $doc->speciality);
             $stmt->bindParam(7, $doc->qualification);
 
             return $stmt->execute();
         }
-
-        protected function _savePhones($uid, $phones) {
+        
+        /**
+        * Удаление записи о документе об образовании.
+        * 
+        * @param  int $uid Идентификатор пользователя.
+        * @return boolean Была ли удалена запись.
+        */
+        public function deleteEduDoc($uid) {
             $sql = '
-                INSERT INTO phones
+                DELETE FROM ' . $this->_tables['edu_docs'] . '
+                WHERE user_id = ?
+                LIMIT 1
+            ';
+            
+            $stmt = $this->prepare($sql);
+            $stmt->execute(array($uid));
+            
+            $affected = $stmt->rowCount();
+            return $affected;
+        }
+
+        /**
+        * Сохранение данных о телефонах пользователя.
+        * 
+        * @param  int               $uid    Идентификатор пользователя.
+        * @param  Model_User_Phones $phones Контейнер с данными.
+        * @return boolean
+        */
+        public function savePhones($uid, Model_User_Phones $phones) {
+            /* Удаляем старую запись (если есть) */
+            $this->deletePhones($uid);
+            
+            /* И добавляем новую */
+            $sql = '
+                INSERT INTO ' . $this->_tables['phones'] . '
                 (user_id, stationary, mobile)
                 VALUES (?, ?, ?)
             ';
 
             $stmt = $this->prepare($sql);
 
-            $phones = (object) $phones;
             $stmt->bindParam(1, $uid);
             $stmt->bindParam(2, $phones->stationary);
             $stmt->bindParam(3, $phones->mobile);
 
             return $stmt->execute();
+        }
+        
+        /**
+        * Удаление записи о телефонах пользователя.
+        * 
+        * @param  int $uid Идентификатор пользователя.
+        * @return boolean Была ли удалена запись.
+        */
+        public function deletePhones($uid) {
+            $sql = '
+                DELETE FROM ' . $this->_tables['phones'] . '
+                WHERE user_id = ?
+                LIMIT 1
+            ';
+            
+            $stmt = $this->prepare($sql);
+            $stmt->execute(array($uid));
+            
+            $affected = $stmt->rowCount();
+            return $affected;
         }
 
         /**
@@ -525,40 +611,72 @@
         }
 
         /**
-        * Получение данных расширенной анкеты слушателя
+        * Получение данных расширенной анкеты слушателя.
         *
-        * @return array
+        * @param  int $user_id Идентификатор пользователя.
+        * @return stdClass Данные расширенного профиля слушателя.
         */
-        public function getStudentExtendedProfile($student_id)
+        public function getExtendedProfile($user_id)
         {
+            
+            $aliasing = array(
+                'passport' => array('p', array('series', 'number', 'birthday',
+                                               'given_by', 'given_date', 
+                                               'region_id', 'city_id', 
+                                               'street', 'house', 'flat')),
+                                               
+                'edu_doc' => array('ed', array('type', 'custom_type', 'number',
+                                                'exit_year', 'speciality', 
+                                                'qualification')),
+                                                
+                'phone' => array('ph', array('stationary', 'mobile'))
+            );
+            
+            $columns = array();
+            
+            foreach ($aliasing as $column_prefix => $tbl)
+            {
+                foreach ($tbl[1] as $column) {
+                    $columns[] = sprintf('%s.%s AS %s_%s', 
+                                         $tbl[0], $column,
+                                         $column_prefix, $column);
+                }
+            }                    
+            
             $sql = '
-                SELECT a.app_id, a.status, u.name, u.surname, u.patronymic,
-                        contract_filename,
-                       p.title AS program_title,
-                       d.title AS discipline_title
-                FROM ' . $this->_tables['applications'] . ' a
-
-                LEFT JOIN ' . $this->_tables['programs'] . ' p
-                ON a.type = :type_program AND
-                   p.program_id = a.object_id
-
-                LEFT JOIN ' . $this->_tables['disciplines'] . ' d
-                ON a.type = :type_discipline AND
-                   d.discipline_id = a.object_id
-
-                LEFT JOIN ' . $this->_tables['users'] . ' u
-                ON u.user_id = a.user_id
+                SELECT ' . implode(', ' . CRLF, $columns) . '
+                FROM ' . $this->_tables['users'] . ' u
+                
+                LEFT JOIN ' . $this->_tables['passports'] . ' p
+                ON p.user_id = u.user_id 
+                
+                LEFT JOIN ' . $this->_tables['edu_docs'] . ' ed
+                ON ed.user_id = u.user_id
+                
+                LEFT JOIN ' . $this->_tables['phones'] . ' ph
+                ON ph.user_id = u.user_id 
+                                         
+                WHERE u.user_id = :uid AND
+                      u.role = :role
             ';
+            
             $values = array(
-                ':type_program'    => self::TYPE_PROGRAM,
-                ':type_discipline' => self::TYPE_DISCIPLINE
+                ':uid'  => $user_id,
+                ':role' => self::ROLE_STUDENT
             );
 
             $stmt = $this->prepare($sql);
             $stmt->execute($values);
 
-            $apps = $stmt->fetchAll(Db_PdO::FETCH_ASSOC);
-            return $apps;
+            $profile = $stmt->fetch(Db_PdO::FETCH_ASSOC);
+            
+            $passport = Model_User_Passport::create()->fromRow($profile);
+            $edu_doc  = Model_User_EduDoc::create()->fromRow($profile);
+            $phones   = Model_User_Phones::create()->fromRow($profile);
+            
+            return (object) array('passport' => $passport,
+                                  'edu_doc'  => $edu_doc,
+                                  'phones'   => $phones);
         }
 
         /**

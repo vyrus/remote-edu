@@ -236,8 +236,9 @@
         public function getAllAppsInfo()
         {
             $sql = '
-                SELECT a.app_id, a.status, u.name, u.surname, u.patronymic, u.login,
-                        contract_filename,
+                SELECT a.app_id, a.status, u.user_id, u.name, u.surname, 
+                       u.patronymic, u.login,
+                       contract_filename,
                        p.title AS program_title,
                        d.title AS discipline_title
                 FROM ' . $this->_tables['applications'] . ' a

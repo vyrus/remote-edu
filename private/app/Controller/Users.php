@@ -328,104 +328,137 @@
             $this->set('rolesCaptions', $this->_roles_captions);
             $this->render('users/users_list');
         }
-
+        
+        /**
+        * Редактирование расширенного профиля слушателя.
+        */
         public function action_profile_extended_by_student() {
+            /* Подгружаем менеджер ссылок */
             $links = Resources::getInstance()->links;
-
-            $user = Model_User::create();
+            
+            /* Создаём экземпляры необходимых моделей */
+            $user     = Model_User::create();
+            $region   = Model_Region::create();
+            $locality = Model_Locality::create();
+            
+            /* Получаем данные пользователя */
             $udata = (object) $user->getAuth();
-
-            if ($user->isExtendedProfileSet($udata->user_id)) {
-                $this->flash('Ваш профиль уже заполнен',
-                             $links->get('student.index'));
-            }
-
-            $request = $this->getRequest();
-
+            
+            /* Создаём объект формы расширенного профиля */
             $action = $links->get('student.extended-profile');
             $form = Form_Profile_Student_Extended::create($action);
             $this->set('form', $form);
-
+            
+            $request = $this->getRequest();
             $method = $form->method();
-            if (empty($request->$method)) {
-                $this->render();
-            }
-
-            $region = Model_Region::create();
-            $locality = Model_Locality::create();
-
-            if (!$form->validate($request, $region, $locality)) {
-                $this->render();
-            }
-
-            $profile = array(
-                'general' => array(
-                    'surname'    => null,
-                    'name'       => null,
-                    'patronymic' => null
-                ),
-
-                'passport' => array(
-                    'birthday'   => null,
-                    'series'     => 'passport_series',
-                    'number'     => 'passport_number',
-                    'given_by'   => 'passport_given_by',
-                    'given_date' => 'passport_given_date',
-                    'region_id'  => null,
-                    'city_id'    => null,
-                    'street'     => null,
-                    'house'      => null,
-                    'flat'       => null
-                ),
-
-                'edu_doc' => array(
-                    'type'          => 'doc_type',
-                    'custom_type'   => 'doc_custom_type',
-                    'number'        => 'doc_number',
-                    'exit_year'     => null,
-                    'speciality'    => null,
-                    'qualification' => null
-                ),
-
-                'phones' => array(
-                    'mobile'     => 'phone_mobile',
-                    'stationary' => 'phone_stationary'
-                )
-            );
-
-            foreach ($profile as $section => $fields)
+            
+            /* Если данных формы нет в запросе, */
+            if (empty($request->$method))
             {
-                foreach ($fields as $field_id => $value)
+                /* и профиль слушателя уже заполнен, */
+                if ($user->isExtendedProfileSet($udata->user_id))
                 {
-                    $id = (null === $value ? $field_id : $value);
-                    $value = $form->$id->value;
-
-                    if (!strlen($value)) {
-                        $value = null;
-                    }
-
-                    $profile[$section][$field_id] = $value;
+                    /* то загружаем данные базового профиля */
+                    $info = $user->getUserInfo($udata->user_id);
+                    
+                    /* И выводим их в форме */
+                    $form->setValue('surname',    $info['surname']);
+                    $form->setValue('name',       $info['name']);
+                    $form->setValue('patronymic', $info['patronymic']);
+                    
+                    /* Загружаем расширенный профиль */
+                    $profile = $user->getExtendedProfile($udata->user_id);
+                    
+                    /* И наполняем форму данными из него */
+                    $profile->passport->toForm($form);
+                    $profile->edu_doc->toForm($form);
+                    $profile->phones->toForm($form);
+                    
+                    /* Получаем по идентификаторам название региона и города */
+                    $r_name = $region->getName($profile->passport->regionId);
+                    $l_name = $locality->getFullName(
+                        $profile->passport->cityId
+                    );
+                    
+                    /* Передаём их в форму */
+                    $form->setValue('region', $r_name);
+                    $form->setValue('city',   $l_name);
                 }
+                
+                /* Отображаем страничку с формой */
+                $this->render();
             }
-
-            self::_toMysqlDate($profile['passport']['birthday']);
-            self::_toMysqlDate($profile['passport']['given_date']);
-
-            if (!$user->setExtendedProfile($udata->user_id, $profile)) {
-                $this->flash('Ошибка при сохранении профиля',
-                             $links->get('student.extended-profile'), false);
+            
+            /* Если же в запросе содержатся заполненные поля формы, */
+            if (!$form->validate($request, $region, $locality)) {
+                /* проверяем их и выводим ошибки */
+                $this->render();
             }
-
-
-            $this->flash('Ваш профиль успешно обновлён',
+            
+            /* Если данные прошли проверку, заполняем ими контейнеры */
+            $snp = (object) array('surname'    => $form->surname->value, 
+                                  'name'       => $form->name->value, 
+                                  'patronymic' => $form->patronymic->value);
+            
+            $passport = Model_User_Passport::create()->fromForm($form);
+            $edu_doc  = Model_User_EduDoc::create()->fromForm($form);
+            $phones   = Model_User_Phones::create()->fromForm($form);
+            
+            /* Обновляем фамилию-имя-отчество */
+            $user->updateSNP($udata->user_id, $snp);
+            
+            /* Сохраняем паспортные данные */
+            if(!$user->savePassport($udata->user_id, $passport)) {
+                $msg = 'Ошибка при сохранении паспортных данных';
+                $alias = 'student.extended-profile';
+                
+                $this->flash($msg, $links->get($alias), false);
+            }
+            
+            /* Если в форме нет данных о документе об образовании, */
+            if (empty($edu_doc->type)) {
+                /* то удаляем возможные записи, если раньше они были внесены */
+                $user->deleteEduDoc($udata->user_id);
+            }
+            /* Если же есть данные о документе, сохраняем их */
+            elseif (!$user->saveEduDoc($udata->user_id, $edu_doc)) {
+                $msg = 'Ошибка при сохранении данных документа об образовании';
+                $alias = 'student.extended-profile';
+                
+                $this->flash($msg, $links->get($alias), false);
+            }
+            
+            /* Если в форме нет данных о телефонах */
+            if (empty($phones->mobile) && empty($phones->stationary)) {
+                /* удаляем возможные записи из базы */
+                $user->deletePhones($udata->user_id);
+            }
+            /* Иначе сохраняем новые телефоны */
+            elseif (!$user->savePhones($udata->user_id, $phones))
+            {
+                $msg = 'Ошибка при сохранении телефонов';
+				$alias = 'student.extended-profile';
+                
+                $this->flash($msg, $links->get($alias), false);
+            }
+                               
+            /* Выводим сообщение об успешном редактировании профиля */
+            $this->flash('Ваш профиль успешно обновлён', 
                          $links->get('student.apply'), false);
-            //$this->render('applications/index_by_student');
         }
 
-        public function action_view_profile_extended($user_id)
+        /**
+        * Просмотр полного профиля слушателя.
+        */
+        public function action_view_profile($params) 
         {
+            $user_id = $params['user_id'];
+            
             $user = Model_User::create();
-            /*...*/
+            $profile = $user->getStudentProfile($user_id);
+            
+            $this->set('profile', $profile);
+            $this->render();
         }
 
         /**
@@ -438,13 +471,9 @@
             $links = Resources::getInstance()->links;
             $this->flash('Авторизация потеряна', $links->get('index'), 0);
             //$this->render($redirect_link);
-        }
-
-        protected static function _toMysqlDate(& $date) {
-            $date = date('Y-m-d', strtotime($date));
-        }
-
-        public function action_edit_account($params) {
+        }    
+        
+        public function action_edit_account($params) { 
             $links = Resources::getInstance()->links;
 
             $opts = array('user_id' => $params['user_id']);
