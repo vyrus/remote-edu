@@ -5,8 +5,26 @@
 
 <?php
 
-    function show($var) {
-        echo (!empty($var) ? $var : '&mdash;');
+    function show($var, $delimiter = null) {
+        if (is_array($var))
+        {
+            $empty = true;
+            
+            foreach ($var as $elem) {
+                $empty &= empty($elem);
+                
+                if (!$empty) {
+                    break;
+                }
+            }           
+            
+            $var = implode($delimiter, $var);
+        } 
+        else {
+            $empty = empty($var);
+        }
+        
+        echo (!$empty ? $var : '&mdash;');
     }
 
 ?>
@@ -14,7 +32,7 @@
 <div class="student_profile">
     <dl>
         <dt>ФИО</dt>
-        <dd><?php show(implode(' ', array($b->surname, $b->name, $b->patronymic))) ?></dd>
+        <dd><?php show(array($b->surname, $b->name, $b->patronymic), ' ') ?></dd>
         
         <dt>Дата рождения</dt>
         <dd><?php show($p->birthday) ?></dd>
@@ -34,10 +52,10 @@
         <dd><?php show($p->number) ?></dd>
         
         <dt>Выдан</dt>
-        <dd><?php show($p->givenDate . ', ' . $p->givenBy) ?></dd>
+        <dd><?php show(array($p->givenDate, $p->givenBy), ', ') ?></dd>
         
         <dt>Прописка</dt>
-        <dd><?php show(implode(', ', array($region, $city, $p->street, $p->house, $p->flat))) ?></dd>
+        <dd><?php show(array($region, $city, $p->street, $p->house, $p->flat), ', ') ?></dd>
     </dl>
 </div>
 

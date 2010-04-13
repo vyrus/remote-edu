@@ -137,8 +137,11 @@
         * @return void
         */
         protected function _afterFromRow() {
-            $this->_fromMysqlDate($this->birthday);
-            $this->_fromMysqlDate($this->givenDate);
+            if (!empty($this->birthday)) 
+                $this->_fromMysqlDate($this->birthday);
+            
+            if (!empty($this->givenDate)) 
+                $this->_fromMysqlDate($this->givenDate);
         }
         
         /**
