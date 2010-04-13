@@ -372,10 +372,6 @@
             */
 
             /* Получаем список заявок на образовательные программы */
-            /**
-            * @todo Disallow this action to non-authorized users in order to
-            * prevent usage of undefined property $user_id here.
-            */
             $program_apps = $app->getProcessedAppsForPrograms($udata->user_id);
 
             /* Перебираем его */
@@ -414,10 +410,6 @@
             }
 
             /* Получаем список заявок на отдельные дисциплины */
-            /**
-            * @todo Disallow this action to non-authorized users in order to
-            * prevent usage of undefined property $user_id here.
-            */
             $disc_app = $app->getProcessedAppsForDisciplines($udata->user_id);
 
             /* Перебираем его */

@@ -201,7 +201,7 @@
                 'applications/index_by_student',          // форма для подачи заявки
 
                 'educational_materials/index_by_student',
-                'education_programs/show_available',
+                'education_programs/available',
             ),
 
             /* Преподаватель */
