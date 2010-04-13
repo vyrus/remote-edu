@@ -32,7 +32,10 @@
 
             /* Редактирование аккаунтов */
             array('/admin/users/edit/([0-9]+)', array('user_id'), 'users', 'edit_account', 'users.edit', Mvc_Router::ROUTE_REGEX),
-
+            
+            /* Просмотр профиля слушателя */
+            array('/admin/users/profile/([0-9]+)', array('user_id'), 'users', 'view_profile', 'users.profile', Mvc_Router::ROUTE_REGEX),
+            
             /* Регистрация сотрудника */
             array('/admin/employee/register', 'users', 'register_employee_by_admin', 'employee.register', Mvc_Router::ROUTE_STATIC),
 
@@ -223,6 +226,7 @@
                 'users/register_employee_by_admin',       // учебные материалы, доступные для слушателя
                 'users/users_list',
                 'users/edit_account',
+                'users/view_profile',
 
                 'applications/index_by_admin',            // список поданных заявок всех пользователей
                 'applications/delete',

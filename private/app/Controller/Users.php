@@ -448,16 +448,33 @@
         }
 
         /**
-        * Просмотр полного профиля слушателя.
+        * Просмотр расширенного профиля слушателя.
         */
-        public function action_view_profile($params) 
-        {
+        public function action_view_profile($params) {
+            /* Получаем из параметров запроса идентификатор пользователя */
             $user_id = $params['user_id'];
             
+            /* Получаем базовый профиль пользователя */
             $user = Model_User::create();
-            $profile = $user->getStudentProfile($user_id);
+            $base_profile = (object) $user->getUserInfo($user_id);
             
-            $this->set('profile', $profile);
+            /* Если пользователь - не слушатель, */
+            if (Model_User::ROLE_STUDENT !== $base_profile->role) {
+                /* отказываемся выводить профиль :) */
+                $msg  = 'Невозможно отобразить профиль, так как указанный ' . 
+                        'пользователь не является слушателем';
+                $alias = 'admin.applications';
+                
+                $link = Resources::getInstance()->links->get($alias);
+                $this->flash($msg, $link, false);
+            }
+            
+            /* Получаем данные расширенного профиля */
+            $ex_profile = $user->getExtendedProfile($user_id);
+            
+            /* И скармливаем всё представлению */
+            $this->set('base_profile', $base_profile);
+            $this->set('ex_profile',   $ex_profile);
             $this->render();
         }
 

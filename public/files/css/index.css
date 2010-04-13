@@ -295,3 +295,31 @@ ul.materials li
     font: 13.34px helvetica,arial,freesans,clean,sans-serif;
     line-height: 1.3em !important;
 }
+
+/* Student profiles */
+
+.student_profile {
+    font: 13.34px helvetica, arial, freesans, clean, sans-serif;
+    color: #000;
+    line-height: 1.7em;
+    margin: 7px 0 15px 0;
+}
+
+dl:first-child {
+    margin-top: 0;
+}
+
+dl {
+    margin: 5px 0 0;
+}    
+
+dl dt {
+    color: #999999;
+    float: left;
+    margin: 0;
+    width: 120px;
+}
+
+dl dd {
+    margin: 0;
+}

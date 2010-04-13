@@ -55,10 +55,14 @@
             <td class="description">Заявка на изучение дисциплины "<?php echo $app['discipline_title'] ?>"</td>
         <?php endif; ?>
             
-            <td><?php
-            if(empty($app['name']) && empty($app['surname']) && empty($app['patronymic']))
-               echo  $app['login'];
-            else echo $app['surname'] . ' ' . $app['name'] . ' ' . $app['patronymic']; ?></td>
+            <td>
+            <?php if(empty($app['name']) && empty($app['surname']) && empty($app['patronymic'])): ?>
+               <?php echo $app['login'] ?>
+            <?php else: ?>
+                <?php echo $app['surname'] . ' ' . $app['name'] . ' ' . $app['patronymic'] ?>
+            <?php endif; ?>
+            <a href="<?php echo $this->_links->get('users.profile', array('user_id' => $app['user_id'])); ?>" title="Подробная анкета слушателя" target="_blank">&rarr;</a>
+            </td>
             <td width='10%'><?php echo $this->statuses[$app['status']] ?></td>
             <td>
                 <?php switch ($app['status']):
