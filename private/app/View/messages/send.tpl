@@ -14,6 +14,7 @@
 </style>
 
 <script type="text/javascript">
+    var attachmentId = 0;
     var recipients = {
 <?php foreach ($recipients as $i => $recipient): ?>
         '<?php echo $i; ?>':{'name':'<?php echo $recipient['recipient_name']; ?>','desc':"<?php foreach ($recipient['recipient_description'] as $i => $desc) {echo $desc . '<br />';} ?>"},
@@ -71,10 +72,19 @@
 
         $('#sendMessageForm').submit();
     }
+    
+    function appendAttachment() {
+        $('#appendAttachmentButton').before('<div id="attachment' + attachmentId + '"><input type="file" name="attachment[' + attachmentId + ']" /><a href="javascript:removeAttachment(' + attachmentId + ')">удалить</a></div>');
+        attachmentId++;
+    }
+    
+    function removeAttachment(attachmentId) {
+        $('#attachment' + attachmentId).remove();
+    }
 </script>
 
 <h3>Отправка сообщения</h3>
-<form id="sendMessageForm" action="<?php echo $form->action(); ?>" method="<?php echo $form->method(); ?>">
+<form id="sendMessageForm" enctype="multipart/form-data" action="<?php echo $form->action(); ?>" method="<?php echo $form->method(); ?>">
 <input name="<?php echo $form->recipient->name; ?>" type="hidden" value="<?php echo $form->recipient->value; ?>"/>
 <table cellspacing="0" cellpadding="0">
 <tr><td class="caption">Кому:</td><td class="field"><a id="selectRecipientButton" href="javascript:showSelectRecipientDialog()">Выбрать адресата</a></td></tr>
@@ -90,6 +100,7 @@
 <div class="error"><?php echo $form->message->error; ?></div>
 <?php endif; ?>
 </td></tr>
+<tr><td colspan="2"><a id="appendAttachmentButton" href="javascript:appendAttachment()">Добавить файл</a></td></tr>
 <tr><td colspan="2"><input type="button" value="Отправить" onclick="submitForm()" /></td></tr>
 </table>
 </form>

@@ -36,7 +36,13 @@
                 'message_id' => $messageId,
                 'user_id' => $this->userId,
             );
-            $this->prepare($sql)->execute($params);
+            
+            $stmt = $this->prepare($sql);
+            $stmt->execute($params);
+            
+            if ($stmt->rowCount()) {
+                $this->removeAttachments($messageId);                
+            }            
         }
 
         public function getInbox($page, &$messagesTotalNumber) {
@@ -128,6 +134,102 @@
             );
 
             $this->prepare($sql)->execute($params);
+            
+            return $this->lastInsertId();
+        }
+
+        public function addAttachments($message, $files) {
+            $storage = Resources::getInstance()->attachments_storage;
+            
+            $sql = 'INSERT INTO `message_attachment`(`message`,`original_filename`,`mime_type`,`filename`)
+                VALUES (:message, :original_filename, :mime_type, :filename)';
+            $stmt = $this->prepare($sql);
+            
+            foreach ($files['name'] as $i => $value) {
+                $filename = $storage->storeFile($files['tmp_name'][$i]);
+                $params = array(
+                    ':message' => $message,
+                    ':original_filename' => $files['name'][$i],
+                    ':mime_type' => $files['type'][$i],
+                    ':filename' => $filename,
+                );
+                
+                $stmt->execute($params);
+            }
+        }
+        
+        public function getAttachments($message) {
+            $sql = 'SELECT *
+                FROM `message_attachment`
+                WHERE `message`=:message';                
+            $params = array(
+                ':message' => $message,
+            );
+            
+            $stmt = $this->prepare($sql);
+            $stmt->execute($params);
+            
+            return $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
+        }
+        
+        public function removeAttachments($messageId) {
+            $attachments = $this->getAttachments($messageId);
+            $storage = Resources::getInstance()->attachments_storage;
+            
+            foreach ($attachments as $i => $attachment) {
+                $storage->removeFile($attachment['filename']);
+                                
+                $sql = 'DELETE FROM `message_attachment`
+                    WHERE `id`=:arrachment_id';                
+                $params = array(
+                    ':arrachment_id' => $attachment['id'],
+                );
+                
+                $this->prepare($sql)->execute($params);
+            }
+        }
+
+        public function getAttachment($attachmentId) {
+            $sql = 'SELECT `message`,`original_filename`,`filename`,`mime_type`
+                FROM `message_attachment`
+                WHERE `id`=:attachment_id';
+            $params = array(
+                ':attachment_id' => $attachmentId,
+            );
+            
+            $stmt = $this->prepare($sql);
+            $stmt->execute($params);            
+            $attachment = $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
+            
+            if (empty($attachment)) {
+                return FALSE;
+            }
+                        
+            $sql = 'SELECT `to`
+                FROM `message`
+                WHERE `message_id`=:message_id';                            
+            $params = array(
+                ':message_id' => $attachment[0]['message'],
+            );
+                        
+            $stmt = $this->prepare($sql);
+            $stmt->execute($params);
+            $message = $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
+            
+            $udata = (object)Model_User::create()->getAuth();
+            
+            if ($udata->user_id != $message[0]['to']) {
+                return FALSE;
+            }
+            
+            $storage = Resources::getInstance()->attachments_storage;
+            
+            header('Content-Disposition: attachment; filename="' . $attachment[0]['original_filename']) . '"';
+            header('Content-Type: ' . $attachment[0]['mime_type']);
+
+            echo $storage->getFileContent($attachment[0]['filename']);
+            
+            return TRUE;
         }
 
         public function getRecipientsList() {

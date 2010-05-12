@@ -211,7 +211,7 @@ CREATE TABLE `payments` (
   KEY `fk_payments_applications` (`app_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-
+DROP TABLE IF EXISTS `message`;
 CREATE TABLE `message` (
   `message_id` int(11) NOT NULL AUTO_INCREMENT,
   `from` int(11) DEFAULT NULL,
@@ -221,6 +221,16 @@ CREATE TABLE `message` (
   `read` enum('read','unread') DEFAULT NULL,
   `time` int(11) DEFAULT NULL,
   PRIMARY KEY (`message_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `message_attachment`;
+CREATE TABLE `message_attachment` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `message` int(11) DEFAULT NULL,
+  `original_filename` varchar(255) DEFAULT NULL,
+  `mime_type` varchar(255) DEFAULT NULL,
+  `filename` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 --
 -- Изменяем тип поля, чтобы можно было гарантировать точность чисел. Максимальное

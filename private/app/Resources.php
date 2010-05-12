@@ -110,6 +110,14 @@
             
             return $links;
         }
+        
+        protected function get_attachments_storage() {
+            $config = $this->_config['storage'];
+            
+            $storage = new Storage($config['messages_attachments']);
+            
+            return $storage;
+        }
     }
 
 ?>

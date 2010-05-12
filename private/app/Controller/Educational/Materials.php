@@ -149,8 +149,8 @@
         }
 
         public function action_get_material ($params) {
-            $educationalMaterials = Model_Educational_Materials::create ();
-            $educationalMaterials->getMaterial ($params['material_id']);
+            $educationalMaterials = Model_Educational_Materials::create();
+            $educationalMaterials->getMaterial($params['material_id']);
         }
 
         /**

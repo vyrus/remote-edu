@@ -168,6 +168,9 @@
             /* Чтение сообщения */
             array('/messages/read/([0-9]+)', array('message_id'), 'messages', 'message', 'messages.read', Mvc_Router::ROUTE_REGEX),
 
+            /* Получение вложения сообщения */
+            array('/messages/attachment/([0-9]+)', array('attachment_id'), 'messages', 'attachment', 'messages.attachment', Mvc_Router::ROUTE_REGEX),
+
             /* Удаление выбранного сообщения */
             array('/messages/remove', 'messages', 'remove', 'messages.remove', Mvc_Router::ROUTE_STATIC),
 
