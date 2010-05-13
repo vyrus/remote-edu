@@ -11,7 +11,9 @@
 
     Укажите, пожалуйста, имя пользователя и пароль, или 
     <a href="<?php echo $this->_links->get('student.register') ?>" title="Регистрация">зарегистрируйтесь</a>.
-    <p>
+    <a href="<?php echo $this->_links->get('users.restore-passwd') ?>">Забыли пароль?</a>
+    <br /><br />
+    
     <div class="field">
       <input name="<?php echo $form->login->name ?>" type="text" id="login" value="<?php echo $form->login->value ?>" />
       <label for="login">Имя пользователя:</label>

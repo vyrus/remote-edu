@@ -26,6 +26,13 @@
         * @var const
         */
         const TYPE_CONTRACT = 'contract';
+        
+        /**
+        * Тип письма: ссылка для восстановления пароля.
+        *
+        * @var const
+        */
+        const TYPE_RESTORE_PASSWD = 'restore-passwd';
 
         /**
         * Тип прикреплённого файла: документ word.
@@ -61,9 +68,10 @@
         * @var array
         */
         protected $_subjects = array(
-            self::TYPE_REG_STUDENT => 'Регистрация',
-            self::TYPE_REG_EMPLOYEE => 'Регистрация',
-            self::TYPE_CONTRACT => 'Договор об оказании услуг по дистанционному обучению'
+            self::TYPE_REG_STUDENT    => 'Регистрация',
+            self::TYPE_REG_EMPLOYEE   => 'Регистрация',
+            self::TYPE_CONTRACT       => 'Договор об оказании услуг по дистанционному обучению',
+            self::TYPE_RESTORE_PASSWD => 'Восстановление пароля'
         );
 
         /**
@@ -72,9 +80,10 @@
         * @var array
         */
         protected $_messages = array(
-            self::TYPE_REG_STUDENT => 'Вы зарегистрированы под логином %s. Для активации аккаунта пройдите по ссылке %s.',
-            self::TYPE_REG_EMPLOYEE => 'Вы зарегистрированы под логином %s. Для активации аккаунта и получения пароля пройдите по ссылке %s.',
-            self::TYPE_CONTRACT => 'Во вложении находиться договор об оказании услуг по дистанционному обучению. Для начала обучения договор необходимо распечатать, подписать и доставить в центр обучения.'
+            self::TYPE_REG_STUDENT    => 'Вы зарегистрированы под логином %s. Для активации аккаунта пройдите по ссылке %s.',
+            self::TYPE_REG_EMPLOYEE   => 'Вы зарегистрированы под логином %s. Для активации аккаунта и получения пароля пройдите по ссылке %s.',
+            self::TYPE_CONTRACT       => 'Во вложении находиться договор об оказании услуг по дистанционному обучению. Для начала обучения договор необходимо распечатать, подписать и доставить в центр обучения.',
+            self::TYPE_RESTORE_PASSWD => 'Для смены пароля пройдите по ссылке %s'
         );
 
         /**
@@ -215,6 +224,30 @@
             return $this->_send($user_email, $subject, $message);
         }
 
+        /**
+        * Отправка сообщения для восстановления пароля.
+        *
+        * @param  int    $id    Идентификатор пользователя.
+        * @param  string $email Email пользователя.
+        * @param  string $code  Код активации.
+        * @return
+        */
+        public function sendPasswdRestore($id, $email, $code) {
+            /* Создаём ссылку для активации */
+            $links = Resources::getInstance()->links;
+            $link = $links->getSiteUrl() .
+                    $links->get('users.reset-passwd',
+                                array('user_id' => $id, 'code' => $code));
+
+            /* Получаем заголовок и текст письма */
+            $subject = $this->_getSubject(self::TYPE_RESTORE_PASSWD);
+
+            $params = array($link);
+            $message = $this->_getMessage(self::TYPE_RESTORE_PASSWD, $params);
+
+            return $this->_send($email, $subject, $message);
+        }
+        
         /**
         * Отправка письма.
         *

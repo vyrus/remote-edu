@@ -172,7 +172,7 @@
         }
 
         /**
-        * Генерация кода активации пользователя
+        * Генерация кода активации пользователя.
         *
         * @param  int $id Идентификатор пользователя.
         * @return string
@@ -184,6 +184,19 @@
             return $code;
         }
 
+        /**
+        * Генерация кода для восстановления пароля.
+        *
+        * @param  int $id Идентификатор пользователя.
+        * @return string
+        */
+        public function getPasswdRestoreCode($id) {
+            $auth = Resources::getInstance()->auth;
+            $code = $auth->getPasswdRestoreCode($id);
+
+            return $code;
+        }
+        
         /**
         * Шифрование пароля.
         *
@@ -880,6 +893,55 @@
                 SET `name`=:name,`surname`=:surname,`patronymic`=:patronymic,`role`=:role
                 WHERE `user_id`=:user_id';
             $this->prepare($sql)->execute($userInfo);
+        }
+        
+        /**
+        * Получение данных пользователя по логину.
+        * 
+        * @param  string $login
+        * @return array
+        */
+        public function getInfoByLogin($login) {
+            $sql = '
+                SELECT *
+                FROM ' . $this->_tables['users'] . '
+                WHERE login = ?
+            ';
+            
+            $stmt = $this->prepare($sql);
+            $stmt->execute(array($login));
+            
+            $info = $stmt->fetch(Db_Pdo::FETCH_ASSOC);
+            return $info;
+        }
+        
+        /**
+        * Установка нового пароля для пользователя.
+        * 
+        * @param int    $user_id Идентификатор пользователя.
+        * @param string $passwd  Пароль.
+        * @return boolean
+        */
+        public function setPasswd($user_id, $passwd) {
+            $sql = '
+                UPDATE ' . $this->_tables['users'] . '
+                SET passwd = :passwd
+                WHERE user_id = :uid
+                LIMIT 1
+            ';
+            
+            $stmt = $this->prepare($sql);
+            
+            /* Вычисляем хэш пароля */
+            $auth = Resources::getInstance()->auth;
+            $passwd = $auth->getPasswdHash($passwd);
+            
+            $values = array(
+                ':uid'    => $user_id,
+                ':passwd' => $passwd
+            );
+            
+            return $stmt->execute($values);
         }
     }
 ?>

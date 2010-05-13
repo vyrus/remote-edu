@@ -1,4 +1,5 @@
 <?php
+
     /* $Id$ */
 
     require_once '../private/init.php';
@@ -11,4 +12,5 @@
 
     /* Обрабатываем запрос */
     $dispatcher->dispatch($request);
+
 ?>
