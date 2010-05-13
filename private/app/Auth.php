@@ -62,6 +62,18 @@
         public function getActivationCode($id) {
             return $this->_hash($id);
         }
+        
+        /**
+        * Генерация кода для восстановления пароля. Код генерируется с 
+        * использованием текущей даты, поэтому он будет действовать только в 
+        * течении дня, когда был сгенерирован.
+        *
+        * @param  int $id Идентификатор пользователя.
+        * @return string
+        */
+        public function getPasswdRestoreCode($id) {
+            return $this->_hash($id . date('d.m.Y'));
+        }
 
         /**
         * Инициализация хранилища данных.

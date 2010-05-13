@@ -21,6 +21,12 @@
             /* Выход */
             array('/logout', 'users', 'logout', 'users.logout', Mvc_Router::ROUTE_STATIC),
 
+            /* Восстановление пароля: запрос на восстановление */
+            array('/restore-password', 'users', 'restore_passwd', 'users.restore-passwd', Mvc_Router::ROUTE_STATIC),
+            
+            /* Восстановление пароля: установка нового пароля */
+            array('/restore-password/([0-9]+)/([0-9a-z]{32})', array('user_id', 'code'), 'users', 'reset_passwd', 'users.reset-passwd', Mvc_Router::ROUTE_REGEX),
+            
             /* Управление пользователями */
             array('/admin/users', 'users', 'index_by_admin', 'admin.users', Mvc_Router::ROUTE_STATIC),
 

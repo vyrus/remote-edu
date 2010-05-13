@@ -306,6 +306,121 @@
         }
 
         /**
+        * Запрос восстановление пароля.
+        */
+        public function action_restore_passwd() {
+            /* Берём менеджер ссылок */
+            $links = Resources::getInstance()->links;
+            
+            /* Получаем ссылку на страницу восстановления пароля */
+            $action = $links->get('users.restore-passwd');
+            /* Инициализируем форму */
+            $form = Form_Profile_RestorePasswd::create($action);
+            
+            /* Передаём форму в шаблон */
+            $this->set('form', $form);
+            
+            $request = $this->getRequest();
+            $method = $form->method();
+            
+            /* Если данных от формы нет, выводим страницу */
+            if (empty($request->$method)) {
+                $this->render();
+            }
+
+            /* Создаём модель для работы с пользователями */
+            $user = Model_User::create();
+            
+            /* Если в форме что-то не заполнено, просим исправить */
+            if (!$form->validate($request, $user)) {
+                $this->render();
+            }
+            
+            /* Получаем данные пользователя */
+            $udata = (object) $user->getInfoByLogin($form->login->value);
+            
+            /* Генерируем код восстановления */
+            $code = $user->getPasswdRestoreCode($udata->user_id);
+
+            /* И отправляем его пользователю */
+            $postman = Resources::getInstance()->postman;
+            $postman->sendPasswdRestore(
+                $udata->user_id, $udata->email, $code
+            );
+            
+            
+            $msg = 'Ссылка для восстановления пароля отправлена на указанный ' .
+                   'при регистрации адрес электронной почты. Она будет ' . 
+                   'действовать только в течении текущего дня.';
+            $link = $links->get('users.login');
+            
+            $this->flash($msg, $link, false);
+        }
+        
+        /**
+        * Смена пароля.
+        */
+        public function action_reset_passwd(array $params) {
+            $params = (object) $params;
+            
+            /* Берём менеджер ссылок */
+            $links = Resources::getInstance()->links;
+            
+            /* Создаём модель пользователя */
+            $user = Model_User::create();
+            /* Генерируем защитный код */
+            $code = $user->getPasswdRestoreCode($params ->user_id);
+            
+            /* Проверяем код */
+            if ($code != $params->code) {
+                $msg = 'Ошибка: недейстительная ссылка для смены пароля'; 
+                $link = $links->get('users.restore-passwd');
+                
+                $this->flash($msg, $link, false);
+            }
+            
+            $opts = array('user_id' => $params->user_id,
+                          'code'    => $params->code);
+            
+            /* Получаем ссылку на страницу смены пароля */
+            $action = $links->get('users.reset-passwd', $opts);
+            
+            /* Инициализируем форму */
+            $form = Form_Profile_ResetPasswd::create($action);
+            $this->set('form', $form);
+            
+            $request = $this->getRequest();
+            $method  = $form->method();
+            
+            /* Если данных от формы нет, выводим страницу */
+            if (empty($request->$method)) {
+                $this->render();
+            }
+            
+            /* Если данные не прошли проверку, выводим ошибки */
+            if (!$form->validate($request)) {
+                $this->render();
+            }
+            
+            $uid    = $params->user_id;
+            $passwd = $form->new_passwd->value;
+            
+            /* Обновляем пароль */
+            $result = $user->setPasswd($uid, $passwd);
+            
+            if ($result) {
+                $msg = 'Пароль успешно изменён';
+                $link = $links->get('users.login');
+            } else {
+                $msg = 'Не удалось изменить пароль';
+                $link = $links->get('users.reset-passwd', $opts);
+            }
+            
+            /* Выводим сообщение, удалось ли сменить пароль или нет */
+            $this->flash($msg, $link, false);
+        }
+        
+        /**
         * Отображение информации об авторизованном пользователе.
         */
         public function action_whoami() {
