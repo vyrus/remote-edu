@@ -108,7 +108,14 @@ $(document).ready(function() {
             <div class="cntnt-leftblock">
               <div>
                 <ul id="accordion_no">
-                  <?php $this->renderElement($this->_request->_router['handler']['controller'] . '-actions') ?>
+                  <?php /* Если в шаблоне страницы было задано, какое меню выводить, */ ?>  
+                  <?php if (isset($this->left_menu)): ?>
+                      <?php /* то отображаем элемент с заданным меню */ ?>
+                      <?php $this->renderElement('menus' . DS . $this->left_menu); ?>
+                  <?php else: ?>
+                      <?php /* Иначе выводим меню, привязанное к контроллеру */ ?>
+                      <?php $this->renderElement($this->_request->_router['handler']['controller'] . '-actions') ?>
+                  <?php endif; ?>
                 </ul>
               </div>
             </div>

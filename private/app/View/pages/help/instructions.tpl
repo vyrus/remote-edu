@@ -1,4 +1,5 @@
-<?php $this->title = 'Личный кабинет';?>
+<?php $this->title = 'Личный кабинет' ?>
+<?php $this->left_menu = 'my_menu' ?>
 <b>Для того чтобы начать обучение Вам всего лишь нужно:</b>
 <ol>
     <li>В разделе <a href="<?php echo $this->_links->get('student.apply') ?>" target=blank>
