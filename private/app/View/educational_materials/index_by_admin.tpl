@@ -111,17 +111,17 @@
 <h3>Список материалов</h3>
 <nobr>
 <form name="filter" method="post" action="<?php echo $this->_links->get('admin.materials') ?>">
-<select id="programsSelect" name="programsSelect" class="educationProgramItems" onchange="updateSelect (programsSelect, disciplinesSelect, DISCIPLINES, [disciplinesSelect, sectionsSelect]);"><option value="-1" selected="selected">--Любое направление--</option>
+<select style="width:200px" id="programsSelect" name="programsSelect" class="educationProgramItems" onchange="updateSelect (programsSelect, disciplinesSelect, DISCIPLINES, [disciplinesSelect, sectionsSelect]);"><option value="-1" selected="selected">--Любое направление--</option>
 <?php foreach ($directions as $i => $direction): ?><option value="<?php echo $direction['program_id']; ?>"<?php if ($direction['program_id'] == $programID): ?> selected="selected"<?php endif; ?>><?php echo $direction['title']; ?></option><?php endforeach; ?>
 </select>
-<select id="disciplinesSelect" name="disciplinesSelect" class="educationProgramItems" onchange="updateSelect (disciplinesSelect, sectionsSelect, SECTIONS, [sectionsSelect]);"<?php if ($programID == -1): ?> disabled="disabled"<?php endif; ?>><option value="-1">--Любая дисциплина--</option>
+<select style="width:200px" id="disciplinesSelect" name="disciplinesSelect" class="educationProgramItems" onchange="updateSelect (disciplinesSelect, sectionsSelect, SECTIONS, [sectionsSelect]);"<?php if ($programID == -1): ?> disabled="disabled"<?php endif; ?>><option value="-1">--Любая дисциплина--</option>
 <?php if ($programID != -1 && isset ($disciplines[$programID])): ?>
 <?php foreach ($disciplines[$programID] as $i => $discipline): ?>
 <option value="<?php echo $discipline['discipline_id']; ?>"<?php if ($discipline['discipline_id'] == $disciplineID): ?> selected="selected"<?php endif; ?>><?php echo $discipline['title']; ?></option>
 <?php endforeach; ?>
 <?php endif; ?>
 </select>
-<select id="sectionsSelect" name="sectionsSelect" class="educationProgramItems"<?php if ($disciplineID == -1): ?> disabled="disabled"<?php endif; ?>><option value="-1">--Любой раздел--</option>
+<select style="width:200px" id="sectionsSelect" name="sectionsSelect" class="educationProgramItems"<?php if ($disciplineID == -1): ?> disabled="disabled"<?php endif; ?>><option value="-1">--Любой раздел--</option>
 <?php if ($disciplineID != -1 && isset ($sections[$disciplineID])): ?>
 <?php foreach ($sections[$disciplineID] as $i => $section): ?>
 <option value="<?php echo $section['section_id']; ?>"<?php if ($section['section_id'] == $sectionID): ?> selected="selected"<?php endif; ?>><?php echo $section['title']; ?></option>
