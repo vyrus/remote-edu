@@ -48,12 +48,16 @@
         public function removeMaterial ($materialID) {
             $user = Model_User::create();
             $udata = (object) $user->getAuth();
-            $sql = 'SELECT `filename` FROM `materials` WHERE `id`=:material_id AND `uploader`=:uploader_id';
+            $sql = 'SELECT `filename` FROM `materials` WHERE `id`=:material_id' . ($udata->role != Model_User::ROLE_ADMIN ? ' AND `uploader`=:uploader_id' : '');
             $stmt = $this->prepare($sql);
             $params = array(
-                ':material_id' => $materialID,
-                ':uploader_id' => $udata->user_id,
+                ':material_id' => $materialID,                
             );
+            
+            if ($udata->role != Model_User::ROLE_ADMIN) {
+                $params[':uploader_id'] = $udata->user_id;
+            }
+            
             $stmt->execute($params);
 
             if (($filename = $stmt->fetch(PDO::FETCH_ASSOC)) === FALSE) {
@@ -74,20 +78,26 @@
                 FROM `materials`';
             $user = Model_User::create();
             $udata = (object) $user->getAuth();
-            $queryParams = array(
-                ':uploader_id' => $udata->user_id,
-            );
+            
+            $queryParams = array();
+            $condition = '';            
+            
+            if ($udata->role != Model_User::ROLE_ADMIN) {
+                $queryParams = array(
+                    ':uploader_id' => $udata->user_id,
+                );
+                $condition = ' WHERE `uploader`=:uploader_id';
+            }
 
             do {
                 if ((empty ($filter)) || ($filter['programsSelect'] == -1)) {
                     $tables = '';
-                    $condition = '';
                     break;
                 }
 
                 if ($filter['disciplinesSelect'] == -1) {
                     $tables = ',`disciplines`,`sections`';
-                    $condition = '`materials`.`section`=`sections`.`section_id` AND `sections`.`discipline_id`=`disciplines`.`discipline_id` AND `disciplines`.`program_id`=:program_id';
+                    $condition .= ($condition == '' ? ' WHERE ' : ' AND ') . '`materials`.`section`=`sections`.`section_id` AND `sections`.`discipline_id`=`disciplines`.`discipline_id` AND `disciplines`.`program_id`=:program_id';
                     $queryParams = array_merge($queryParams, array(
                             ':program_id' => $filter['programsSelect'],
                         )
@@ -97,7 +107,7 @@
 
                 if ($filter['sectionsSelect'] == -1) {
                     $tables = ',`sections`';
-                    $condition = '`materials`.`section`=`sections`.`section_id` AND `sections`.`discipline_id`=:discipline_id';
+                    $condition .= ($condition == '' ? ' WHERE ' : ' AND ') . '`materials`.`section`=`sections`.`section_id` AND `sections`.`discipline_id`=:discipline_id';
                     $queryParams = array_merge($queryParams, array(
                             ':discipline_id' => $filter['disciplinesSelect'],
                         )
@@ -106,14 +116,15 @@
                 }
 
                 $tables = '';
-                $condition = '`materials`.`section`=:section_id';
+                $condition .= ($condition == '' ? ' WHERE ' : ' AND ') . '`materials`.`section`=:section_id';
                 $queryParams = array_merge($queryParams, array(
                         ':section_id' => $filter['sectionsSelect'],
                     )
                 );
             } while(0);
 
-            $sql .= $tables . 'WHERE `uploader`=:uploader_id' . (($condition != '') ? (' AND ' . $condition) : (''));
+
+            $sql .= $tables . $condition;
 
             $stmt = $this->prepare ($sql);
             $stmt->execute ($queryParams);
@@ -124,11 +135,15 @@
         public function getMaterialInfo($materialId) {
             $user = Model_User::create();
             $udata = (object) $user->getAuth();
-            $sql = 'SELECT `description`,`type` FROM `materials` WHERE `id`=:material_id AND `uploader`=:uploader_id';
+            $sql = 'SELECT `description`,`type` FROM `materials` WHERE `id`=:material_id' . ($udata->role != Model_User::ROLE_ADMIN ? ' AND `uploader`=:uploader_id' : '');
             $params = array(
                 ':material_id' => $materialId,
-                ':uploader_id' => $udata->user_id,
             );
+            
+            if ($udata->role != Model_User::ROLE_ADMIN) {
+                $params[':uploader_id'] = $udata->user_id;
+            }            
+            
             $stmt = $this->prepare($sql);
             $stmt->execute($params);
 
@@ -138,13 +153,17 @@
         public function updateMaterialInfo($materialInfo) {
             $user = Model_User::create();
             $udata = (object) $user->getAuth();
-            $sql = 'UPDATE `materials` SET `description`=:description,`type`=:type WHERE `id`=:material_id AND `uploader`=:uploader_id';
+            $sql = 'UPDATE `materials` SET `description`=:description,`type`=:type WHERE `id`=:material_id' . ($udata->role != Model_User::ROLE_ADMIN ? ' AND `uploader`=:uploader_id' : '');
             $params = array(
                 ':material_id' => $materialInfo['id'],
                 ':description' => $materialInfo['description'],
                 ':type' => $materialInfo['type'],
-                ':uploader_id' => $udata->user_id,
             );
+            
+            if ($udata->role != Model_User::ROLE_ADMIN) {
+                $params[':uploader_id'] = $udata->user_id;
+            }                        
+            
             $this->prepare($sql)->execute($params);
         }
 
