@@ -185,6 +185,9 @@
 
             /* Автодополнение при выборе города */
             array('/ajax/autocomplete/city', 'ajax', 'autocomplete_city', 'ajax.autocomplete-city', Mvc_Router::ROUTE_STATIC),
+
+            /* Download contract by student */
+            array('/student/download_contract/([0-9a-z]{32})', array('file_name'), 'applications', 'download_contract', 'applications.download_contract', Mvc_Router::ROUTE_REGEX)
         ),
 
         /* Права доступа к разделам сайта */

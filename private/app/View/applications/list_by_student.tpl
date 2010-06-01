@@ -52,8 +52,8 @@
 						{
 							echo"идёт формирование договора";
 						}else
-						{ ?>
-							<a href="<?=$app['contract_filename'].'.doc'?>">скачать договор</a></td> <?
+						{ $test = $this->_links->get('applications.download_contract',array('file_name'=>$app['contract_filename'])); ?>
+							<a href="<?=$test?>">скачать договор</a></td> <?
 						}
 					} ?>
 			</tr> <?

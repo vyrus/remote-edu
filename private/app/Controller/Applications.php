@@ -168,6 +168,95 @@
 
             $this->render();
         }
+        
+        
+        public function action_download_contract($params)
+        {
+			$file_name = $params['file_name'];
+			
+			// folder with files
+			define('BASE_DIR',ROOT.'/contracts/');
+			
+			// log file name
+			define('LOG_FILE',ROOT.'/contracts/downloads.log');
+			
+			if (!isset($file_name) || empty($file_name)) {
+			  die("Please specify file name for download.");
+			}
+			
+			// Get real file name.
+			$fname = basename($file_name);
+			
+			// Check if the file exists
+			function find_file($dirname, $fname, &$file_path) 
+			{
+				$dir = opendir($dirname);
+				while ($file = readdir($dir)) 
+				{
+			    if (empty($file_path) && $file != '.' && $file != '..') 
+			    {
+				      if (is_dir($dirname.'/'.$file)) 
+				      {
+				          find_file($dirname.'/'.$file, $fname, $file_path);
+				      }
+				      else 
+				      {
+				        if (file_exists($dirname.'/'.$fname)) 
+				        {
+				            $file_path = $dirname.'/'.$fname;
+				            return;
+				        }
+				      }
+			    }
+			  }
+			} // find_file
+			
+			// get full file path (including subfolders)
+			$file_path = '';
+			find_file(BASE_DIR, $fname, $file_path);
+			
+			if (!is_file($file_path)) {
+			  die("File does not exist. Make sure you specified correct file name."); 
+			}
+			
+			// file size in bytes
+			$fsize = filesize($file_path); 
+			$fext = 'doc';
+			$mtype = 'application/msword';
+			$asfname = 'contract.doc';
+			
+			// set headers
+			header("Pragma: public");
+			header("Expires: 0");
+			header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+			header("Cache-Control: public");
+			header("Content-Description: File Transfer");
+			header("Content-Type: $mtype");
+			header("Content-Disposition: attachment; filename=\"$asfname\"");
+			header("Content-Transfer-Encoding: binary");
+			header("Content-Length: " . $fsize);
+			
+			// download
+			// @readfile($file_path);
+			$file = @fopen($file_path,"rb");
+			if ($file) {
+			  while(!feof($file)) {
+			    print(fread($file, 1024*8));
+			    flush();
+			    if (connection_status()!=0) {
+			      @fclose($file);
+			      die();
+			    }
+			  }
+			  @fclose($file);
+			}
+			
+			$f = @fopen(LOG_FILE, 'a+');
+			if ($f) {
+			  @fputs($f, date("m.d.Y g:ia")."  ".$_SERVER['REMOTE_ADDR']."  ".$fname."\n");
+			  @fclose($f);
+			}      
+        }
 
         public function action_change_app_status($params)
         {
