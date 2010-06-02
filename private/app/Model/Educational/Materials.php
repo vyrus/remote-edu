@@ -51,13 +51,13 @@
             $sql = 'SELECT `filename` FROM `materials` WHERE `id`=:material_id' . ($udata->role != Model_User::ROLE_ADMIN ? ' AND `uploader`=:uploader_id' : '');
             $stmt = $this->prepare($sql);
             $params = array(
-                ':material_id' => $materialID,                
+                ':material_id' => $materialID,
             );
-            
+
             if ($udata->role != Model_User::ROLE_ADMIN) {
                 $params[':uploader_id'] = $udata->user_id;
             }
-            
+
             $stmt->execute($params);
 
             if (($filename = $stmt->fetch(PDO::FETCH_ASSOC)) === FALSE) {
@@ -78,10 +78,10 @@
                 FROM `materials`';
             $user = Model_User::create();
             $udata = (object) $user->getAuth();
-            
+
             $queryParams = array();
-            $condition = '';            
-            
+            $condition = '';
+
             if ($udata->role != Model_User::ROLE_ADMIN) {
                 $queryParams = array(
                     ':uploader_id' => $udata->user_id,
@@ -139,11 +139,11 @@
             $params = array(
                 ':material_id' => $materialId,
             );
-            
+
             if ($udata->role != Model_User::ROLE_ADMIN) {
                 $params[':uploader_id'] = $udata->user_id;
-            }            
-            
+            }
+
             $stmt = $this->prepare($sql);
             $stmt->execute($params);
 
@@ -159,11 +159,11 @@
                 ':description' => $materialInfo['description'],
                 ':type' => $materialInfo['type'],
             );
-            
+
             if ($udata->role != Model_User::ROLE_ADMIN) {
                 $params[':uploader_id'] = $udata->user_id;
-            }                        
-            
+            }
+
             $this->prepare($sql)->execute($params);
         }
 
@@ -267,7 +267,7 @@
         */
         public function getAllByDiscipline($disc_id) {
             $sql = '
-                SELECT section, number, id, description, state
+                SELECT section, number, id, description, state, type
                 FROM ' . $this->_tables['sections'] . ' s
                 LEFT JOIN ' . $this->_tables['checkpoints'] . ' c
                     ON  s.section_id = c.section_id
