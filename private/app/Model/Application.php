@@ -47,6 +47,13 @@
         const STATUS_SIGNED = 'signed';
         
         /**
+        * Статус программы: платная.
+        * 
+        * @var const
+        */
+        const PROGRAMM_PAID = 'paid';
+        
+        /**
         * Карта соответствия обозначений статусов заявок названиям статусов
         * заявок.
         * 
@@ -123,7 +130,7 @@
         */
         public function getAppsInfo($user_id) {
             $sql = '
-                SELECT a.app_id, a.status,
+                SELECT a.app_id, a.status, a.object_id,
                        contract_filename,      
                        p.title AS program_title,
                        d.title AS discipline_title
@@ -152,6 +159,59 @@
             $apps = $stmt->fetchAll(Db_PdO::FETCH_ASSOC);
             return $apps;
         }
+
+        /**
+        * Получение информации о направлении
+        * 
+        * @param  int $program_id Идентификатор направления.
+        * @return array
+        */
+        public function getProgram($program_id) 
+        {
+            $sql = '
+			SELECT `title`,`labour_intensive`,`paid_type`,`cost`
+			FROM '. $this->_tables['programs'] .' p
+			WHERE
+			    `program_id`=:pid 
+            ';
+            
+            $values = array(
+                ':pid'             => $program_id
+            );
+            
+            $stmt = $this->prepare($sql);
+            $stmt->execute($values);
+            
+            $prog = $stmt->fetchAll(Db_PdO::FETCH_ASSOC);
+            return $prog[0];
+        }
+       
+        /**
+        * Получение информации о дисциплине
+        * 
+        * @param  int $disc_id Идентификатор дисциплины.
+        * @return array
+        */
+        public function getDiscipline($disc_id) 
+        {
+            $sql = '
+			SELECT `program_id`,`serial_number`,`title`,`labour_intensive`,`coef`,`responsible_teacher`
+			FROM '. $this->_tables['disciplines'] .' d
+			WHERE
+			    `discipline_id`=:did 
+            ';
+            
+            $values = array(
+                ':did'             => $disc_id
+            );
+            
+            $stmt = $this->prepare($sql);
+            $stmt->execute($values);
+            
+            $disc = $stmt->fetchAll(Db_PdO::FETCH_ASSOC);
+            return $disc[0];
+        }
+       
         
         /**
         * Получение обработанных заявок на программы, т.е. заявок, которые были

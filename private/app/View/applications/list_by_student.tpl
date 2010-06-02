@@ -55,6 +55,35 @@
 						{ $test = $this->_links->get('applications.download_contract',array('file_name'=>$app['contract_filename'])); ?>
 							<a href="<?=$test?>">скачать договор</a></td> <?
 						}
+					}else
+					{
+						if ($app['program_title'])
+						{
+							if ($app['rest'] == 'free')
+							{
+								echo "бесплатное направление";							
+							}elseif ($app['rest'] == 0)
+							{
+								echo "направление оплачено";
+							}else
+							{
+								echo "задолженность по оплате ".$app['rest'];
+								echo " рублей,<br> что составляет ".$app['rest_rate']." от общей суммы";
+							}
+						}else
+						{
+							if ($app['rest'] == 'free')
+							{
+								echo "бесплатная дисциплина";							
+							}elseif ($app['rest'] == 0)
+							{
+								echo "дисциплина оплачена";
+							}else
+							{
+								echo "задолженность по оплате ".$app['rest'];
+								echo " рублей,<br> что составляет ".$app['rest_rate']." от общей суммы";
+							}
+						}
 					} ?>
 			</tr> <?
 		}

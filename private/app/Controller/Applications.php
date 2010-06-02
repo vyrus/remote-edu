@@ -125,7 +125,7 @@
                 Model_Education_Programs::PAID_TYPE_PAID === $info->paid_type &&
                 !$user->isExtendedProfileSet($udata->user_id)
             ) {
-                /* просим пользователя его заполнить */
+                // просим пользователя его заполнить 
                 $msg = 'Заполните, пожалуйста, подробную анкету слушателя';
                 $this->flash($msg, $links->get('student.extended-profile'));
             }
@@ -153,19 +153,48 @@
         {
             $user = Model_User::create();
             $udata = (object) $user->getAuth();
-            /**
-            * @todo Paginator.
-            */
             $app = Model_Application::create();
-            /**
-            * @todo If user is not logged in, then $udata is empty. Avoid it by
-            * protecting this line with route, allowed only for logged in user.
-            */
+			$paym = Model_Payment::create();
+			
             $apps = $app->getAppsInfo($udata->user_id);
-
+		    foreach ($apps as $i=>$a)  
+		    {	
+		    	if ($a['status'] == 'signed')
+				{				
+				    if ($a['program_title'])
+					{					
+						//товарищ учится по всему направлению
+						$prog = $app->getProgram($a['object_id']);
+						if ($prog['paid_type'] == 'paid')
+						{												
+							$paid_money = $paym->getTotal($a['app_id']); 
+							$rest = $prog['cost'] - $paid_money; // (program price - paid already)
+							$rest_rate = $rest/$prog['cost']; // how many cost's parts to pay
+							$apps[$i] = array_merge($apps[$i],array('rest' => $rest, 'rest_rate' => $rest_rate));
+						}else
+						{
+							$apps[$i] = array_merge($apps[$i],array('rest' => 'free', 'rest_rate' => 'free'));
+						}						
+					}else
+					{
+						//учится по дисциплине
+						$disc = $app->getDiscipline($a['object_id']);
+						$upper_prog = $app->getProgram($disc['program_id']);
+						if ($upper_prog['paid_type'] == 'paid')
+						{												
+							$paid_money = $paym->getTotal($a['app_id']); 
+							$rest = ($upper_prog['cost']*$disc['coef'])/100 - $paid_money; // (program price - paid already)
+							$rest_rate = $rest/(($upper_prog['cost']*$disc['coef'])/100); // how many cost's parts to pay
+							$apps[$i] = array_merge($apps[$i],array('rest' => $rest, 'rest_rate' => $rest_rate));
+						}else
+						{
+							$apps[$i] = array_merge($apps[$i],array('rest' => 'free', 'rest_rate' => 'free'));
+						}
+					}
+				}
+		    }
             $this->set('applications', $apps);
             $this->set('statuses', Model_Application::getStatusMap());
-
             $this->render();
         }
         
