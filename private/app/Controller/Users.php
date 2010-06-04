@@ -437,9 +437,10 @@
             $this->flash($msg, '#', false);
         }
 
-        public function action_users_list() {
+        public function action_users_list($params) {
             $users = Model_User::create();
-            $this->set('users', $users->getUsersList());
+            $this->set('users', $users->getUsersList($params['filter']));
+            $this->set('filter', $params['filter']);
             $this->set('rolesCaptions', $this->_roles_captions);
             $this->render('users/users_list');
         }

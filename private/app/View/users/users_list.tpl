@@ -1,6 +1,8 @@
 <?php
     $rolesCaptions = $this->rolesCaptions;
     $users = $this->users;
+    $links = Resources::getInstance()->links;
+    $filter = $this->filter;
 ?>
 
 <style type="text/css">
@@ -22,7 +24,14 @@
     }	
 </style>
 
+<script type="text/javascript">
+    function filterSelectOnchange() {
+        window.location = '<?php echo $links->get("users.list"); ?>' + $('#filter').val();
+    }
+</script>
+
 <h3>Список пользователей системы</h3>
+Фильтр<select id="filter" onchange="filterSelectOnchange()"><option value="all"<?php if ($filter == 'all'):?> selected="selected"<?php endif; ?>>Все</option><option value="admin"<?php if ($filter == 'admin'):?> selected="selected"<?php endif; ?>>Администраторы</option><option value="teacher"<?php if ($filter == 'teacher'):?> selected="selected"<?php endif; ?>>Преподаватели</option><option value="student"<?php if ($filter == 'student'):?> selected="selected"<?php endif; ?>>Слушатели</option></select>
 <table class="users" border="0" cellspacing="2" cellpadding="0">
 <tr class="odd"><th class="id">ID</th><th class="login">Логин</th><th class="fio">ФИО</th><th class="role">Роль в системе</th><th></th></tr>
 <?php foreach ($users as $i => $user): ?>

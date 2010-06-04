@@ -32,7 +32,11 @@
             */            
                         
             $messageId = $messages->sendMessage($requestData['recipient'], htmlspecialchars($requestData['subject']), htmlspecialchars($requestData['message']));
-            $messages->addAttachments($messageId, $_FILES['attachment']);
+            
+            if (isset($_FILES['attachment'])) {
+                $messages->addAttachments($messageId, $_FILES['attachment']);
+            }
+            
             $this->flash('Сообщение отправлено', $links->get('messages.inbox'), 3);
         }
 

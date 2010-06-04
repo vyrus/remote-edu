@@ -9,7 +9,7 @@
     $admin_elements = array(
         'Регистрация сотрудника' => $this->_links->get('employee.register'),
         'Регистрация слушателя'  => $this->_links->get('student.register'),
-        'Список пользователей'   => $this->_links->get('users.list'),
+        'Список пользователей'   => $this->_links->get('users.list', array('filter' => 'all')),
         'Инструкция'             => $this->_links->get('help.registration')
     );
 

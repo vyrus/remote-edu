@@ -866,11 +866,17 @@
             return $retval;
         }
 
-        public function getUsersList() {
+        public function getUsersList($usersRole) {
             $sql = 'SELECT `user_id`,`login`,`role`,`name`,`surname`,`patronymic`
-                FROM `users`';
+                FROM `users`' . ($usersRole == 'all' ? '' : ' WHERE `role`=:role');
             $stmt = $this->prepare($sql);
-            $stmt->execute();
+            $params = array();
+            
+            if ($usersRole != 'all') {
+                $params[':role'] = $usersRole;
+            }
+            
+            $stmt->execute($params);
 
             return $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
         }

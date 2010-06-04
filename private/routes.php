@@ -34,7 +34,7 @@
             array('/admin/users', 'users', 'index_by_admin', 'admin.users', Mvc_Router::ROUTE_STATIC),
 
             /* Список пользователей */
-            array('/admin/users/list', 'users', 'users_list', 'users.list', Mvc_Router::ROUTE_STATIC),
+            array('/admin/users/list/(all|admin|teacher|student)?', array('filter'), 'users', 'users_list', 'users.list', Mvc_Router::ROUTE_REGEX),
 
             /* Редактирование аккаунтов */
             array('/admin/users/edit/([0-9]+)', array('user_id'), 'users', 'edit_account', 'users.edit', Mvc_Router::ROUTE_REGEX),
