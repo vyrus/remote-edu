@@ -81,22 +81,27 @@
 
             $queryParams = array();
             $condition = '';
+            $tables = '';
 
-            if ($udata->role != Model_User::ROLE_ADMIN) {
+            $isAdminUser = $udata->role == Model_User::ROLE_ADMIN;
+
+            if (!$isAdminUser) {
+                $tables = ',`disciplines`,`sections`';
+                
                 $queryParams = array(
-                    ':uploader_id' => $udata->user_id,
+                    ':permitted_user' => $udata->user_id,
                 );
-                $condition = ' WHERE `uploader`=:uploader_id';
+                $condition = ' WHERE (uploader=:permitted_user OR materials.section=sections.section_id AND sections.discipline_id=disciplines.discipline_id AND disciplines.responsible_teacher=:permitted_user)';
             }
 
             do {
                 if ((empty ($filter)) || ($filter['programsSelect'] == -1)) {
-                    $tables = '';
+                    $tables = $isAdminUser ? '' : $tables;
                     break;
                 }
 
                 if ($filter['disciplinesSelect'] == -1) {
-                    $tables = ',`disciplines`,`sections`';
+                    $tables = $isAdminUser ? ',`disciplines`,`sections`' : $tables;
                     $condition .= ($condition == '' ? ' WHERE ' : ' AND ') . '`materials`.`section`=`sections`.`section_id` AND `sections`.`discipline_id`=`disciplines`.`discipline_id` AND `disciplines`.`program_id`=:program_id';
                     $queryParams = array_merge($queryParams, array(
                             ':program_id' => $filter['programsSelect'],
@@ -106,7 +111,7 @@
                 }
 
                 if ($filter['sectionsSelect'] == -1) {
-                    $tables = ',`sections`';
+                    $tables = $isAdminUser ? ',`sections`' : $tables;
                     $condition .= ($condition == '' ? ' WHERE ' : ' AND ') . '`materials`.`section`=`sections`.`section_id` AND `sections`.`discipline_id`=:discipline_id';
                     $queryParams = array_merge($queryParams, array(
                             ':discipline_id' => $filter['disciplinesSelect'],
@@ -115,7 +120,7 @@
                     break;
                 }
 
-                $tables = '';
+                $tables = $isAdminUser ? '' : $tables;
                 $condition .= ($condition == '' ? ' WHERE ' : ' AND ') . '`materials`.`section`=:section_id';
                 $queryParams = array_merge($queryParams, array(
                         ':section_id' => $filter['sectionsSelect'],
