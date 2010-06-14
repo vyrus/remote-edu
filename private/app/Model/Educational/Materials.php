@@ -280,9 +280,8 @@
                     ON  s.section_id = m.section
                 LEFT JOIN ' . $this->_tables['materials_states'] . ' ms
                     ON  m.id = ms.material_id
-                WHERE   discipline_id = :discipline_id AND (
-                        c.student_id = :student_id OR
-                        s.number = 1)
+                WHERE   discipline_id = :discipline_id AND
+                        c.student_id = :student_id
                 ORDER BY number ASC
             ';
 
