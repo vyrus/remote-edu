@@ -32,7 +32,43 @@
             * (или вообще ешё не приняты/подписаны).
             */
             $apps = $app->getAllAppsInfo();
-
+			$paym = Model_Payment::create();
+		    foreach ($apps as $i=>$a)
+		    {
+		    	if ($a['status'] == 'signed')
+				{
+				    if ($a['program_title'])
+					{
+						//товарищ учится по всему направлению
+						$prog = $app->getProgram($a['object_id']);
+						if ($prog['paid_type'] == 'paid')
+						{
+							$paid_money = $paym->getTotal($a['app_id']);
+							$rest = $prog['cost'] - $paid_money; // (program price - paid already)
+							$rest_rate = $rest/$prog['cost']; // how many cost's parts to pay
+							$apps[$i] = array_merge($apps[$i],array('rest' => $rest, 'rest_rate' => $rest_rate));
+						}else
+						{
+							$apps[$i] = array_merge($apps[$i],array('rest' => 'free', 'rest_rate' => 'free'));
+						}
+					}else
+					{
+						//учится по дисциплине
+						$disc = $app->getDiscipline($a['object_id']);
+						$upper_prog = $app->getProgram($disc['program_id']);
+						if ($upper_prog['paid_type'] == 'paid')
+						{
+							$paid_money = $paym->getTotal($a['app_id']);
+							$rest = ($upper_prog['cost']*$disc['coef'])/100 - $paid_money; // (program price - paid already)
+							$rest_rate = $rest/(($upper_prog['cost']*$disc['coef'])/100); // how many cost's parts to pay
+							$apps[$i] = array_merge($apps[$i],array('rest' => $rest, 'rest_rate' => $rest_rate));
+						}else
+						{
+							$apps[$i] = array_merge($apps[$i],array('rest' => 'free', 'rest_rate' => 'free'));
+						}
+					}
+				}
+		    }
             $this->set('applications', $apps);
             $this->set('statuses', Model_Application::getStatusMap());
             $this->set ('invalidMaterialsForms', array ());
@@ -44,7 +80,7 @@
             if (empty ($requestData)) {
                 $this->render ('applications/index_by_admin');
             }
-        // [ загрузка договора
+	        // [ загрузка договора
             $invalidMaterialsForms = array ();
 
             foreach ($request->files as $key=>$item)
@@ -304,7 +340,10 @@
                 $programs = Model_Education_Programs::create();
                 $app_info = $app->getAppInfo($app_id);
                 $first_section = $programs->getFirstSectionOfDiscipline($app_info[0]['object_id']);
-                $programs->setCheckpoint(array('student_id' => $app_info[0]['user_id'], 'section_id' => $first_section[0]['section_id']));
+                if (!empty($first_section))
+                {
+					$programs->setCheckpoint(array('student_id' => $app_info[0]['user_id'], 'section_id' => $first_section[0]['section_id']));
+                }
             }
 
             $map = Model_Application::getStatusMap();

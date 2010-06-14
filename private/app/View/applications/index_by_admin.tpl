@@ -64,18 +64,18 @@
             <a href="<?php echo $this->_links->get('users.profile', array('user_id' => $app['user_id'])); ?>" title="Подробная анкета слушателя" target="_blank">&rarr;</a>
             </td>
             <td width='10%'><?php echo $this->statuses[$app['status']] ?></td>
-            <td>
-                <?php switch ($app['status']):
+            <td> <?php 
+            	switch ($app['status']):
                     case Model_Application::STATUS_APPLIED: ?>
                         <button class="addButton" name='accept' onclick="changeStatus('accepted', <?php echo $app['app_id'] ?>);">принять</button>
-                        <button class="addButton" name='decline' onclick="changeStatus('declined', <?php echo $app['app_id'] ?>);">отклонить</button>
-                    <?php break; ?>
-
-                    <?php case Model_Application::STATUS_DECLINED: ?>
-                        <button class="addButton" name='delApp' onclick="deleteApp(<?php echo $app['app_id'] ?>);">удалить</button>
-                    <?php break; ?>
-
-                    <?php case Model_Application::STATUS_ACCEPTED: ?>
+                        <button class="addButton" name='decline' onclick="changeStatus('declined', <?php echo $app['app_id'] ?>);">отклонить</button> <?php 
+                        break; ?> <?php
+                         
+                    case Model_Application::STATUS_DECLINED: ?>
+                        <button class="addButton" name='delApp' onclick="deleteApp(<?php echo $app['app_id'] ?>);">удалить</button> <?php 
+                        break; ?> <?php 
+                        
+                    case Model_Application::STATUS_ACCEPTED: ?>
                         <?php if (empty($app['contract_filename'])): ?>
                             <form id="educationalMaterials<?php echo $app['app_id'] ?>"
                                   name="educationalMaterials<?php echo $app['app_id'] ?>"
@@ -89,13 +89,42 @@
                             </form>
                         <?php else: ?>
                             Договор загружен
-                            <button class="addButton" name='signedApp' onclick="changeStatus('signed', <?echo $app['app_id'] ?>);">подписана</button>
-                        <?php endif; ?>
-                    <?php break; ?>
-
-                    <?php case Model_Application::STATUS_SIGNED: ?>
-                        <button class="addButton" name='delApp' onclick="addPayment(<?php echo $app['app_id'] ?>);">добавить платёж</button>
-                        <button class="addButton" name='delApp' onclick="deleteApp(<?php echo $app['app_id'] ?>);">удалить</button>
+                            <button class="addButton" name='signedApp' onclick="changeStatus('signed', <?echo $app['app_id'] ?>);">договор подписан</button>
+                        <?php endif; ?> <?php 
+                        break; ?> <?php 
+                    
+                    case Model_Application::STATUS_SIGNED:
+						if ($app['program_title'])
+						{
+							if ($app['rest'] == 'free')
+							{
+								echo "бесплатное направление";							
+							}elseif ($app['rest'] == 0)
+							{
+								echo "направление оплачено";
+							}else
+							{
+								echo "задолженность по оплате ".$app['rest'];
+								echo " рублей,<br> что составляет ".$app['rest_rate']." от общей суммы"; ?>
+		                        <button class="addButton" name='delApp' onclick="addPayment(<?php echo $app['app_id'] ?>);">добавить платёж</button>
+		                        <button class="addButton" name='delApp' onclick="deleteApp(<?php echo $app['app_id'] ?>);">удалить</button> <?
+							}
+						}else
+						{
+							if ($app['rest'] == 'free')
+							{
+								echo "бесплатная дисциплина";							
+							}elseif ($app['rest'] == 0)
+							{
+								echo "дисциплина оплачена";
+							}else
+							{
+								echo "задолженность по оплате ".$app['rest'];
+								echo " рублей,<br> что составляет ".$app['rest_rate']." от общей суммы"; ?>
+		                        <button class="addButton" name='delApp' onclick="addPayment(<?php echo $app['app_id'] ?>);">добавить платёж</button>
+		                        <button class="addButton" name='delApp' onclick="deleteApp(<?php echo $app['app_id'] ?>);">удалить</button> <?								
+							}
+						} ?> <br>
                     <?php break; ?>
                 <?php endswitch; ?>
             </td>

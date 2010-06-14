@@ -55,7 +55,7 @@
 						{ $test = $this->_links->get('applications.download_contract',array('file_name'=>$app['contract_filename'])); ?>
 							<a href="<?=$test?>">скачать договор</a></td> <?
 						}
-					}else
+					}elseif ($app['status'] == 'signed')
 					{
 						if ($app['program_title'])
 						{

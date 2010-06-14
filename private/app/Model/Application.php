@@ -135,8 +135,12 @@
                 WHERE app_id = :app_id
             ';
 
+            $values = array(
+                ':app_id'          => $app_id
+            );
+            
             $stmt = $this->prepare($sql);
-            $stmt->execute(array($app_id));
+            $stmt->execute($values);
             return $stmt->fetchAll(Db_PdO::FETCH_ASSOC);
         }
 
@@ -315,7 +319,7 @@
         public function getAllAppsInfo()
         {
             $sql = '
-                SELECT a.app_id, a.status, u.user_id, u.name, u.surname,
+                SELECT a.app_id, a.status, u.user_id, u.name, u.surname, a.object_id,
                        u.patronymic, u.login,
                        contract_filename,
                        p.title AS program_title,
