@@ -17,7 +17,8 @@
 
     /* ссылки, доступные только слушателю */
     $student_elements = array(
-        'Доступные программы'     => $this->_links->get('student.programs'),
+        'Учебная комната'	      => $this->_links->get('student.programs'),
+        'Зачетная книжка' 		  => '#',
         'Инструкция пользователю' => $this->_links->get('help.materials')
     );
 
