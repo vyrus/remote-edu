@@ -100,11 +100,11 @@
             $udata = (object) $user->getAuth();
 
             $links = Resources::getInstance()->links;
-            
+
             /* Получаем параметры программы */
             $object_id = $params['program_id'];
             $type = $params['program_type'];
-            
+
             /* Если подаётся заявка на дисциплину, */
             if (Model_Application::TYPE_DISCIPLINE === $type) {
                 /* то получаем идентификатор программы по дисциплине */
@@ -115,21 +115,21 @@
                 /* Если же заявка на программу, то берём её идентификатор */
                 $program_id = $object_id;
             }
-            
+
             /* Получаем данные программы */
             $program = Model_Education_Programs::create();
             $info = (object) $program->getProgramInfo($program_id);
-            
+
             /* Если программы платная и не заполнен расширенный профиль, то */
             if (
                 Model_Education_Programs::PAID_TYPE_PAID === $info->paid_type &&
                 !$user->isExtendedProfileSet($udata->user_id)
             ) {
-                // просим пользователя его заполнить 
+                // просим пользователя его заполнить
                 $msg = 'Заполните, пожалуйста, подробную анкету слушателя';
                 $this->flash($msg, $links->get('student.extended-profile'));
             }
-            
+
             $app = Model_Application::create();
             $app->apply($udata->user_id, $object_id, $type);
 
@@ -155,34 +155,34 @@
             $udata = (object) $user->getAuth();
             $app = Model_Application::create();
 			$paym = Model_Payment::create();
-			
+
             $apps = $app->getAppsInfo($udata->user_id);
-		    foreach ($apps as $i=>$a)  
-		    {	
+		    foreach ($apps as $i=>$a)
+		    {
 		    	if ($a['status'] == 'signed')
-				{				
+				{
 				    if ($a['program_title'])
-					{					
+					{
 						//товарищ учится по всему направлению
 						$prog = $app->getProgram($a['object_id']);
 						if ($prog['paid_type'] == 'paid')
-						{												
-							$paid_money = $paym->getTotal($a['app_id']); 
+						{
+							$paid_money = $paym->getTotal($a['app_id']);
 							$rest = $prog['cost'] - $paid_money; // (program price - paid already)
 							$rest_rate = $rest/$prog['cost']; // how many cost's parts to pay
 							$apps[$i] = array_merge($apps[$i],array('rest' => $rest, 'rest_rate' => $rest_rate));
 						}else
 						{
 							$apps[$i] = array_merge($apps[$i],array('rest' => 'free', 'rest_rate' => 'free'));
-						}						
+						}
 					}else
 					{
 						//учится по дисциплине
 						$disc = $app->getDiscipline($a['object_id']);
 						$upper_prog = $app->getProgram($disc['program_id']);
 						if ($upper_prog['paid_type'] == 'paid')
-						{												
-							$paid_money = $paym->getTotal($a['app_id']); 
+						{
+							$paid_money = $paym->getTotal($a['app_id']);
 							$rest = ($upper_prog['cost']*$disc['coef'])/100 - $paid_money; // (program price - paid already)
 							$rest_rate = $rest/(($upper_prog['cost']*$disc['coef'])/100); // how many cost's parts to pay
 							$apps[$i] = array_merge($apps[$i],array('rest' => $rest, 'rest_rate' => $rest_rate));
@@ -197,40 +197,40 @@
             $this->set('statuses', Model_Application::getStatusMap());
             $this->render();
         }
-        
-        
+
+
         public function action_download_contract($params)
         {
 			$file_name = $params['file_name'];
-			
+
 			// folder with files
 			define('BASE_DIR',ROOT.'/contracts/');
-			
+
 			// log file name
 			define('LOG_FILE',ROOT.'/contracts/downloads.log');
-			
+
 			if (!isset($file_name) || empty($file_name)) {
 			  die("Please specify file name for download.");
 			}
-			
+
 			// Get real file name.
 			$fname = basename($file_name);
-			
+
 			// Check if the file exists
-			function find_file($dirname, $fname, &$file_path) 
+			function find_file($dirname, $fname, &$file_path)
 			{
 				$dir = opendir($dirname);
-				while ($file = readdir($dir)) 
+				while ($file = readdir($dir))
 				{
-			    if (empty($file_path) && $file != '.' && $file != '..') 
+			    if (empty($file_path) && $file != '.' && $file != '..')
 			    {
-				      if (is_dir($dirname.'/'.$file)) 
+				      if (is_dir($dirname.'/'.$file))
 				      {
 				          find_file($dirname.'/'.$file, $fname, $file_path);
 				      }
-				      else 
+				      else
 				      {
-				        if (file_exists($dirname.'/'.$fname)) 
+				        if (file_exists($dirname.'/'.$fname))
 				        {
 				            $file_path = $dirname.'/'.$fname;
 				            return;
@@ -239,21 +239,21 @@
 			    }
 			  }
 			} // find_file
-			
+
 			// get full file path (including subfolders)
 			$file_path = '';
 			find_file(BASE_DIR, $fname, $file_path);
-			
+
 			if (!is_file($file_path)) {
-			  die("File does not exist. Make sure you specified correct file name."); 
+			  die("File does not exist. Make sure you specified correct file name.");
 			}
-			
+
 			// file size in bytes
-			$fsize = filesize($file_path); 
+			$fsize = filesize($file_path);
 			$fext = 'doc';
 			$mtype = 'application/msword';
 			$asfname = 'contract.doc';
-			
+
 			// set headers
 			header("Pragma: public");
 			header("Expires: 0");
@@ -264,7 +264,7 @@
 			header("Content-Disposition: attachment; filename=\"$asfname\"");
 			header("Content-Transfer-Encoding: binary");
 			header("Content-Length: " . $fsize);
-			
+
 			// download
 			// @readfile($file_path);
 			$file = @fopen($file_path,"rb");
@@ -279,12 +279,12 @@
 			  }
 			  @fclose($file);
 			}
-			
+
 			$f = @fopen(LOG_FILE, 'a+');
 			if ($f) {
 			  @fputs($f, date("m.d.Y g:ia")."  ".$_SERVER['REMOTE_ADDR']."  ".$fname."\n");
 			  @fclose($f);
-			}      
+			}
         }
 
         public function action_change_app_status($params)
@@ -292,13 +292,20 @@
             $links = Resources::getInstance()->links;
 
             $user = Model_User::create();
-            $udata = (object) $user->getAuth();
+            $udata = $user->getAuth();
 
             $new_status = $params['new_status'];
             $app_id = $params['app_id'];
 
             $app = Model_Application::create();
             $app->setAppStatus($new_status, $app_id);
+
+            if ('signed' == $new_status) {
+                $programs = Model_Education_Programs::create();
+                $app_info = $app->getAppInfo($app_id);
+                $first_section = $programs->getFirstSectionOfDiscipline($app_info[0]['object_id']);
+                $programs->setCheckpoint(array('student_id' => $app_info[0]['user_id'], 'section_id' => $first_section[0]['section_id']));
+            }
 
             $map = Model_Application::getStatusMap();
             $this->flash('Заявка ' . $map[$new_status],

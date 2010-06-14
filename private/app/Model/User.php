@@ -196,7 +196,7 @@
 
             return $code;
         }
-        
+
         /**
         * Шифрование пароля.
         *
@@ -389,17 +389,17 @@
 
         /**
         * Проверяет, заполнен ли расширенный профиль слушателя.
-        * 
+        *
         * @param  int $id Идентификатор пользователя.
         * @return boolean
         */
         public function isExtendedProfileSet($id) {
             /**
-            * Проверяем, чтобы были заданы паспортные данные. Если они есть - 
-            * значит и профиль заполнен (так как паспортные данные - 
+            * Проверяем, чтобы были заданы паспортные данные. Если они есть -
+            * значит и профиль заполнен (так как паспортные данные -
             * обязательные поля профиля).
             */
-            
+
             $sql = '
                 SELECT COUNT(*)
                 FROM ' . $this->_tables['passports'] . '
@@ -414,10 +414,10 @@
         }
 
         /**
-        * Обновление фамилии-имени-отчества в записи пользователя. Если 
-        * передаются такие же значение, какие сейчас хранятся в базе, то метод 
+        * Обновление фамилии-имени-отчества в записи пользователя. Если
+        * передаются такие же значение, какие сейчас хранятся в базе, то метод
         * вернёт false.
-        * 
+        *
         * @param  int      $uid Идентификатор пользователя.
         * @param  stdClass $snp Объект с новыми значениями.
         * @return boolean  Была ли обновлена запись в базе.
@@ -445,7 +445,7 @@
 
         /**
         * Сохранение паспортных данных.
-        * 
+        *
         * @param  int                 $uid      Идентификатор пользователя.
         * @param  Model_User_Passport $passport Контейнер с данными.
         * @return boolean
@@ -453,7 +453,7 @@
         public function savePassport($uid, Model_User_Passport $passport) {
             /* Удаляем старую запись (если есть) */
             $this->deletePassport($uid);
-            
+
             /* И добавляем новую */
             $sql = '
                 INSERT INTO passports
@@ -481,10 +481,10 @@
 
             return $stmt->execute();
         }
-        
+
         /**
         * Удаление записи о паспортных данных пользователя.
-        * 
+        *
         * @param  int $uid Идентификатор пользователя.
         * @return boolean Была ли удалена запись.
         */
@@ -494,17 +494,17 @@
                 WHERE user_id = ?
                 LIMIT 1
             ';
-            
+
             $stmt = $this->prepare($sql);
             $stmt->execute(array($uid));
-            
+
             $affected = $stmt->rowCount();
             return $affected;
         }
 
         /**
         * Сохранение данных о документе об образовании.
-        * 
+        *
         * @param  int               $uid Идентификатор пользователя.
         * @param  Model_User_EduDoc $doc Контейнер с данными.
         * @return boolean
@@ -512,11 +512,11 @@
         public function saveEduDoc($uid, Model_User_EduDoc $doc) {
             /* Удаляем старую запись (если есть) */
             $this->deleteEduDoc($uid);
-            
+
             /* И добавляем новую */
             $sql = '
                 INSERT INTO edu_docs (
-                    user_id, type, custom_type, number, exit_year, speciality, 
+                    user_id, type, custom_type, number, exit_year, speciality,
                     qualification
                 )
                 VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -534,10 +534,10 @@
 
             return $stmt->execute();
         }
-        
+
         /**
         * Удаление записи о документе об образовании.
-        * 
+        *
         * @param  int $uid Идентификатор пользователя.
         * @return boolean Была ли удалена запись.
         */
@@ -547,17 +547,17 @@
                 WHERE user_id = ?
                 LIMIT 1
             ';
-            
+
             $stmt = $this->prepare($sql);
             $stmt->execute(array($uid));
-            
+
             $affected = $stmt->rowCount();
             return $affected;
         }
 
         /**
         * Сохранение данных о телефонах пользователя.
-        * 
+        *
         * @param  int               $uid    Идентификатор пользователя.
         * @param  Model_User_Phones $phones Контейнер с данными.
         * @return boolean
@@ -565,7 +565,7 @@
         public function savePhones($uid, Model_User_Phones $phones) {
             /* Удаляем старую запись (если есть) */
             $this->deletePhones($uid);
-            
+
             /* И добавляем новую */
             $sql = '
                 INSERT INTO ' . $this->_tables['phones'] . '
@@ -581,10 +581,10 @@
 
             return $stmt->execute();
         }
-        
+
         /**
         * Удаление записи о телефонах пользователя.
-        * 
+        *
         * @param  int $uid Идентификатор пользователя.
         * @return boolean Была ли удалена запись.
         */
@@ -594,10 +594,10 @@
                 WHERE user_id = ?
                 LIMIT 1
             ';
-            
+
             $stmt = $this->prepare($sql);
             $stmt->execute(array($uid));
-            
+
             $affected = $stmt->rowCount();
             return $affected;
         }
@@ -631,48 +631,48 @@
         */
         public function getExtendedProfile($user_id)
         {
-            
+
             $aliasing = array(
                 'passport' => array('p', array('series', 'number', 'birthday',
-                                               'given_by', 'given_date', 
-                                               'region_id', 'city_id', 
+                                               'given_by', 'given_date',
+                                               'region_id', 'city_id',
                                                'street', 'house', 'flat')),
-                                               
+
                 'edu_doc' => array('ed', array('type', 'custom_type', 'number',
-                                                'exit_year', 'speciality', 
+                                                'exit_year', 'speciality',
                                                 'qualification')),
-                                                
+
                 'phone' => array('ph', array('stationary', 'mobile'))
             );
-            
+
             $columns = array();
-            
+
             foreach ($aliasing as $column_prefix => $tbl)
             {
                 foreach ($tbl[1] as $column) {
-                    $columns[] = sprintf('%s.%s AS %s_%s', 
+                    $columns[] = sprintf('%s.%s AS %s_%s',
                                          $tbl[0], $column,
                                          $column_prefix, $column);
                 }
-            }                    
-            
+            }
+
             $sql = '
                 SELECT ' . implode(', ' . CRLF, $columns) . '
                 FROM ' . $this->_tables['users'] . ' u
-                
+
                 LEFT JOIN ' . $this->_tables['passports'] . ' p
-                ON p.user_id = u.user_id 
-                
+                ON p.user_id = u.user_id
+
                 LEFT JOIN ' . $this->_tables['edu_docs'] . ' ed
                 ON ed.user_id = u.user_id
-                
+
                 LEFT JOIN ' . $this->_tables['phones'] . ' ph
-                ON ph.user_id = u.user_id 
-                                         
+                ON ph.user_id = u.user_id
+
                 WHERE u.user_id = :uid AND
                       u.role = :role
             ';
-            
+
             $values = array(
                 ':uid'  => $user_id,
                 ':role' => self::ROLE_STUDENT
@@ -682,11 +682,11 @@
             $stmt->execute($values);
 
             $profile = $stmt->fetch(Db_PdO::FETCH_ASSOC);
-            
+
             $passport = Model_User_Passport::create()->fromRow($profile);
             $edu_doc  = Model_User_EduDoc::create()->fromRow($profile);
             $phones   = Model_User_Phones::create()->fromRow($profile);
-            
+
             return (object) array('passport' => $passport,
                                   'edu_doc'  => $edu_doc,
                                   'phones'   => $phones);
@@ -900,10 +900,10 @@
                 WHERE `user_id`=:user_id';
             $this->prepare($sql)->execute($userInfo);
         }
-        
+
         /**
         * Получение данных пользователя по логину.
-        * 
+        *
         * @param  string $login
         * @return array
         */
@@ -913,17 +913,17 @@
                 FROM ' . $this->_tables['users'] . '
                 WHERE login = ?
             ';
-            
+
             $stmt = $this->prepare($sql);
             $stmt->execute(array($login));
-            
+
             $info = $stmt->fetch(Db_Pdo::FETCH_ASSOC);
             return $info;
         }
-        
+
         /**
         * Установка нового пароля для пользователя.
-        * 
+        *
         * @param int    $user_id Идентификатор пользователя.
         * @param string $passwd  Пароль.
         * @return boolean
@@ -935,18 +935,18 @@
                 WHERE user_id = :uid
                 LIMIT 1
             ';
-            
+
             $stmt = $this->prepare($sql);
-            
+
             /* Вычисляем хэш пароля */
             $auth = Resources::getInstance()->auth;
             $passwd = $auth->getPasswdHash($passwd);
-            
+
             $values = array(
                 ':uid'    => $user_id,
                 ':passwd' => $passwd
             );
-            
+
             return $stmt->execute($values);
         }
     }

@@ -261,38 +261,6 @@ div#content .dist a:hover, div#content  .dist2 a:hover{text-decoration: none;}
 div#content .dist div {padding: 30px 0px 30px 70px;}
 div#content .dist2 div {padding: 20px 0px 20px 70px;}
 
-/*-----------------------------------------------
-/educational_materials/show/
------------------------------------------------*/
-
-h1.title_discipline,
-h2.title_section,
-h3.title_materials {
-    font-family: sans-serif;
-    margin-bottom: 0.5em;
-}
-
-h3.title_materials {
-    margin-left: 1em;
-}
-
-ul.materials li {
-    margin: 0.5em 0;
-    padding: 0.5em;
-}
-
-ul.materials li.state_last {
-    background-color: #cfc;
-}
-
-ul.materials li.state_downloaded {
-    background-color: #ccc;
-}
-
-ul.materials li.state_non_downloaded {
-    background-color: #ccf;
-}
-
 /* Help pages */
 
 .help h1, h2, h3 {
@@ -331,4 +299,84 @@ dl dt {
 
 dl dd {
     margin: 0;
+}
+
+/*-----------------------------------------------
+/educational_materials/show/
+-----------------------------------------------*/
+
+h1.title_discipline,
+h2.title_section,
+h3.title_materials {
+    font-family: sans-serif;
+    margin-bottom: 0.5em;
+}
+
+h3.title_materials {
+    margin-left: 1em;
+}
+
+ul.materials li {
+    margin: 0.5em 0;
+    padding: 0.5em;
+}
+
+ul.materials li.state_last {
+    background-color: #cfc;
+}
+
+ul.materials li.state_downloaded {
+    background-color: #ccc;
+}
+
+ul.materials li.state_non_downloaded {
+    background-color: #ccf;
+}
+
+/*-----------------------------------------------
+/teacher_courses/discipline/
+-----------------------------------------------*/
+
+table.checkpoints {
+    border: #ccc 1px solid;
+    border-collapse: collapse;
+    margin: 10px 0 0 0;
+    padding: 0;
+    width: 80em;
+}
+
+table.checkpoints th,
+table.checkpoints td {
+    border: #ccc 1px solid;
+    margin: 0;
+    padding: 0.5em;
+}
+
+table.checkpoints td .column_student {
+    width: 20em;
+}
+
+table.checkpoints table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+table.checkpoints table tr:hover td {
+    background-color: #cfc;
+}
+
+.checkpoints th.column_status {
+    width: 7em;
+}
+
+.checkpoints th.column_date {
+/*    width: 11em;*/
+}
+
+.checkpoints th.column_action {
+    width: 10em;
+}
+
+.checkpoints td.column_center {
+    text-align: center;
 }

@@ -5,15 +5,15 @@
     tr.odd, th.odd {
         background-color: #ECECEC;
     }
-    
+
     tr.even, th.even {
         background-color: #FFFFFF;
     }
-    
+
     th {
         font-weight     : bold;
     }
-    
+
     td.description, th.description {
         width             : 300px;
     }
@@ -23,13 +23,13 @@
         padding-right             : 10px;
         text-align                : right;
     }
-    
+
     td.field {
         width                     : 50%;
         padding-left             : 10px;
         text-align                : left;
     }
-    
+
     td.cancel {
         width                     : 100%;
         text-align                : right;
@@ -41,11 +41,11 @@
 <table class="materials" border="0" cellspacing="2" cellpadding="0">
     <tr class="odd">
     <th class="description">Заявка</th>
-    <th class="description">Слушатель</th>        
+    <th class="description">Слушатель</th>
     <th class="description">Статус</th>
     <th class="description">Действие</th>
     </tr>
-    
+
     <?php foreach ($this->applications as $i => $app): ?>
     <?php $class = ($i % 2 ? "odd" : "even") ?>
     <tr class="<?php echo $class ?>">
@@ -54,7 +54,7 @@
         <?php elseif($app['discipline_title']): ?>
             <td class="description">Заявка на изучение дисциплины "<?php echo $app['discipline_title'] ?>"</td>
         <?php endif; ?>
-            
+
             <td>
             <?php if(empty($app['name']) && empty($app['surname']) && empty($app['patronymic'])): ?>
                <?php echo $app['login'] ?>
@@ -67,14 +67,14 @@
             <td>
                 <?php switch ($app['status']):
                     case Model_Application::STATUS_APPLIED: ?>
-                        <button class="addButton" name='accept' onclick="changeStatus('accepted', <?php echo $app['app_id'] ?>);">принять</button>                        
+                        <button class="addButton" name='accept' onclick="changeStatus('accepted', <?php echo $app['app_id'] ?>);">принять</button>
                         <button class="addButton" name='decline' onclick="changeStatus('declined', <?php echo $app['app_id'] ?>);">отклонить</button>
                     <?php break; ?>
-                    
+
                     <?php case Model_Application::STATUS_DECLINED: ?>
                         <button class="addButton" name='delApp' onclick="deleteApp(<?php echo $app['app_id'] ?>);">удалить</button>
                     <?php break; ?>
-                    
+
                     <?php case Model_Application::STATUS_ACCEPTED: ?>
                         <?php if (empty($app['contract_filename'])): ?>
                             <form id="educationalMaterials<?php echo $app['app_id'] ?>"
@@ -92,7 +92,7 @@
                             <button class="addButton" name='signedApp' onclick="changeStatus('signed', <?echo $app['app_id'] ?>);">подписана</button>
                         <?php endif; ?>
                     <?php break; ?>
-                    
+
                     <?php case Model_Application::STATUS_SIGNED: ?>
                         <button class="addButton" name='delApp' onclick="addPayment(<?php echo $app['app_id'] ?>);">добавить платёж</button>
                         <button class="addButton" name='delApp' onclick="deleteApp(<?php echo $app['app_id'] ?>);">удалить</button>
@@ -108,7 +108,7 @@
         this.container = document.getElementById('edMatContainer');
         contract = this;
     }
-    
+
     EducationalMaterial.prototype.createErrorMessage = function (errorText) {
         var errorMessage = document.createElement ('tr').appendChild (
             document.createElement ('td')
@@ -119,31 +119,31 @@
                 ).parentNode
             ).parentNode
         ).parentNode;
-        
+
         $ ('div'            , errorMessage).addClass ('error');
         $ ('td:first-child'    , errorMessage).addClass ('caption');
         $ ('td:last-child'    , errorMessage).addClass ('field');
-        
+
         return errorMessage;
-    }    
-    
+    }
+
     function changeStatus(newStatus,appId)
     {
         window.location = '<?php echo $this->_links->get('applications.change-status') ?>' + newStatus + '/' + appId + '/';
     }
-    
+
     function addPayment(appId) {
         window.location = '<?php echo $this->_links->get('payments.add') ?>' + appId + '/';
     }
 
     function deleteApp(appId) {
         var question = 'Вы действительно хотите удалить заявку?';
-        
-        if (confirm(question)) { 
+
+        if (confirm(question)) {
             window.location = '<?php echo $this->_links->get('applications.delete') ?>' + appId + '/';
         }
     }
-    
+
 <?php if (empty ($invalidMaterialsForms)): ?>
         var filenameRow        = $ ('#errorContainer');
 <?php else: ?>
@@ -153,6 +153,6 @@
 
 $filename        = invalidMaterialsForms[0]->filename;
 ?>
-filenameRow.innerHTML = <?php echo ((isset ($filename->error)) ? ("'" . $filename->error . "'") : ('null')); 
+filenameRow.innerHTML = <?php echo ((isset ($filename->error)) ? ("'" . $filename->error . "'") : ('null'));
       endif; ?>
-</script>    
+</script>

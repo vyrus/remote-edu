@@ -1,7 +1,7 @@
 <?php $this->title = $this->discipline['title'] ?>
 <h1 class="title_discipline"><?php echo $this->discipline['title'] ?></h1>
 <p style="margin: 1em 0;"><a href="<?php echo $this->_links->get('messages.send') . $this->discipline['responsible_teacher']; ?>">Написать сообщение преподавателю</a></p>
-<?php 
+<?php
     $i = 0;
     foreach ($this->sections as $s):
         $i++;
@@ -14,7 +14,7 @@
             foreach ($this->materials[$s->section_id] as $m) {
                 $materials[$m['type']][] = $m;
             }
-            foreach ($materials as $m_title=>$m_data) {
+            foreach ($materials as $m_title => $m_data) {
                 switch ($m_title) {
                 case 'lecture':
                     $title = 'Лекционный материал';

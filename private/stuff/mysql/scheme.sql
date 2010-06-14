@@ -267,4 +267,9 @@ CREATE TABLE IF NOT EXISTS `checkpoints` (
   PRIMARY KEY (`section_id`,`student_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+--
+-- Добавляем поле даты создания контрольной точки.
+--
+ALTER TABLE `checkpoints` ADD `created` datetime DEFAULT NULL AFTER `student_id`;
+
 SET character_set_client = @saved_cs_client;

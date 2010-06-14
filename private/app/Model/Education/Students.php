@@ -1,5 +1,5 @@
 <?php
-    
+
     /* $Id: Students.php $ */
 
     /**
@@ -8,21 +8,21 @@
     class Model_Education_Students extends Mvc_Model_Abstract {
         /**
         * Название таблицы с пользователями в БД.
-        * 
+        *
         * @var string
         */
         protected $_table = 'users';
-        
+
         /**
         * Кэш данных авторизации.
-        * 
+        *
         * @var array
         */
         protected static $_auth_cache = null;
-        
+
         /**
         * Создание экземпляра модели.
-        * 
+        *
         * @return Model_Education_Students
         */
         public static function create() {
@@ -30,7 +30,7 @@
         }
         /**
         * Получение списка студентов.
-        * 
+        *
         * @param  int $id Идентификатор.
         * @return array|false
         */
@@ -40,11 +40,11 @@
                 FROM ' . $this->_table . '
                 WHERE role = ?
             ';
-            
+
             $stmt = $this->prepare($sql);
             $stmt->execute(array('student'));
-                           
+
             return $stmt->fetchAll();
-        }        
+        }
     }
 ?>

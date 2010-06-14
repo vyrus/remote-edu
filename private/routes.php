@@ -23,10 +23,10 @@
 
             /* Восстановление пароля: запрос на восстановление */
             array('/restore-password', 'users', 'restore_passwd', 'users.restore-passwd', Mvc_Router::ROUTE_STATIC),
-            
+
             /* Восстановление пароля: установка нового пароля */
             array('/restore-password/([0-9]+)/([0-9a-z]{32})', array('user_id', 'code'), 'users', 'reset_passwd', 'users.reset-passwd', Mvc_Router::ROUTE_REGEX),
-            
+
             /* Управление пользователями */
             array('/admin/users', 'users', 'index_by_admin', 'admin.users', Mvc_Router::ROUTE_STATIC),
 
@@ -38,10 +38,10 @@
 
             /* Редактирование аккаунтов */
             array('/admin/users/edit/([0-9]+)', array('user_id'), 'users', 'edit_account', 'users.edit', Mvc_Router::ROUTE_REGEX),
-            
+
             /* Просмотр профиля слушателя */
             array('/admin/users/profile/([0-9]+)', array('user_id'), 'users', 'view_profile', 'users.profile', Mvc_Router::ROUTE_REGEX),
-            
+
             /* Регистрация сотрудника */
             array('/admin/employee/register', 'users', 'register_employee_by_admin', 'employee.register', Mvc_Router::ROUTE_STATIC),
 
@@ -119,6 +119,12 @@
 
             /* Работа ответственного преподавателя с курсами */
             array('/teacher_courses/course/([0-9]+)?', array('program_id'), 'teacher_courses', 'course', 'teacher.course', Mvc_Router::ROUTE_REGEX),
+
+            /* Добавление контрольной точки */
+            array('/teacher_courses/set_checkpoint/([0-9]+)/([0-9]+)', array('student_id', 'section_id'), 'teacher_courses', 'set_checkpoint', 'teacher.set_checkpoint', Mvc_Router::ROUTE_REGEX),
+
+            /* Удаление контрольной точки */
+            array('/teacher_courses/remove_checkpoint/([0-9]+)/([0-9]+)', array('student_id', 'section_id'), 'teacher_courses', 'remove_checkpoint', 'teacher.remove_checkpoint', Mvc_Router::ROUTE_REGEX),
 
             /* Инструкции для слушателя */
             array('/student', 'pages', 'display', array('page' => 'help/instructions'), 'student.index', Mvc_Router::ROUTE_STATIC),
@@ -213,19 +219,22 @@
                 'applications/index_by_student',          // форма для подачи заявки
 
                 'educational_materials/index_by_student',
+                'educational_materials/show',
                 'education_programs/available',
             ),
 
             /* Преподаватель */
             Model_User::ROLE_TEACHER => array
             (
-                'educational_materials/index',  // учебные материалы, добавленные залогиненным преподавателем
+                'educational_materials/index',          // учебные материалы, добавленные залогиненным преподавателем
                 'educational_materials/upload',
                 'educational_materials/edit',
                 'educational_materials/remove',
-            
-                'teacher_courses/discipline',   // дисциплины, за которые ответственным назначен преподаватель
-                'teacher_courses/course',       // курсы, за которые ответственным назначен преподаватель
+
+                'teacher_courses/discipline',           // дисциплины, за которые ответственным назначен преподаватель
+                'teacher_courses/course',               // курсы, за которые ответственным назначен преподаватель
+                'teacher_courses/set_checkpoint',       // добавление контрольной точки
+                'teacher_courses/remove_checkpoint',    // удаление контрольной точки
             ),
 
             /* Администратор */

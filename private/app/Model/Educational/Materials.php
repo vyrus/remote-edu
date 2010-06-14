@@ -286,18 +286,20 @@
                 ORDER BY number ASC
             ';
 
-//`section_id`, `number`
+            $udata = Model_User::create()->getAuth();
+            if ($udata) {
+                $params = array(
+                    ':discipline_id' => $disc_id,
+                    ':student_id' => $udata['user_id']
+                );
+                $stmt = $this->prepare($sql);
+                $stmt->execute($params);
 
-            $udata = (object) Model_User::create()->getAuth();
-            $params = array(
-                ':discipline_id' => $disc_id,
-                ':student_id' => $udata->user_id
-            );
-            $stmt = $this->prepare($sql);
-            $stmt->execute($params);
-
-            $materials = $stmt->fetchAll(Db_Pdo::FETCH_GROUP|Db_Pdo::FETCH_ASSOC);
-            return $materials;
+                $materials = $stmt->fetchAll(Db_Pdo::FETCH_GROUP|Db_Pdo::FETCH_ASSOC);
+                return $materials;
+            } else {
+                return false;
+            }
         }
     }
 ?>

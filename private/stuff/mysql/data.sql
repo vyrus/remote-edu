@@ -92,3 +92,10 @@ INSERT INTO `materials` (`id`, `description`, `original_filename`, `mime_type`, 
 (4, 'Структура HTML-документа', 'Структура HTML-документа.txt', 'text/plain', '1682638d372b60e2a5b621ab7284aa66', 6, 'lecture', 1),
 (5, 'Основы форматирования HTML-документа', 'Основы форматирования HTML-документа..txt', 'text/plain', '48f3cfad682de5dfefb875c050068ef4', 6, 'lecture', 1),
 (6, 'Пространственные отношения', 'Пространственные отношения.txt', 'text/plain', '30a3bfb92a1cbfc1d76d5869b31dfce9', 7, 'lecture', 1);
+
+--
+-- Дамп данных таблицы `checkpoints`
+--
+
+INSERT INTO `checkpoints` (`section_id`, `student_id`, `created`) VALUES
+(5, 3, '2010-06-14 15:32:04');

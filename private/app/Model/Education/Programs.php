@@ -703,28 +703,82 @@ QUERY;
         }
 
         /**
-        * Возвращает список студентов, изучающих дисциплину
+        * Возвращает первый раздел дисциплины.
+        *
+        * @param  int $discipline_id Идентификатор дисциплины.
+        * @return array
+        */
+        public function getFirstSectionOfDiscipline($discipline_id) {
+            $sql = 'SELECT *
+            FROM ' . $this->_tables['sections'] . ' s
+            WHERE s.discipline_id = ? AND s.number = 1';
+            $stmt = $this->prepare($sql);
+            $stmt->execute(array($discipline_id));
+
+            return $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);;
+        }
+
+        /**
+        * Возвращает список разделов дисциплины.
+        *
+        * @param  int $discipline_id Идентификатор дисциплины.
+        * @return array
+        */
+        public function getSectionsByDiscipline($discipline_id) {
+            $sql = 'SELECT *
+            FROM ' . $this->_tables['sections'] . ' s
+            WHERE s.discipline_id = ?
+            ORDER BY s.number';
+            $stmt = $this->prepare($sql);
+            $stmt->execute(array($discipline_id));
+
+            return $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);;
+        }
+
+        /**
+        * Возвращает список контрольных точек.
+        *
+        * @param  int $discipline_id Идентификатор дисциплины.
+        * @return array
+        */
+        public function getCheckpointsByDiscipline($discipline_id) {
+            $sql = 'SELECT u.user_id, c.section_id, c.created
+            FROM ' . $this->_tables['checkpoints'] . ' c
+            LEFT JOIN ' . $this->_tables['users'] . ' u
+            ON c.student_id = u.user_id
+            LEFT JOIN ' . $this->_tables['sections'] . ' s
+            ON s.section_id = c.section_id
+            WHERE s.discipline_id = ?';
+
+            $stmt = $this->prepare($sql);
+            $stmt->execute(array($discipline_id));
+
+            return $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
+            //return null;
+        }
+
+        /**
+        * Возвращает список студентов, изучающих дисциплину.
         *
         * @param  int $discipline_id Идентификатор дисциплины.
         * @return array
         */
         public function getStudentsByDiscipline($discipline_id) {
-            $sql = 'SELECT *
+            $sql = 'SELECT u.user_id, u.name, u.surname, u.patronymic
             FROM ' . $this->_tables['users'] . ' u
             LEFT JOIN ' . $this->_tables['applications'] . ' a
             ON u.user_id = a.user_id
             WHERE a.type = \'discipline\' AND a.object_id = ?';
             $stmt = $this->prepare($sql);
             $stmt->execute(array($discipline_id));
-            $retval = $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
 
-            return $retval;
+            return $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
         }
 
         /**
-        * Возвращает список студентов, изучающих курс
+        * Возвращает список студентов, изучающих курс.
         *
-        * @param  int $discipline_id Идентификатор курса.
+        * @param  int $course_id Идентификатор курса.
         * @return array
         */
         public function getStudentsByCourse($course_id) {
@@ -735,9 +789,46 @@ QUERY;
             WHERE a.type = \'program\' AND a.object_id = ?';
             $stmt = $this->prepare($sql);
             $stmt->execute(array($course_id));
-            $retval = $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
 
-            return $retval;
+            return $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
+        }
+
+        /**
+        * Создаёт контрольную точку.
+        *
+        * @param  int $student_id Идентификатор студента.
+        * @param  int $section_id Идентификатор раздела.
+        * @return void
+        */
+        public function setCheckpoint($params) {
+            $sql = '
+                INSERT INTO ' . $this->_tables['checkpoints'] . ' (`student_id`, `section_id`, `created`)
+                VALUES (:student_id, :section_id, NOW())';
+            $sql_params = array(
+                ':student_id' => $params['student_id'],
+                ':section_id' => $params['section_id'],
+            );
+            $this->prepare($sql)->execute($sql_params);
+        }
+
+        /**
+        * Удаляет контрольную точку.
+        *
+        * @param  int $student_id Идентификатор студента.
+        * @param  int $section_id Идентификатор раздела.
+        * @return void
+        */
+        public function removeCheckpoint($params) {
+            $sql = '
+                DELETE FROM ' . $this->_tables['checkpoints'] . '
+                WHERE
+                    student_id = :student_id AND
+                    section_id = :section_id';
+            $sql_params = array(
+                ':student_id' => $params['student_id'],
+                ':section_id' => $params['section_id'],
+            );
+            $this->prepare($sql)->execute($sql_params);
         }
     }
 ?>
