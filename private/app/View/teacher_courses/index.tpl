@@ -12,7 +12,8 @@
 <?php if (count($this->courses) > 0) { ?>
 <ul>
     <?php foreach($this->courses as $course) { ?>
-    <li><a href="<?php echo $this->_links->get('teacher.course', array('course_id' => $course['program_id'])) ?>"><?php echo $course['title']; ?></a>
+    <li><?php echo $course['title']; ?>
+    <!--<li><a href="<?php //echo $this->_links->get('teacher.course', array('course_id' => $course['program_id'])) ?>"><?php //echo $course['title']; ?></a>-->
     <?php } ?>
 </ul>
 <?php } else { ?>

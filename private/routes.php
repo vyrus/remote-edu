@@ -118,7 +118,7 @@
             array('/teacher_courses/discipline/([0-9]+)?', array('discipline_id'), 'teacher_courses', 'discipline', 'teacher.discipline', Mvc_Router::ROUTE_REGEX),
 
             /* Работа ответственного преподавателя с курсами */
-            array('/teacher_courses/course/([0-9]+)?', array('program_id'), 'teacher_courses', 'course', 'teacher.course', Mvc_Router::ROUTE_REGEX),
+            //array('/teacher_courses/course/([0-9]+)?', array('course_id'), 'teacher_courses', 'course', 'teacher.course', Mvc_Router::ROUTE_REGEX),
 
             /* Добавление контрольной точки */
             array('/teacher_courses/set_checkpoint/([0-9]+)/([0-9]+)', array('student_id', 'section_id'), 'teacher_courses', 'set_checkpoint', 'teacher.set_checkpoint', Mvc_Router::ROUTE_REGEX),
@@ -232,7 +232,7 @@
                 'educational_materials/remove',
 
                 'teacher_courses/discipline',           // дисциплины, за которые ответственным назначен преподаватель
-                'teacher_courses/course',               // курсы, за которые ответственным назначен преподаватель
+                //'teacher_courses/course',               // курсы, за которые ответственным назначен преподаватель
                 'teacher_courses/set_checkpoint',       // добавление контрольной точки
                 'teacher_courses/remove_checkpoint',    // удаление контрольной точки
             ),

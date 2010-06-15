@@ -132,7 +132,7 @@
             $sql = '
                 SELECT *
                 FROM ' . $this->_tables['applications'] . ' a
-                WHERE app_id = :app_id
+                WHERE app_id = ?
             ';
 
             $values = array(
