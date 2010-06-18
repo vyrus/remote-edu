@@ -96,10 +96,10 @@
                     case Model_Application::STATUS_SIGNED:
 						if ($app['program_title'])
 						{
-							if ($app['rest'] == 'free')
+							if ($app['rest'] === 'free')
 							{
 								echo "бесплатное направление";							
-							}elseif ($app['rest'] == 0)
+							}elseif ($app['rest'] <= 0)
 							{
 								echo "направление оплачено";
 							}else
@@ -111,10 +111,10 @@
 							}
 						}else
 						{
-							if ($app['rest'] == 'free')
+							if ($app['rest'] === 'free')
 							{
 								echo "бесплатная дисциплина";							
-							}elseif ($app['rest'] == 0)
+							}elseif ($app['rest'] <= 0)
 							{
 								echo "дисциплина оплачена";
 							}else
