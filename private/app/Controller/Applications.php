@@ -245,6 +245,9 @@
 			// log file name
 			define('LOG_FILE',ROOT.'/contracts/downloads.log');
 
+            /**
+            * @todo Better do $this->flash().
+            */
 			if (!isset($file_name) || empty($file_name)) {
 			  die("Please specify file name for download.");
 			}
@@ -280,6 +283,9 @@
 			$file_path = '';
 			find_file(BASE_DIR, $fname, $file_path);
 
+            /**
+            * @todo $this->flash().
+            */
 			if (!is_file($file_path)) {
 			  die("File does not exist. Make sure you specified correct file name.");
 			}
