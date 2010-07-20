@@ -5,9 +5,16 @@
     */
     abstract class Model_Question_Abstract {
         /**
+        * Тип вопроса.
+        *
+        * @var mixed
+        */
+        public $type;
+
+        /**
         * Создание экземпляра контейнера.
         */
-        abstract public function create();
+        abstract public static function create();
 
         /**
         * @todo PHP Magic methods.

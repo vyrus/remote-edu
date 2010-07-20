@@ -5,6 +5,13 @@
     */
     class Model_Question_PickOne extends Model_Question_Abstract {
         /**
+        * Тип вопроса.
+        *
+        * @var mixed
+        */
+        public $type = Model_Question::TYPE_PICK_ONE;
+
+        /**
         * Текст вопроса.
         *
         * @var string
@@ -30,7 +37,7 @@
         *
         * @return Model_Question_PickOne
         */
-        public function create() {
+        public static function create() {
             return new self();
         }
 
@@ -38,7 +45,7 @@
         * @todo PHP Magic methods
         */
         public function __sleep() {
-            //
+            return array('question', 'answers', 'correct_answer');
         }
     }
 

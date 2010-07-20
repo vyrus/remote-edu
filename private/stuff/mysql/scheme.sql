@@ -1,9 +1,9 @@
 SET @saved_cs_client     = @@character_set_client;
 SET character_set_client = utf8;
 
--- 
+--
 -- Table structure for table `users`
--- 
+--
 
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
@@ -64,9 +64,9 @@ CREATE TABLE `programs` (
 
 ALTER TABLE `programs` ADD `responsible_teacher` int;
 
--- 
+--
 -- Структура таблицы `regions`
--- 
+--
 
 DROP TABLE IF EXISTS `regions`;
 CREATE TABLE `regions` (
@@ -76,9 +76,9 @@ CREATE TABLE `regions` (
   PRIMARY KEY  (`region_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
--- 
+--
 -- Структура таблицы `localities`
--- 
+--
 
 DROP TABLE IF EXISTS `localities`;
 CREATE TABLE `localities` (
@@ -91,9 +91,9 @@ CREATE TABLE `localities` (
   KEY `fk_localities_regions` (`region_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
--- 
+--
 -- Структура таблицы `edu_docs`
--- 
+--
 
 DROP TABLE IF EXISTS `edu_docs`;
 CREATE TABLE `edu_docs` (
@@ -111,9 +111,9 @@ CREATE TABLE `edu_docs` (
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Структура таблицы `passports`
--- 
+--
 
 DROP TABLE IF EXISTS `passports`;
 CREATE TABLE `passports` (
@@ -137,9 +137,9 @@ CREATE TABLE `passports` (
 
 -- --------------------------------------------------------
 
--- 
+--
 -- Структура таблицы `phones`
--- 
+--
 
 DROP TABLE IF EXISTS `phones`;
 CREATE TABLE `phones` (
@@ -152,7 +152,7 @@ CREATE TABLE `phones` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 -- --------------------------------------------------------
 
--- 
+--
 -- Структура таблицы `applications`
 --
 
@@ -168,9 +168,9 @@ CREATE TABLE `applications` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 -- --------------------------------------------------------
 
--- 
+--
 -- Структура таблицы `apps_history`
--- 
+--
 
 DROP TABLE IF EXISTS `apps_history`;
 CREATE TABLE `apps_history` (
@@ -197,9 +197,9 @@ CREATE TABLE IF NOT EXISTS `materials_states` (
 ALTER TABLE `applications` CHANGE `status` `status` ENUM('applied', 'declined', 'accepted', 'signed');
 ALTER TABLE `apps_history` CHANGE `status` `status` ENUM('applied', 'declined', 'accepted', 'signed');
 
--- 
+--
 -- Структура таблицы `payments`
--- 
+--
 
 DROP TABLE IF EXISTS `payments`;
 CREATE TABLE `payments` (
@@ -273,3 +273,15 @@ CREATE TABLE IF NOT EXISTS `checkpoints` (
 ALTER TABLE `checkpoints` ADD `created` datetime DEFAULT NULL AFTER `student_id`;
 
 SET character_set_client = @saved_cs_client;
+
+--
+-- Таблица для хранения вопросов к тестам.
+--
+
+CREATE TABLE `questions` (
+ `question_id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+ `test_id` INT UNSIGNED NOT NULL ,
+ `type` ENUM(  'pick-one' ) NOT NULL ,
+ `data` TEXT NOT NULL ,
+  PRIMARY KEY ( `question_id` )
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
