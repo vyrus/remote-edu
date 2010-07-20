@@ -54,10 +54,9 @@
         * @link http://www.php.net/manual/en/language.oop5.overloading.php
         *
         * @param  mixed $name  Переменная.
-        * @param  mixed $value Значение.
         * @return boolean
         */
-        public function __isset($name, $value) {
+        public function __isset($name) {
             return isset($_SESSION[$name]);
         }
 

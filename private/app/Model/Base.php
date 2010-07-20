@@ -1,5 +1,5 @@
 <?php
-    
+
     /* $Id$ */
 
     abstract class Model_Base extends Mvc_Model_Abstract {
@@ -15,6 +15,7 @@
             'passports'         => 'passports',
             'phones'            => 'phones',
             'programs'          => 'programs',
+            'questions'         => 'questions',
             'regions'           => 'regions',
             'localities'        => 'localities',
             'sections'          => 'sections',
