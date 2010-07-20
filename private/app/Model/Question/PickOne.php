@@ -9,7 +9,7 @@
         *
         * @var mixed
         */
-        public $type = Model_Question::TYPE_PICK_ONE;
+        protected $_type = Model_Question::TYPE_PICK_ONE;
 
         /**
         * Текст вопроса.

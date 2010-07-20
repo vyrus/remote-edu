@@ -9,12 +9,21 @@
         *
         * @var mixed
         */
-        public $type;
+        protected $_type;
 
         /**
         * Создание экземпляра контейнера.
         */
         abstract public static function create();
+
+        /**
+        * Возвращает тип вопроса.
+        *
+        * @return mixed
+        */
+        public function getType() {
+            return $this->_type;
+        }
 
         /**
         * @todo PHP Magic methods.

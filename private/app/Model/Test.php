@@ -36,7 +36,7 @@
             );
 
             foreach ($questions as $q) {
-                $values[':type'] = $q->type;
+                $values[':type'] = $q->getType();
                 $values[':data'] = serialize($q);
                 $stmt->execute($values);
             }
