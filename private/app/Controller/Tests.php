@@ -55,6 +55,37 @@
         public function action_delete() {
             //
         }
+
+        public function action_ajax_save() {
+            $request = $this->getRequest();
+            $questions = $request->post['questions'];
+
+            if (get_magic_quotes_gpc()) {
+                $questions = stripslashes($questions);
+            }
+
+            $questions = json_decode($questions);
+
+            /**
+            * @todo Detect question type.
+            */
+
+            $pick_ones = array();
+
+            foreach ($questions as $q) {
+                $pick_one = Model_Question_PickOne::create();
+                $pick_one->question = $q->text;
+                $pick_one->answers = $q->answers;
+                $pick_one->correct_answer = $q->correct_answer;
+
+                $pick_ones[] = $pick_one;
+            }
+
+            $test = Model_Test::create();
+            $test->addQuestions(1, $pick_ones);
+
+            print_r($pick_ones);
+        }
     }
 
 ?>

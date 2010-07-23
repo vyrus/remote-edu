@@ -46,9 +46,14 @@
         /*border: 1px solid green;*/
         /*display: block;*/
     }
+
+    input.inactive {
+        color: #BFBFBF;
+    }
 </style>
 
 <script type="text/javascript" src="<?php echo $this->_links->getPath('/js/test-create.js') ?>"></script>
+<script type="text/javascript" src="<?php echo $this->_links->getPath('/js/jquery.json-2.2.js') ?>"></script>
 <script type="text/javascript">
     var quests;
     var test = new Test();
@@ -60,11 +65,15 @@
     function addQuestion() {
         test.addPickOne(quests);
     }
+
+    function saveTest() {
+        test.save('/tests/ajax_save');
+    }
 </script>
 
 <div id="controls">
     <a href="#" onClick="javascript: addQuestion(); return false;">Добавить вопрос</a>
-    <a href="#" onClick="javascript: alert('Implement me!')">Сохранить</a>
+    <a href="#" onClick="javascript: saveTest(); return false;">Сохранить</a>
 </div>
 
 <div id="questions"></div>
