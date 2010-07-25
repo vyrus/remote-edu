@@ -272,8 +272,6 @@ CREATE TABLE IF NOT EXISTS `checkpoints` (
 --
 ALTER TABLE `checkpoints` ADD `created` datetime DEFAULT NULL AFTER `student_id`;
 
-SET character_set_client = @saved_cs_client;
-
 --
 -- Таблица для хранения вопросов к тестам.
 --
@@ -285,3 +283,5 @@ CREATE TABLE `questions` (
  `data` TEXT NOT NULL ,
   PRIMARY KEY ( `question_id` )
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+SET character_set_client = @saved_cs_client;
