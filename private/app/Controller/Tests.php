@@ -84,7 +84,9 @@
             $test = Model_Test::create();
             $test->addQuestions(1, $pick_ones);
 
-            print_r($pick_ones);
+            //print_r($pick_ones);
+
+            echo json_encode(array('result' => false, 'error' => ';)'));
         }
     }
 
