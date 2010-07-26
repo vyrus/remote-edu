@@ -4,6 +4,8 @@
     * Модель для работы с данными тестов.
     */
     class Model_Test extends Model_Base {
+        const TIME_PER_QUESTION = 120;
+
         /**
         * Создание экземпляра модели.
         *
@@ -11,6 +13,63 @@
         */
         public static function create() {
             return new self();
+        }
+
+        public function add(
+            $theme, $num_questions, /*$time_limit, */$errors_limit,
+            $attempts_limit
+        ) {
+            $sql = '
+                INSERT INTO ' . $this->_tables['tests']  . '
+                (theme, num_questions, time_limit, errors_limit, attempts_limit)
+                VALUES (
+                    :theme, :num_questions, :time_limit, :attempts_limit,
+                    :errors_limit
+                )
+            ';
+
+            $values = array(
+                ':theme'          => $theme,
+                ':num_questions'  => $num_questions,
+                ':time_limit'     => $num_questions * self::TIME_PER_QUESTION,
+                ':errors_limit'   => $errors_limit,
+                ':attempts_limit' => $attempts_limit
+            );
+
+            $stmt = $this->prepare($sql);
+            $stmt->execute($values);
+
+            return $this->lastInsertId();
+        }
+
+        public function update(
+            $test_id, $theme, $num_questions, /*$time_limit, */$errors_limit,
+            $attempts_limit
+        ) {
+            $sql = '
+                UPDATE ' . $this->_tables['tests']  . '
+                SET theme          = :theme,
+                    num_questions  = :num_questions,
+                    time_limit     = :time_limit,
+                    errors_limit   = :errors_limit,
+                    attempts_limit = :attempts_limit
+                WHERE test_id = :tid
+            ';
+
+            $values = array(
+                ':tid'            => $test_id,
+                ':theme'          => $theme,
+                ':num_questions'  => $num_questions,
+                ':time_limit'     => $num_questions * self::TIME_PER_QUESTION,
+                ':errors_limit'   => $errors_limit,
+                ':attempts_limit' => $attempts_limit
+            );
+
+            $stmt = $this->prepare($sql);
+            $stmt->execute($values);
+
+            $row_count = $stmt->rowCount();
+            return $row_count > 0;
         }
 
         /**

@@ -19,6 +19,7 @@
             'regions'           => 'regions',
             'localities'        => 'localities',
             'sections'          => 'sections',
+            'tests'             => 'tests',
             'users'             => 'users',
         );
     }

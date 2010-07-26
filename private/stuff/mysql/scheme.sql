@@ -284,4 +284,18 @@ CREATE TABLE `questions` (
   PRIMARY KEY ( `question_id` )
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+--
+-- Таблица для хранения тестов.
+--
+
+CREATE TABLE  `tests` (
+ `test_id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+ `theme` VARCHAR( 256 ) NOT NULL ,
+ `num_questions` INT NOT NULL ,
+ `time_limit` INT NOT NULL ,
+ `attempts_limit` INT NOT NULL ,
+ `errors_limit` INT NOT NULL ,
+  PRIMARY KEY (  `test_id` )
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
 SET character_set_client = @saved_cs_client;

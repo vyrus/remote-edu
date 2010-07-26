@@ -9,6 +9,20 @@ var Test = function() {
 Test.prototype = {
     questions: [],
 
+    _id: null,
+
+    isIdSet: function() {
+        return (null !== this._id);
+    },
+
+    setId: function(id) {
+        this._id = id;
+    },
+
+    getId: function() {
+        return this._id;
+    },
+
     /**
     * Добавление в тест нового вопроса с одним правильным ответом.
     */
@@ -21,10 +35,23 @@ Test.prototype = {
         this.questions.push(q);
     },
 
+    saveOptions: function() {
+        /* Собираем параметры теста */
+        var data = {
+            test_id:        this.getId(),
+            theme:          $('#theme').val(),
+            num_questions:  $('#num_questions').val(),
+            errors_limit:   $('#errors_limit').val(),
+            attempts_limit: $('#attempts_limit').val()
+        };
+
+        return data;
+    },
+
     /**
     * Сохранение всех данных теста в одном объекте.
     */
-    save: function() {
+    saveQuestions: function() {
         var questions = [], q;
 
         /* Перебираем все вопросы в тесте */
@@ -35,7 +62,7 @@ Test.prototype = {
             questions.push(q.save());
         }
 
-        return {questions: questions};
+        return questions;
     }
 }
 

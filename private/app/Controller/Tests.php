@@ -56,12 +56,74 @@
             //
         }
 
-        /**
-        * Сохранение теста.
-        */
-        public function action_ajax_save() {
-            /* Берём список вопросов теста */
+        public function action_ajax_save_options() {
             $request = $this->getRequest();
+
+            $form = Form_Test_Options::create();
+            $form->validate($request);
+
+            $fields = array('theme', 'num_questions', 'errors_limit',
+                            'attempts_limit');
+
+            $form_errors = array();
+
+            foreach ($fields as $field)
+            {
+                if (isset($form->$field->error)) {
+                    $form_errors[$field] = $form->$field->error;
+                }
+            }
+
+            if (!empty($form_errors))
+            {
+                $response = array(
+                    'result'     => false,
+                    'error'      => 'Ошибки при заполнении формы.',
+                    'formErrors' => $form_errors
+                );
+
+                echo json_encode($response);
+                return;
+            }
+
+            $theme          = $form->theme->value;
+            $num_questions  = $form->num_questions->value;
+            $errors_limit   = $form->errors_limit->value;
+            $attempts_limit = $form->attempts_limit->value;
+
+            $test = Model_Test::create();
+
+            /**
+            * @todo Переписать для использования контейнера.
+            */
+
+            $test_id = & $request->post['test_id'];
+
+            if (!isset($test_id) || !is_numeric($test_id)) {
+                /**
+                * @todo Check if $test_id is set.
+                */
+                $test_id = $test->add($theme, $num_questions, $errors_limit,
+                                      $attempts_limit);
+                $response = array('result' => true, 'testId' => $test_id);
+            } else {
+                $test_id = (int) $test_id;
+
+                $test->update($test_id, $theme, $num_questions,
+                              $errors_limit, $attempts_limit);
+                $response = array('result' => true);
+            }
+
+            echo json_encode($response);
+        }
+
+        /**
+        * Сохранение вопросов теста.
+        */
+        public function action_ajax_save_questions() {
+            /* Берём идентификатор теста и список вопросов */
+            $request = $this->getRequest();
+            $test_id   = $request->post['testId'];
             $questions = $request->post['questions'];
 
             /* Если включено автоматическое экрание данных, */
@@ -93,6 +155,7 @@
                         $q_objs[] = $obj;
                         break;
 
+                    /* Если вопрос неизвестного типа, возвращаем ошибку */
                     default:
                         $response = array(
                             'result' => false,
@@ -107,7 +170,7 @@
 
             /* Инициализируем модель теста и добавляем вопросы */
             $test = Model_Test::create();
-            $test->addQuestions(1, $q_objs);
+            $test->addQuestions($test_id, $q_objs);
 
             /* Возвращаем ответ, что всё прошло успешно */
             $response = array('result' => true);
