@@ -63,7 +63,7 @@
                 //alert(text);
 
                 if (response.result != true) {
-                    var msg = 'Не удалось сохранить тест: ' + response.error;
+                    var msg = 'Не удалось сохранить тест. ' + response.error;
                     $('#status').text(msg);
                 } else {
                     $('#status').hide();

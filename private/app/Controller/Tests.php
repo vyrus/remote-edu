@@ -56,37 +56,62 @@
             //
         }
 
+        /**
+        * Сохранение теста.
+        */
         public function action_ajax_save() {
+            /* Берём список вопросов теста */
             $request = $this->getRequest();
             $questions = $request->post['questions'];
 
+            /* Если включено автоматическое экрание данных, */
             if (get_magic_quotes_gpc()) {
+                /* убираем лишние слеши */
                 $questions = stripslashes($questions);
             }
 
+            /* Парсим JSON-формат */
             $questions = json_decode($questions);
 
-            /**
-            * @todo Detect question type.
-            */
+            /* Массив объектов вопросов */
+            $q_objs = array();
 
-            $pick_ones = array();
+            /* Перебираем присланные вопросы */
+            foreach ($questions as $q)
+            {
+                switch ($q->type)
+                {
+                    /* Если вопрос с одним ответом */
+                    case Model_Question::TYPE_PICK_ONE:
+                        /* Создаём и наполняем контейнер вопроса */
+                        $obj = Model_Question_PickOne::create();
+                        $obj->question = $q->text;
+                        $obj->answers = $q->answers;
+                        $obj->correct_answer = $q->correct_answer;
 
-            foreach ($questions as $q) {
-                $pick_one = Model_Question_PickOne::create();
-                $pick_one->question = $q->text;
-                $pick_one->answers = $q->answers;
-                $pick_one->correct_answer = $q->correct_answer;
+                        /* Сохраняем вопрос в списке */
+                        $q_objs[] = $obj;
+                        break;
 
-                $pick_ones[] = $pick_one;
+                    default:
+                        $response = array(
+                            'result' => false,
+                            'error'  => 'Неизвестный тип вопроса: ' . $q->type
+                        );
+
+                        echo json_encode($response);
+                        return;
+                        break;
+                }
             }
 
+            /* Инициализируем модель теста и добавляем вопросы */
             $test = Model_Test::create();
-            $test->addQuestions(1, $pick_ones);
+            $test->addQuestions(1, $q_objs);
 
-            //print_r($pick_ones);
-
-            echo json_encode(array('result' => false, 'error' => ';)'));
+            /* Возвращаем ответ, что всё прошло успешно */
+            $response = array('result' => true);
+            echo json_encode($response);
         }
     }
 

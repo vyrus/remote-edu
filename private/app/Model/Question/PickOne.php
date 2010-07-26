@@ -42,7 +42,11 @@
         }
 
         /**
-        * @todo PHP Magic methods
+        * Метод для сериализации объекта.
+        *
+        * @link http://www.php.net/manual/en/language.oop5.magic.php
+        *
+        * @return array Список атрибутов для сериализации.
         */
         public function __sleep() {
             return array('question', 'answers', 'correct_answer');
