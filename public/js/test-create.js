@@ -11,6 +11,17 @@ Test.prototype = {
 
     _id: null,
 
+    _inputs_map: {
+        theme:          'theme',
+        num_questions:  'num_questions',
+        errors_limit:   'errors_limit',
+        attempts_limit: 'attempts_limit'
+    },
+
+    _questions_map: {
+        'pick-one': function() { return new Question_PickOne(); }
+    },
+
     isIdSet: function() {
         return (null !== this._id);
     },
@@ -21,6 +32,10 @@ Test.prototype = {
 
     getId: function() {
         return this._id;
+    },
+
+    _getInput: function(alias) {
+        return $('#' + this._inputs_map[alias]);
     },
 
     /**
@@ -35,17 +50,41 @@ Test.prototype = {
         this.questions.push(q);
     },
 
+    setOptions: function(options) {
+        for (key in options) {
+            this._getInput(key).val(options[key]);
+        }
+    },
+
+    /**
+    * @todo rename to getOptions
+    */
     saveOptions: function() {
         /* Собираем параметры теста */
         var data = {
             test_id:        this.getId(),
-            theme:          $('#theme').val(),
-            num_questions:  $('#num_questions').val(),
-            errors_limit:   $('#errors_limit').val(),
-            attempts_limit: $('#attempts_limit').val()
+            theme:          this._getInput('theme').val(),
+            num_questions:  this._getInput('num_questions').val(),
+            errors_limit:   this._getInput('errors_limit').val(),
+            attempts_limit: this._getInput('attempts_limit').val()
         };
 
         return data;
+    },
+
+    setQuestions: function(questions, container) {
+        var q, q_obj;
+
+        for (key in questions)
+        {
+            q = questions[key];
+            q_obj = this._questions_map[q.type]();
+
+            q_obj.setData(q);
+            q_obj.addForm(container);
+
+            this.questions.push(q_obj);
+        }
     },
 
     /**
@@ -107,11 +146,37 @@ Question_PickOne.prototype = {
     */
     answers: [],
 
+    data: {},
+
+    setData: function(data) {
+        /* Начинаем заполнять массив данными - типом вопроса и текстом */
+        this.data = {
+            id: data.id,
+            type: data.type,
+            text: data.question,
+            answers: [],
+            correct_answer: data.correct_answer
+        };
+
+        var answer;
+
+        /* Пробегаемся по полям для ввода ответов */
+        for (idx in data.answers)
+        {
+            answer = data.answers[idx];
+            this.data.answers.push(answer);
+        }
+    },
+
+    renderForm: function(container) {
+        //
+    },
+
     /**
     * Добавление формы вопроса на страницу в конец указанного контейнера.
     */
     addForm: function(container) {
-        var inputs = [], radio, answer;
+        var inputs = [], radio, answer, q_id;
 
         /* Создаём контейнер формы */
         var form = $('<form></form>')
@@ -121,12 +186,20 @@ Question_PickOne.prototype = {
         var text = $('<input type="text" value="Вопрос" />')
                      .addClass(this.classes.text);
 
+        q_id = $('<input type="hidden" value="" />');
+
+        if (undefined !== this.data.type) {
+            text.val(this.data.text);
+            q_id.val(this.data.id);
+        } else {
+            inputs.push(text);
+        }
+
         /* Запоминаем поле, чтобы потом взять из него текст вопроса */
         this.text = text;
-
-        /* Добавляем в список полей и к форме */
-        inputs.push(text);
-        form.append(text);
+        form
+            .append(text)
+            .append(q_id);
 
         /* Создаём input'ы для ввода ответов */
         for (var i = 0; i < this._num_answers; i++)
@@ -139,9 +212,15 @@ Question_PickOne.prototype = {
             answer = $('<input type="text" value="Ответ ' + (i + 1) + '" />')
                        .addClass(this.classes.answer);
 
-            /* Запоминаем объекты input'ов */
-            inputs.push(radio);
-            inputs.push(answer);
+            if (undefined !== this.data.type) {
+                if (i == this.data.correct_answer) {
+                    radio.attr('checked', 'checked');
+                }
+
+                answer.val(this.data.answers[i]);
+            } else {
+                inputs.push(answer);
+            }
 
             /* Сохраняем пару radio-button и поле с ответом */
             this.answers.push({
@@ -152,7 +231,7 @@ Question_PickOne.prototype = {
             /* И добавляем их к форме */
             form
                 .append(radio)
-                .append(answer)
+                .append(answer);
         }
 
         /* Для выбранных полей ввода устанавливаем текстовые подсказки */
@@ -172,6 +251,7 @@ Question_PickOne.prototype = {
 
         /* Начинаем заполнять массив данными - типом вопроса и текстом */
         data = {
+            id: this.text.next().val(),
             type: this._type,
             text: this.text.val(),
             answers: [],

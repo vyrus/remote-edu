@@ -39,14 +39,18 @@
         /**
         * Редактирование существующего теста.
         */
-        public function action_edit() {
-            $tid = 1;
+        public function action_edit(array $params) {
+            if (empty($params)) {
+                $this->flash('Не указан идентификатор теста', '#', false);
+            }
 
-            $test = Model_Test::create();
-            $questions = $test->getQuestions($tid);
+            /**
+            * @todo Сделать нормальный маршрут.
+            */
+            $test_id = array_shift($params);
 
-            header('Content-Type: text/plain; charset=utf-8');
-            print_r($questions);
+            $this->set('test_id', $test_id);
+            $this->render('tests/create');
         }
 
         /**
@@ -174,6 +178,33 @@
 
             /* Возвращаем ответ, что всё прошло успешно */
             $response = array('result' => true);
+            echo json_encode($response);
+        }
+
+        public function action_ajax_load_test() {
+            $request = $this->getRequest();
+
+            /**
+            * @todo Check whether 'test_id' key exists.
+            */
+
+            $test_id = $request->post['test_id'];
+
+            /**
+            * @todo Проверить, возврашают ли запросы записи.
+            *
+            * @var Model_Test
+            */
+            $test = Model_Test::create();
+            $options   = $test->get($test_id);
+            $questions = $test->getQuestions($test_id, false);
+
+            $response = array(
+                'result'    => true,
+                'options'   => $options,
+                'questions' => $questions
+            );
+
             echo json_encode($response);
         }
     }

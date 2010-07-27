@@ -59,7 +59,29 @@
 <script type="text/javascript" src="<?php echo $this->_links->getPath('/js/test-create.js') ?>"></script>
 <script type="text/javascript" src="<?php echo $this->_links->getPath('/js/jquery.json-2.2.js') ?>"></script>
 <script type="text/javascript">
-    var test = new Test();
+    var test = new Test(),
+        test_id = <?php echo isset($this->test_id) ? $this->test_id : 'null' ?>;
+
+    $(document).ready(function()
+    {
+        $('#lnk-save').click(function() {
+            saveOptions();
+        });
+
+        $('#lnk-add-question').click(function() {
+            test.addPickOne($('#questions'));
+        });
+
+        $('#frm-options').submit(function() {
+            $('#lnk-save').click();
+            return false;
+        });
+
+        if (null !== test_id) {
+            test.setId(test_id);
+            loadTest(test_id);
+        }
+    })
 
     function saveOptions() {
         $('#status').text('Сохранение...').show();
@@ -148,21 +170,38 @@
         });
     }
 
-    $(document).ready(function()
-    {
-        $('#lnk-save').click(function() {
-            saveOptions();
-        });
+    function loadTest(tid) {
+        $('#status').text('Загрузка...').show();
 
-        $('#lnk-add-question').click(function() {
-            test.addPickOne($('#questions'));
-        });
+        $.ajax({
+            type: 'POST',
+            url: '/tests/ajax_load_test',
+            data: {test_id: tid},
+            dataType: 'json',
 
-        $('#frm-options').submit(function() {
-            $('#lnk-save').click();
-            return false;
+            success: function(response) {
+                if (response.result != true) {
+                    var msg = 'Не удалось загрузить параметры теста. ' +
+                              response.error;
+                    $('#status').text(msg);
+                } else {
+                    test.setOptions(response.options);
+                    test.setQuestions(response.questions, $('#questions'));
+
+                    $('#status').hide();
+                    $('#lnk-add-question').show();
+                }
+            },
+
+            error: function(xhr, textStatus, errorThrown) {
+                /**
+                * @todo Вынести отображение ошибок в отдельную функцию.
+                */
+                var msg = 'Ошибка: ' + textStatus;
+                $('#status').text(msg);
+            }
         });
-    })
+    }
 </script>
 
 <div id="controls">

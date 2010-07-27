@@ -72,6 +72,20 @@
             return $row_count > 0;
         }
 
+        public function get($test_id) {
+            $sql = '
+                SELECT *
+                FROM ' . $this->_tables['tests'] . '
+                WHERE test_id = ?
+                LIMIT 1
+            ';
+
+            $stmt = $this->prepare($sql);
+            $stmt->execute(array($test_id));
+
+            return $stmt->fetch(Db_Pdo::FETCH_ASSOC);
+        }
+
         /**
         * Добавление нескольких вопросов в тест.
         *
@@ -96,7 +110,7 @@
 
             foreach ($questions as $q) {
                 $values[':type'] = $q->getType();
-                $values[':data'] = serialize($q);
+                $values[':data'] = $q->freeze();
                 $stmt->execute($values);
             }
         }
@@ -104,10 +118,11 @@
         /**
         * Получение списка всех вопросов к тесту.
         *
-        * @param  int $test_id Идентификатор теста.
+        * @param  int     $test_id Идентификатор теста.
+        * @param  boolean $thaw    Создавать ли объекты вопросов или оставить сырые данные.
         * @return array array(идентификатор_вопроса => объект_вопроса).
         */
-        public function getQuestions($test_id) {
+        public function getQuestions($test_id, $thaw = true) {
             $sql = '
                 SELECT *
                 FROM ' . $this->_tables['questions'] . '
@@ -119,8 +134,17 @@
 
             $questions = array();
 
-            while ($q = $stmt->fetch(Db_Pdo::FETCH_OBJ)) {
-                $questions[$q->question_id] = unserialize($q->data);
+            while ($q = $stmt->fetch(Db_Pdo::FETCH_OBJ))
+            {
+                if ($thaw) {
+                    $q_data = Model_Question_Abstract::thaw($q->type, $q->data);
+                } else {
+                    $q_data = unserialize($q->data);
+                    $q_data['type'] = $q->type;
+                    $q_data['id']   = $q->question_id;
+                }
+
+                $questions[$q->question_id] = $q_data;
             }
 
             return $questions;

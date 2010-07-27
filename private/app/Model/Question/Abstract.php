@@ -25,10 +25,18 @@
             return $this->_type;
         }
 
-        /**
-        * @todo PHP Magic methods.
-        */
-        abstract public function __sleep();
+        abstract public function freeze();
+
+        public static function thaw($type, $data) {
+            $pattern = '/-([a-z0-9]{1})/e';
+            $replace = 'strtoupper("$1")';
+
+            $class = preg_replace($pattern, $replace, $type);
+            $class = 'Model_Question_' . ucfirst($class);
+
+            $callback = array($class, __FUNCTION__);
+            return call_user_func($callback, $data);
+        }
     }
 
 ?>

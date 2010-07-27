@@ -41,15 +41,24 @@
             return new self();
         }
 
-        /**
-        * Метод для сериализации объекта.
-        *
-        * @link http://www.php.net/manual/en/language.oop5.magic.php
-        *
-        * @return array Список атрибутов для сериализации.
-        */
-        public function __sleep() {
-            return array('question', 'answers', 'correct_answer');
+        public function freeze() {
+            return serialize(array(
+                'question'       => $this->question,
+                'answers'        => $this->answers,
+                'correct_answer' => $this->correct_answer
+            ));
+        }
+
+        public static function thaw($data) {
+            $data = (object) unserialize($data);
+
+            $q = self::create();
+
+            $q->question        = $data->question;
+            $q->answers         = $data->answers;
+            $q->correct_answer  = $data->correct_answer;
+
+            return $q;
         }
     }
 
