@@ -53,6 +53,20 @@
                     new Model_Question_PickOne_Exception($code);
             }
 
+            foreach ($this->answers as $key => $answer) {
+                if (empty($answer)) {
+                    unset($this->answers[$key]);
+                }
+            }
+
+            $empty = empty($this->question) || sizeof($this->answers) < 4;
+            if ($empty) {
+                $code = Model_Question_PickOne_Exception::EMPTY_FIELDS;
+
+                $errors['question'] =
+                    new Model_Question_PickOne_Exception($code);
+            }
+
             return $errors;
         }
 

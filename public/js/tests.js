@@ -244,7 +244,13 @@ Question_PickOne.prototype = {
         data.answers        = [];
         data.correct_answer = null;
 
-        var radio, answer;
+        if (this._question_input.hasClass(this._classes.inactiveInput)) {
+            data.question = '';
+        } else {
+            data.question = this._question_input.val();
+        }
+
+        var radio, answer, value;
 
         /* Пробегаемся по полям для ввода ответов */
         for (idx in this._answer_inputs)
@@ -259,7 +265,10 @@ Question_PickOne.prototype = {
             }
 
             /* Добавляем в массив текст ответа */
-            data.answers.push(answer.val());
+
+            if (!answer.hasClass(this._classes.inactiveInput)) {
+                data.answers.push(answer.val());
+            }
         }
 
         this.setData(data);
@@ -277,7 +286,8 @@ Question_PickOne.prototype = {
                      .addClass(this._classes.form);
 
         /* Поле ввода для текста вопроса */
-        var question = $('<input type="text" value="Вопрос" />')
+        var question = $('<input type="text" value="" />')
+                         .data('default', 'Вопрос')
                          .addClass(this._classes.text);
 
         var e_target = $('<span></span>')
@@ -315,7 +325,8 @@ Question_PickOne.prototype = {
                       .addClass(this._classes.radio);
 
             /* Поле для ввода текста ответа */
-            answer = $('<input type="text" value="Ответ ' + (i + 1) + '" />')
+            answer = $('<input type="text" value="" />')
+                       .data('default', 'Ответ' + (i + 1))
                        .addClass(this._classes.answer);
 
             if (undefined !== q_data)
@@ -381,8 +392,9 @@ Question_PickOne.prototype = {
         var class_inactive = this._classes.inactiveInput;
 
         var hinter = function() {
+            $(this).val($(this).data('default'));
             $(this)
-                .data('default', $(this).val())
+                //.data('default', $(this).val())
                 .addClass(class_inactive)
 
                 .focus(function() {
