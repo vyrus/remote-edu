@@ -41,6 +41,21 @@
             return new self();
         }
 
+        public function validate() {
+            $errors = array();
+
+            $answer = & $this->answers[$this->correct_answer];
+            if (!isset($answer))
+            {
+                $code = Model_Question_PickOne_Exception::NO_CORRECT_ANSWER;
+
+                $errors['question'] =
+                    new Model_Question_PickOne_Exception($code);
+            }
+
+            return $errors;
+        }
+
         public function freeze() {
             return serialize(array(
                 'question'       => $this->question,

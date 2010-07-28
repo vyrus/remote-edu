@@ -54,154 +54,18 @@
         padding-left: 0.7em;
         color: #DE0000;
     }
+
+    .e-target {
+        color: #DE0000;
+    }
 </style>
 
-<script type="text/javascript" src="<?php echo $this->_links->getPath('/js/test-create.js') ?>"></script>
 <script type="text/javascript" src="<?php echo $this->_links->getPath('/js/jquery.json-2.2.js') ?>"></script>
+<script type="text/javascript" src="<?php echo $this->_links->getPath('/js/tests.js') ?>"></script>
+<script type="text/javascript" src="<?php echo $this->_links->getPath('/js/tests-init.js') ?>"></script>
 <script type="text/javascript">
-    var test = new Test(),
+    var test,
         test_id = <?php echo isset($this->test_id) ? $this->test_id : 'null' ?>;
-
-    $(document).ready(function()
-    {
-        $('#lnk-save').click(function() {
-            saveOptions();
-        });
-
-        $('#lnk-add-question').click(function() {
-            test.addPickOne($('#questions'));
-        });
-
-        $('#frm-options').submit(function() {
-            $('#lnk-save').click();
-            return false;
-        });
-
-        if (null !== test_id) {
-            test.setId(test_id);
-            loadTest(test_id);
-        }
-    })
-
-    function saveOptions() {
-        $('#status').text('Сохранение...').show();
-        $('td.error').text('');
-
-        var options = test.saveOptions();
-
-        $.ajax({
-            type: 'POST',
-            url: '/tests/ajax_save_options',
-            data: options,
-            dataType: 'json',
-
-            success: function(response) {
-                if (
-                    response.result != true &&
-                    undefined !== response.formErrors
-                ) {
-                    for (field in response.formErrors) {
-                        $('#' + field)
-                            .parent()
-                            .next()
-                            .text(response.formErrors[field]);
-                    }
-                    $('#status').hide();
-                }
-                else if(response.result != true) {
-                    var msg = 'Не удалось сохранить тест. ' +
-                               response.error;
-                    $('#status').text(msg);
-                }
-                else
-                {
-                    if (undefined !== response.testId) {
-                        test.setId(response.testId);
-                    }
-
-                    saveQuestions();
-
-                    $('#lnk-add-question').show();
-                }
-            },
-
-            error: function(xhr, textStatus, errorThrown) {
-                var msg = 'Ошибка: ' + textStatus;
-                $('#status').text(msg);
-            }
-        });
-    }
-
-    function saveQuestions() {
-        var questions = test.saveQuestions();
-
-        if (!questions.length) {
-            $('#status').hide();
-            return;
-        }
-
-        questions = $.toJSON(questions);
-        alert(questions);
-
-        var data = {
-            testId: test.getId(),
-            questions: questions
-        }
-
-        $.ajax({
-            type: 'POST',
-            url: '/tests/ajax_save_questions',
-            data: data,
-            dataType: 'json',
-
-            success: function(response) {
-                if (response.result != true) {
-                    var msg = 'Не удалось сохранить вопросы. ' + response.error;
-                    $('#status').text(msg);
-                } else {
-                    $('#status').hide();
-                }
-            },
-
-            error: function(xhr, textStatus, errorThrown) {
-                var msg = 'Ошибка: ' + textStatus;
-                $('#status').text(msg);
-            }
-        });
-    }
-
-    function loadTest(tid) {
-        $('#status').text('Загрузка...').show();
-
-        $.ajax({
-            type: 'POST',
-            url: '/tests/ajax_load_test',
-            data: {test_id: tid},
-            dataType: 'json',
-
-            success: function(response) {
-                if (response.result != true) {
-                    var msg = 'Не удалось загрузить параметры теста. ' +
-                              response.error;
-                    $('#status').text(msg);
-                } else {
-                    test.setOptions(response.options);
-                    test.setQuestions(response.questions, $('#questions'));
-
-                    $('#status').hide();
-                    $('#lnk-add-question').show();
-                }
-            },
-
-            error: function(xhr, textStatus, errorThrown) {
-                /**
-                * @todo Вынести отображение ошибок в отдельную функцию.
-                */
-                var msg = 'Ошибка: ' + textStatus;
-                $('#status').text(msg);
-            }
-        });
-    }
 </script>
 
 <div id="controls">

@@ -127,7 +127,7 @@
         public function action_ajax_save_questions() {
             /* Берём идентификатор теста и список вопросов */
             $request = $this->getRequest();
-            $test_id   = $request->post['testId'];
+            $test_id   = $request->post['test_id'];
             $questions = $request->post['questions'];
 
             /* Если включено автоматическое экрание данных, */
@@ -140,23 +140,25 @@
             $questions = json_decode($questions);
 
             /* Массив объектов вопросов */
-            $q_objs = array();
+            $add_questions  = array();
+            $edit_questions = array();
+
+            $return_errors = array();
 
             /* Перебираем присланные вопросы */
             foreach ($questions as $q)
             {
+                $obj = null;
+
                 switch ($q->type)
                 {
                     /* Если вопрос с одним ответом */
                     case Model_Question::TYPE_PICK_ONE:
                         /* Создаём и наполняем контейнер вопроса */
                         $obj = Model_Question_PickOne::create();
-                        $obj->question = $q->text;
+                        $obj->question = $q->question;
                         $obj->answers = $q->answers;
                         $obj->correct_answer = $q->correct_answer;
-
-                        /* Сохраняем вопрос в списке */
-                        $q_objs[] = $obj;
                         break;
 
                     /* Если вопрос неизвестного типа, возвращаем ошибку */
@@ -170,14 +172,75 @@
                         return;
                         break;
                 }
+
+                if (isset($q->question_id)) {
+                    $id_key = 'question_id';
+                    $id_val = $q->question_id;
+                }
+                elseif (isset($q->tmp_id)) {
+                    $id_key = 'tmp_id';
+                    $id_val = $q->tmp_id;
+                }
+
+                $errors = $obj->validate();
+
+                if (!empty($errors))
+                {
+                    foreach ($errors as $target => $error) {
+                        $code = $error->getCode();
+                        $errors[$target] = $error->errors_map[$code];
+                    }
+
+                    $return_errors[] = array(
+                        $id_key  => $id_val,
+                        'errors' => $errors
+                    );
+
+                    continue;
+                }
+
+                if (isset($q->question_id))
+                {
+                    $edit_questions[] = array(
+                        $id_key => $id_val,
+                        'obj'   => $obj
+                    );
+                }
+                elseif (isset($q->tmp_id))
+                {
+                    $add_questions[] = array(
+                        $id_key => $id_val,
+                        'obj'   => $obj
+                    );
+                }
             }
 
+            if (!empty($return_errors))
+            {
+                $response = array(
+                    'result'       => false,
+                    'field_errors' => $return_errors
+                );
+
+                echo json_encode($response);
+                return;
+            }
+
+            $response = array();
             /* Инициализируем модель теста и добавляем вопросы */
             $test = Model_Test::create();
-            $test->addQuestions($test_id, $q_objs);
+
+            if (!empty($add_questions)) {
+                $new_ids = $test->addQuestions($test_id, $add_questions);
+                $response['new_ids'] = $new_ids;
+            }
+
+            if (!empty($edit_questions)) {
+                $test->editQuestions($edit_questions);
+            }
 
             /* Возвращаем ответ, что всё прошло успешно */
-            $response = array('result' => true);
+            $response['result'] = true;
             echo json_encode($response);
         }
 

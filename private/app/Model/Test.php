@@ -91,7 +91,7 @@
         *
         * @param  mixed $test_id   Идентификатор теста, к которому добавляется вопрос.
         * @param  mixed $questions Список контейнеров вопросов.
-        * @return void
+        * @return //
         */
         public function addQuestions($test_id, array $questions) {
             $sql = '
@@ -108,9 +108,42 @@
                 ':data' => ''
             );
 
+            $new_ids = new stdClass();
+
             foreach ($questions as $q) {
-                $values[':type'] = $q->getType();
-                $values[':data'] = $q->freeze();
+                $q = (object) $q;
+
+                $values[':type'] = $q->obj->getType();
+                $values[':data'] = $q->obj->freeze();
+                $stmt->execute($values);
+
+                /**
+                * Performing string convertion in order to save all keys in
+                * JSON.
+                */
+                $new_ids->{$q->tmp_id} = $this->lastInsertId();
+            }
+
+            return $new_ids;
+        }
+
+        public function editQuestions(array $questions) {
+            $sql = '
+                UPDATE ' . $this->_tables['questions'] . '
+                SET data = :data
+                WHERE question_id = :qid
+            ';
+
+            $stmt = $this->prepare($sql);
+
+            foreach ($questions as $q)
+            {
+                $q = (object) $q;
+
+                $values = array(
+                    ':qid'  => $q->question_id,
+                    ':data' => $q->obj->freeze()
+                );
                 $stmt->execute($values);
             }
         }
@@ -141,10 +174,10 @@
                 } else {
                     $q_data = unserialize($q->data);
                     $q_data['type'] = $q->type;
-                    $q_data['id']   = $q->question_id;
+                    $q_data['question_id'] = $q->question_id;
                 }
 
-                $questions[$q->question_id] = $q_data;
+                $questions[] = $q_data;
             }
 
             return $questions;

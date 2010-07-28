@@ -25,6 +25,8 @@
             return $this->_type;
         }
 
+        abstract public function validate();
+
         abstract public function freeze();
 
         public static function thaw($type, $data) {
