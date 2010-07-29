@@ -16,6 +16,8 @@ Test.prototype = {
 
     _new_questions: {},
 
+    _exam_questions: {},
+
     _last_tmp_id: 0,
 
     _inputs_map: {
@@ -160,6 +162,20 @@ Test.prototype = {
         };
 
         $.each(ids, setter);
+    },
+
+    setExamQuestions: function(questions, container) {
+        var exam_questions = this._exam_questions;
+        var factory = this._types_map;
+
+        $.each(questions, function(q_id, q_data) {
+            var q_obj = factory[q_data.type]();
+
+            q_obj.setExamData(q_data);
+            q_obj.renderExamForm(container);
+
+            exam_questions[q_id] = q_obj;
+        });
     }
 }
 
@@ -195,6 +211,11 @@ Question_PickOne.prototype = {
         radio:  'question-radio',
         answer: 'question-answer',
 
+        examDiv:      'exam-div',
+        examForm:     'exam-form',
+        examQuestion: 'exam-question',
+        examAnswer:   'exam-answer',
+
         inactiveInput: 'inactive',
         errorTarget:   'e-target'
     },
@@ -210,6 +231,8 @@ Question_PickOne.prototype = {
     * Radio-button'ы и поля для ввода ответов.
     */
     _answer_inputs: [],
+
+    _exam_answer_inputs: [],
 
     _error_targets: {},
 
@@ -272,6 +295,15 @@ Question_PickOne.prototype = {
         }
 
         this.setData(data);
+    },
+
+    setExamData: function(data) {
+        this._data = {
+            question_id: data.question_id,
+            type:        this._type,
+            question:    data.question,
+            answers:     data.answers,
+        };
     },
 
     renderForm: function(container, q_data) {
@@ -357,6 +389,65 @@ Question_PickOne.prototype = {
         $(empty_inputs).each(this._createInputHinter());
 
         //alert(div.html());
+
+        /* Добавляем форму на страницу */
+        container.append(div);
+    },
+
+    renderExamForm: function(container, q_data) {
+        if (undefined === q_data && this.issetData()) {
+            q_data = this.getData();
+        }
+
+        var div = $('<div></div>')
+                    .addClass(this._classes.examDiv);
+
+        /* Создаём контейнер формы */
+        var form = $('<form></form>')
+                     .addClass(this._classes.examForm);
+
+        var question = $('<div></div>')
+                         .addClass(this._classes.examQuestion)
+                         .text(q_data.question);
+
+        var e_target = $('<span></span>')
+                         .addClass(this._classes.errorTarget)
+                         .hide();
+
+        var q_id = $('<input type="hidden" value="" />')
+                     .val(q_data.question_id);
+
+        div.append(form);
+        form
+            .append(question)
+            .append(e_target)
+            .append(q_id);
+
+        this._question_input = question;
+        this._id_input   = q_id;
+        this._error_targets.answers = e_target;
+
+        var radio, answer;
+
+        for (var i = 0; i < this._num_answers; i++)
+        {
+            /* Radio-button для выбора правильного ответа */
+            radio = $('<input type="radio" name="correct_answer" />')
+                      .addClass(this._classes.radio);
+
+            /* Поле для ввода текста ответа */
+            answer = $('<div></div>')
+                       .addClass(this._classes.examAnswer)
+                       .text(q_data.answers[i]);
+
+            /* Сохраняем пару radio-button и поле с ответом */
+            this._exam_answer_inputs.push({radio: radio});
+
+            answer.prepend(radio);
+            form.append(answer);
+        }
+
+        alert(div.html());
 
         /* Добавляем форму на страницу */
         container.append(div);

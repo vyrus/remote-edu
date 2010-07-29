@@ -70,6 +70,13 @@
             return $errors;
         }
 
+        public function getExamData() {
+            return array(
+                'question' => $this->question,
+                'answers'  => $this->answers
+            );
+        }
+
         public function freeze() {
             return serialize(array(
                 'question'       => $this->question,

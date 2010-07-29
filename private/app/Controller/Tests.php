@@ -60,6 +60,19 @@
             //
         }
 
+        public function action_examination(array $params) {
+            /**
+            * @todo Check if 'test_id' param is set.
+            */
+            $test_id = array_shift($params);
+
+            $test = Model_Test::create();
+            $data = $test->get($test_id);
+
+            $this->set('test', $data);
+            $this->render();
+        }
+
         public function action_ajax_save_options() {
             $request = $this->getRequest();
 
@@ -268,6 +281,29 @@
                 'questions' => $questions
             );
 
+            echo json_encode($response);
+        }
+
+        public function action_ajax_get_exam_questions() {
+            $request = $this->getRequest();
+            $test_id = (int) $request->post['test_id'];
+
+            $test = Model_Test::create();
+            $data = $test->get($test_id);
+            $questions = $test->getExamQuestions($test_id,
+                                                 $data['num_questions']);
+
+            if (sizeof($questions) < $data['num_questions']) {
+                $response = array(
+                    'result' => false,
+                    'error'  => 'В базе недостаточно вопросов.'
+                );
+
+                echo json_encode($response);
+                return;
+            }
+
+            $response = array('result' => true, 'questions' => $questions);
             echo json_encode($response);
         }
     }

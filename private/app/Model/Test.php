@@ -183,6 +183,34 @@
             return $questions;
         }
 
+        public function getExamQuestions($test_id, $limit) {
+            $sql = '
+                SELECT *
+                FROM ' . $this->_tables['questions'] . '
+                WHERE test_id = ?
+                ORDER BY RAND()
+                LIMIT ' . $limit . '
+            ';
+
+            $stmt = $this->prepare($sql);
+            $stmt->execute(array($test_id));
+
+            $questions = array();
+
+            while ($q = $stmt->fetch(Db_Pdo::FETCH_OBJ))
+            {
+                $obj = Model_Question_Abstract::thaw($q->type, $q->data);
+                $data = $obj->getExamData();
+
+                $data['type'] = $q->type;
+                $data['question_id'] = $q->question_id;
+
+                $questions[] = $data;
+            }
+
+            return $questions;
+        }
+
         public function start() {/*_*/}
 
         public function stop() {/*_*/}
