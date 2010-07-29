@@ -52,6 +52,7 @@
                 $errors['question'] =
                     new Model_Question_PickOne_Exception($code);
             }
+            unset($answer);
 
             foreach ($this->answers as $key => $answer) {
                 if (empty($answer)) {

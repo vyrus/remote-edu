@@ -302,7 +302,7 @@ Question_PickOne.prototype = {
             question_id: data.question_id,
             type:        this._type,
             question:    data.question,
-            answers:     data.answers,
+            answers:     data.answers
         };
     },
 
