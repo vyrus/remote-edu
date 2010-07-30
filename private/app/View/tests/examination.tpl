@@ -31,12 +31,21 @@
         margin-top: 1.7em;
     }
 
-    .exam-div {
+    .exam-container {
         margin-bottom: 1.5em;
+    }
+
+    .exam-question {
+        margin-bottom: 0.5em;
+    }
+
+    .exam-answer {
+        line-height: 1.7em;
     }
 </style>
 
 <script type="text/javascript" src="<?php echo $this->_links->getPath('/js/jquery.json-2.2.js') ?>"></script>
+<script type="text/javascript" src="<?php echo $this->_links->getPath('/js/jquery.nano.js') ?>"></script>
 <script type="text/javascript" src="<?php echo $this->_links->getPath('/js/tests.js') ?>"></script>
 <script type="text/javascript" src="<?php echo $this->_links->getPath('/js/tests-exam.js') ?>"></script>
 <script type="text/javascript">
@@ -79,5 +88,7 @@
 <div id="status" style="display: none;">
 </div>
 
-<div id="questions">
+<div>
+    <ol id="questions"></ol>
+    <input type="button" id="btn-finish-test" value="Закончить тестирование" />
 </div>

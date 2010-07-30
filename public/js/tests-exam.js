@@ -6,6 +6,10 @@ $(document).ready(function()
     $('#btn-start').click(function() {
         startExamination();
     });
+
+    $('#btn-finish-test').click(function() {
+        test.getExamAnswers();
+    });
 })
 
 function startExamination() {

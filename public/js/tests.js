@@ -168,14 +168,24 @@ Test.prototype = {
         var exam_questions = this._exam_questions;
         var factory = this._types_map;
 
-        $.each(questions, function(q_id, q_data) {
+        $.each(questions, function(idx, q_data) {
             var q_obj = factory[q_data.type]();
 
             q_obj.setExamData(q_data);
             q_obj.renderExamForm(container);
 
-            exam_questions[q_id] = q_obj;
+            exam_questions[q_data.question_id] = q_obj;
         });
+    },
+
+    getExamAnswers: function() {
+        var answers = {};
+
+        $.each(this._exam_questions, function(id, q) {
+            answers[id] = q.getAnswer();
+        });
+
+        alert($.toJSON(answers));
     }
 }
 
@@ -211,10 +221,10 @@ Question_PickOne.prototype = {
         radio:  'question-radio',
         answer: 'question-answer',
 
-        examDiv:      'exam-div',
-        examForm:     'exam-form',
-        examQuestion: 'exam-question',
-        examAnswer:   'exam-answer',
+        examContainer: 'exam-container',
+        examForm:      'exam-form',
+        examQuestion:  'exam-question',
+        examAnswer:    'exam-answer',
 
         inactiveInput: 'inactive',
         errorTarget:   'e-target'
@@ -237,6 +247,8 @@ Question_PickOne.prototype = {
     _error_targets: {},
 
     _data: null,
+
+    _view: null,
 
     setData: function(data) {
         this._data = {
@@ -399,58 +411,27 @@ Question_PickOne.prototype = {
             q_data = this.getData();
         }
 
-        var div = $('<div></div>')
-                    .addClass(this._classes.examDiv);
+        var view = new View_Question_PickOne_Show();
+        var html = view.render({
+            id:      q_data.question_id,
+            text:    q_data.question,
+            answers: q_data.answers
+        });
 
-        /* Создаём контейнер формы */
-        var form = $('<form></form>')
-                     .addClass(this._classes.examForm);
+        this._view = view;
+        container.append(html);
+    },
 
-        var question = $('<div></div>')
-                         .addClass(this._classes.examQuestion)
-                         .text(q_data.question);
+    getAnswer: function() {
+        var selected_idx = null;
 
-        var e_target = $('<span></span>')
-                         .addClass(this._classes.errorTarget)
-                         .hide();
+        $.each(this._view.getRadios(), function(idx, radio) {
+            if ($(radio).attr('checked')) {
+                selected_idx = idx;
+            }
+        })
 
-        var q_id = $('<input type="hidden" value="" />')
-                     .val(q_data.question_id);
-
-        div.append(form);
-        form
-            .append(question)
-            .append(e_target)
-            .append(q_id);
-
-        this._question_input = question;
-        this._id_input   = q_id;
-        this._error_targets.answers = e_target;
-
-        var radio, answer;
-
-        for (var i = 0; i < this._num_answers; i++)
-        {
-            /* Radio-button для выбора правильного ответа */
-            radio = $('<input type="radio" name="correct_answer" />')
-                      .addClass(this._classes.radio);
-
-            /* Поле для ввода текста ответа */
-            answer = $('<div></div>')
-                       .addClass(this._classes.examAnswer)
-                       .text(q_data.answers[i]);
-
-            /* Сохраняем пару radio-button и поле с ответом */
-            this._exam_answer_inputs.push({radio: radio});
-
-            answer.prepend(radio);
-            form.append(answer);
-        }
-
-        alert(div.html());
-
-        /* Добавляем форму на страницу */
-        container.append(div);
+        return selected_idx;
     },
 
     showErrors: function(errors) {
@@ -507,3 +488,89 @@ Question_PickOne.prototype = {
         return hinter;
     }
 }
+
+function inherit(child, parent) {
+    var f = function() {};
+
+    f.prototype = parent.prototype;
+    child.prototype = new f();
+    child.prototype.constructor = child;
+    child._parent = parent.prototype
+}
+
+var View = function() {/*_*/}
+
+View.prototype = {
+    render: function(tpl, data) {
+        return $.nano(tpl, data);
+    }
+};
+
+var View_Question_PickOne = function() {
+    this._parent = View_Question_PickOne._parent;
+}
+inherit(View_Question_PickOne, View);
+
+$.extend(View_Question_PickOne.prototype, {
+    _classes: {
+        inactiveInput: 'inactive',
+        errorTarget:   'e-target'
+    }
+});
+
+var View_Question_PickOne_Show = function() {
+    this._parent = View_Question_PickOne_Show._parent;
+    $.extend(this._classes, this._parent._classes);
+}
+inherit(View_Question_PickOne_Show, View_Question_PickOne);
+
+$.extend(View_Question_PickOne_Show.prototype, {
+    _classes: {
+        container: 'exam-container',
+        form:      'exam-form',
+        question:  'exam-question',
+        answer:    'exam-answer',
+        radio:     'exam-radio',
+    },
+
+    _tpl: {
+        question: '<li class="{cls.container}">' +
+                      '<form class="{cls.form}">' +
+                          '<div class="{cls.question}">{text}</div>' +
+                              '<span class="{cls.errorTarget}"></span>' +
+                              '<input type="hidden" value="{id}" />' +
+                              '{answers}' +
+                      '</form>' +
+                  '</li>',
+
+        answer: '<div class="{cls.answer}">' +
+                    '<input type="radio" name="correct_answer" class="{cls.radio}" />' +
+                    '{answer}' +
+                 '</div>'
+    },
+
+    _html: null,
+
+    render: function(data) {
+        var answers = '';
+
+        for (idx in data.answers) {
+            answers += this._parent.render(this._tpl.answer, {
+                cls:    this._classes,
+                answer: data.answers[idx]
+            });
+        }
+
+        data.cls     = this._classes;
+        data.answers = answers;
+
+        var html = this._parent.render(this._tpl.question, data);
+
+        this._html = $(html);
+        return this._html;
+    },
+
+    getRadios: function() {
+        return $('.' + this._classes.radio, this._html);
+    }
+});
