@@ -213,24 +213,6 @@ Question_PickOne.prototype = {
     _num_answers: 4,
 
     /**
-    * CSS-классы для различных элементов формы вопроса.
-    */
-    _classes: {
-        form:   'question-form',
-        text:   'question-text',
-        radio:  'question-radio',
-        answer: 'question-answer',
-
-        examContainer: 'exam-container',
-        examForm:      'exam-form',
-        examQuestion:  'exam-question',
-        examAnswer:    'exam-answer',
-
-        inactiveInput: 'inactive',
-        errorTarget:   'e-target'
-    },
-
-    /**
     * Объект с текстом вопроса.
     */
     _question_input: null,
@@ -323,87 +305,14 @@ Question_PickOne.prototype = {
             q_data = this.getData();
         }
 
-        var div = $('<div></div>');
+        var view = new View_Question_PickOne_Edit();
+        var html = view.render({
+            num_answers: this._num_answers,
+            q:           q_data
+        });
 
-        /* Создаём контейнер формы */
-        var form = $('<form></form>')
-                     .addClass(this._classes.form);
-
-        /* Поле ввода для текста вопроса */
-        var question = $('<input type="text" value="" />')
-                         .data('default', 'Вопрос')
-                         .addClass(this._classes.text);
-
-        var e_target = $('<span></span>')
-                         .addClass(this._classes.errorTarget)
-                         .hide();
-
-        var q_id = $('<input type="hidden" value="" />');
-
-        div.append(form);
-        form
-            .append(question)
-            .append(e_target)
-            .append(q_id);
-
-        this._question_input = question;
-        this._id_input   = q_id;
-        this._error_targets.question = e_target;
-
-        var empty_inputs = [];
-
-        if (undefined !== q_data) {
-            question.val(q_data.question);
-            q_id.val(q_data.question_id);
-        } else {
-            empty_inputs.push(question);
-            empty_inputs.push(q_id);
-        }
-
-        var answers, radio, answer;
-
-        for (var i = 0; i < this._num_answers; i++)
-        {
-            /* Radio-button для выбора правильного ответа */
-            radio = $('<input type="radio" name="correct_answer" />')
-                      .addClass(this._classes.radio);
-
-            /* Поле для ввода текста ответа */
-            answer = $('<input type="text" value="" />')
-                       .data('default', 'Ответ' + (i + 1))
-                       .addClass(this._classes.answer);
-
-            if (undefined !== q_data)
-            {
-                if (i == q_data.correct_answer) {
-                    radio.attr('checked', 'checked');
-                }
-                answer.val(q_data.answers[i]);
-            }
-            else
-            {
-                empty_inputs.push(answer);
-            }
-
-            /* Сохраняем пару radio-button и поле с ответом */
-            this._answer_inputs.push({
-                radio: radio,
-                answer: answer
-            });
-
-             /* И добавляем их к форме */
-            form
-                .append(radio)
-                .append(answer);
-        }
-
-        /* Для выбранных полей ввода устанавливаем текстовые подсказки */
-        $(empty_inputs).each(this._createInputHinter());
-
-        //alert(div.html());
-
-        /* Добавляем форму на страницу */
-        container.append(div);
+        //alert(html.html());
+        container.append(html);
     },
 
     renderExamForm: function(container, q_data) {
@@ -450,42 +359,6 @@ Question_PickOne.prototype = {
         $.each(this._error_targets, function(idx, elem) {
             elem.hide();
         });
-    },
-
-    /**
-    * Создание функции для установки подсказок в поля ввода. В качестве текста
-    * подсказки используется текущее значение поля.
-    */
-    _createInputHinter: function() {
-        /**
-        * Заносим в переменную из области видимости функции класс неактивного
-        * input'а, чтобы он был доступен внутри замыкания.
-        */
-        var class_inactive = this._classes.inactiveInput;
-
-        var hinter = function() {
-            $(this).val($(this).data('default'));
-            $(this)
-                //.data('default', $(this).val())
-                .addClass(class_inactive)
-
-                .focus(function() {
-                    $(this).removeClass(class_inactive);
-                    if ($(this).val() == $(this).data('default') || '') {
-                        $(this).val('');
-                    }
-                })
-
-                .blur(function() {
-                    var default_val = $(this).data('default');
-                    if ($(this).val() == '') {
-                        $(this).addClass(class_inactive);
-                        $(this).val($(this).data('default'));
-                    }
-                });
-        };
-
-        return hinter;
     }
 }
 
@@ -515,6 +388,131 @@ $.extend(View_Question_PickOne.prototype, {
     _classes: {
         inactiveInput: 'inactive',
         errorTarget:   'e-target'
+    }
+});
+
+
+var View_Question_PickOne_Edit = function() {
+    this._parent = View_Question_PickOne_Edit._parent;
+    $.extend(this._classes, this._parent._classes);
+}
+inherit(View_Question_PickOne_Edit, View_Question_PickOne);
+
+$.extend(View_Question_PickOne_Edit.prototype, {
+    _classes: {
+        form:     'question-form',
+        id:       'question-id',
+        question: 'question-text',
+        radio:    'question-radio',
+        answer:   'question-answer',
+    },
+
+    _tpl: {
+        question: '<div>' +
+                       '<form class="{cls.form}">' +
+                           '<input type="text" class="{cls.question}" value="{q.question}" />' +
+                           '<span class="{cls.errorTarget}"></span>' +
+                           '<input type="hidden" class="{cls.id}" value="{q.question_id}" />' +
+                           '{answers}' +
+                       '</form>' +
+                   '</div>',
+
+        answer: '<input type="radio" class="{cls.radio}" name="correct_answer" {checked}/>' +
+                '<input type="text" class="{cls.answer}" value="{answer}" />'
+    },
+
+    _html: null,
+
+    getQuestionInput: function() {
+        return $('.' + this._classes.question, this._html);
+    },
+
+    getAnswerInputs: function() {
+        return $('.' + this._classes.answer, this._html);
+    },
+
+    render: function(data) {
+        var answers = '', checked;
+
+        for (var i = 0; i < data.num_answers; i++) {
+            checked = false;
+            if (undefined != data.q) {
+                if (i == data.q.correct_answer) {
+                    checked = true;
+                }
+            }
+
+            answers += this._parent.render(this._tpl.answer, {
+                cls:     this._classes,
+                answer:  (undefined != data.q ? data.q.answers[i] : ''),
+                checked: (checked ? 'checked ' : '')
+            });
+        }
+
+        data.cls     = this._classes;
+        data.answers = answers;
+
+        if (undefined == data.q) {
+            data.q = {
+                question_id: '',
+                question:    ''
+            };
+        }
+
+        var html = this._parent.render(this._tpl.question, data);
+        this._html = $(html);
+
+        if (undefined == data.q.answers) {
+            var hinter = this._createInputHinter(), inputs, q_input;
+
+            inputs = this.getAnswerInputs();
+            $.each(inputs, function(idx, input) {
+                $(input).data('hint', 'Ответ ' + (idx + 1));
+            });
+
+            q_input = this.getQuestionInput().data('hint', 'Вопрос');
+
+            inputs.push(q_input);
+            $.each(inputs, hinter);
+        }
+
+        return this._html;
+    },
+
+    /**
+    * Создание функции для установки подсказок в поля ввода. В качестве текста
+    * подсказки используется текущее значение поля.
+    */
+    _createInputHinter: function() {
+        /**
+        * Заносим в переменную из области видимости функции класс неактивного
+        * input'а, чтобы он был доступен внутри замыкания.
+        */
+        var class_inactive = this._classes.inactiveInput;
+
+        var hinter = function() {
+            $(this).val($(this).data('hint'));
+            $(this)
+                //.data('default', $(this).val())
+                .addClass(class_inactive)
+
+                .focus(function() {
+                    $(this).removeClass(class_inactive);
+                    if ($(this).val() == $(this).data('hint') || '') {
+                        $(this).val('');
+                    }
+                })
+
+                .blur(function() {
+                    var default_val = $(this).data('hint');
+                    if ($(this).val() == '') {
+                        $(this).addClass(class_inactive);
+                        $(this).val($(this).data('hint'));
+                    }
+                });
+        };
+
+        return hinter;
     }
 });
 

@@ -61,6 +61,7 @@
 </style>
 
 <script type="text/javascript" src="<?php echo $this->_links->getPath('/js/jquery.json-2.2.js') ?>"></script>
+<script type="text/javascript" src="<?php echo $this->_links->getPath('/js/jquery.nano.js') ?>"></script>
 <script type="text/javascript" src="<?php echo $this->_links->getPath('/js/tests.js') ?>"></script>
 <script type="text/javascript" src="<?php echo $this->_links->getPath('/js/tests-init.js') ?>"></script>
 <script type="text/javascript">
