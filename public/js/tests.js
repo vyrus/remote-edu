@@ -1,8 +1,9 @@
-var Test = function() {
+var Test = function(optsFormId) {
     this._id = null;
     this._questions = {};
     this._new_questions = {};
     this._last_tmp_id = 0;
+    this._view = new View_Test_Options(optsFormId);
 };
 
 /**
@@ -20,16 +21,11 @@ Test.prototype = {
 
     _last_tmp_id: 0,
 
-    _inputs_map: {
-        theme:          'theme',
-        num_questions:  'num_questions',
-        errors_limit:   'errors_limit',
-        attempts_limit: 'attempts_limit'
-    },
-
     _types_map: {
         'pick-one': function() { return new Question_PickOne(); }
     },
+
+    _view: null,
 
     isIdSet: function() {
         return (null !== this._id);
@@ -41,10 +37,6 @@ Test.prototype = {
 
     getId: function() {
         return this._id;
-    },
-
-    _getInput: function(alias) {
-        return $('#' + this._inputs_map[alias]);
     },
 
     /**
@@ -82,18 +74,19 @@ Test.prototype = {
 
     setOptions: function(options) {
         for (key in options) {
-            this._getInput(key).val(options[key]);
+            this._view.getInput(key).val(options[key]);
         }
     },
 
     getOptions: function() {
-        /* Собираем параметры теста */
-        var data = {
-            theme:          this._getInput('theme').val(),
-            num_questions:  this._getInput('num_questions').val(),
-            errors_limit:   this._getInput('errors_limit').val(),
-            attempts_limit: this._getInput('attempts_limit').val()
-        };
+        var data = {},
+            opts = ['theme', 'num_questions', 'errors_limit', 'attempts_limit'],
+            opt;
+
+        for (var idx in opts) {
+            opt = opts[idx];
+            data[opt] = this._view.getInput(opt).val();
+        }
 
         return data;
     },
@@ -324,6 +317,8 @@ Question_PickOne.prototype = {
         });
 
         this._view = view;
+
+        //alert(html.html());
         container.append(html);
     },
 
@@ -370,6 +365,32 @@ View.prototype = {
         return $.nano(tpl, data);
     }
 };
+
+var View_Test_Options = function(formId) {
+    this._parent = View_Test_Options._parent;
+    this._parent.__construct.apply(this);
+    this.__construct(formId);
+}
+inherit(View_Test_Options, View);
+
+$.extend(View_Test_Options.prototype, {
+    _inputs_map: {
+        theme:          'theme',
+        num_questions:  'num_questions',
+        errors_limit:   'errors_limit',
+        attempts_limit: 'attempts_limit'
+    },
+
+    _html: null,
+
+    __construct: function(formId) {
+        this._html = $(formId);
+    },
+
+    getInput: function(alias) {
+        return $('#' + this._inputs_map[alias], this._html);
+    }
+});
 
 var View_Question_PickOne = function() {
     this._parent = View_Question_PickOne._parent;

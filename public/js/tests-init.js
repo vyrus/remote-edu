@@ -1,6 +1,6 @@
 $(document).ready(function()
 {
-    test = new Test();
+    test = new Test('#frm-options');
 
     $('#lnk-save').click(function() {
         setOptions();
