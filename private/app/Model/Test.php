@@ -174,6 +174,9 @@
                 } else {
                     $q_data = unserialize($q->data);
                     $q_data['type'] = $q->type;
+                    /**
+                    * @todo Cast to stdClass
+                    */
                     $q_data['question_id'] = $q->question_id;
                 }
 
@@ -183,7 +186,7 @@
             return $questions;
         }
 
-        public function getExamQuestions($test_id, $limit) {
+        protected function _getExamQuestions($test_id, $limit) {
             $sql = '
                 SELECT *
                 FROM ' . $this->_tables['questions'] . '
@@ -196,24 +199,115 @@
             $stmt->execute(array($test_id));
 
             $questions = array();
+            $question_ids = array();
 
             while ($q = $stmt->fetch(Db_Pdo::FETCH_OBJ))
             {
                 $obj = Model_Question_Abstract::thaw($q->type, $q->data);
                 $data = $obj->getExamData();
-
                 $data['type'] = $q->type;
-                $data['question_id'] = $q->question_id;
 
-                $questions[] = $data;
+                $questions[$q->question_id] = $data;
             }
 
             return $questions;
         }
 
-        public function start() {/*_*/}
+        protected function _getQuestionsById($ids) {
+            $ids = implode(', ', $ids);
+            $ids = $this->quote($ids);
+            $ids = trim($ids, "'");
 
-        public function stop() {/*_*/}
+            $sql = '
+                SELECT *
+                FROM ' . $this->_tables['questions'] . '
+                WHERE question_id IN (' . $ids . ')
+            ';
+
+            $stmt = $this->prepare($sql);
+            $stmt->execute();
+
+            $questions = array();
+
+            while ($q = $stmt->fetch(Db_Pdo::FETCH_OBJ)) {
+                $obj = Model_Question_Abstract::thaw($q->type, $q->data);
+                $questions[$q->question_id] = $obj;
+            }
+
+            return $questions;
+        }
+
+        public function start($test_id, $num_questions) {
+            $questions = $this->_getExamQuestions($test_id, $num_questions);
+
+            if (sizeof($questions) < $num_questions) {
+                $code = Model_Test_Exception::NOT_ENOUGH_QUESTIONS;
+                throw new Model_Test_Exception($code);
+            }
+
+            $session = Resources_Abstract::getInstance()->session;
+            $auth    = Resources_Abstract::getInstance()->auth;
+
+            $timer = Timer::create()->start();
+            $question_ids = array_keys($questions);
+            $sec_code = $auth->getExamSecurityCode($test_id, $question_ids);
+
+            $session->exams[$test_id] = array(
+                'sec_code' => $sec_code,
+                'timer'    => $timer
+            );
+
+            return $questions;
+        }
+
+        public function stop($test_id, $answers) {
+            $session = Resources_Abstract::getInstance()->session;
+
+            $exams = & $session->exams[$test_id];
+
+            if (!isset($exams)) {
+                $code = Model_Test_Exception::EXAM_IS_NOT_REGISTERED;
+                throw new Model_Test_Exception($code);
+            }
+
+            $auth = Resources_Abstract::getInstance()->auth;
+            $question_ids = array_keys($answers);
+            $sec_code = $auth->getExamSecurityCode($test_id, $question_ids);
+
+            if ($sec_code != $exams['sec_code']) {
+                $code = Model_Test_Exception::EXAM_QUESTIONS_MISMATCHED;
+                throw new Model_Test_Exception($code);
+            }
+
+            $questions = $this->_getQuestionsById($question_ids);
+
+            $results = (object) array(
+                'correct'    => array(),
+                'incorrect'  => array(),
+                'unanswered' => array(),
+                'time'       => $exams['timer']->stop()
+            );
+
+            unset($exams, $session->exams[$test_id]);
+
+            foreach ($answers as $q_id => $answer)
+            {
+                $q = $questions[$q_id];
+
+                if (null === $answer) {
+                    $results->unanswered[] = $q_id;
+                    continue;
+                }
+
+                if ($q->isCorrectAnswer($answer)) {
+                    $results->correct[] = $q_id;
+                } else {
+                    $results->incorrect[] = $q_id;
+                }
+            }
+
+            return $results;
+        }
     }
 
 ?>

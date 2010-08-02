@@ -18,11 +18,6 @@
         padding-right: 0.5em;
     }
 
-    #intro td.start-btn {
-        text-align: center;
-        padding-top: 1em;
-    }
-
     #status {
         margin-top: 1.7em;
     }
@@ -78,17 +73,15 @@
             <td class="label">Попыток:</td>
             <td><?php echo $test->attempts_limit ?> (осталось ...<?php // ?>)</td>
         </tr>
-
-        <tr>
-            <td colspan="2" class="start-btn"><input type="button" id="btn-start" value="Начать тестирование" /></td>
-        </tr>
     </table>
 </div>
 
-<div id="status" style="display: none;">
+<div id="status">
+    <input type="button" id="btn-start" value="Начать тестирование" />
 </div>
 
-<div>
-    <ol id="questions"></ol>
-    <input type="button" id="btn-finish-test" value="Закончить тестирование" />
+<div id="questions">
+    <ol></ol>
 </div>
+
+<input type="button" id="btn-finish" value="Закончить тестирование" style="display: none;" />

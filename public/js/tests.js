@@ -161,13 +161,13 @@ Test.prototype = {
         var exam_questions = this._exam_questions;
         var factory = this._types_map;
 
-        $.each(questions, function(idx, q_data) {
+        $.each(questions, function(q_id, q_data) {
             var q_obj = factory[q_data.type]();
 
             q_obj.setExamData(q_data);
             q_obj.renderExamForm(container);
 
-            exam_questions[q_data.question_id] = q_obj;
+            exam_questions[q_id] = q_obj;
         });
     },
 
@@ -178,7 +178,13 @@ Test.prototype = {
             answers[id] = q.getAnswer();
         });
 
-        alert($.toJSON(answers));
+        return answers;
+    },
+
+    disableRadios: function() {
+        $.each(this._exam_questions, function(idx, q) {
+            q.disableRadios();
+        });
     }
 }
 
@@ -344,6 +350,10 @@ Question_PickOne.prototype = {
 
     hideErrors: function() {
         this._view.hideErrors();
+    },
+
+    disableRadios: function() {
+        this._view.disableRadios();
     }
 }
 
@@ -441,7 +451,7 @@ $.extend(View_Question_PickOne_Edit.prototype, {
         id:       'question-id',
         question: 'question-text',
         radio:    'question-radio',
-        answer:   'question-answer',
+        answer:   'question-answer'
     },
 
     _tpl: {
@@ -595,7 +605,7 @@ $.extend(View_Question_PickOne_Show.prototype, {
         form:      'exam-form',
         question:  'exam-question',
         answer:    'exam-answer',
-        radio:     'exam-radio',
+        radio:     'exam-radio'
     },
 
     _tpl: {
@@ -641,5 +651,11 @@ $.extend(View_Question_PickOne_Show.prototype, {
 
     getRadios: function() {
         return $('.' + this._classes.radio, this._html);
+    },
+
+    disableRadios: function() {
+        this.getRadios().each(function(idx, radio) {
+            $(radio).attr('disabled', 'disabled');
+        });
     }
 });

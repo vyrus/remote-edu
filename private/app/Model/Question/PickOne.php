@@ -78,6 +78,10 @@
             );
         }
 
+        public function isCorrectAnswer($answer) {
+            return ($this->correct_answer == $answer);
+        }
+
         public function freeze() {
             return serialize(array(
                 'question'       => $this->question,

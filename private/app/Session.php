@@ -37,14 +37,17 @@
         }
 
         /**
-        * Получение значения переменной сессии.
+        * Получение значения переменной сессии. Используется возврат значения по
+        * ссылке для того, чтобы работали операции с массивами - иначе будет
+        * возникать ошибка "Indirect modification of overloaded property has no
+        * effect".
         *
         * @link http://www.php.net/manual/en/language.oop5.overloading.php
         *
         * @param  mixed $name Переменная.
         * @return mixed
         */
-        public function __get($name) {
+        public function & __get($name) {
             return $_SESSION[$name];
         }
 

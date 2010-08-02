@@ -82,6 +82,11 @@
             return $this->_hash($id . date('d.m.Y'));
         }
 
+        public function getExamSecurityCode($test_id, array $question_ids) {
+            natsort($question_ids);
+            return $this->_hash($test_id . implode(', ', $question_ids));
+        }
+
         /**
         * Инициализация хранилища данных.
         *
@@ -90,7 +95,6 @@
         public function init() {
             /* Инициализируем сессию */
             $this->_session = Resources::getInstance()->session;
-            $this->_session->init();
 
             return $this;
         }

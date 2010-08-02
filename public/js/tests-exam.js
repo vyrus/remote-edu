@@ -7,8 +7,8 @@ $(document).ready(function()
         startExamination();
     });
 
-    $('#btn-finish-test').click(function() {
-        test.getExamAnswers();
+    $('#btn-finish').click(function() {
+        finishExamination();
     });
 })
 
@@ -34,9 +34,48 @@ function onGetQuestionsSuccess(response) {
         return;
     }
 
-    test.setExamQuestions(response.questions, $('#questions'));
+    var ol = $('<ol></ol>');
+    $('#questions').append(ol);
+
+    test.setExamQuestions(response.questions, ol);
 
     $('#status').hide();
+    $('#btn-start').hide();
+    $('#btn-finish').show();
+}
+
+function finishExamination() {
+    var answers = test.getExamAnswers();
+    answers = $.toJSON(answers);
+    //alert(answers);
+
+    $('#status')
+        .text('Проверка...')
+        .show();
+
+    test.disableRadios();
+
+    $.ajax({
+        type:     'POST',
+        url:      '/tests/ajax_check_exam_answers',
+        data:     {test_id: test.getId(), answers: answers},
+        dataType: 'json',
+        success:  onCheckAnswersSuccess,
+        error:    onAjaxError
+    });
+}
+
+function onCheckAnswersSuccess(response) {
+    if (response.result != true) {
+        var msg = 'Произошла ошибка при проверке ответов. ' + response.error;
+        $('#status').text(msg);
+        return;
+    }
+
+    alert('Correct: ' + response.results.correct.length + '\n' +
+          'Incorrect: ' + response.results.incorrect.length + '\n' +
+          'Unanswered: ' + response.results.unanswered.length + '\n' +
+          'Time: ' + response.results.time);
 }
 
 function onAjaxError(xhr, textStatus, errorThrown) {

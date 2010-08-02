@@ -126,6 +126,8 @@
         */
         protected function get_session() {
             $session = Session::create();
+            $session->init();
+            
             return $session;
         }
     }

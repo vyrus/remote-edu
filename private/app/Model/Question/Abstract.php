@@ -29,6 +29,8 @@
 
         abstract public function getExamData();
 
+        abstract public function isCorrectAnswer($answer);
+
         abstract public function freeze();
 
         public static function thaw($type, $data) {

@@ -290,20 +290,56 @@
 
             $test = Model_Test::create();
             $data = $test->get($test_id);
-            $questions = $test->getExamQuestions($test_id,
-                                                 $data['num_questions']);
 
-            if (sizeof($questions) < $data['num_questions']) {
+            try {
+                $questions = $test->start($test_id, $data['num_questions']);
+            }
+            catch(Model_Test_Exception $e) {
                 $response = array(
                     'result' => false,
-                    'error'  => 'В базе недостаточно вопросов.'
+                    'error'  => $e->getMessage()
                 );
 
                 echo json_encode($response);
                 return;
             }
 
+            $questions = (object) $questions;
             $response = array('result' => true, 'questions' => $questions);
+            echo json_encode($response);
+        }
+
+        public function action_ajax_check_exam_answers() {
+            $request = $this->getRequest();
+            $test_id = (int) $request->post['test_id'];
+            $answers = $request->post['answers'];
+
+            /* Если включено автоматическое экрание данных, */
+            if (get_magic_quotes_gpc()) {
+                /* убираем лишние слеши */
+                $answers = stripslashes($answers);
+            }
+
+            $answers = json_decode($answers, true);
+
+            try {
+                $test = Model_Test::create();
+                $results = $test->stop($test_id, $answers);
+            }
+            catch(Model_Test_Exception $e) {
+                $response = array(
+                    'result' => false,
+                    'error'  => $e->getMessage()
+                );
+
+                echo json_encode($response);
+                return;
+            }
+
+            $response = array(
+                'result'  => true,
+                'results' => $results,
+            );
             echo json_encode($response);
         }
     }
