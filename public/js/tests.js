@@ -140,7 +140,7 @@ Test.prototype = {
             delete q_data.question_id;
             q_data.tmp_id = key;
 
-            questions.push(q_data)
+            questions.push(q_data);
         }
 
         return questions;
@@ -226,8 +226,6 @@ Question_PickOne.prototype = {
 
     _exam_answer_inputs: [],
 
-    _error_targets: {},
-
     _data: null,
 
     _view: null,
@@ -256,37 +254,33 @@ Question_PickOne.prototype = {
     collectData: function() {
         var data = {};
 
-        data.question_id    = this._id_input.val();
-        data.question       = this._question_input.val();
+        var id_input       = this._view.getIdInput(),
+            question_input = this._view.getQuestionInput(),
+            answer_inputs  = this._view.getAnswerInputs();
+
+        data.question_id    = id_input.val();
+        data.question       = question_input.val();
         data.answers        = [];
         data.correct_answer = null;
 
-        if (this._question_input.hasClass(this._classes.inactiveInput)) {
-            data.question = '';
+        if (this._view.isInputActive(question_input)) {
+            data.question = question_input.val();
         } else {
-            data.question = this._question_input.val();
+            data.question = '';
         }
 
-        var radio, answer, value;
+        var radio, answer, value, view = this._view;
 
-        /* Пробегаемся по полям для ввода ответов */
-        for (idx in this._answer_inputs)
+        $.each(answer_inputs, function(idx, pair)
         {
-            radio  = this._answer_inputs[idx].radio;
-            answer = this._answer_inputs[idx].answer;
-
-            /* Если radio-button включён, */
-            if (radio.attr('checked')) {
-                /* то запоминаем этот ответ как правильный  */
+            if ($(pair.radio).attr('checked')) {
                 data.correct_answer = idx;
             }
 
-            /* Добавляем в массив текст ответа */
-
-            if (!answer.hasClass(this._classes.inactiveInput)) {
-                data.answers.push(answer.val());
+            if (view.isInputActive($(pair.text))) {
+                data.answers.push($(pair.text).val());
             }
-        }
+        });
 
         this.setData(data);
     },
@@ -310,6 +304,8 @@ Question_PickOne.prototype = {
             num_answers: this._num_answers,
             q:           q_data
         });
+
+        this._view = view;
 
         //alert(html.html());
         container.append(html);
@@ -344,21 +340,15 @@ Question_PickOne.prototype = {
     },
 
     showErrors: function(errors) {
-        var target, msg;
+        var target;
 
-        for (target in errors)
-        {
-            msg = errors[target];
-            this._error_targets[target]
-                .text(msg)
-                .show();
+        for (target in errors) {
+            this._view.showError(target, errors[target]);
         }
     },
 
     hideErrors: function() {
-        $.each(this._error_targets, function(idx, elem) {
-            elem.hide();
-        });
+        this._view.hideErrors();
     }
 }
 
@@ -374,6 +364,8 @@ function inherit(child, parent) {
 var View = function() {/*_*/}
 
 View.prototype = {
+    __construct: function() {},
+
     render: function(tpl, data) {
         return $.nano(tpl, data);
     }
@@ -381,6 +373,8 @@ View.prototype = {
 
 var View_Question_PickOne = function() {
     this._parent = View_Question_PickOne._parent;
+    this._parent.__construct.apply(this);
+    this.__construct();
 }
 inherit(View_Question_PickOne, View);
 
@@ -388,13 +382,35 @@ $.extend(View_Question_PickOne.prototype, {
     _classes: {
         inactiveInput: 'inactive',
         errorTarget:   'e-target'
+    },
+
+    _error_targets: {},
+
+    __construct: function() {
+        this._error_targets = {};
+    },
+
+    isInputActive: function(input) {
+        return !input.hasClass(this._classes.inactiveInput);
+    },
+
+    showError: function(target, msg) {
+        $(this._error_targets[target])
+            .text(msg)
+            .show();
+    },
+
+    hideErrors: function() {
+        $.each(this._error_targets, function(idx, elem) {
+            $(elem).hide();
+        });
     }
 });
 
-
 var View_Question_PickOne_Edit = function() {
     this._parent = View_Question_PickOne_Edit._parent;
-    $.extend(this._classes, this._parent._classes);
+    this._parent.__construct.apply(this);
+    this.__construct();
 }
 inherit(View_Question_PickOne_Edit, View_Question_PickOne);
 
@@ -423,12 +439,31 @@ $.extend(View_Question_PickOne_Edit.prototype, {
 
     _html: null,
 
+    __construct: function() {
+        $.extend(this._classes, this._parent._classes);
+    },
+
+    getIdInput: function() {
+        return $('.' + this._classes.id, this._html);
+    },
+
     getQuestionInput: function() {
         return $('.' + this._classes.question, this._html);
     },
 
     getAnswerInputs: function() {
-        return $('.' + this._classes.answer, this._html);
+        var radios = $('.' + this._classes.radio, this._html);
+        var text_fields = $('.' + this._classes.answer, this._html);
+
+        var pairs = [];
+        radios.each(function(idx, radio) {
+            pairs.push({
+                radio: radio,
+                text:  text_fields.get(idx)
+            });
+        });
+
+        return pairs;
     },
 
     render: function(data) {
@@ -462,19 +497,26 @@ $.extend(View_Question_PickOne_Edit.prototype, {
         var html = this._parent.render(this._tpl.question, data);
         this._html = $(html);
 
-        if (undefined == data.q.answers) {
-            var hinter = this._createInputHinter(), inputs, q_input;
+        if (undefined == data.q.answers)
+        {
+            var hinter = this._createInputHinter(), pairs, q_input,
+                empty_inputs = [];
 
-            inputs = this.getAnswerInputs();
-            $.each(inputs, function(idx, input) {
-                $(input).data('hint', 'Ответ ' + (idx + 1));
+            pairs = this.getAnswerInputs();
+
+            $.each(pairs, function(idx, pair) {
+                $(pair.text).data('hint', 'Ответ ' + (idx + 1));
+                empty_inputs.push(pair.text);
             });
 
             q_input = this.getQuestionInput().data('hint', 'Вопрос');
 
-            inputs.push(q_input);
-            $.each(inputs, hinter);
+            empty_inputs.push(q_input);
+            $.each(empty_inputs, hinter);
         }
+
+        this._error_targets.question =
+            $('.' + this._classes.errorTarget, this._html).get(0);
 
         return this._html;
     },
@@ -497,9 +539,12 @@ $.extend(View_Question_PickOne_Edit.prototype, {
                 .addClass(class_inactive)
 
                 .focus(function() {
-                    $(this).removeClass(class_inactive);
-                    if ($(this).val() == $(this).data('hint') || '') {
+                    if (
+                        $(this).val() == $(this).data('hint') &&
+                        $(this).hasClass(class_inactive)
+                    ) {
                         $(this).val('');
+                        $(this).removeClass(class_inactive);
                     }
                 })
 
@@ -518,7 +563,8 @@ $.extend(View_Question_PickOne_Edit.prototype, {
 
 var View_Question_PickOne_Show = function() {
     this._parent = View_Question_PickOne_Show._parent;
-    $.extend(this._classes, this._parent._classes);
+    this._parent.__construct.apply(this);
+    this.__construct();
 }
 inherit(View_Question_PickOne_Show, View_Question_PickOne);
 
@@ -548,6 +594,10 @@ $.extend(View_Question_PickOne_Show.prototype, {
     },
 
     _html: null,
+
+    __construct: function() {
+        $.extend(this._classes, this._parent._classes);
+    },
 
     render: function(data) {
         var answers = '';
