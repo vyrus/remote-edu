@@ -7,43 +7,83 @@ var Test = function(optsFormId) {
 };
 
 /**
-* Прототип объекта для создания тестов. Управляет формами для внесения данных
-* теста и вопросов и собирает из них данные в один итоговый объект.
+* Прототип объекта для создания тестов.
 */
 Test.prototype = {
+    /**
+    * Идентификатор теста.
+    */
     _id: null,
 
+    /**
+    * Список вопросов, сохранённых в базе.
+    */
     _questions: {},
 
+    /**
+    * Список новых введённых запросов.
+    */
     _new_questions: {},
 
+    /**
+    * Список вопросов при прохождении теста.
+    */
     _exam_questions: {},
 
+    /**
+    * Последнее значение временного идентификатора для новых вопросов.
+    */
     _last_tmp_id: 0,
 
+    /**
+    * Карта типов вопросов в factory function для создания объектов вопросов.
+    */
     _types_map: {
         'pick-one': function() { return new Question_PickOne(); }
     },
 
+    /**
+    * Объект представления для работы с формой опций теста.
+    */
     _view: null,
 
+    /**
+    * Проверяет, установлен ли идентификатор теста.
+    *
+    * @return boolean
+    */
     isIdSet: function() {
         return (null !== this._id);
     },
 
+    /**
+    * Установка идентификатора теста.
+    *
+    * @param  int
+    * @return void
+    */
     setId: function(id) {
         this._id = id;
     },
 
+    /**
+    * Получение идентификатор теста.
+    *
+    * @return int
+    */
     getId: function() {
         return this._id;
     },
 
     /**
-    * Добавление в тест нового вопроса с одним правильным ответом.
+    * Добавление в тест нового вопроса.
+    *
+    * @param  string type      Тип вопроса.
+    * @param  object container Контейнер на странице, в который будет добавлена форма вопроса.
+    * @return void
     */
     addQuestion: function(type, container) {
-        /* Создаём новый вопрос и добавляем его форму на страницу */
+        /* Создаём объект вопроса и добавляем его форму на страницу */
         var q = new this._types_map[type]();
         q.renderForm(container);
 
@@ -51,88 +91,152 @@ Test.prototype = {
         this._new_questions[this._last_tmp_id++] = q;
     },
 
-    showErrors: function(q_category, key, errors) {
+    /**
+    * Отображение ошибок в форме вопроса.
+    *
+    * @param  string q_category Категория вопроса: new - новые, ещё не сохранённые вопросы, old - старые.
+    * @param  int    key        Идентификатор вопроса.
+    * @param  object errors     Список ошибок.
+    * @return void
+    */
+    showErrors: function(q_category, id, errors) {
         var questions;
 
+        /* Выбираем в зависимости от категории список вопросов */
         if ('new' == q_category) {
             questions = this._new_questions;
         } else {
             questions = this._questions;
         }
 
-        questions[key].showErrors(errors);
+        /* Находим объект вопроса и вызываем его метод для вывода ошибок */
+        questions[id].showErrors(errors);
     },
 
+    /**
+    * Скрывает надписи ошибок.
+    *
+    * @return void
+    */
     hideErrors: function() {
-        var hider = function(idx, elem) {
-            elem.hideErrors();
+        /* Создаём функцию для обработки элементов списка */
+        var hider = function(id, q) {
+            /* Прячем ошибки в очередном вопросе */
+            q.hideErrors();
         };
 
+        /* Проходим по обоим спискам вопросов нашей функцией */
         $.each(this._new_questions, hider);
         $.each(this._questions, hider);
     },
 
+    /**
+    * Установка значений опций теста. Эти значения будут сохранены в полях ввода
+    * формы опций.
+    *
+    * @param  object options Список значений вида {option: value}.
+    * @return void
+    */
     setOptions: function(options) {
+        /* Перебираем переданный список */
         for (key in options) {
-            this._view.getInput(key).val(options[key]);
+            /* Через отображение */
+            this._view
+                /* находим поле ввода по ключу опции */
+                .getInput(key)
+                    /* и вводим в него значение опции */
+                    .val(options[key]);
         }
     },
 
+    /**
+    * Получение значений опций теста.
+    *
+    * @return object
+    */
     getOptions: function() {
         var data = {},
+            /* Задаём список ключей, по которым будем находть значения опций */
             opts = ['theme', 'num_questions', 'errors_limit', 'attempts_limit'],
             opt;
 
+        /* Перебираем список ключей */
         for (var idx in opts) {
+            /* Берём очередный ключ опции */
             opt = opts[idx];
+            /* И запоминаем значение из соответствующего input'а */
             data[opt] = this._view.getInput(opt).val();
         }
 
         return data;
     },
 
+    /**
+    * Добавление сохранённых вопросов из базы в тест.
+    *
+    * @param  array  Список вопросов.
+    * @param  object Контейнер, в которой добавлять формы вопросов.
+    * @return void
+    */
     setQuestions: function(questions, container) {
         var q, q_obj;
 
+        /* Перебираем список вопросов */
         for (key in questions)
         {
+            /* Берём данные очередного вопроса */
             q = questions[key];
+            /* Создаём объект соответствующего типа вопроса */
             q_obj = this._types_map[q.type]();
 
+            /* Сохраняем в объекте данные вопроса */
             q_obj.setData(q);
+            /* Выводим форму вопроса на страницу */
             q_obj.renderForm(container);
 
+            /* И запоминаем новый объект вопроса в списке */
             this._questions[q.question_id] = q_obj;
         }
     },
 
     /**
-    * Сохранение всех данных теста в одном объекте.
+    * Получение данных всех вопросов теста.
+    *
+    * @return array
     */
     getQuestions: function() {
         var questions = [], q, key;
 
-        /* Перебираем все вопросы в тесте */
+        /* Перебираем старые вопросы */
         for (key in this._questions)
         {
+            /* Берём очередной вопрос */
             q = this._questions[key];
-            /* Сохраняем данные очередного вопроса в массиве */
+            /* Собираем его данные из формы */
             q.collectData();
+            /* И сохраняем в итоговый список */
             questions.push(q.getData());
         }
 
         var q_data = {};
 
+        /* Перебираем новые вопросы */
         for (key in this._new_questions)
         {
+            /* Берём очередной объект вопроса */
             q = this._new_questions[key];
 
+            /* Собираем его данные из формы и получаем их */
             q_data = q.collectData();
             q_data = q.getData();
 
+            /* Удаляем атрибут идентификатора, он ещё не задан, так как вопрос
+            не сохранён */
             delete q_data.question_id;
+            /* Присваиваем временный идентификатор - ключ в списке вопросов */
             q_data.tmp_id = key;
 
+            /* Заносим данные в итоговый список */
             questions.push(q_data);
         }
 
@@ -164,7 +268,9 @@ Test.prototype = {
         $.each(questions, function(q_id, q_data) {
             var q_obj = factory[q_data.type]();
 
+            q_data.question_id = q_id;
             q_obj.setExamData(q_data);
+
             q_obj.renderExamForm(container);
 
             exam_questions[q_id] = q_obj;
@@ -613,14 +719,13 @@ $.extend(View_Question_PickOne_Show.prototype, {
                       '<form class="{cls.form}">' +
                           '<div class="{cls.question}">{text}</div>' +
                               '<span class="{cls.errorTarget}"></span>' +
-                              '<input type="hidden" value="{id}" />' +
                               '{answers}' +
                       '</form>' +
                   '</li>',
 
         answer: '<div class="{cls.answer}">' +
-                    '<input type="radio" name="correct_answer" class="{cls.radio}" />' +
-                    '{answer}' +
+                    '<input type="radio" name="correct_answer" id="{id}" class="{cls.radio}" />' +
+                    '<label for="{id}">{answer}</label>' +
                  '</div>'
     },
 
@@ -636,7 +741,8 @@ $.extend(View_Question_PickOne_Show.prototype, {
         for (idx in data.answers) {
             answers += this._parent.render(this._tpl.answer, {
                 cls:    this._classes,
-                answer: data.answers[idx]
+                answer: data.answers[idx],
+                id:     'answer_' + data.id + '_' + idx
             });
         }
 
