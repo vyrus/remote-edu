@@ -44,7 +44,7 @@
     }
 
     var Car = {
-        __name__: 'Car',
+        __name__: null,
 
         __construct: function() {
             document.writeln("Вызван конструктор Car().");
@@ -57,11 +57,10 @@
     Car = newClass(Car);
 
     var Zaporojets = {
-        __name__: 'Zaporojets',
-
-        __construct: function() {
+        __construct: function(name) {
             document.writeln("Вызван конструктор Zaporojets().");
             this.__parent.__construct();
+            this.__name__ = name;
         },
 
         crack: function() {
@@ -78,12 +77,12 @@
     document.writeln("Программа запущена.");
 
     // Создаем объект производного "класса".
-    var vehicle = new Zaporojets();
-    vehicle.drive(); // вызывается функция базового объекта
+    var vehicle1 = new Zaporojets('name-1');
+    vehicle1.drive(); // вызывается функция базового объекта
 
     // Создаем еще один объект того же класса.
-    var vehicle = new Zaporojets();
-    vehicle.crack(); // функция производного объекта
+    var vehicle2 = new Zaporojets('name-2');
+    vehicle2.crack(); // функция производного объекта
 </script>
 </pre>
 
