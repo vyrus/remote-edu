@@ -7,19 +7,17 @@
 <script type="text/javascript">
     $.ready(start());
 
-    function newClass(parent, child) {
-
+    function newClass(child, parent) {
         var new_class = function() {
             if (new_class.__defining_class__) {
-                return delete new_class.__defining_class__;
+                delete new_class.__defining_class__;
+                return;
             }
 
             if (new_class.__constructor__) {
                 this.constructor = new_class;
                 new_class.__constructor__.apply(this, arguments);
             }
-
-            this.__name__ = new_class.__name__;
         }
 
         new_class.prototype = {};
@@ -50,9 +48,7 @@
     }
 
     function start() {
-        Car = newClass(null, {
-          __name__: 'Car',
-
+        Car = newClass({
           constructor: function() {
             document.writeln("Вызван конструктор Car().");
           },
@@ -62,9 +58,7 @@
           }
         });
 
-        Zaporojets = newClass(Car, {
-          __name__: 'Zaporojets',
-
+        Zaporojets = newClass({
           constructor: function() {
             document.writeln("Вызван конструктор Zaporojets().");
             this.constructor.prototype.constructor.call(this);
@@ -78,7 +72,7 @@
             document.writeln("Вызван Zaporojets.drive()");
             return this.constructor.prototype.drive.call(this);
           }
-        });
+        }, Car);
 
         document.writeln("Программа запущена.");
 
@@ -91,7 +85,6 @@
         vehicle.crack(); // функция производного объекта
     }
 </script>
-
 </pre>
 
 </body>
