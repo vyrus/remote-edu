@@ -43,7 +43,7 @@
         return new_class;
     }
 
-    Car = newClass({
+    var Car = {
         __name__: 'Car',
 
         __construct: function() {
@@ -53,9 +53,10 @@
         drive: function() {
             document.writeln("Вызван Car.drive()");
         }
-    });
+    };
+    Car = newClass(Car);
 
-    Zaporojets = newClass({
+    var Zaporojets = {
         __name__: 'Zaporojets',
 
         __construct: function() {
@@ -71,7 +72,8 @@
             document.writeln("Вызван Zaporojets.drive()");
             return this.__parent.drive.call(this);
         }
-    }, Car);
+    };
+    Zaporojets = newClass(Zaporojets, Car);
 
     document.writeln("Программа запущена.");
 
