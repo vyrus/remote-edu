@@ -5,76 +5,91 @@
 
 <pre>
 <script type="text/javascript">
-    function newClass(child, parent) {
+    $.ready(start());
 
-        var new_class = function () {
-            if (new_class._constructing) {
-                delete new_class._constructing;
-                return;
+    function newClass(parent, child) {
+
+        var new_class = function() {
+            if (new_class.__defining_class__) {
+                return delete new_class.__defining_class__;
             }
 
-            if (new_class._constructor) {
+            if (new_class.__constructor__) {
                 this.constructor = new_class;
-                new_class._constructor.apply(this, arguments);
+                new_class.__constructor__.apply(this, arguments);
             }
+
+            this.__name__ = new_class.__name__;
         }
 
         new_class.prototype = {};
 
         if (parent) {
-            new_class._constructing = true;
+            parent.__defining_class__ = true;
 
             new_class.prototype = new parent();
             new_class.prototype.constructor = parent;
-            new_class._constructor = parent;
+            new_class.__constructor__ = parent;
         }
 
         var constr_name = 'constructor';
 
-        if (child[constr_name] && Object != child[constr_name]) {
-            new_class._constructor = child[constr_name];
-        }
+        if (child)
+        {
+            for (var prop in child) {
+                if (prop != constr_name)
+                    new_class.prototype[prop] = child[prop];
+            }
 
-        $.extend(new_class.prototype, child);
+            if (child[constr_name] && Object != child[constr_name]) {
+                new_class.__constructor__ = child[constr_name];
+            }
+        }
 
         return new_class;
     }
 
-    Car = newClass({
-      constructor: function() {
-        document.writeln("Вызван конструктор Car().");
-      },
+    function start() {
+        Car = newClass(null, {
+          __name__: 'Car',
 
-      drive: function() {
-        document.writeln("Вызван Car.drive()");
-      }
-    });
+          constructor: function() {
+            document.writeln("Вызван конструктор Car().");
+          },
 
-    Zaporojets = newClass({
-      constructor: function() {
-        document.writeln("Вызван конструктор Zaporojets().");
-        this.constructor.prototype.constructor.call(this);
-      },
+          drive: function() {
+            document.writeln("Вызван Car.drive()");
+          }
+        });
 
-      crack: function() {
-        document.writeln("Вызван Zaporojets.crack()");
-      },
+        Zaporojets = newClass(Car, {
+          __name__: 'Zaporojets',
 
-      drive: function() {
-        document.writeln("Вызван Zaporojets.drive()");
-        return this.constructor.prototype.drive.call(this);
-      }
-    }, Car);
+          constructor: function() {
+            document.writeln("Вызван конструктор Zaporojets().");
+            this.constructor.prototype.constructor.call(this);
+          },
 
-    document.writeln("Программа запущена.");
+          crack: function() {
+            document.writeln("Вызван Zaporojets.crack()");
+          },
 
-    // Создаем объект производного "класса".
-    var vehicle = new Zaporojets();
-    vehicle.drive(); // вызывается функция базового объекта
+          drive: function() {
+            document.writeln("Вызван Zaporojets.drive()");
+            return this.constructor.prototype.drive.call(this);
+          }
+        });
 
-    // Создаем еще один объект того же класса.
-    var vehicle = new Zaporojets();
-    vehicle.crack(); // функция производного объекта
+        document.writeln("Программа запущена.");
+
+        // Создаем объект производного "класса".
+        var vehicle = new Zaporojets();
+        vehicle.drive(); // вызывается функция базового объекта
+
+        // Создаем еще один объект того же класса.
+        var vehicle = new Zaporojets();
+        vehicle.crack(); // функция производного объекта
+    }
 </script>
 
 </pre>
