@@ -1,15 +1,47 @@
-var Test = function(optsFormId) {
-    this._id = null;
-    this._questions = {};
-    this._new_questions = {};
-    this._last_tmp_id = 0;
-    this._view = new View_Test_Options(optsFormId);
-};
+function newClass(child, parent) {
+    var new_class = function() {
+        if (new_class.__defining_class__) {
+            this.__parent = new_class.prototype;
+            return;
+        }
+
+        if (new_class.__constructor__) {
+            this.constructor = new_class;
+            new_class.__constructor__.apply(this, arguments);
+        }
+    }
+
+    new_class.prototype = {};
+
+    if (parent) {
+        parent.__defining_class__ = true;
+        new_class.prototype = new parent();
+        delete parent.__defining_class__;
+
+        new_class.prototype.constructor = parent;
+        new_class.__constructor__ = parent;
+    }
+
+    var constr_name = '__construct';
+
+    if (child)
+    {
+        for (var prop in child) {
+            new_class.prototype[prop] = child[prop];
+        }
+
+        if (child[constr_name] && Object != child[constr_name]) {
+            new_class.__constructor__ = child[constr_name];
+        }
+    }
+
+    return new_class;
+}
 
 /**
 * Прототип объекта для создания тестов.
 */
-Test.prototype = {
+Test = {
     /**
     * Идентификатор теста.
     */
@@ -46,6 +78,14 @@ Test.prototype = {
     * Объект представления для работы с формой опций теста.
     */
     _view: null,
+
+    __construct: function(optsFormId) {
+        this._id = null;
+        this._questions = {};
+        this._new_questions = {};
+        this._last_tmp_id = 0;
+        this._view = new View_Test_Options(optsFormId);
+    },
 
     /**
     * Проверяет, установлен ли идентификатор теста.
@@ -293,20 +333,12 @@ Test.prototype = {
         });
     }
 }
-
-var Question_PickOne = function() {
-    this._num_answers = 4;
-    this._text_input = null;
-    this._id_input = null;
-    this._answer_inputs = [];
-    this._error_targets = {};
-    this._data = null;
-}
+Test = newClass(Test);
 
 /**
 * Прототип объекта вопроса с одним правильным ответом.
 */
-Question_PickOne.prototype = {
+Question_PickOne = {
     /**
     * Тип вопроса.
     */
@@ -334,6 +366,15 @@ Question_PickOne.prototype = {
     _data: null,
 
     _view: null,
+
+    __construct: function() {
+        this._num_answers = 4;
+        this._text_input = null;
+        this._id_input = null;
+        this._answer_inputs = [];
+        this._error_targets = {};
+        this._data = null;
+    },
 
     setData: function(data) {
         this._data = {
@@ -462,34 +503,16 @@ Question_PickOne.prototype = {
         this._view.disableRadios();
     }
 }
+Question_PickOne = newClass(Question_PickOne);
 
-function inherit(child, parent) {
-    var f = function() {};
-
-    f.prototype = parent.prototype;
-    child.prototype = new f();
-    child.prototype.constructor = child;
-    child._parent = parent.prototype
-}
-
-var View = function() {/*_*/}
-
-View.prototype = {
-    __construct: function() {},
-
+View = {
     render: function(tpl, data) {
         return $.nano(tpl, data);
     }
 };
+View = newClass(View);
 
-var View_Test_Options = function(formId) {
-    this._parent = View_Test_Options._parent;
-    this._parent.__construct.apply(this);
-    this.__construct(formId);
-}
-inherit(View_Test_Options, View);
-
-$.extend(View_Test_Options.prototype, {
+View_Test_Options = {
     _inputs_map: {
         theme:          'theme',
         num_questions:  'num_questions',
@@ -506,16 +529,10 @@ $.extend(View_Test_Options.prototype, {
     getInput: function(alias) {
         return $('#' + this._inputs_map[alias], this._html);
     }
-});
+};
+View_Test_Options = newClass(View_Test_Options, View);
 
-var View_Question_PickOne = function() {
-    this._parent = View_Question_PickOne._parent;
-    this._parent.__construct.apply(this);
-    this.__construct();
-}
-inherit(View_Question_PickOne, View);
-
-$.extend(View_Question_PickOne.prototype, {
+View_Question_PickOne = {
     _classes: {
         inactiveInput: 'inactive',
         errorTarget:   'e-target'
@@ -542,16 +559,10 @@ $.extend(View_Question_PickOne.prototype, {
             $(elem).hide();
         });
     }
-});
+};
+View_Question_PickOne = newClass(View_Question_PickOne, View);
 
-var View_Question_PickOne_Edit = function() {
-    this._parent = View_Question_PickOne_Edit._parent;
-    this._parent.__construct.apply(this);
-    this.__construct();
-}
-inherit(View_Question_PickOne_Edit, View_Question_PickOne);
-
-$.extend(View_Question_PickOne_Edit.prototype, {
+View_Question_PickOne_Edit = {
     _classes: {
         form:     'question-form',
         id:       'question-id',
@@ -577,7 +588,8 @@ $.extend(View_Question_PickOne_Edit.prototype, {
     _html: null,
 
     __construct: function() {
-        $.extend(this._classes, this._parent._classes);
+        this.__parent.__construct.call(this);
+        $.extend(this._classes, this.__parent._classes);
     },
 
     getIdInput: function() {
@@ -614,7 +626,7 @@ $.extend(View_Question_PickOne_Edit.prototype, {
                 }
             }
 
-            answers += this._parent.render(this._tpl.answer, {
+            answers += this.__parent.render(this._tpl.answer, {
                 cls:     this._classes,
                 answer:  (undefined != data.q ? data.q.answers[i] : ''),
                 checked: (checked ? 'checked ' : '')
@@ -631,7 +643,7 @@ $.extend(View_Question_PickOne_Edit.prototype, {
             };
         }
 
-        var html = this._parent.render(this._tpl.question, data);
+        var html = this.__parent.render(this._tpl.question, data);
         this._html = $(html);
 
         if (undefined == data.q.answers)
@@ -696,16 +708,11 @@ $.extend(View_Question_PickOne_Edit.prototype, {
 
         return hinter;
     }
-});
+};
+View_Question_PickOne_Edit = newClass(View_Question_PickOne_Edit,
+                                      View_Question_PickOne);
 
-var View_Question_PickOne_Show = function() {
-    this._parent = View_Question_PickOne_Show._parent;
-    this._parent.__construct.apply(this);
-    this.__construct();
-}
-inherit(View_Question_PickOne_Show, View_Question_PickOne);
-
-$.extend(View_Question_PickOne_Show.prototype, {
+View_Question_PickOne_Show = {
     _classes: {
         container: 'exam-container',
         form:      'exam-form',
@@ -732,14 +739,15 @@ $.extend(View_Question_PickOne_Show.prototype, {
     _html: null,
 
     __construct: function() {
-        $.extend(this._classes, this._parent._classes);
+        this.__parent.__construct.call(this);
+        $.extend(this._classes, this.__parent._classes);
     },
 
     render: function(data) {
         var answers = '';
 
         for (idx in data.answers) {
-            answers += this._parent.render(this._tpl.answer, {
+            answers += this.__parent.render(this._tpl.answer, {
                 cls:    this._classes,
                 answer: data.answers[idx],
                 id:     'answer_' + data.id + '_' + idx
@@ -749,7 +757,7 @@ $.extend(View_Question_PickOne_Show.prototype, {
         data.cls     = this._classes;
         data.answers = answers;
 
-        var html = this._parent.render(this._tpl.question, data);
+        var html = this.__parent.render(this._tpl.question, data);
 
         this._html = $(html);
         return this._html;
@@ -764,4 +772,6 @@ $.extend(View_Question_PickOne_Show.prototype, {
             $(radio).attr('disabled', 'disabled');
         });
     }
-});
+};
+View_Question_PickOne_Show = newClass(View_Question_PickOne_Show,
+                                      View_Question_PickOne);
