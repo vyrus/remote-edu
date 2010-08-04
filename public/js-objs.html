@@ -1,0 +1,83 @@
+<html>
+<body>
+
+<script type="text/javascript" src="/js/jquery-1.3.2.min.js"></script>
+
+<pre>
+<script type="text/javascript">
+    function newClass(child, parent) {
+
+        var new_class = function () {
+            if (new_class._constructing) {
+                delete new_class._constructing;
+                return;
+            }
+
+            if (new_class._constructor) {
+                this.constructor = new_class;
+                new_class._constructor.apply(this, arguments);
+            }
+        }
+
+        new_class.prototype = {};
+
+        if (parent) {
+            new_class._constructing = true;
+
+            new_class.prototype = new parent();
+            new_class.prototype.constructor = parent;
+            new_class._constructor = parent;
+        }
+
+        var constr_name = 'constructor';
+
+        if (child[constr_name] && Object != child[constr_name]) {
+            new_class._constructor = child[constr_name];
+        }
+
+        $.extend(new_class.prototype, child);
+
+        return new_class;
+    }
+
+    Car = newClass({
+      constructor: function() {
+        document.writeln("Вызван конструктор Car().");
+      },
+
+      drive: function() {
+        document.writeln("Вызван Car.drive()");
+      }
+    });
+
+    Zaporojets = newClass({
+      constructor: function() {
+        document.writeln("Вызван конструктор Zaporojets().");
+        this.constructor.prototype.constructor.call(this);
+      },
+
+      crack: function() {
+        document.writeln("Вызван Zaporojets.crack()");
+      },
+
+      drive: function() {
+        document.writeln("Вызван Zaporojets.drive()");
+        return this.constructor.prototype.drive.call(this);
+      }
+    }, Car);
+
+    document.writeln("Программа запущена.");
+
+    // Создаем объект производного "класса".
+    var vehicle = new Zaporojets();
+    vehicle.drive(); // вызывается функция базового объекта
+
+    // Создаем еще один объект того же класса.
+    var vehicle = new Zaporojets();
+    vehicle.crack(); // функция производного объекта
+</script>
+
+</pre>
+
+</body>
+</html>
