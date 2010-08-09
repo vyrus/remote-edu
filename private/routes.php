@@ -221,6 +221,10 @@
                 'educational_materials/index_by_student',
                 'educational_materials/show',
                 'education_programs/available',
+
+                'tests/examination',
+                'tests/ajax_get_exam_questions',
+                'tests/ajax_check_exam_questions',
             ),
 
             /* Преподаватель */

@@ -285,7 +285,8 @@
                 'correct'    => array(),
                 'incorrect'  => array(),
                 'unanswered' => array(),
-                'time'       => $exams['timer']->stop()
+                'time'       => $exams['timer']->stop(),
+                'passed'     => null
             );
 
             unset($exams, $session->exams[$test_id]);
@@ -306,7 +307,76 @@
                 }
             }
 
+            $test = (object) $this->get($test_id);
+            $num_errors = sizeof($results->incorrect) +
+                          sizeof($results->unanswered);
+            $allowable_errors = self::calcAllowableErrors($test->num_questions,
+                                                          $test->errors_limit);
+
+            $passed  = ($num_errors > $allowable_errors ? false : true);
+            $passed &= ($results->time > $test->time_limit ? false : true);
+
+            $results->passed = $passed;
+
+            $this->_saveExamResults($test_id, $num_errors,
+                                    $results->time, $results->passed);
+
             return $results;
+        }
+
+        protected function _saveExamResults(
+            $test_id, $num_errors, $time, $passed
+        ) {
+            $sql = '
+                INSERT INTO ' . $this->_tables['examinations'] . '
+                (user_id, test_id, time, num_errors, passed)
+                VALUES (:uid, :tid, :time, :num_errors, :passed)
+            ';
+
+            $user = Model_User::create();
+            $udata = (object) $user->getAuth();
+
+            $values = array(
+                'uid'        => $udata->user_id,
+                'tid'        => $test_id,
+                'time'       => $time,
+                'num_errors' => $num_errors,
+                'passed'     => ($passed ? 'true' : 'false')
+            );
+
+            $stmt = $this->prepare($sql);
+            $stmt->execute($values);
+
+            return $this->lastInsertId();
+        }
+
+        public function attemptsRemains($test_id, $attempts_limit) {
+            $sql = '
+                SELECT COUNT(*)
+                FROM ' . $this->_tables['examinations'] . '
+                WHERE test_id = :tid AND
+                      user_id = :uid
+            ';
+
+            $user = Model_User::create();
+            $udata = (object) $user->getAuth();
+
+            $values = array(
+                'tid' => $test_id,
+                'uid' => $udata->user_id
+            );
+
+            $stmt = $this->prepare($sql);
+            $stmt->execute($values);
+
+            $attempts_used = $stmt->fetchColumn();
+            $attempts_remaining = $attempts_limit - $attempts_used;
+
+            return $attempts_remaining;
+        }
+
+        public static function calcAllowableErrors($num_questions, $errors_limit) {
+            return round($num_questions / 100 * $errors_limit);
         }
     }
 

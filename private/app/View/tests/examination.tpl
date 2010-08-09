@@ -66,12 +66,12 @@
 
         <tr>
             <td class="label">Допускается ошибок:</td>
-            <td><?php echo round($test->num_questions / 100 * $test->errors_limit) ?> (<?php echo $test->errors_limit ?>%)</td>
+            <td><?php echo Model_Test::calcAllowableErrors($test->num_questions, $test->errors_limit) ?> (<?php echo $test->errors_limit ?>%)</td>
         </tr>
 
         <tr>
             <td class="label">Попыток:</td>
-            <td><?php echo $test->attempts_limit ?> (осталось ...<?php // ?>)</td>
+            <td><?php echo $test->attempts_limit ?> (осталось <?php echo $this->attempts_remaining ?>)</td>
         </tr>
     </table>
 </div>

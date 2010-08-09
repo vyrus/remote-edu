@@ -9,6 +9,7 @@
             'checkpoints'       => 'checkpoints',
             'disciplines'       => 'disciplines',
             'edu_docs'          => 'edu_docs',
+            'examinations'      => 'examinations',
             'materials'         => 'materials',
             'materials_states'  => 'materials_states',
             'payments'          => 'payments',

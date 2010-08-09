@@ -288,7 +288,7 @@ CREATE TABLE `questions` (
 -- Таблица для хранения тестов.
 --
 
-CREATE TABLE  `tests` (
+CREATE TABLE `tests` (
  `test_id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
  `theme` VARCHAR( 256 ) NOT NULL ,
  `num_questions` INT NOT NULL ,
@@ -296,6 +296,20 @@ CREATE TABLE  `tests` (
  `attempts_limit` INT NOT NULL ,
  `errors_limit` INT NOT NULL ,
   PRIMARY KEY (  `test_id` )
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Таблица для результатов сдачи тестов.
+--
+
+CREATE TABLE `examinations` (
+ `examination_id` INT NOT NULL AUTO_INCREMENT ,
+ `user_id` INT NOT NULL ,
+ `test_id` INT NOT NULL ,
+ `time` INT NOT NULL ,
+ `num_errors` INT NOT NULL ,
+ `passed` ENUM(  'true',  'false' ) NOT NULL ,
+  PRIMARY KEY (  `examination_id` )
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 SET character_set_client = @saved_cs_client;

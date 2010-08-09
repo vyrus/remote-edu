@@ -69,7 +69,20 @@
             $test = Model_Test::create();
             $data = $test->get($test_id);
 
+            $attempts_remaining = $test->attemptsRemains(
+                $test_id, $data['attempts_limit']
+            );
+
+            /**
+            * @todo Нормальная ссылка.
+            */
+            if (!$attempts_remaining) {
+                $msg = 'У вас больше не осталось попыток для сдачи этого теста';
+                $this->flash($msg, '#', false);
+            }
+
             $this->set('test', $data);
+            $this->set('attempts_remaining', $attempts_remaining);
             $this->render();
         }
 

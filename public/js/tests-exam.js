@@ -77,7 +77,10 @@ function onCheckAnswersSuccess(response) {
     alert('Correct: ' + response.results.correct.length + '\n' +
           'Incorrect: ' + response.results.incorrect.length + '\n' +
           'Unanswered: ' + response.results.unanswered.length + '\n' +
-          'Time: ' + response.results.time);
+          'Time: ' + response.results.time + '\n' +
+          'Passed: ' + response.results.passed);
+
+    $('#status').hide();
 }
 
 function onAjaxError(xhr, textStatus, errorThrown) {
