@@ -72,6 +72,8 @@ function onCheckAnswersSuccess(response) {
         return;
     }
 
+    test.displayCorrectness(response.results);
+
     alert('Correct: ' + response.results.correct.length + '\n' +
           'Incorrect: ' + response.results.incorrect.length + '\n' +
           'Unanswered: ' + response.results.unanswered.length + '\n' +

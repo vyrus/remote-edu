@@ -331,6 +331,20 @@ Test = {
         $.each(this._exam_questions, function(idx, q) {
             q.disableRadios();
         });
+    },
+
+    displayCorrectness: function(results) {
+        var questions = this._exam_questions;
+
+        var create_func = function(correctness) {
+            return function(idx, q_id) {
+                questions[q_id].setCorrectness(correctness);
+            }
+        }
+
+        $.each(results.correct,    create_func(true));
+        $.each(results.incorrect,  create_func(false));
+        $.each(results.unanswered, create_func(false));
     }
 }
 Test = newClass(Test);
@@ -501,6 +515,10 @@ Question_PickOne = {
 
     disableRadios: function() {
         this._view.disableRadios();
+    },
+
+    setCorrectness: function(correctness) {
+        this._view.setCorrectness(correctness);
     }
 }
 Question_PickOne = newClass(Question_PickOne);
@@ -718,7 +736,8 @@ View_Question_PickOne_Show = {
         form:      'exam-form',
         question:  'exam-question',
         answer:    'exam-answer',
-        radio:     'exam-radio'
+        radio:     'exam-radio',
+        correctness: 'exam-correctness'
     },
 
     _tpl: {
@@ -767,10 +786,20 @@ View_Question_PickOne_Show = {
         return $('.' + this._classes.radio, this._html);
     },
 
+    getContainer: function() {
+        return this._html;
+    },
+
     disableRadios: function() {
         this.getRadios().each(function(idx, radio) {
             $(radio).attr('disabled', 'disabled');
         });
+    },
+
+    setCorrectness: function(correctness) {
+        var img = (correctness ? 'plus' : 'minus');
+        this.getContainer().css('list-style-image',
+                                'url(/images/' + img  + '.png)');
     }
 };
 View_Question_PickOne_Show = newClass(View_Question_PickOne_Show,
