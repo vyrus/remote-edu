@@ -37,9 +37,9 @@
         */
         protected function get_router() {
             $router = Mvc_Router::create();
-            
+
             $router->addRoutes($this->_config['routes']);
-            
+
             return $router;
         }
 
@@ -55,9 +55,9 @@
                 $config['dsn'], $config['user'], $config['passwd'],
                 $config['options']
             );
-            
+
             $db->exec('SET NAMES utf8');
-            
+
             return $db;
         }
 
@@ -81,10 +81,10 @@
         */
         protected function get_postman() {
             $config = $this->_config['postman'];
-            
-            $postman = Postman::create($config);   
-            
-            return $postman; 
+
+            $postman = Postman::create($config);
+
+            return $postman;
         }
 
         /**
@@ -96,27 +96,39 @@
             $view = Mvc_View::create(VIEWS . DS, LAYOUTS . DS, ELEMENTS . DS);
             return $view;
         }
-        
+
         /**
         * Инициализация менеджера ссылок.
-        * 
+        *
         * @return Mvc_Links
         */
         protected function get_links() {
             $links = Mvc_Links::create();
-            
+
             $links->setBaseUrl($this->_config['base_url'])
                   ->addRoutes($this->_config['routes']);
-            
+
             return $links;
         }
-        
+
         protected function get_attachments_storage() {
             $config = $this->_config['storage'];
-            
+
             $storage = new Storage($config['messages_attachments']);
-            
+
             return $storage;
+        }
+
+        /**
+        * Инициализация объекта для работы с сессией.
+        *
+        * @return Session
+        */
+        protected function get_session() {
+            $session = Session::create();
+            $session->init();
+            
+            return $session;
         }
     }
 

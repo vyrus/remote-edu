@@ -14,6 +14,13 @@
         protected $_salt;
 
         /**
+        * Объект для работы с сессией.
+        *
+        * @var mixed
+        */
+        protected $_session;
+
+        /**
         * Метод-конструктор класса.
         *
         * @param  string $salt Соль для хеширования.
@@ -62,10 +69,10 @@
         public function getActivationCode($id) {
             return $this->_hash($id);
         }
-        
+
         /**
-        * Генерация кода для восстановления пароля. Код генерируется с 
-        * использованием текущей даты, поэтому он будет действовать только в 
+        * Генерация кода для восстановления пароля. Код генерируется с
+        * использованием текущей даты, поэтому он будет действовать только в
         * течении дня, когда был сгенерирован.
         *
         * @param  int $id Идентификатор пользователя.
@@ -75,17 +82,20 @@
             return $this->_hash($id . date('d.m.Y'));
         }
 
+        public function getExamSecurityCode($test_id, array $question_ids) {
+            natsort($question_ids);
+            return $this->_hash($test_id . implode(', ', $question_ids));
+        }
+
         /**
         * Инициализация хранилища данных.
         *
         * @return Auth
         */
         public function init() {
-            $sid = session_id(); // при login и logout без проверки сессия стартует 2 раза (2-й раз из-за проверки прав в меню)
-            if (empty($sid))
-            {
-                session_start();
-            }
+            /* Инициализируем сессию */
+            $this->_session = Resources::getInstance()->session;
+
             return $this;
         }
 
@@ -96,7 +106,7 @@
         * @return void
         */
         public function setUserId($id) {
-            $_SESSION['user_id'] = $id;
+            $this->_session->user_id = $id;
         }
 
         /**
@@ -105,14 +115,16 @@
         * @return int|boolean False, если не данные не найдены, иначе id.
         */
         public function getUserId() {
-            return (isset($_SESSION['user_id']) ? $_SESSION['user_id'] : false);
+            return (isset($this->_session->user_id) ?
+                        $this->_session->user_id :
+                        false);
         }
 
         /**
         * Снятие авторизации, удаление идентификатора из сессии.
         */
         public function unsetUserId() {
-            unset($_SESSION['user_id']);
+            unset($this->_session->user_id);
         }
 
         /**

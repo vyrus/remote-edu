@@ -42,12 +42,12 @@
     /* Загружаем конфигурацию */
     $config = require_once 'config.php';
     $routes = require_once 'routes.php';
-    
+
     /* Приводим маршруты к полном виду */
     $config['routes'] = Mvc_Router::expandRoutes($routes['routes']);
     /* Добавляем в конфиг права доступа */
     $config['permissions'] = $routes['permissions'];
-    
+
     switch ($config['mode']) {
         /* Если включён режим отладки, то... */
         case 'debug':
