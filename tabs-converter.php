@@ -15,15 +15,15 @@
 
     $_process_exts = array('php', 'tpl');
 
-    $loc = process_dir(ROOT, $_process_exts);
+    $nor = process_dir(ROOT, $_process_exts);
 
     header('Content-Type: text/plain; charset=utf-8');
-    print_r($loc);
+    print_r($nor);
 
     function process_dir($path, array $exts) {
         global $_skip_entries;
 
-        $loc = array();
+        $nor = array();
 
         $dir = dir($path);
 
@@ -40,10 +40,15 @@
             }
 
             if (is_dir($full_path)) {
-                $tmp_loc = process_dir($full_path, $exts);
+                $tmp_nor = process_dir($full_path, $exts);
+
+                if (1 == sizeof($tmp_nor) && 0 == $tmp_nor['total']) {
+                    continue;
+                }
 
                 $key = strip_base_dir($full_path);
-                $loc[$key] = $tmp_loc;
+                $nor[$key] = $tmp_nor;
+                $nor['total'] += $tmp_nor['total'];
 
                 continue;
             }
@@ -56,14 +61,14 @@
 
                 if (null !== $nr_replacements) {
                     $key = strip_base_dir($full_path);
-                    $loc[$key] = $nr_replacements;
+                    $nor[$key] = $nr_replacements;
                 }
             }
         }
 
-        $loc['total'] = array_sum($loc);
+        $nor['total'] = array_sum($nor);
 
-        return $loc;
+        return $nor;
     }
 
     function convert_tabs($file_path) {
