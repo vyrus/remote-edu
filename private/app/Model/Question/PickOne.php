@@ -68,6 +68,60 @@
                     new Model_Question_PickOne_Exception($code);
             }
 
+            require_once 'jevix.class.php';
+            $jevix = new Jevix();
+
+            $jevix->cfgAllowTags(array('img', 'code'));
+
+            $jevix->cfgSetTagShort(array('img'));
+
+            $jevix->cfgSetTagPreformatted(array('code'));
+
+            $jevix->cfgSetTagCutWithContent(array('script', 'object', 'iframe',
+                                                  'style'));
+            $jevix->cfgAllowTagParams('img',
+                                      array('src',
+                                            'alt'    => '#text',
+                                            'title',
+                                            'align'  => array('right', 'left',
+                                                              'center'),
+                                            'width'  => '#int',
+                                            'height' => '#int',
+                                            'hspace' => '#int',
+                                            'vspace' => '#int'));
+
+            $jevix->cfgSetTagParamsRequired('img', 'src');
+
+            /* Включаем или выключаем режим XHTML. (по умолчанию включен) */
+            $jevix->cfgSetXHTMLMode(true);
+
+            /* Включаем или выключаем режим замены переноса строк на тег <br/>. (по умолчанию включен) */
+            $jevix->cfgSetAutoBrMode(false);
+
+            /* Включаем или выключаем режим автоматического определения ссылок. (по умолчанию включен) */
+            $jevix->cfgSetAutoLinkMode(false);
+
+            $jevix->cfgSetTagNoTypography('code');
+
+            $j_errors = array();
+            $this->question = $jevix->parse($this->question, $j_errors);
+            if (!empty($j_errors)) {
+                $code = Model_Question_PickOne_Exception::INVALID_HTML;
+
+                $first_error = array_shift($j_errors);
+                $first_error = '. ' . $first_error['message'];
+
+                $errors['question'] =
+                    new Model_Question_PickOne_Exception($code, $first_error);
+            }
+
+            /**
+            * @todo Сделать error target для ответов.
+            */
+            foreach ($this->answers as $key => $a) {
+                $this->answers[$key] = $jevix->parse($a, $j_errors);
+            }
+
             return $errors;
         }
 

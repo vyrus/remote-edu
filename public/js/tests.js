@@ -644,6 +644,8 @@ View_Question_PickOne_Edit = {
                 }
             }
 
+            data.q.answers[i] = data.q.answers[i].replace(/"/gi, '\'');
+
             answers += this.__parent.render(this._tpl.answer, {
                 cls:     this._classes,
                 answer:  (undefined != data.q ? data.q.answers[i] : ''),
@@ -661,7 +663,11 @@ View_Question_PickOne_Edit = {
             };
         }
 
+        data.q.question = data.q.question.replace(/"/gi, '\'');
+        //alert(data.q.question);
+
         var html = this.__parent.render(this._tpl.question, data);
+        //alert(html);
         this._html = $(html);
 
         if (undefined == data.q.answers)
