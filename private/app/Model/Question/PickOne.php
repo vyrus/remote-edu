@@ -68,42 +68,9 @@
                     new Model_Question_PickOne_Exception($code);
             }
 
-            require_once 'jevix.class.php';
-            $jevix = new Jevix();
-
-            $jevix->cfgAllowTags(array('img', 'code'));
-
-            $jevix->cfgSetTagShort(array('img'));
-
-            $jevix->cfgSetTagPreformatted(array('code'));
-
-            $jevix->cfgSetTagCutWithContent(array('script', 'object', 'iframe',
-                                                  'style'));
-            $jevix->cfgAllowTagParams('img',
-                                      array('src',
-                                            'alt'    => '#text',
-                                            'title',
-                                            'align'  => array('right', 'left',
-                                                              'center'),
-                                            'width'  => '#int',
-                                            'height' => '#int',
-                                            'hspace' => '#int',
-                                            'vspace' => '#int'));
-
-            $jevix->cfgSetTagParamsRequired('img', 'src');
-
-            /* Включаем или выключаем режим XHTML. (по умолчанию включен) */
-            $jevix->cfgSetXHTMLMode(true);
-
-            /* Включаем или выключаем режим замены переноса строк на тег <br/>. (по умолчанию включен) */
-            $jevix->cfgSetAutoBrMode(false);
-
-            /* Включаем или выключаем режим автоматического определения ссылок. (по умолчанию включен) */
-            $jevix->cfgSetAutoLinkMode(false);
-
-            $jevix->cfgSetTagNoTypography('code');
-
+            $jevix = $this->_getJevix();
             $j_errors = array();
+
             $this->question = $jevix->parse($this->question, $j_errors);
             if (!empty($j_errors)) {
                 $code = Model_Question_PickOne_Exception::INVALID_HTML;
@@ -154,6 +121,60 @@
             $q->correct_answer  = $data->correct_answer;
 
             return $q;
+        }
+
+        protected function _getJevix() {
+            require_once 'jevix.class.php';
+
+            $jevix = new Jevix();
+
+            /* Устанавливаем разрешённые теги (все остальные - запрещенные) */
+            $jevix->cfgAllowTags(array('img', 'code'));
+
+            /* Устанавливаем коротие теги (не имеющие закрывающего тега) */
+            $jevix->cfgSetTagShort(array('img'));
+
+            /* Устанавливаем преформатированные теги (в них всё будет заменятся
+            на HTML-сущности) */
+            $jevix->cfgSetTagPreformatted(array('code'));
+
+            /* Устанавливаем теги, которые необходимо вырезать из текста вместе
+            с контентом */
+            $jevix->cfgSetTagCutWithContent(array('script', 'object', 'iframe',
+                                                  'style'));
+
+            /* Устанавливаем разрешённые параметры тегов и их допустимые
+            значения */
+            $jevix->cfgAllowTagParams('img',
+                                      array('src',
+                                            'alt'    => '#text',
+                                            'title',
+                                            'align'  => array('right', 'left',
+                                                              'center'),
+                                            'width'  => '#int',
+                                            'height' => '#int',
+                                            'hspace' => '#int',
+                                            'vspace' => '#int'));
+
+            /* Устанавливаем параметры тегов являющиеся обязяательными, без них
+            вырезает тег, оставляя содержимое */
+            $jevix->cfgSetTagParamsRequired('img', 'src');
+
+            /* Включаем режим XHTML (по умолчанию включен) */
+            $jevix->cfgSetXHTMLMode(true);
+
+            /* Выключаем режим замены переноса строк на тег <br/>. (по умолчанию
+            включен) */
+            $jevix->cfgSetAutoBrMode(false);
+
+            /* Выключаем режим автоматического определения ссылок. (по умолчанию
+            включен) */
+            $jevix->cfgSetAutoLinkMode(false);
+
+            /* Отключаем типографирование в определенном теге */
+            $jevix->cfgSetTagNoTypography('code');
+
+            return $jevix;
         }
     }
 
