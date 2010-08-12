@@ -9,17 +9,38 @@
     }
 
     .question-text {
-        /*border: 1px solid blue;*/
-        display: block;
+        overflow: hidden;
+        width: 40em;
+        height: 1.25em;
+        font: 1.7em Tahoma, Verdana, Arial;
+        border: 1px solid #e8e8e8;
+    }
+
+    .ui-resizable-se {
+        bottom: 14px;
+        right: 2px;
+    }
+
+    .answer-container {
+        margin-left: 1.5em;
+    }
+
+    .answer-container td {
+        padding: 0;
+        margin: 0;
     }
 
     .question-radio {
-        /*border: 1px solid black;*/
+        margin-top: -1em;
     }
 
     .question-answer {
         /*border: 1px solid green;*/
-        /*display: block;*/
+        overflow: hidden;
+        width: 25em;
+        height: 1.3em;
+        font: 1em Tahoma, Verdana, Arial;
+        border: 1px solid #e8e8e8;
     }
 
     #questions {
