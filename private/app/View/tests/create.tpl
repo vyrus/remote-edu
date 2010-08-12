@@ -9,7 +9,7 @@
     }
 
     .question-text {
-        overflow: hidden;
+        overflow: auto;
         width: 40em;
         height: 1.25em;
         font: 1.7em Tahoma, Verdana, Arial;
@@ -36,7 +36,7 @@
 
     .question-answer {
         /*border: 1px solid green;*/
-        overflow: hidden;
+        overflow: auto;
         width: 25em;
         height: 1.3em;
         font: 1em Tahoma, Verdana, Arial;
@@ -51,7 +51,7 @@
         margin-left: 7px;
     }
 
-    input.inactive {
+    .inactive {
         color: #BFBFBF;
     }
 

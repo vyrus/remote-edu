@@ -764,11 +764,13 @@ View_Question_PickOne_Edit = newClass(View_Question_PickOne_Edit,
 
 View_Question_PickOne_Show = {
     _classes: {
-        container: 'exam-container',
-        form:      'exam-form',
-        question:  'exam-question',
-        answer:    'exam-answer',
-        radio:     'exam-radio',
+        container:   'exam-container',
+        form:        'exam-form',
+        question:    'exam-question',
+        answer_cntr: 'exam-answer-container',
+        radio_td:    'exam-radio-td',
+        radio:       'exam-radio',
+        label_td:    'exam-label-td',
         correctness: 'exam-correctness'
     },
 
@@ -781,10 +783,17 @@ View_Question_PickOne_Show = {
                       '</form>' +
                   '</li>',
 
-        answer: '<div class="{cls.answer}">' +
-                    '<input type="radio" name="correct_answer" id="{id}" class="{cls.radio}" />' +
-                    '<label for="{id}">{answer}</label>' +
-                 '</div>'
+        answer:  '<table class="{cls.answer_cntr}">' +
+                    '<tr>' +
+                        '<td class="{cls.radio_td}">' +
+                            '<input type="radio" name="correct_answer" id="{id}" class="{cls.radio}" />' +
+                        '</td>' +
+
+                        '<td class="{cls.label_td}">' +
+                            '<label for="{id}">{answer}</label>' +
+                        '</td>' +
+                    '</tr>' +
+                '</table>'
     },
 
     _html: null,

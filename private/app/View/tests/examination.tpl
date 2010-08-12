@@ -34,8 +34,21 @@
         margin-bottom: 0.5em;
     }
 
-    .exam-answer {
-        line-height: 1.7em;
+    .exam-answer-container td {
+        padding: 0.5em 0 0 0;
+    }
+
+    td.exam-radio-td {
+        vertical-align: top;
+        padding-right: 0.3em;
+    }
+
+    td.exam-label-td {
+        padding-top: 0.7em;
+    }
+
+    .exam-question pre, .exam-label-td pre {
+        font: 1em "Courier New";
     }
 </style>
 
