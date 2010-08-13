@@ -68,6 +68,36 @@
                     new Model_Question_PickOne_Exception($code);
             }
 
+            $jevix = $this->_getJevix();
+            $j_errors = array();
+
+            $this->question = $jevix->parse($this->question, $j_errors);
+            if (!empty($j_errors)) {
+                $code = Model_Question_PickOne_Exception::INVALID_HTML;
+
+                $first_error = array_shift($j_errors);
+                $first_error = '. ' . $first_error['message'];
+
+                $errors['question'] =
+                    new Model_Question_PickOne_Exception($code, $first_error);
+            }
+
+            $j_errors = array();
+            foreach ($this->answers as $key => $a)
+            {
+                $this->answers[$key] = $jevix->parse($a, $j_errors);
+
+                if (!empty($j_errors)) {
+                    $code = Model_Question_PickOne_Exception::INVALID_HTML;
+
+                    $first_error = array_shift($j_errors);
+                    $first_error = '. ' . $first_error['message'];
+
+                    $errors['answer_' . $key] =
+                    new Model_Question_PickOne_Exception($code, $first_error);
+                }
+            }
+
             return $errors;
         }
 
@@ -100,6 +130,60 @@
             $q->correct_answer  = $data->correct_answer;
 
             return $q;
+        }
+
+        protected function _getJevix() {
+            require_once 'jevix.class.php';
+
+            $jevix = new Jevix();
+
+            /* Устанавливаем разрешённые теги (все остальные - запрещенные) */
+            $jevix->cfgAllowTags(array('img', 'code', 'pre'));
+
+            /* Устанавливаем коротие теги (не имеющие закрывающего тега) */
+            $jevix->cfgSetTagShort(array('img'));
+
+            /* Устанавливаем преформатированные теги (в них всё будет заменятся
+            на HTML-сущности) */
+            $jevix->cfgSetTagPreformatted(array('pre'));
+
+            /* Устанавливаем теги, которые необходимо вырезать из текста вместе
+            с контентом */
+            $jevix->cfgSetTagCutWithContent(array('script', 'object', 'iframe',
+                                                  'style'));
+
+            /* Устанавливаем разрешённые параметры тегов и их допустимые
+            значения */
+            $jevix->cfgAllowTagParams('img',
+                                      array('src',
+                                            'alt'    => '#text',
+                                            'title',
+                                            'align'  => array('right', 'left',
+                                                              'center'),
+                                            'width'  => '#int',
+                                            'height' => '#int',
+                                            'hspace' => '#int',
+                                            'vspace' => '#int'));
+
+            /* Устанавливаем параметры тегов являющиеся обязяательными, без них
+            вырезает тег, оставляя содержимое */
+            $jevix->cfgSetTagParamsRequired('img', 'src');
+
+            /* Включаем режим XHTML (по умолчанию включен) */
+            $jevix->cfgSetXHTMLMode(true);
+
+            /* Включаем режим замены переноса строк на тег <br/>. (по умолчанию
+            включен) */
+            $jevix->cfgSetAutoBrMode(true);
+
+            /* Выключаем режим автоматического определения ссылок. (по умолчанию
+            включен) */
+            $jevix->cfgSetAutoLinkMode(false);
+
+            /* Отключаем типографирование в определенном теге */
+            $jevix->cfgSetTagNoTypography('code');
+
+            return $jevix;
         }
     }
 

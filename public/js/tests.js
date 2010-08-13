@@ -469,6 +469,8 @@ Question_PickOne = {
 
         //alert(html.html());
         container.append(html);
+
+        view.onAppend();
     },
 
     renderExamForm: function(container, q_data) {
@@ -582,25 +584,40 @@ View_Question_PickOne = newClass(View_Question_PickOne, View);
 
 View_Question_PickOne_Edit = {
     _classes: {
-        form:     'question-form',
-        id:       'question-id',
-        question: 'question-text',
-        radio:    'question-radio',
-        answer:   'question-answer'
+        form:            'question-form',
+        id:              'question-id',
+        question:        'question-text',
+        radio:           'question-radio',
+        answer:          'question-answer',
+        answer_cntr:     'answer-container',
+        error_target_td: 'error-target'
     },
 
     _tpl: {
         question: '<div>' +
                        '<form class="{cls.form}">' +
-                           '<input type="text" class="{cls.question}" value="{q.question}" />' +
+                           '<textarea class="{cls.question}">{q.question}</textarea>' +
                            '<span class="{cls.errorTarget}"></span>' +
                            '<input type="hidden" class="{cls.id}" value="{q.question_id}" />' +
                            '{answers}' +
                        '</form>' +
                    '</div>',
 
-        answer: '<input type="radio" class="{cls.radio}" name="correct_answer" {checked}/>' +
-                '<input type="text" class="{cls.answer}" value="{answer}" />'
+        answer: '<table class="{cls.answer_cntr}">' +
+                    '<tr>' +
+                        '<td>' +
+                            '<input type="radio" class="{cls.radio}" name="correct_answer" {checked}/>' +
+                        '</td>' +
+
+                        '<td>' +
+                            '<textarea class="{cls.answer}">{answer}</textarea>' +
+                        '</td>' +
+
+                        '<td class="{cls.error_target_td}">' +
+                            '<span class="{cls.errorTarget}"></span>' +
+                        '</td>' +
+                    '</tr>' +
+                '</table>'
     },
 
     _html: null,
@@ -681,11 +698,41 @@ View_Question_PickOne_Edit = {
             empty_inputs.push(q_input);
             $.each(empty_inputs, hinter);
         }
+        else
+        {
+            var error_targets = this._error_targets;
+            var answer_targets = $('td .' + this._classes.errorTarget,
+                                   this._html);
+
+            $.each(answer_targets, function(idx, target) {
+                error_targets['answer_' + idx] = target;
+            });
+        }
 
         this._error_targets.question =
             $('.' + this._classes.errorTarget, this._html).get(0);
 
         return this._html;
+    },
+
+    onAppend: function() {
+        var question = $(this.getQuestionInput());
+
+        question.resizable({
+            handles: 'se',
+            minHeight: question.outerHeight(),
+            minWidth: question.outerWidth()
+        });
+
+        $.each(this.getAnswerInputs(), function (idx, pair){
+            var answer = $(pair.text);
+
+            answer.resizable({
+                handles: 'se',
+                minHeight: answer.outerHeight(),
+                minWidth: answer.outerWidth()
+            });
+        });
     },
 
     /**
@@ -732,11 +779,13 @@ View_Question_PickOne_Edit = newClass(View_Question_PickOne_Edit,
 
 View_Question_PickOne_Show = {
     _classes: {
-        container: 'exam-container',
-        form:      'exam-form',
-        question:  'exam-question',
-        answer:    'exam-answer',
-        radio:     'exam-radio',
+        container:   'exam-container',
+        form:        'exam-form',
+        question:    'exam-question',
+        answer_cntr: 'exam-answer-container',
+        radio_td:    'exam-radio-td',
+        radio:       'exam-radio',
+        label_td:    'exam-label-td',
         correctness: 'exam-correctness'
     },
 
@@ -749,10 +798,17 @@ View_Question_PickOne_Show = {
                       '</form>' +
                   '</li>',
 
-        answer: '<div class="{cls.answer}">' +
-                    '<input type="radio" name="correct_answer" id="{id}" class="{cls.radio}" />' +
-                    '<label for="{id}">{answer}</label>' +
-                 '</div>'
+        answer:  '<table class="{cls.answer_cntr}">' +
+                    '<tr>' +
+                        '<td class="{cls.radio_td}">' +
+                            '<input type="radio" name="correct_answer" id="{id}" class="{cls.radio}" />' +
+                        '</td>' +
+
+                        '<td class="{cls.label_td}">' +
+                            '<label for="{id}">{answer}</label>' +
+                        '</td>' +
+                    '</tr>' +
+                '</table>'
     },
 
     _html: null,

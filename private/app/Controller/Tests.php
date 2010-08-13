@@ -213,8 +213,7 @@
                 if (!empty($errors))
                 {
                     foreach ($errors as $target => $error) {
-                        $code = $error->getCode();
-                        $errors[$target] = $error->errors_map[$code];
+                        $errors[$target] = $error->getErrorMessage();
                     }
 
                     $return_errors[] = array(
