@@ -10,7 +10,7 @@
 
     .question-text {
         overflow: auto;
-        width: 40em;
+        width: 30em;
         height: 1.25em;
         font: 1.7em Tahoma, Verdana, Arial;
         border: 1px solid #e8e8e8;
@@ -37,7 +37,7 @@
     .question-answer {
         /*border: 1px solid green;*/
         overflow: auto;
-        width: 25em;
+        width: 15em;
         height: 1.3em;
         font: 1em Tahoma, Verdana, Arial;
         border: 1px solid #e8e8e8;
