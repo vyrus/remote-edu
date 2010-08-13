@@ -43,6 +43,12 @@
         border: 1px solid #e8e8e8;
     }
 
+    td.error-target {
+        padding-top: 0.2em;
+        padding-left: 0.7em;
+        vertical-align: top;
+    }
+
     #questions {
         margin-top: 1em;
     }

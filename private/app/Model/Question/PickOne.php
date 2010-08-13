@@ -82,11 +82,20 @@
                     new Model_Question_PickOne_Exception($code, $first_error);
             }
 
-            /**
-            * @todo Сделать error target для ответов.
-            */
-            foreach ($this->answers as $key => $a) {
+            $j_errors = array();
+            foreach ($this->answers as $key => $a)
+            {
                 $this->answers[$key] = $jevix->parse($a, $j_errors);
+
+                if (!empty($j_errors)) {
+                    $code = Model_Question_PickOne_Exception::INVALID_HTML;
+
+                    $first_error = array_shift($j_errors);
+                    $first_error = '. ' . $first_error['message'];
+
+                    $errors['answer_' . $key] =
+                    new Model_Question_PickOne_Exception($code, $first_error);
+                }
             }
 
             return $errors;

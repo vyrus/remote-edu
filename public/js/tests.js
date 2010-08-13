@@ -584,12 +584,13 @@ View_Question_PickOne = newClass(View_Question_PickOne, View);
 
 View_Question_PickOne_Edit = {
     _classes: {
-        form:        'question-form',
-        id:          'question-id',
-        question:    'question-text',
-        radio:       'question-radio',
-        answer:      'question-answer',
-        answer_cntr: 'answer-container'
+        form:            'question-form',
+        id:              'question-id',
+        question:        'question-text',
+        radio:           'question-radio',
+        answer:          'question-answer',
+        answer_cntr:     'answer-container',
+        error_target_td: 'error-target'
     },
 
     _tpl: {
@@ -610,6 +611,10 @@ View_Question_PickOne_Edit = {
 
                         '<td>' +
                             '<textarea class="{cls.answer}">{answer}</textarea>' +
+                        '</td>' +
+
+                        '<td class="{cls.error_target_td}">' +
+                            '<span class="{cls.errorTarget}"></span>' +
                         '</td>' +
                     '</tr>' +
                 '</table>'
@@ -692,6 +697,16 @@ View_Question_PickOne_Edit = {
 
             empty_inputs.push(q_input);
             $.each(empty_inputs, hinter);
+        }
+        else
+        {
+            var error_targets = this._error_targets;
+            var answer_targets = $('td .' + this._classes.errorTarget,
+                                   this._html);
+
+            $.each(answer_targets, function(idx, target) {
+                error_targets['answer_' + idx] = target;
+            });
         }
 
         this._error_targets.question =
