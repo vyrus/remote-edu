@@ -177,7 +177,7 @@ function onTestLoadSuccess(response) {
         $('#questions').hide();
 
         $('#status').hide();
-        $('#questions').show('slow');
+        $('#questions').show('slow', function() { test.hideAll() });
     }
 }
 

@@ -126,7 +126,7 @@ Test = {
         /* Создаём объект вопроса и добавляем его форму на страницу */
         var q = new this._types_map[type]();
         q.setTmpId(++this._last_tmp_id);
-        q.renderForm(container);
+        q.renderForm(container, undefined, true);
 
         /* Сохраняем в списке вопросов теста */
         this._new_questions[this._last_tmp_id] = q;
@@ -508,7 +508,7 @@ Question_PickOne = {
         };
     },
 
-    renderForm: function(container, q_data) {
+    renderForm: function(container, q_data, new_question) {
         if (undefined === q_data && this.issetData()) {
             q_data = this.getData();
         }
@@ -521,8 +521,16 @@ Question_PickOne = {
 
         this._view = view;
 
+        if (true == new_question) {
+            html.hide();
+        }
+
         //alert(html.html());
         container.append(html);
+
+        if (true == new_question) {
+            html.show('fast');
+        }
 
         view.onAppend();
     },
