@@ -305,6 +305,8 @@ Test = {
             q.setData(data);
             q.deleteTmpId();
 
+            q.hide();
+
             old_questions[data.question_id] = q;
             delete new_questions[idx];
         };
@@ -680,8 +682,8 @@ View_Question_PickOne_Edit = {
 
     _tpl: {
         question: '<div class="{cls.wrapper}">' +
-                       '<a href="#" class="{cls.lnk_toggle}">Скрыть</a>&nbsp;' +
-                       '<a href="#" class="{cls.lnk_delete}">Удалить</a>' +
+                       '<a href="" class="{cls.lnk_toggle}">Скрыть</a>&nbsp;' +
+                       '<a href="" class="{cls.lnk_delete}">Удалить</a>' +
 
                        '<div class="{cls.expanded}">' +
                            '<form class="{cls.form}">' +
@@ -830,8 +832,8 @@ View_Question_PickOne_Edit = {
             $('.' + this._classes.errorTarget, this._html).get(0);
 
         var v = this;
-        $(this.getToggleLink()).click(function() { v.toggle.apply(v); });
-        $(this.getDeleteLink()).click(function() { v.onDelete.apply(v); });
+        $(this.getToggleLink()).click(function() { return v.toggle.apply(v); });
+        $(this.getDeleteLink()).click(function() { return v.onDelete.apply(v); });
 
         return this._html;
     },
@@ -850,6 +852,8 @@ View_Question_PickOne_Edit = {
             var data = this._q_obj.getData();
             deleteQuestion('old', data.question_id);
         }
+
+        return false;
     },
 
     show: function() {
@@ -876,6 +880,7 @@ View_Question_PickOne_Edit = {
 
     toggle: function() {
         this._collapsed ? this.show() : this.hide();
+        return false;
     },
 
     onAppend: function() {
