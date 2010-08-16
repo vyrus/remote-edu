@@ -835,7 +835,7 @@ View_Question_PickOne_Edit = {
         var tmp_id = this._q_obj.getTmpId();
 
         if (null != tmp_id) {
-            deleteQuestion('new', id);
+            deleteQuestion('new', tmp_id);
         }
         else {
             var data = this._q_obj.getData();
@@ -887,8 +887,6 @@ View_Question_PickOne_Edit = {
                 minWidth: answer.outerWidth()
             });
         });
-
-        this._html.hide().show('fast');
     },
 
     /**
