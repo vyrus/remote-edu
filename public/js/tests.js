@@ -590,12 +590,17 @@ View_Question_PickOne_Edit = {
         radio:           'question-radio',
         answer:          'question-answer',
         answer_cntr:     'answer-container',
-        error_target_td: 'error-target'
+        error_target_td: 'error-target',
+
+        wrapper:         'question-wrapper',
+        collapsed:       'question-collapsed',
+        expanded:        'question-expanded',
+        lnk_toggle:      'lnk-toggle-question'
     },
 
     _tpl: {
-        question: '<div>' +
-                       '<a href="#" class="{cls.lnk_toggle}">Свернуть</a>' +
+        question: '<div class="{cls.wrapper}">' +
+                       '<a href="#" class="{cls.lnk_toggle}">Скрыть</a>' +
 
                        '<div class="{cls.expanded}">' +
                            '<form class="{cls.form}">' +
@@ -628,6 +633,8 @@ View_Question_PickOne_Edit = {
 
     _html: null,
 
+    _collapsed: false,
+
     __construct: function() {
         this.__parent.__construct.call(this);
         $.extend(this._classes, this.__parent._classes);
@@ -658,6 +665,18 @@ View_Question_PickOne_Edit = {
         });
 
         return pairs;
+    },
+
+    getToggleLink: function() {
+        return this._get('lnk_toggle');
+    },
+
+    getExpandedDiv: function() {
+        return this._get('expanded');
+    },
+
+    getCollapsedDiv: function() {
+        return this._get('collapsed');
     },
 
     render: function(data) {
@@ -722,7 +741,35 @@ View_Question_PickOne_Edit = {
         this._error_targets.question =
             $('.' + this._classes.errorTarget, this._html).get(0);
 
+        $(this.getToggleLink()).click(this._createToggleFunc(this));
+
         return this._html;
+    },
+
+    _createToggleFunc: function(view) {
+        return function() {
+            if (!view._collapsed) {
+                var question = $(view.getQuestionInput())
+                                 .text()
+                                 .substr(0, 100)
+                                 .replace(/</g, '&lt;')
+                                 .replace(/>/g, '&gt;');
+
+                $(view.getExpandedDiv()).hide('fast');
+                $(view.getCollapsedDiv()).html(question).show('fast');
+                $(view.getToggleLink()).text('Показать');
+
+                view._collapsed = true;
+            }
+            else
+            {
+                $(view.getExpandedDiv()).show('fast');
+                $(view.getCollapsedDiv()).hide('fast');
+                $(view.getToggleLink()).text('Скрыть');
+
+                view._collapsed = false;
+            }
+        }
     },
 
     onAppend: function() {

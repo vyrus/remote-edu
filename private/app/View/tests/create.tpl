@@ -3,9 +3,17 @@
         /*margin-bottom: 1.7em;*/
     }
 
+    .question-wrapper {
+        margin-top: 1em;
+    }
+
+    .question-expanded, .question-collapsed {
+        margin-top: 0.5em;
+    }
+
     .question-form {
         /*border: 1px solid red;*/
-        margin: 1.7em 0px;
+        /*margin: 1.7em 0px;*/
     }
 
     .question-text {
