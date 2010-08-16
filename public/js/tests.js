@@ -345,6 +345,35 @@ Test = {
         $.each(results.correct,    create_func(true));
         $.each(results.incorrect,  create_func(false));
         $.each(results.unanswered, create_func(false));
+    },
+
+    showAll: function() {
+         var show = function(id, q) {
+            q.show();
+        };
+
+        this._eachQuestion(show);
+    },
+
+    hideAll: function() {
+         var hide = function(id, q) {
+            q.hide();
+        };
+
+        this._eachQuestion(hide);
+    },
+
+    toggleAll: function() {
+        var toggle = function(id, q) {
+            q.toggle();
+        };
+
+        this._eachQuestion(toggle);
+    },
+
+    _eachQuestion: function(func) {
+        $.each(this._new_questions, func);
+        $.each(this._questions, func);
     }
 }
 Test = newClass(Test);
@@ -521,6 +550,18 @@ Question_PickOne = {
 
     setCorrectness: function(correctness) {
         this._view.setCorrectness(correctness);
+    },
+
+    show: function() {
+        this._view.show();
+    },
+
+    hide: function() {
+        this._view.hide();
+    },
+
+    toggle: function() {
+        this._view.toggle();
     }
 }
 Question_PickOne = newClass(Question_PickOne);
@@ -741,35 +782,36 @@ View_Question_PickOne_Edit = {
         this._error_targets.question =
             $('.' + this._classes.errorTarget, this._html).get(0);
 
-        $(this.getToggleLink()).click(this._createToggleFunc(this));
+        var view = this;
+        $(this.getToggleLink()).click(function() { view.toggle.apply(view); });
 
         return this._html;
     },
 
-    _createToggleFunc: function(view) {
-        return function() {
-            if (!view._collapsed) {
-                var question = $(view.getQuestionInput())
-                                 .text()
-                                 .substr(0, 100)
-                                 .replace(/</g, '&lt;')
-                                 .replace(/>/g, '&gt;');
+    show: function() {
+        $(this.getExpandedDiv()).show('fast');
+        $(this.getCollapsedDiv()).hide('fast');
+        $(this.getToggleLink()).text('Скрыть');
 
-                $(view.getExpandedDiv()).hide('fast');
-                $(view.getCollapsedDiv()).html(question).show('fast');
-                $(view.getToggleLink()).text('Показать');
+        this._collapsed = false;
+    },
 
-                view._collapsed = true;
-            }
-            else
-            {
-                $(view.getExpandedDiv()).show('fast');
-                $(view.getCollapsedDiv()).hide('fast');
-                $(view.getToggleLink()).text('Скрыть');
+    hide: function() {
+        var question = $(this.getQuestionInput())
+                         .text()
+                         .substr(0, 100)
+                         .replace(/</g, '&lt;')
+                         .replace(/>/g, '&gt;');
 
-                view._collapsed = false;
-            }
-        }
+        $(this.getExpandedDiv()).hide('fast');
+        $(this.getCollapsedDiv()).html(question).show('fast');
+        $(this.getToggleLink()).text('Показать');
+
+        this._collapsed = true;
+    },
+
+    toggle: function() {
+        this._collapsed ? this.show() : this.hide();
     },
 
     onAppend: function() {

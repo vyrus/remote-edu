@@ -10,6 +10,25 @@ $(document).ready(function()
         test.addQuestion('pick-one', $('#questions'));
     });
 
+    var hide_all   = 'Скрыть всё',
+        show_all   = 'Показать всё',
+        toggle_all = 'Переключить всё';
+
+    $('#lnk-show-all')
+        .text(show_all)
+        .click(function() { test.showAll(); });
+
+    $('#lnk-hide-all')
+        .text(hide_all)
+        .click(function() { test.hideAll(); });
+
+    $('#lnk-toggle-all')
+        .text(toggle_all)
+        .click(function() {
+            test.toggleAll();
+            //$(this).text(hide_all == $(this).text() ? show_all : hide_all);
+        });
+
     $('#frm-options').submit(function() {
         $('#lnk-save').click();
         return false;
@@ -148,11 +167,17 @@ function onTestLoadSuccess(response) {
         var msg = 'Не удалось загрузить параметры теста. ' + response.error;
         $('#status').text(msg);
     } else {
+        /* Показываем контейнер, чтобы корректно добавились вопросы */
+        $('#questions').show();
+
         test.setOptions(response.options);
         test.setQuestions(response.questions, $('#questions'));
 
+        /* Прячем, чтобы потом снова показать, но уже с анимацией */
+        $('#questions').hide();
+
         $('#status').hide();
-        $('#lnk-add-question').show();
+        $('#questions').show('slow');
     }
 }
 

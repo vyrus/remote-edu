@@ -139,6 +139,9 @@
     </form>
 </div>
 
-<div id="questions">
-    <a href="#" id="lnk-add-question" style="display: none;">Добавить вопрос</a>
+<div id="questions" style="display: none;">
+    <a href="#" id="lnk-add-question">Добавить вопрос</a>
+    <a href="#" id="lnk-show-all"></a>
+    <a href="#" id="lnk-hide-all"></a>
+    <a href="#" id="lnk-toggle-all"></a>
 </div>
