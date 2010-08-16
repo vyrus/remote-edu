@@ -595,12 +595,18 @@ View_Question_PickOne_Edit = {
 
     _tpl: {
         question: '<div>' +
-                       '<form class="{cls.form}">' +
-                           '<textarea class="{cls.question}">{q.question}</textarea>' +
-                           '<span class="{cls.errorTarget}"></span>' +
-                           '<input type="hidden" class="{cls.id}" value="{q.question_id}" />' +
-                           '{answers}' +
-                       '</form>' +
+                       '<a href="#" class="{cls.lnk_toggle}">Свернуть</a>' +
+
+                       '<div class="{cls.expanded}">' +
+                           '<form class="{cls.form}">' +
+                               '<textarea class="{cls.question}">{q.question}</textarea>' +
+                               '<span class="{cls.errorTarget}"></span>' +
+                               '<input type="hidden" class="{cls.id}" value="{q.question_id}" />' +
+                               '{answers}' +
+                           '</form>' +
+                       '</div>' +
+
+                       '<div class="{cls.collapsed}" style="display: none;"></div>' +
                    '</div>',
 
         answer: '<table class="{cls.answer_cntr}">' +
@@ -627,17 +633,21 @@ View_Question_PickOne_Edit = {
         $.extend(this._classes, this.__parent._classes);
     },
 
+    _get: function(elem_class) {
+        return $('.' + this._classes[elem_class], this._html);
+    },
+
     getIdInput: function() {
-        return $('.' + this._classes.id, this._html);
+        return this._get('id');
     },
 
     getQuestionInput: function() {
-        return $('.' + this._classes.question, this._html);
+        return this._get('question');
     },
 
     getAnswerInputs: function() {
-        var radios = $('.' + this._classes.radio, this._html);
-        var text_fields = $('.' + this._classes.answer, this._html);
+        var radios = this._get('radio');
+        var text_fields = this._get('answer');
 
         var pairs = [];
         radios.each(function(idx, radio) {
