@@ -530,6 +530,7 @@ Question_PickOne = {
 
         if (true == new_question) {
             html.show('fast');
+            $.scrollTo(html, 200);
         }
 
         view.onAppend();
