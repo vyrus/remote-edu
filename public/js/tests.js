@@ -126,7 +126,7 @@ Test = {
         /* Создаём объект вопроса и добавляем его форму на страницу */
         var q = new this._types_map[type]();
         q.setTmpId(++this._last_tmp_id);
-        q.renderForm(container);
+        q.renderForm(container, undefined, true);
 
         /* Сохраняем в списке вопросов теста */
         this._new_questions[this._last_tmp_id] = q;
@@ -304,6 +304,8 @@ Test = {
             data.question_id = elem;
             q.setData(data);
             q.deleteTmpId();
+
+            q.hide();
 
             old_questions[data.question_id] = q;
             delete new_questions[idx];
@@ -508,7 +510,7 @@ Question_PickOne = {
         };
     },
 
-    renderForm: function(container, q_data) {
+    renderForm: function(container, q_data, new_question) {
         if (undefined === q_data && this.issetData()) {
             q_data = this.getData();
         }
@@ -521,8 +523,17 @@ Question_PickOne = {
 
         this._view = view;
 
+        if (true == new_question) {
+            html.hide();
+        }
+
         //alert(html.html());
         container.append(html);
+
+        if (true == new_question) {
+            html.show('fast');
+            $.scrollTo(html, 200);
+        }
 
         view.onAppend();
     },
@@ -671,8 +682,8 @@ View_Question_PickOne_Edit = {
 
     _tpl: {
         question: '<div class="{cls.wrapper}">' +
-                       '<a href="#" class="{cls.lnk_toggle}">Скрыть</a>&nbsp;' +
-                       '<a href="#" class="{cls.lnk_delete}">Удалить</a>' +
+                       '<a href="" class="{cls.lnk_toggle}">Скрыть</a>&nbsp;' +
+                       '<a href="" class="{cls.lnk_delete}">Удалить</a>' +
 
                        '<div class="{cls.expanded}">' +
                            '<form class="{cls.form}">' +
@@ -821,8 +832,8 @@ View_Question_PickOne_Edit = {
             $('.' + this._classes.errorTarget, this._html).get(0);
 
         var v = this;
-        $(this.getToggleLink()).click(function() { v.toggle.apply(v); });
-        $(this.getDeleteLink()).click(function() { v.onDelete.apply(v); });
+        $(this.getToggleLink()).click(function() { return v.toggle.apply(v); });
+        $(this.getDeleteLink()).click(function() { return v.onDelete.apply(v); });
 
         return this._html;
     },
@@ -835,12 +846,14 @@ View_Question_PickOne_Edit = {
         var tmp_id = this._q_obj.getTmpId();
 
         if (null != tmp_id) {
-            deleteQuestion('new', id);
+            deleteQuestion('new', tmp_id);
         }
         else {
             var data = this._q_obj.getData();
             deleteQuestion('old', data.question_id);
         }
+
+        return false;
     },
 
     show: function() {
@@ -867,6 +880,7 @@ View_Question_PickOne_Edit = {
 
     toggle: function() {
         this._collapsed ? this.show() : this.hide();
+        return false;
     },
 
     onAppend: function() {
@@ -887,8 +901,6 @@ View_Question_PickOne_Edit = {
                 minWidth: answer.outerWidth()
             });
         });
-
-        this._html.hide().show('fast');
     },
 
     /**

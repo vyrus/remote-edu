@@ -4,10 +4,12 @@ $(document).ready(function()
 
     $('#lnk-save').click(function() {
         setOptions();
+        return false;
     });
 
     $('#lnk-add-question').click(function() {
         test.addQuestion('pick-one', $('#questions'));
+        return false;
     });
 
     var hide_all   = 'Скрыть всё',
@@ -16,16 +18,17 @@ $(document).ready(function()
 
     $('#lnk-show-all')
         .text(show_all)
-        .click(function() { test.showAll(); });
+        .click(function() { test.showAll(); return false; });
 
     $('#lnk-hide-all')
         .text(hide_all)
-        .click(function() { test.hideAll(); });
+        .click(function() { test.hideAll(); return false; });
 
     $('#lnk-toggle-all')
         .text(toggle_all)
         .click(function() {
             test.toggleAll();
+            return false;
             //$(this).text(hide_all == $(this).text() ? show_all : hide_all);
         });
 
@@ -177,7 +180,7 @@ function onTestLoadSuccess(response) {
         $('#questions').hide();
 
         $('#status').hide();
-        $('#questions').show('slow');
+        $('#questions').show('slow', function() { test.hideAll() });
     }
 }
 
