@@ -186,6 +186,20 @@
             return $questions;
         }
 
+        public function deleteQuestion($id) {
+            $sql = '
+                DELETE FROM ' . $this->_tables['questions'] . '
+                WHERE question_id = ?
+                LIMIT 1
+            ';
+
+            $stmt = $this->prepare($sql);
+            $stmt->execute(array($id));
+
+            $affected = $stmt->rowCount();
+            return $affected > 0;
+        }
+
         protected function _getExamQuestions($test_id, $limit) {
             $sql = '
                 SELECT *

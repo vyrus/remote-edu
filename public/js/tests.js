@@ -65,7 +65,7 @@ Test = {
     /**
     * Последнее значение временного идентификатора для новых вопросов.
     */
-    _last_tmp_id: 0,
+    _last_tmp_id: -1,
 
     /**
     * Карта типов вопросов в factory function для создания объектов вопросов.
@@ -83,7 +83,7 @@ Test = {
         this._id = null;
         this._questions = {};
         this._new_questions = {};
-        this._last_tmp_id = 0;
+        this._last_tmp_id = -1;
         this._view = new View_Test_Options(optsFormId);
     },
 
@@ -125,10 +125,11 @@ Test = {
     addQuestion: function(type, container) {
         /* Создаём объект вопроса и добавляем его форму на страницу */
         var q = new this._types_map[type]();
+        q.setTmpId(++this._last_tmp_id);
         q.renderForm(container);
 
         /* Сохраняем в списке вопросов теста */
-        this._new_questions[this._last_tmp_id++] = q;
+        this._new_questions[this._last_tmp_id] = q;
     },
 
     /**
@@ -283,6 +284,15 @@ Test = {
         return questions;
     },
 
+    deleteQuestion: function(q_category, id) {
+        var questions = ('new' == q_category ?
+                            this._new_questions :
+                            this._questions);
+
+        questions[id].deleteForm();
+        delete questions[id];
+    },
+
     setNewIds: function(ids) {
         var new_questions = this._new_questions,
             old_questions = this._questions;
@@ -293,6 +303,7 @@ Test = {
 
             data.question_id = elem;
             q.setData(data);
+            q.deleteTmpId();
 
             old_questions[data.question_id] = q;
             delete new_questions[idx];
@@ -345,6 +356,35 @@ Test = {
         $.each(results.correct,    create_func(true));
         $.each(results.incorrect,  create_func(false));
         $.each(results.unanswered, create_func(false));
+    },
+
+    showAll: function() {
+         var show = function(id, q) {
+            q.show();
+        };
+
+        this._eachQuestion(show);
+    },
+
+    hideAll: function() {
+         var hide = function(id, q) {
+            q.hide();
+        };
+
+        this._eachQuestion(hide);
+    },
+
+    toggleAll: function() {
+        var toggle = function(id, q) {
+            q.toggle();
+        };
+
+        this._eachQuestion(toggle);
+    },
+
+    _eachQuestion: function(func) {
+        $.each(this._new_questions, func);
+        $.each(this._questions, func);
     }
 }
 Test = newClass(Test);
@@ -379,6 +419,8 @@ Question_PickOne = {
 
     _data: null,
 
+    _tmp_id: null,
+
     _view: null,
 
     __construct: function() {
@@ -398,6 +440,18 @@ Question_PickOne = {
             answers:        data.answers,
             correct_answer: data.correct_answer
         };
+    },
+
+    setTmpId: function(id) {
+        this._tmp_id = id;
+    },
+
+    getTmpId: function() {
+        return this._tmp_id;
+    },
+
+    deleteTmpId: function() {
+        this._tmp_id = null;
     },
 
     /**
@@ -460,9 +514,9 @@ Question_PickOne = {
         }
 
         var view = new View_Question_PickOne_Edit();
-        var html = view.render({
+        var html = view.render(this, {
             num_answers: this._num_answers,
-            q:           q_data
+            q:           q_data,
         });
 
         this._view = view;
@@ -471,6 +525,10 @@ Question_PickOne = {
         container.append(html);
 
         view.onAppend();
+    },
+
+    deleteForm: function() {
+        this._view.destroy();
     },
 
     renderExamForm: function(container, q_data) {
@@ -521,6 +579,18 @@ Question_PickOne = {
 
     setCorrectness: function(correctness) {
         this._view.setCorrectness(correctness);
+    },
+
+    show: function() {
+        this._view.show();
+    },
+
+    hide: function() {
+        this._view.hide();
+    },
+
+    toggle: function() {
+        this._view.toggle();
     }
 }
 Question_PickOne = newClass(Question_PickOne);
@@ -590,17 +660,30 @@ View_Question_PickOne_Edit = {
         radio:           'question-radio',
         answer:          'question-answer',
         answer_cntr:     'answer-container',
-        error_target_td: 'error-target'
+        error_target_td: 'error-target',
+
+        wrapper:         'question-wrapper',
+        collapsed:       'question-collapsed',
+        expanded:        'question-expanded',
+        lnk_toggle:      'lnk-toggle-question',
+        lnk_delete:      'lnk-delete-question'
     },
 
     _tpl: {
-        question: '<div>' +
-                       '<form class="{cls.form}">' +
-                           '<textarea class="{cls.question}">{q.question}</textarea>' +
-                           '<span class="{cls.errorTarget}"></span>' +
-                           '<input type="hidden" class="{cls.id}" value="{q.question_id}" />' +
-                           '{answers}' +
-                       '</form>' +
+        question: '<div class="{cls.wrapper}">' +
+                       '<a href="#" class="{cls.lnk_toggle}">Скрыть</a>&nbsp;' +
+                       '<a href="#" class="{cls.lnk_delete}">Удалить</a>' +
+
+                       '<div class="{cls.expanded}">' +
+                           '<form class="{cls.form}">' +
+                               '<textarea class="{cls.question}">{q.question}</textarea>' +
+                               '<span class="{cls.errorTarget}"></span>' +
+                               '<input type="hidden" class="{cls.id}" value="{q.question_id}" />' +
+                               '{answers}' +
+                           '</form>' +
+                       '</div>' +
+
+                       '<div class="{cls.collapsed}" style="display: none;"></div>' +
                    '</div>',
 
         answer: '<table class="{cls.answer_cntr}">' +
@@ -622,22 +705,30 @@ View_Question_PickOne_Edit = {
 
     _html: null,
 
+    _collapsed: false,
+
+    _q_obj: null,
+
     __construct: function() {
         this.__parent.__construct.call(this);
         $.extend(this._classes, this.__parent._classes);
     },
 
+    _get: function(elem_class) {
+        return $('.' + this._classes[elem_class], this._html);
+    },
+
     getIdInput: function() {
-        return $('.' + this._classes.id, this._html);
+        return this._get('id');
     },
 
     getQuestionInput: function() {
-        return $('.' + this._classes.question, this._html);
+        return this._get('question');
     },
 
     getAnswerInputs: function() {
-        var radios = $('.' + this._classes.radio, this._html);
-        var text_fields = $('.' + this._classes.answer, this._html);
+        var radios = this._get('radio');
+        var text_fields = this._get('answer');
 
         var pairs = [];
         radios.each(function(idx, radio) {
@@ -650,8 +741,25 @@ View_Question_PickOne_Edit = {
         return pairs;
     },
 
-    render: function(data) {
+    getToggleLink: function() {
+        return this._get('lnk_toggle');
+    },
+
+    getDeleteLink: function() {
+        return this._get('lnk_delete');
+    },
+
+    getExpandedDiv: function() {
+        return this._get('expanded');
+    },
+
+    getCollapsedDiv: function() {
+        return this._get('collapsed');
+    },
+
+    render: function(q_obj, data) {
         var answers = '', checked;
+        this._q_obj = q_obj;
 
         for (var i = 0; i < data.num_answers; i++) {
             checked = false;
@@ -712,7 +820,53 @@ View_Question_PickOne_Edit = {
         this._error_targets.question =
             $('.' + this._classes.errorTarget, this._html).get(0);
 
+        var v = this;
+        $(this.getToggleLink()).click(function() { v.toggle.apply(v); });
+        $(this.getDeleteLink()).click(function() { v.onDelete.apply(v); });
+
         return this._html;
+    },
+
+    destroy: function() {
+        this._html.hide('fast', function() { $(this).remove(); });
+    },
+
+    onDelete: function(question_id) {
+        var tmp_id = this._q_obj.getTmpId();
+
+        if (null != tmp_id) {
+            deleteQuestion('new', id);
+        }
+        else {
+            var data = this._q_obj.getData();
+            deleteQuestion('old', data.question_id);
+        }
+    },
+
+    show: function() {
+        $(this.getExpandedDiv()).show('fast');
+        $(this.getCollapsedDiv()).hide('fast');
+        $(this.getToggleLink()).text('Скрыть');
+
+        this._collapsed = false;
+    },
+
+    hide: function() {
+        var question = $(this.getQuestionInput())
+                         .val()
+                         .substr(0, 100)
+                         .replace(/</g, '&lt;')
+                         .replace(/>/g, '&gt;');
+
+        $(this.getExpandedDiv()).hide('fast');
+        $(this.getCollapsedDiv()).html(question).show('fast');
+        $(this.getToggleLink()).text('Показать');
+
+        this._collapsed = true;
+    },
+
+    toggle: function() {
+        this._collapsed ? this.show() : this.hide();
     },
 
     onAppend: function() {
@@ -733,6 +887,8 @@ View_Question_PickOne_Edit = {
                 minWidth: answer.outerWidth()
             });
         });
+
+        this._html.hide().show('fast');
     },
 
     /**

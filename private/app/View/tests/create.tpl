@@ -3,9 +3,17 @@
         /*margin-bottom: 1.7em;*/
     }
 
+    .question-wrapper {
+        margin-top: 1em;
+    }
+
+    .question-expanded, .question-collapsed {
+        margin-top: 0.5em;
+    }
+
     .question-form {
         /*border: 1px solid red;*/
-        margin: 1.7em 0px;
+        /*margin: 1.7em 0px;*/
     }
 
     .question-text {
@@ -131,6 +139,9 @@
     </form>
 </div>
 
-<div id="questions">
-    <a href="#" id="lnk-add-question" style="display: none;">Добавить вопрос</a>
+<div id="questions" style="display: none;">
+    <a href="#" id="lnk-add-question">Добавить вопрос</a>
+    <a href="#" id="lnk-show-all"></a>
+    <a href="#" id="lnk-hide-all"></a>
+    <a href="#" id="lnk-toggle-all"></a>
 </div>
