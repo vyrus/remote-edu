@@ -65,7 +65,7 @@ Test = {
     /**
     * Последнее значение временного идентификатора для новых вопросов.
     */
-    _last_tmp_id: 0,
+    _last_tmp_id: -1,
 
     /**
     * Карта типов вопросов в factory function для создания объектов вопросов.
@@ -83,7 +83,7 @@ Test = {
         this._id = null;
         this._questions = {};
         this._new_questions = {};
-        this._last_tmp_id = 0;
+        this._last_tmp_id = -1;
         this._view = new View_Test_Options(optsFormId);
     },
 
@@ -125,10 +125,11 @@ Test = {
     addQuestion: function(type, container) {
         /* Создаём объект вопроса и добавляем его форму на страницу */
         var q = new this._types_map[type]();
+        q.setTmpId(++this._last_tmp_id);
         q.renderForm(container);
 
         /* Сохраняем в списке вопросов теста */
-        this._new_questions[this._last_tmp_id++] = q;
+        this._new_questions[this._last_tmp_id] = q;
     },
 
     /**
@@ -283,6 +284,15 @@ Test = {
         return questions;
     },
 
+    deleteQuestion: function(q_category, id) {
+        var questions = ('new' == q_category ?
+                            this._new_questions :
+                            this._questions);
+
+        questions[id].deleteForm();
+        delete questions[id];
+    },
+
     setNewIds: function(ids) {
         var new_questions = this._new_questions,
             old_questions = this._questions;
@@ -293,6 +303,7 @@ Test = {
 
             data.question_id = elem;
             q.setData(data);
+            q.deleteTmpId();
 
             old_questions[data.question_id] = q;
             delete new_questions[idx];
@@ -408,6 +419,8 @@ Question_PickOne = {
 
     _data: null,
 
+    _tmp_id: null,
+
     _view: null,
 
     __construct: function() {
@@ -427,6 +440,18 @@ Question_PickOne = {
             answers:        data.answers,
             correct_answer: data.correct_answer
         };
+    },
+
+    setTmpId: function(id) {
+        this._tmp_id = id;
+    },
+
+    getTmpId: function() {
+        return this._tmp_id;
+    },
+
+    deleteTmpId: function() {
+        this._tmp_id = null;
     },
 
     /**
@@ -489,9 +514,9 @@ Question_PickOne = {
         }
 
         var view = new View_Question_PickOne_Edit();
-        var html = view.render({
+        var html = view.render(this, {
             num_answers: this._num_answers,
-            q:           q_data
+            q:           q_data,
         });
 
         this._view = view;
@@ -500,6 +525,10 @@ Question_PickOne = {
         container.append(html);
 
         view.onAppend();
+    },
+
+    deleteForm: function() {
+        this._view.destroy();
     },
 
     renderExamForm: function(container, q_data) {
@@ -636,12 +665,14 @@ View_Question_PickOne_Edit = {
         wrapper:         'question-wrapper',
         collapsed:       'question-collapsed',
         expanded:        'question-expanded',
-        lnk_toggle:      'lnk-toggle-question'
+        lnk_toggle:      'lnk-toggle-question',
+        lnk_delete:      'lnk-delete-question'
     },
 
     _tpl: {
         question: '<div class="{cls.wrapper}">' +
-                       '<a href="#" class="{cls.lnk_toggle}">Скрыть</a>' +
+                       '<a href="#" class="{cls.lnk_toggle}">Скрыть</a>&nbsp;' +
+                       '<a href="#" class="{cls.lnk_delete}">Удалить</a>' +
 
                        '<div class="{cls.expanded}">' +
                            '<form class="{cls.form}">' +
@@ -675,6 +706,8 @@ View_Question_PickOne_Edit = {
     _html: null,
 
     _collapsed: false,
+
+    _q_obj: null,
 
     __construct: function() {
         this.__parent.__construct.call(this);
@@ -712,6 +745,10 @@ View_Question_PickOne_Edit = {
         return this._get('lnk_toggle');
     },
 
+    getDeleteLink: function() {
+        return this._get('lnk_delete');
+    },
+
     getExpandedDiv: function() {
         return this._get('expanded');
     },
@@ -720,8 +757,9 @@ View_Question_PickOne_Edit = {
         return this._get('collapsed');
     },
 
-    render: function(data) {
+    render: function(q_obj, data) {
         var answers = '', checked;
+        this._q_obj = q_obj;
 
         for (var i = 0; i < data.num_answers; i++) {
             checked = false;
@@ -782,10 +820,27 @@ View_Question_PickOne_Edit = {
         this._error_targets.question =
             $('.' + this._classes.errorTarget, this._html).get(0);
 
-        var view = this;
-        $(this.getToggleLink()).click(function() { view.toggle.apply(view); });
+        var v = this;
+        $(this.getToggleLink()).click(function() { v.toggle.apply(v); });
+        $(this.getDeleteLink()).click(function() { v.onDelete.apply(v); });
 
         return this._html;
+    },
+
+    destroy: function() {
+        this._html.hide('fast', function() { $(this).remove(); });
+    },
+
+    onDelete: function(question_id) {
+        var tmp_id = this._q_obj.getTmpId();
+
+        if (null != tmp_id) {
+            deleteQuestion('new', id);
+        }
+        else {
+            var data = this._q_obj.getData();
+            deleteQuestion('old', data.question_id);
+        }
     },
 
     show: function() {
@@ -798,7 +853,7 @@ View_Question_PickOne_Edit = {
 
     hide: function() {
         var question = $(this.getQuestionInput())
-                         .text()
+                         .val()
                          .substr(0, 100)
                          .replace(/</g, '&lt;')
                          .replace(/>/g, '&gt;');
@@ -832,6 +887,8 @@ View_Question_PickOne_Edit = {
                 minWidth: answer.outerWidth()
             });
         });
+
+        this._html.hide().show('fast');
     },
 
     /**

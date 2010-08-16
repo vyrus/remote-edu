@@ -354,6 +354,29 @@
             );
             echo json_encode($response);
         }
+
+        public function action_ajax_delete_question() {
+            $request = $this->getRequest();
+
+            /**
+            * @todo Check whether 'question_id' key exists.
+            */
+            $question_id = $request->post['question_id'];
+
+            $test = Model_Test::create();
+            $result = $test->deleteQuestion($question_id);
+
+            $response = (
+                $result ?
+                    array('result' => true) :
+                    array(
+                        'result' => false,
+                        'error' => 'Неизвестная ошибка при удалении вопроса'
+                    )
+            );
+
+            echo json_encode($response);
+        }
     }
 
 ?>

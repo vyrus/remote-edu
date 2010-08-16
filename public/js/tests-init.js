@@ -185,3 +185,35 @@ function onAjaxError(xhr, textStatus, errorThrown) {
     var msg = 'Ошибка: ' + textStatus;
     $('#status').text(msg);
 }
+
+function deleteQuestion(category, id, force) {
+    if (undefined === force) {
+        force = false;
+    }
+
+    if ('new' == category || force) {
+        test.deleteQuestion(category, id);
+        return;
+    }
+
+    if ('old' == category) {
+        $('#status').text('Удаление...').show();
+
+        $.ajax({
+            type:     'POST',
+            url:      '/tests/ajax_delete_question',
+            data:     {question_id: id},
+            dataType: 'json',
+            error:    onAjaxError,
+            success:  function(response) {
+                if (response.result != true) {
+                    var msg = 'Не удалось удалить вопрос. ' + response.error;
+                    $('#status').text(msg);
+                } else {
+                    deleteQuestion(category, id, true);
+                    $('#status').hide();
+                }
+            }
+        });
+    }
+}
