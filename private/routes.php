@@ -126,6 +126,9 @@
             /* Удаление контрольной точки */
             array('/teacher_courses/remove_checkpoint/([0-9]+)/([0-9]+)', array('student_id', 'section_id'), 'teacher_courses', 'remove_checkpoint', 'teacher.remove_checkpoint', Mvc_Router::ROUTE_REGEX),
 
+            /* __Редактирование тестов__ */
+            array('/tests/edit/([0-9]+)', array('test_id'), 'tests', 'edit', 'tests.edit', Mvc_Router::ROUTE_REGEX),
+
             /* Инструкции для слушателя */
             array('/student', 'pages', 'display', array('page' => 'help/instructions'), 'student.index', Mvc_Router::ROUTE_STATIC),
 

@@ -312,4 +312,10 @@ CREATE TABLE `examinations` (
   PRIMARY KEY (  `examination_id` )
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+--
+-- Добавляем дату и время сдачи теста
+--
+
+ALTER TABLE `examinations` ADD `created` DATETIME NOT NULL AFTER `passed`;
+
 SET character_set_client = @saved_cs_client;

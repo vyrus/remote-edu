@@ -86,6 +86,26 @@
             $this->render();
         }
 
+        public function action_results(array $params = array()) {
+            if (null === ($test_id = array_shift($params))) {
+                /**
+                * @todo Insert real link here.
+                */
+                $msg = 'Не указан идентификатор теста';
+                $this->flash($msg, '#', false);
+            }
+
+            /**
+            * @todo Allow only ints in test_id with approriate route.
+            */
+
+            $test = Model_Test::create();
+            $results = $test->getResults($test_id);
+
+            $this->set('results', $results);
+            $this->render();
+        }
+
         public function action_ajax_save_options() {
             $request = $this->getRequest();
 
