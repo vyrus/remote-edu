@@ -50,6 +50,10 @@
     tr.even td {
         background-color: #ffffff;
     }
+
+    .extra-attempts {
+        color: #7d7d;
+    }
 </style>
 
 <div id="results">
@@ -59,7 +63,7 @@
             <th>Пользователь</th>
             <th>Тест</th>
             <th>Результат</th>
-            <th>Вопросы</th>
+            <th>Ошибок</th>
             <th>Время</th>
             <th>Попытка</th>
         </tr>
@@ -89,19 +93,30 @@
             </td>
 
             <td>
-                Неправильно: <?php echo $r->num_errors ?> из <?php echo $r->num_questions ?>,
+                <?php echo $r->num_errors ?>,
                 <?php echo round($r->num_errors / $r->num_questions * 100, 2) ?>%
             </td>
 
             <td><?php echo _formatTimeMin($r->time) ?></td>
 
-            <td><?php echo $r->attempt_num ?> из <?php echo $r->attempts_limit ?></td>
+            <td>
+                <?php echo $r->attempt_num ?> из <?php echo $r->attempts_limit ?>
+
+                <?php if ($r->extra_attempts): ?>
+                    <span class="extra-attempts"> + <?php echo $r->extra_attempts ?></span>
+                <?php endif; ?>
+
+                <a href="<?php echo $this->_links->get(
+                    'tests.add-extra-attempt', array('user_id' => $r->user_id,
+                                                     'test_id' => $r->test_id)
+                ) ?>" title="Добавить дополнительную попытку">+</a>
+            </td>
         </tr>
         <?php endforeach; ?>
 
         <?php if (!$this->results->rowCount()): ?>
         <tr class="odd">
-            <td colspan="6" style="text-align: center;">
+            <td colspan="7" style="text-align: center;">
                 Тестирования ещё не проводились
             </td>
         </tr>

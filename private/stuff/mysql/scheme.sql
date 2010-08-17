@@ -324,4 +324,14 @@ ALTER TABLE `examinations` ADD `created` DATETIME NOT NULL AFTER `passed`;
 --
 ALTER TABLE `examinations` ADD `num_questions` INT NOT NULL AFTER `num_errors`;
 
+--
+-- Таблица для хранения дополнительных попыток сдач теста.
+--
+CREATE TABLE `extra_attempts` (
+    `user_id`        INT NOT NULL,
+    `test_id`        INT NOT NULL,
+    `extra_attempts` INT NOT NULL,
+    PRIMARY KEY (`user_id`, `test_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
 SET character_set_client = @saved_cs_client;
