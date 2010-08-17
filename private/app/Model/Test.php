@@ -343,8 +343,8 @@
         ) {
             $sql = '
                 INSERT INTO ' . $this->_tables['examinations'] . '
-                (user_id, test_id, time, num_errors, passed)
-                VALUES (:uid, :tid, :time, :num_errors, :passed)
+                (user_id, test_id, time, num_errors, passed, created)
+                VALUES (:uid, :tid, :time, :num_errors, :passed, NOW())
             ';
 
             $user = Model_User::create();
@@ -391,6 +391,46 @@
 
         public static function calcAllowableErrors($num_questions, $errors_limit) {
             return round($num_questions / 100 * $errors_limit);
+        }
+
+        /**
+        * put your comment there...
+        *
+        * @param  mixed $test_id
+        * @return Db_Pdo_Statement
+        */
+        public function getResults($test_id) {
+            $sql = '
+                SELECT e.*,
+                       u.user_id, u.surname, u.name, u.patronymic,
+                       t.theme, t.attempts_limit,
+                       (
+                           SELECT COUNT(*)
+                           FROM ' . $this->_tables['examinations'] . ' ea
+                           WHERE ea.test_id = e.test_id AND
+                                 ea.user_id = e.user_id AND
+                                 ea.examination_id <= e.examination_id
+                           ORDER BY ea.examination_id
+                       ) AS attempt_num
+
+                FROM ' . $this->_tables['examinations'] . ' e
+
+                LEFT JOIN ' . $this->_tables['users'] . ' u
+                ON u.user_id = e.user_id
+
+                LEFT JOIN ' . $this->_tables['tests'] . ' t
+                ON t.test_id = e.test_id
+
+                WHERE e.test_id = ?
+
+                ORDER BY created
+            ';
+
+            $stmt = $this->prepare($sql);
+            $stmt->execute(array($test_id));
+            $stmt->setFetchMode(Db_Pdo::FETCH_OBJ);
+
+            return $stmt;
         }
     }
 
