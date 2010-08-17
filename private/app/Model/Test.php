@@ -328,6 +328,11 @@
             $allowable_errors = self::calcAllowableErrors($test->num_questions,
                                                           $test->errors_limit);
 
+            /**
+            * @todo Добавить проверку на количество попыток (можно открыть 10
+            * окон с тестированием и ограничение не сработает).
+            */
+
             $passed  = ($num_errors > $allowable_errors ? false : true);
             $passed &= ($results->time > $test->time_limit ? false : true);
 
@@ -368,7 +373,7 @@
             return $this->lastInsertId();
         }
 
-        public function attemptsRemains($test_id, $attempts_limit) {
+        public function getUsedAttempts($user_id, $test_id) {
             $sql = '
                 SELECT COUNT(*)
                 FROM ' . $this->_tables['examinations'] . '
@@ -376,25 +381,20 @@
                       user_id = :uid
             ';
 
-            $user = Model_User::create();
-            $udata = (object) $user->getAuth();
-
             $values = array(
                 'tid' => $test_id,
-                'uid' => $udata->user_id
+                'uid' => $user_id
             );
 
             $stmt = $this->prepare($sql);
             $stmt->execute($values);
 
-            $attempts_used = $stmt->fetchColumn();
-            $attempts_remaining = $attempts_limit - $attempts_used;
-
-            return $attempts_remaining;
+            $used = $stmt->fetchColumn();
+            return $used;
         }
 
         public static function calcAllowableErrors($num_questions, $errors_limit) {
-            return round($num_questions / 100 * $errors_limit);
+            return floor($num_questions / 100 * $errors_limit);
         }
 
         /**
@@ -411,11 +411,17 @@
                        (
                            SELECT COUNT(*)
                            FROM ' . $this->_tables['examinations'] . ' ea
-                           WHERE ea.test_id = e.test_id AND
-                                 ea.user_id = e.user_id AND
+                           WHERE ea.user_id = e.user_id AND
+                                 ea.test_id = e.test_id AND
                                  ea.examination_id <= e.examination_id
                            ORDER BY ea.examination_id
-                       ) AS attempt_num
+                       ) AS attempt_num,
+                       (
+                           SELECT extra_attempts
+                            FROM ' . $this->_tables['extra_attempts'] . ' a
+                            WHERE a.user_id = e.user_id AND
+                                  a.test_id = e.test_id
+                       ) AS extra_attempts
 
                 FROM ' . $this->_tables['examinations'] . ' e
 
@@ -435,6 +441,54 @@
             $stmt->setFetchMode(Db_Pdo::FETCH_OBJ);
 
             return $stmt;
+        }
+
+        /**
+        * put your comment there...
+        *
+        * @param  mixed $user_id
+        * @param  mixed $test_id
+        * @return void
+        */
+        public function addExtraAttempt($user_id, $test_id) {
+            $sql = '
+                INSERT INTO ' . $this->_tables['extra_attempts'] . '
+                (user_id, test_id, extra_attempts)
+                VALUES (:uid, :tid, 1)
+                ON DUPLICATE KEY UPDATE extra_attempts = extra_attempts + 1
+            ';
+
+            $values = array(
+                'uid' => $user_id,
+                'tid' => $test_id
+            );
+
+            $stmt = $this->prepare($sql);
+            $stmt->execute($values);
+        }
+
+        public function getExtraAttempts($user_id, $test_id) {
+            $sql = '
+                SELECT extra_attempts
+                FROM ' . $this->_tables['extra_attempts'] . '
+                WHERE user_id = :uid AND
+                      test_id = :tid
+            ';
+
+            $values = array(
+                'uid' => $user_id,
+                'tid' => $test_id,
+            );
+
+            $stmt = $this->prepare($sql);
+            $stmt->execute($values);
+
+            if (!$stmt->rowCount()) {
+                return 0;
+            }
+
+            $extra = $stmt->fetchColumn();
+            return $extra;
         }
     }
 

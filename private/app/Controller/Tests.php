@@ -67,21 +67,28 @@
             $test_id = array_shift($params);
 
             $test = Model_Test::create();
-            $data = $test->get($test_id);
+            $tdata = (object) $test->get($test_id);
 
-            $attempts_remaining = $test->attemptsRemains(
-                $test_id, $data['attempts_limit']
-            );
+            $user = Model_User::create();
+            $udata = (object) $user->getAuth();
+
+            $attempts_used  = $test->getUsedAttempts($udata->user_id, $test_id);
+            $extra_attempts = $test->getExtraAttempts($udata->user_id,$test_id);
+
+            $attempts_remaining = $tdata->attempts_limit + $extra_attempts -
+                                  $attempts_used;
 
             /**
             * @todo Нормальная ссылка.
             */
-            if (!$attempts_remaining) {
+            if ($attempts_remaining <= 0) {
                 $msg = 'У вас больше не осталось попыток для сдачи этого теста';
                 $this->flash($msg, '#', false);
             }
 
-            $this->set('test', $data);
+            $this->set('test', $tdata);
+            $this->set('attempts_used',      $attempts_used);
+            $this->set('extra_attempts',     $extra_attempts);
             $this->set('attempts_remaining', $attempts_remaining);
             $this->render();
         }
@@ -104,6 +111,21 @@
 
             $this->set('results', $results);
             $this->render();
+        }
+
+        public function action_add_extra_attempt(array $params) {
+            $params = (object) $params;
+
+            $test = Model_Test::create();
+            $result = $test->addExtraAttempt($params->user_id,
+                                             $params->test_id);
+
+            $links = Resources_Abstract::getInstance()->links;
+            $link  = $links->get('tests.results',
+                                 array('test_id' => $params->test_id));
+            $msg = 'Дополнительная попытка добавлена';
+
+            $this->flash($msg, $link);
         }
 
         public function action_ajax_save_options() {

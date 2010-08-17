@@ -84,7 +84,11 @@
 
         <tr>
             <td class="label">Попыток:</td>
-            <td><?php echo $test->attempts_limit ?> (осталось <?php echo $this->attempts_remaining ?>)</td>
+            <td>
+                <?php echo $test->attempts_limit ?>
+                <?php echo ($this->extra_attempts ? ' + ' . $this->extra_attempts : '') ?>
+                (осталось <?php echo $this->attempts_remaining ?>)
+            </td>
         </tr>
     </table>
 </div>
