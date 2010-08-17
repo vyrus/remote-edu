@@ -318,4 +318,10 @@ CREATE TABLE `examinations` (
 
 ALTER TABLE `examinations` ADD `created` DATETIME NOT NULL AFTER `passed`;
 
+--
+-- Добавляем количество вопросов при тестровании, чтобы сохранить результаты
+-- корректными, если это количество изменится в свойствах теста
+--
+ALTER TABLE `examinations` ADD `num_questions` INT NOT NULL AFTER `num_errors`;
+
 SET character_set_client = @saved_cs_client;

@@ -324,6 +324,7 @@
             $test = (object) $this->get($test_id);
             $num_errors = sizeof($results->incorrect) +
                           sizeof($results->unanswered);
+
             $allowable_errors = self::calcAllowableErrors($test->num_questions,
                                                           $test->errors_limit);
 
@@ -332,30 +333,33 @@
 
             $results->passed = $passed;
 
-            $this->_saveExamResults($test_id, $num_errors,
+            $this->_saveExamResults($test_id, $num_errors, $test->num_questions,
                                     $results->time, $results->passed);
 
             return $results;
         }
 
         protected function _saveExamResults(
-            $test_id, $num_errors, $time, $passed
+            $test_id, $num_errors, $num_questions, $time, $passed
         ) {
             $sql = '
                 INSERT INTO ' . $this->_tables['examinations'] . '
-                (user_id, test_id, time, num_errors, passed, created)
-                VALUES (:uid, :tid, :time, :num_errors, :passed, NOW())
+                (user_id, test_id, time, num_errors, num_questions, passed,
+                created)
+                VALUES
+                (:uid, :tid, :time, :num_errors, :num_questions, :passed, NOW())
             ';
 
             $user = Model_User::create();
             $udata = (object) $user->getAuth();
 
             $values = array(
-                'uid'        => $udata->user_id,
-                'tid'        => $test_id,
-                'time'       => $time,
-                'num_errors' => $num_errors,
-                'passed'     => ($passed ? 'true' : 'false')
+                'uid'           => $udata->user_id,
+                'tid'           => $test_id,
+                'time'          => $time,
+                'num_errors'    => $num_errors,
+                'num_questions' => $num_questions,
+                'passed'        => ($passed ? 'true' : 'false')
             );
 
             $stmt = $this->prepare($sql);
