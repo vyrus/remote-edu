@@ -88,7 +88,10 @@
                 ) ?>" />
             </td>
 
-            <td>Неправильно: <?php echo $r->num_errors ?></td>
+            <td>
+                Неправильно: <?php echo $r->num_errors ?> из <?php echo $r->num_questions ?>,
+                <?php echo round($r->num_errors / $r->num_questions * 100, 2) ?>%
+            </td>
 
             <td><?php echo _formatTimeMin($r->time) ?></td>
 
