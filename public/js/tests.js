@@ -518,7 +518,7 @@ Question_PickOne = {
         var view = new View_Question_PickOne_Edit();
         var html = view.render(this, {
             num_answers: this._num_answers,
-            q:           q_data,
+            q:           q_data
         });
 
         this._view = view;
