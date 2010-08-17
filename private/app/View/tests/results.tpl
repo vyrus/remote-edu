@@ -52,7 +52,7 @@
     }
 
     .extra-attempts {
-        color: #7d7d;
+        color: #7d7d7d;
     }
 </style>
 
