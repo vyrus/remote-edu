@@ -194,6 +194,10 @@ function deleteQuestion(category, id, force) {
         force = false;
     }
 
+    if (!confirm('Вы действительно хотите удалить вопрос?')) {
+        return false;
+    }
+
     if ('new' == category || force) {
         test.deleteQuestion(category, id);
         return;
