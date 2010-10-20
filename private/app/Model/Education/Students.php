@@ -28,10 +28,10 @@
         public static function create() {
             return new self();
         }
+
         /**
-        * Получение списка студентов.
+        * Получение списка всех студентов.
         *
-        * @param  int $id Идентификатор.
         * @return array|false
         */
         public function getStudentList() {
@@ -46,5 +46,32 @@
 
             return $stmt->fetchAll();
         }
+
+        /**
+        * Получение списка слушателей, куратором которых является указанный преподаватель.
+        *
+        * @param  int $curator_id Идентификатор преподавателя.
+        * @return array|false
+        */
+        public function getListenerList($curator_id) {
+            $sql = '
+                SELECT user_id, login, surname, name, patronymic
+                FROM ' . $this->_table . '
+                WHERE
+                    role = :role AND
+                    curator = :curator
+            ';
+
+            $values = array(
+                ':curator' => $curator_id,
+                ':role'    => 'student'
+            );
+
+            $stmt = $this->prepare($sql);
+            $stmt->execute($values);
+
+            return $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
+        }
     }
+
 ?>
