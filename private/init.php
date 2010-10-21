@@ -37,7 +37,7 @@
     require_once 'Zend/Loader/Autoloader.php';
     Zend_Loader_Autoloader::getInstance()
         ->setFallbackAutoloader(true)
-        ->suppressNotFoundWarnings(true);
+        ->suppressNotFoundWarnings(false);
 
     /* Загружаем конфигурацию */
     $config = require_once 'config.php';
@@ -52,7 +52,7 @@
         /* Если включён режим отладки, то... */
         case 'debug':
             /* Включаваем вывод всех-всех ошибок */
-            Init::setErrorReporting(E_ALL | E_STRICT);
+            Init::setErrorReporting(E_ALL);
             /* Включаем вывод ошибок */
             Init::displayErrors(true);
             /* И отключаем запись ошибок в логи */
