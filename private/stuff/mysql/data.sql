@@ -85,6 +85,13 @@ INSERT INTO `checkpoints` (`section_id`, `student_id`) VALUES
 (6, 3);
 
 --
+-- Дамп данных таблицы `checkpoints2`
+--
+
+INSERT INTO `checkpoints2` (`object_id`, `object_type`, `title`, `text`, `type`, `test_id`) VALUES
+(10, 'section', 'Контрольная точка раздела', 'Текст контрольной точки раздела', 'test', NULL);
+
+--
 -- Дополнительные данные таблицы `materials` для проверки работы контрольных точек
 --
 

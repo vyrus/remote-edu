@@ -120,6 +120,9 @@
             /* Работа ответственного преподавателя с курсами */
             //array('/teacher_courses/course/([0-9]+)?', array('course_id'), 'teacher_courses', 'course', 'teacher.course', Mvc_Router::ROUTE_REGEX),
 
+            /* Редактирование контрольной точки */
+            array('/admin/checkpoints/edit/', array('checkpoint_id'), 'checkpoints', 'edit', 'checkpoints.edit', Mvc_Router::ROUTE_REGEX),
+
             /* Добавление контрольной точки */
             array('/teacher_courses/set_checkpoint/([0-9]+)/([0-9]+)', array('student_id', 'section_id'), 'teacher_courses', 'set_checkpoint', 'teacher.set_checkpoint', Mvc_Router::ROUTE_REGEX),
 
@@ -256,16 +259,18 @@
             /* Администратор */
             Model_User::ROLE_ADMIN => array
             (
+                'admin/checkpoints/edit',                // Редактирование контрольной точки
+
                 '/assignment/responsible_teacher',
                 '/assignment/students_curator',
                 '/assignment',
 
-                'users/register_employee_by_admin',       // учебные материалы, доступные для слушателя
+                'users/register_employee_by_admin',     // учебные материалы, доступные для слушателя
                 'users/users_list',
                 'users/edit_account',
                 'users/view_profile',
 
-                'applications/index_by_admin',            // список поданных заявок всех пользователей
+                'applications/index_by_admin',          // список поданных заявок всех пользователей
                 'applications/delete',
 
                 'payments/add',

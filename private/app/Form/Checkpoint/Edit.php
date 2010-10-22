@@ -1,5 +1,6 @@
 <?php
-    class Form_Section_Edit extends Form_Section_Abstract {
+    class Form_Checkpoint_Edit extends Form_Checkpoint_Abstract {
+/*
         private function addSection () {
             $this->addField ('section');
 
@@ -54,10 +55,10 @@
                 ($this->validateNumber ($educationPrograms, $request))
             );
         }
-
+*/
         public function __construct ($action) {
             parent::__construct ($action);
-            $this->addSection ();
+            //$this->addSection ();
         }
 
         public static function create($action) {

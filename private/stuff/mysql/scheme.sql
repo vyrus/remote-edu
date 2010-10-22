@@ -273,6 +273,39 @@ CREATE TABLE IF NOT EXISTS `checkpoints` (
 ALTER TABLE `checkpoints` ADD `created` datetime DEFAULT NULL AFTER `student_id`;
 
 --
+-- Структура таблицы `checkpoints2`
+--
+
+CREATE TABLE IF NOT EXISTS `checkpoints2` (
+  `object_id` int(11) NOT NULL,
+  `object_type` set('program','discipline','section') NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `text` text,
+  `type` set('lab','control','test') NOT NULL,
+  `test_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`object_id`,`object_type`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Структура таблицы `checkpoint_materials`
+--
+
+CREATE TABLE IF NOT EXISTS `checkpoint_materials` (
+  `checkpoint_id` int(11) NOT NULL,
+  `material_id` int(11) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Структура таблицы `checkpoint_students`
+--
+
+CREATE TABLE IF NOT EXISTS `checkpoint_students` (
+  `checkpoint_id` int(11) NOT NULL,
+  `student_id` int(11) NOT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '1'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
 -- Таблица для хранения вопросов к тестам.
 --
 

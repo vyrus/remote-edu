@@ -7,6 +7,7 @@
             'applications'      => 'applications',
             'apps_history'      => 'apps_history',
             'checkpoints'       => 'checkpoints',
+            'checkpoints2'      => 'checkpoints2',
             'disciplines'       => 'disciplines',
             'edu_docs'          => 'edu_docs',
             'extra_attempts'    => 'extra_attempts',

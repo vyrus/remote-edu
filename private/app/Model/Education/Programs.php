@@ -881,6 +881,56 @@ QUERY;
         }
 
         /**
+        * Создаёт/обновляет контрольную точку.
+        *
+        * @param  int $object_id Идентификатор учебной единицы.
+        * @param  int $object_type Тип учебной единицы (программа, дисциплина, раздел).
+        * @param  int $title Заголовок контрольной точки.
+        * @param  int $text Тескт контрольной точки.
+        * @param  int $type Тип контрольной точки.
+        * @return void
+        */
+        public function setCheckpoint2($object_id, $object_type, $title, $text, $type) {
+            $sql = '
+                INSERT INTO ' . $this->_tables['checkpoints2'] . ' (`object_id`, `object_type`, `title`, `text`, `type`)
+                VALUES (:object_id, :object_type, :title, :text, :type)
+                ON DUPLICATE KEY UPDATE `title`=:title, `text`=:text, `type`=:type';
+            $values = array(
+                ':object_id' => $object_id,
+                ':object_type' => $object_type,
+                ':title' => $title,
+                ':text' => $text,
+                ':type' => $type
+            );
+            $this->prepare($sql)->execute($values);
+        }
+
+        /**
+        * Возвращает контрольную точку.
+        *
+        * @param  int $object_id Идентификатор объекта, к которому относится контрольная точка.
+        * @param  int $object_type Тип объекта (программа обучения, дисциплина, раздел).
+        * @return array|false
+        */
+        public function getCheckpoint($object_id, $object_type) {
+            $sql = 'SELECT *
+            FROM ' . $this->_tables['checkpoints2'] . '
+            WHERE
+                object_id = :object_id AND
+                object_type = :object_type';
+
+            $values = array(
+                ':object_id'   => $object_id,
+                ':object_type' => $object_type
+            );
+
+            $stmt = $this->prepare($sql);
+            $stmt->execute($values);
+
+            return $stmt->fetch(Db_Pdo::FETCH_ASSOC);
+        }
+
+        /**
         * Создаёт контрольную точку.
         *
         * @param  int $student_id Идентификатор студента.

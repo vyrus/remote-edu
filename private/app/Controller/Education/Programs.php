@@ -280,35 +280,43 @@
         public function action_edit_section ($params) {
             $links = Resources::getInstance()->links;
 
-            $this->set ('buttonCaption', 'Сохранить');
-
             $request = $this->getRequest ();
-            $request->set ('section', $params['section_id']);
+            $request->set('section', $params['section_id']);
 
             $opts = array('section_id' => $params['section_id']);
             $action = $links->get('sections.edit', $opts);
 
-            $form = Form_Section_Edit::create ($action);
-            $this->set ('form', $form);
+            $form = Form_Section_Edit::create($action);
+            $this->set('form', $form);
             $method = $form->method ();
 
             $educationPrograms = Model_Education_Programs::create ();
 
-            if (empty ($request->$method)) {
-                if (! $form->validateID ($educationPrograms, $request)) {
-                    $this->render ('education_programs/section_form');
+            if (empty($request->$method)) {
+                if (!$form->validateID($educationPrograms, $request)) {
+                    $this->render('education_programs/section_form');
                 }
 
                 $educationPrograms->getSection ($params['section_id'], $title, $number);
 
-                $form->setValue ('title', 	$title);
-                $form->setValue ('number', 	$number);
+                $form->setValue('title', $title);
+                $form->setValue('number', $number);
 
-                $this->render ('education_programs/section_form');
+                $checkpoint = $educationPrograms->getCheckpoint($params['section_id'], 'section');
+                $action = $links->get('checkpoints.edit');
+                $form_checkpoint = Form_Checkpoint_Edit::create($action);
+                $form_checkpoint->setValue('title', $checkpoint['title']);
+                $form_checkpoint->setValue('text', $checkpoint['text']);
+                $form_checkpoint->setValue('type', $checkpoint['type']);
+                $this->set('form_checkpoint', $form_checkpoint);
+                $this->set('checkpoint_object_id', $params['section_id']);
+                $this->set('checkpoint_object_type', 'section');
+
+                $this->render('education_programs/section_form');
             }
 
-            if (! $form->validate ($request, $educationPrograms)) {
-                $this->render ('education_programs/section_form');
+            if (!$form->validate($request, $educationPrograms)) {
+                $this->render('education_programs/section_form');
             }
 
             $educationPrograms->editSection (
