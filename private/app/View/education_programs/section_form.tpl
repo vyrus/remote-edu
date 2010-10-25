@@ -45,4 +45,4 @@
     </div>
 </form>
 <h3>Контрольная точка раздела</h3>
-<?php include('checkpoint_form.tpl'); ?>
+<?php $this->renderElement('checkpoint-form') ?>

@@ -53,4 +53,4 @@
 </div>
 </form>
 <h3>Контрольная точка дисциплины</h3>
-<?php include('checkpoint_form.tpl'); ?>
+<?php $this->renderElement('checkpoint-form') ?>
