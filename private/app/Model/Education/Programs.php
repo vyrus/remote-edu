@@ -890,14 +890,15 @@ QUERY;
         * @param  int $type Тип контрольной точки.
         * @return void
         */
-        public function setCheckpoint2($object_id, $object_type, $title, $text, $type) {
+        public function setCheckpoint2($object_id, $object_type, $active, $title, $text, $type) {
             $sql = '
-                INSERT INTO ' . $this->_tables['checkpoints2'] . ' (`object_id`, `object_type`, `title`, `text`, `type`)
-                VALUES (:object_id, :object_type, :title, :text, :type)
-                ON DUPLICATE KEY UPDATE `title`=:title, `text`=:text, `type`=:type';
+                INSERT INTO ' . $this->_tables['checkpoints2'] . ' (`object_id`, `object_type`, `active`, `title`, `text`, `type`)
+                VALUES (:object_id, :object_type, :active, :title, :text, :type)
+                ON DUPLICATE KEY UPDATE `active`=:active, `title`=:title, `text`=:text, `type`=:type';
             $values = array(
                 ':object_id' => $object_id,
                 ':object_type' => $object_type,
+                ':active' => $active,
                 ':title' => $title,
                 ':text' => $text,
                 ':type' => $type

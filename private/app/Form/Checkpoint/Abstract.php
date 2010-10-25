@@ -1,7 +1,13 @@
 <?php
     class Form_Checkpoint_Abstract extends Form_Abstract {
 
-        private function addTitle () {
+        private function addActive() {
+            $this
+                ->addField('active');
+            return $this;
+        }
+
+        private function addTitle() {
             $this
                 ->addField('title')
                 ->setValidator('/^.{3,256}$/ixu')
@@ -9,7 +15,7 @@
             return $this;
         }
 
-        private function addText () {
+        private function addText() {
             $this
                 ->addField('text')
                 ->setValidator('/^.{3,256}$/ixu')
@@ -17,13 +23,13 @@
             return $this;
         }
 
-        private function addType () {
+        private function addType() {
             $this
                 ->addField('type');
             return $this;
         }
 
-        private function addTestId () {
+        private function addTestId() {
             $this
                 ->addField('test_id');
             return $this;
@@ -33,6 +39,7 @@
             $this
                 ->setAction($action)
                 ->setMethod(self::METHOD_POST)
+                ->addActive()
                 ->addTitle()
                 ->addText()
                 ->addType()

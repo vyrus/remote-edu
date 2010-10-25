@@ -205,6 +205,17 @@
                 $form->setValue ('paidType', $paidType);
                 $form->setValue ('cost', $cost);
 
+                $checkpoint = $educationPrograms->getCheckpoint($params['program_id'], 'program');
+                $action = $links->get('checkpoints.edit');
+                $form_checkpoint = Form_Checkpoint_Edit::create($action);
+                $form_checkpoint->setValue('title', $checkpoint['title']);
+                $form_checkpoint->setValue('text', $checkpoint['text']);
+                $form_checkpoint->setValue('type', $checkpoint['type']);
+                $form_checkpoint->setValue('active', $checkpoint['active']);
+                $this->set('form_checkpoint', $form_checkpoint);
+                $this->set('checkpoint_object_id', $params['program_id']);
+                $this->set('checkpoint_object_type', 'program');
+
                 $this->render ('education_programs/program_form');
             }
 
@@ -255,6 +266,17 @@
                 $form->setValue ('title', $title);
                 $form->setValue ('labourIntensive', $labourIntensive);
                 $form->setValue ('coef', $coef);
+
+                $checkpoint = $educationPrograms->getCheckpoint($params['discipline_id'], 'discipline');
+                $action = $links->get('checkpoints.edit');
+                $form_checkpoint = Form_Checkpoint_Edit::create($action);
+                $form_checkpoint->setValue('title', $checkpoint['title']);
+                $form_checkpoint->setValue('text', $checkpoint['text']);
+                $form_checkpoint->setValue('type', $checkpoint['type']);
+                $form_checkpoint->setValue('active', $checkpoint['active']);
+                $this->set('form_checkpoint', $form_checkpoint);
+                $this->set('checkpoint_object_id', $params['discipline_id']);
+                $this->set('checkpoint_object_type', 'discipline');
 
                 $this->render ('education_programs/discipline_form');
             }
@@ -308,6 +330,7 @@
                 $form_checkpoint->setValue('title', $checkpoint['title']);
                 $form_checkpoint->setValue('text', $checkpoint['text']);
                 $form_checkpoint->setValue('type', $checkpoint['type']);
+                $form_checkpoint->setValue('active', $checkpoint['active']);
                 $this->set('form_checkpoint', $form_checkpoint);
                 $this->set('checkpoint_object_id', $params['section_id']);
                 $this->set('checkpoint_object_type', 'section');

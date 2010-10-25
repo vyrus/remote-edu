@@ -1,13 +1,13 @@
 <?php
-	$form = $this->form;
+    $form = $this->form;
 
-	if (isset ($form->speciality)) {
-		$speciality = $form->speciality;
-	}
+    if (isset ($form->speciality)) {
+        $speciality = $form->speciality;
+    }
 
-	if (isset ($form->discipline)) {
-		$discipline = $form->discipline;
-	}
+    if (isset ($form->discipline)) {
+        $discipline = $form->discipline;
+    }
 ?>
 
 <form action="<?php echo $form->action() ?>" method="<?php echo $form->method() ?>">
@@ -52,3 +52,5 @@
     </div>
 </div>
 </form>
+<h3>Контрольная точка дисциплины</h3>
+<?php include('checkpoint_form.tpl'); ?>
