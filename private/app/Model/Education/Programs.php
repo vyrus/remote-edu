@@ -888,20 +888,48 @@ QUERY;
         * @param  int $title Заголовок контрольной точки.
         * @param  int $text Тескт контрольной точки.
         * @param  int $type Тип контрольной точки.
+        * @param  int $test_id Идентификатор теста.
         * @return void
         */
-        public function setCheckpoint2($object_id, $object_type, $active, $title, $text, $type) {
+        public function setCheckpoint2($object_id, $object_type, $active, $title, $text, $type, $test_id) {
+            if (empty($test_id)) {
+                $test_id = null;
+            }
             $sql = '
-                INSERT INTO ' . $this->_tables['checkpoints2'] . ' (`object_id`, `object_type`, `active`, `title`, `text`, `type`)
-                VALUES (:object_id, :object_type, :active, :title, :text, :type)
-                ON DUPLICATE KEY UPDATE `active`=:active, `title`=:title, `text`=:text, `type`=:type';
+                INSERT INTO ' . $this->_tables['checkpoints2'] . ' (`object_id`, `object_type`, `active`, `title`, `text`, `type`, `test_id`)
+                VALUES (:object_id, :object_type, :active, :title, :text, :type, :test_id)
+                ON DUPLICATE KEY UPDATE `active`=:active, `title`=:title, `text`=:text, `type`=:type, `test_id`=:test_id';
             $values = array(
                 ':object_id' => $object_id,
                 ':object_type' => $object_type,
                 ':active' => $active,
                 ':title' => $title,
                 ':text' => $text,
-                ':type' => $type
+                ':type' => $type,
+                ':test_id' => $test_id
+            );
+            $this->prepare($sql)->execute($values);
+        }
+
+        /**
+        * Делает контрольную точку неактивной.
+        *
+        * @param  int $object_id Идентификатор учебной единицы.
+        * @param  int $object_type Тип учебной единицы (программа, дисциплина, раздел).
+        * @return void
+        */
+        public function setCheckpointInactive($object_id, $object_type) {
+            if (empty($test_id)) {
+                $test_id = null;
+            }
+            $sql = '
+                INSERT INTO ' . $this->_tables['checkpoints2'] . ' (`object_id`, `object_type`, `active`)
+                VALUES (:object_id, :object_type, :active)
+                ON DUPLICATE KEY UPDATE `active`=:active';
+            $values = array(
+                ':object_id' => $object_id,
+                ':object_type' => $object_type,
+                ':active' => false,
             );
             $this->prepare($sql)->execute($values);
         }

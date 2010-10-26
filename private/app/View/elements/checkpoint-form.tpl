@@ -1,16 +1,29 @@
 <?php $form_checkpoint = $this->form_checkpoint; ?>
 <script>
     function updateCheckboxForm() {
+        updateInputs();
+        updateTestId();
+    }
+
+    function updateInputs() {
         state = ($('#active').attr('checked')) ? false : true;
         $('#checkpoint_title').attr('disabled', state);
         $('#checkpoint_text').attr('disabled', state);
         $('#checkpoint_type').attr('disabled', state);
+        $('#checkpoint_test_id').attr('disabled', state);
+    }
+
+    function updateTestId() {
+        ($('#checkpoint_type option:selected').attr('value') == 'test') ? $('#checkpoint_test_id_field').show() : $('#checkpoint_test_id_field').hide();
     }
 
     $(document).ready(function() {
         updateCheckboxForm();
         $('#active').change(function () {
             updateCheckboxForm();
+        });
+        $('#checkpoint_type').change(function () {
+            updateTestId();
         });
     })
 </script>
@@ -58,6 +71,14 @@
         <?php if (isset($form_checkpoint->type->error)): ?>
         <div class="error"><?php echo $form_checkpoint->type->error; ?></div>
         <?php endif; ?>
+
+        <div class="field" id="checkpoint_test_id_field">
+            <label for="checkpoint_test_id">Идентификатор теста:</label>
+            <input id="checkpoint_test_id" name="<?php echo $form_checkpoint->test_id->name; ?>" type="text" value="<?php echo $form_checkpoint->test_id->value; ?>" />
+            <?php if (isset($form_checkpoint->test_id->error)): ?>
+            <div class="error"><?php echo $form_checkpoint->test_id->error; ?></div>
+            <?php endif; ?>
+        </div>
 
         <div class="field">
             <input type="submit" value="Сохранить" />

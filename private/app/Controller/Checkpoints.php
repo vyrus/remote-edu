@@ -17,12 +17,21 @@
             }
 
             $model = Model_Education_Programs::create();
-            $model->setCheckpoint2($params['checkpoint_object_id'],
-                                   $params['checkpoint_object_type'],
-                                   $params['active'],
-                                   $params['title'],
-                                   $params['text'],
-                                   $params['type']);
+
+            if (!$params['active']) {
+                $model->setCheckpointInactive(
+                    $params['checkpoint_object_id'],
+                    $params['checkpoint_object_type']
+                );
+            } else {
+                $model->setCheckpoint2($params['checkpoint_object_id'],
+                                       $params['checkpoint_object_type'],
+                                       $params['active'],
+                                       $params['title'],
+                                       $params['text'],
+                                       $params['type'],
+                                       $params['test_id']);
+            }
 
             $msg = 'Контрольная точка успешно изменена';
 
