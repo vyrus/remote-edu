@@ -1,13 +1,26 @@
-<?php
-    $form_checkpoint = $this->form_checkpoint;
-?>
+<?php $form_checkpoint = $this->form_checkpoint; ?>
+<script>
+    function updateCheckboxForm() {
+        state = ($('#active').attr('checked')) ? false : true;
+        $('#checkpoint_title').attr('disabled', state);
+        $('#checkpoint_text').attr('disabled', state);
+        $('#checkpoint_type').attr('disabled', state);
+    }
+
+    $(document).ready(function() {
+        updateCheckboxForm();
+        $('#active').change(function () {
+            updateCheckboxForm();
+        });
+    })
+</script>
 <form action="<?php echo $form_checkpoint->action() ?>" method="<?php echo $form_checkpoint->method() ?>">
     <div class="form">
         <input name="checkpoint_object_id" type="hidden" id="checkpoint_object_id" value="<?php echo $this->checkpoint_object_id; ?>" />
         <input name="checkpoint_object_type" type="hidden" id="checkpoint_object_type" value="<?php echo $this->checkpoint_object_type; ?>" />
         <div class="field">
             <label for="active">Активна</label>
-            <input name="active" type="checkbox" id="active" value="<?php echo $form_checkpoint->active->value; ?>"<?php if ($form_checkpoint->active->value) echo ' checked'; ?> />
+            <input name="active" type="checkbox" id="active" value="1" <?php if ($form_checkpoint->active->value) echo 'checked '; ?>/>
         </div>
         <div class="field">
             <label for="checkpoint_title">Заголовок:</label>
