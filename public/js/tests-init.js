@@ -41,6 +41,10 @@ $(document).ready(function()
         test.setId(test_id);
         loadTest(test_id);
     }
+
+    AjexFileManager.init({
+        returnTo: 'function'
+    });
 })
 
 function setOptions() {

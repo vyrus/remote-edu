@@ -61,6 +61,8 @@ function newClass(child, parent) {
     return new_class;
 }
 
+var ajex_fm_active_input;
+
 /**
 * Прототип объекта для создания тестов.
 */
@@ -746,13 +748,15 @@ View_Question_PickOne_Edit = {
         collapsed:       'question-collapsed',
         expanded:        'question-expanded',
         lnk_toggle:      'lnk-toggle-question',
-        lnk_delete:      'lnk-delete-question'
+        lnk_delete:      'lnk-delete-question',
+        lnk_add_img:     'lnk-add-img'
     },
 
     _tpl: {
         question: '<div class="{cls.wrapper}">' +
                        '<a href="" class="{cls.lnk_toggle}">Скрыть</a>&nbsp;' +
-                       '<a href="" class="{cls.lnk_delete}">Удалить</a>' +
+                       '<a href="" class="{cls.lnk_delete}">Удалить</a>&nbsp;' +
+                       '<a href="" class="{cls.lnk_add_img}">Вставить изображение</a>' +
 
                        '<div class="{cls.expanded}">' +
                            '<form class="{cls.form}">' +
@@ -829,6 +833,11 @@ View_Question_PickOne_Edit = {
         return this._get('lnk_delete');
     },
 
+
+    getAddImgLink: function() {
+        return this._get('lnk_add_img');
+    },
+
     getExpandedDiv: function() {
         return this._get('expanded');
     },
@@ -903,6 +912,11 @@ View_Question_PickOne_Edit = {
         var v = this;
         $(this.getToggleLink()).click(function() { return v.toggle.apply(v); });
         $(this.getDeleteLink()).click(function() { return v.onDelete.apply(v); });
+        $(this.getAddImgLink()).click(function(e) {
+            ajex_fm_active_input = v.getQuestionInput();
+            AjexFileManager.open({ returnTo: 'ajex_fm_insert' });
+            return false;
+        });
 
         return this._html;
     },
@@ -1097,3 +1111,13 @@ View_Question_PickOne_Show = {
 };
 View_Question_PickOne_Show = newClass(View_Question_PickOne_Show,
                                       View_Question_PickOne);
+
+function ajex_fm_insert(file_path) {
+    code = '<img src="' + file_path + '" />';
+
+    value = ajex_fm_active_input.text();
+    value += code;
+    ajex_fm_active_input.text(value);
+
+    ajex_fm_active_input = null;
+}

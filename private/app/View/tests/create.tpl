@@ -99,7 +99,10 @@
 <script type="text/javascript" src="<?php echo $this->_links->getPath('/js/jquery.nano.js') ?>"></script>
 <script type="text/javascript" src="<?php echo $this->_links->getPath('/js/jquery.scrollTo.js') ?>"></script>
 <script type="text/javascript" src="<?php echo $this->_links->getPath('/js/tests.js') ?>"></script>
+<script type="text/javascript" src="<?php echo $this->_links->getPath('/AjexFileManager/ajex.js') ?>"></script>
 <script type="text/javascript" src="<?php echo $this->_links->getPath('/js/tests-init.js') ?>"></script>
+
+
 <script type="text/javascript">
     var test,
         test_id = <?php echo isset($this->test_id) ? $this->test_id : 'null' ?>;
