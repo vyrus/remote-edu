@@ -1,36 +1,59 @@
+/**
+* Создание нового "класса".
+*
+* @link http://dklab.ru/chicken/nablas/40.html
+*/
 function newClass(child, parent) {
     var new_class = function() {
+        /* Если идёт только объявление нового класса, */
         if (new_class.__defining_class__) {
+            /* сохраняем родительский класс */
             this.__parent = new_class.prototype;
+            /* И выходим */
             return;
         }
 
+        /* Если задан метод-конструктор класса */
         if (new_class.__constructor__) {
+            /* Устанавливаем конструктор объекта на функцию класса */
             this.constructor = new_class;
+            /* И вызываем метод-конструктор */
             new_class.__constructor__.apply(this, arguments);
         }
     }
 
+    /* Устанавливаем пустой объект прототипом нового класса */
     new_class.prototype = {};
 
+    /* Если задан родительский класс, */
     if (parent) {
+        /* устанавливаем флаг, обозначающий объвление класса */
         parent.__defining_class__ = true;
+        /* Устанавливаем в качестве прототипа объект родительского класса */
         new_class.prototype = new parent();
+        /* И снимаем флаг */
         delete parent.__defining_class__;
 
+        /* Задаём оригинальный конструктор для родителя */
         new_class.prototype.constructor = parent;
+        /* И устанавливаем в качестве метода-конструктора конструктор объекта */
         new_class.__constructor__ = parent;
     }
 
+    /* Название метода-конструктор класса */
     var constr_name = '__construct';
 
+    /* Если задан объект со свойствами нового класса */
     if (child)
     {
+        /* Копируем свойства в сам класс */
         for (var prop in child) {
             new_class.prototype[prop] = child[prop];
         }
 
+        /* Если задан метод-конструктор, */
         if (child[constr_name] && Object != child[constr_name]) {
+            /* запоминаем его */
             new_class.__constructor__ = child[constr_name];
         }
     }
@@ -48,17 +71,17 @@ Test = {
     _id: null,
 
     /**
-    * Список вопросов, сохранённых в базе.
+    * Список вопросов, сохранённых в базе (при редактировании теста).
     */
     _questions: {},
 
     /**
-    * Список новых введённых запросов.
+    * Список новых введённых запросов (при редактировании теста).
     */
     _new_questions: {},
 
     /**
-    * Список вопросов при прохождении теста.
+    * Список выводимых слушателю вопросов (при сдачи теста).
     */
     _exam_questions: {},
 
@@ -79,11 +102,14 @@ Test = {
     */
     _view: null,
 
+    /**
+    * Конструктор класса.
+    *
+    * @param  string optsFormId Идентификатор формы опций на странице.
+    * @return void
+    */
     __construct: function(optsFormId) {
-        this._id = null;
-        this._questions = {};
-        this._new_questions = {};
-        this._last_tmp_id = -1;
+        /* Инициализируем объект представления для формы опций теста */
         this._view = new View_Test_Options(optsFormId);
     },
 
@@ -123,20 +149,22 @@ Test = {
     * @return void
     */
     addQuestion: function(type, container) {
-        /* Создаём объект вопроса и добавляем его форму на страницу */
+        /* Создаём объект вопроса */
         var q = new this._types_map[type]();
+        /* Устанавливаем временный идентификатор */
         q.setTmpId(++this._last_tmp_id);
+        /* Добавляем его форму на страницу */
         q.renderForm(container, undefined, true);
 
-        /* Сохраняем в списке вопросов теста */
+        /* И сохраняем в списке вопросов теста */
         this._new_questions[this._last_tmp_id] = q;
     },
 
     /**
     * Отображение ошибок в форме вопроса.
     *
-    * @param  string q_category Категория вопроса: new - новые, ещё не сохранённые вопросы, old - старые.
-    * @param  int    key        Идентификатор вопроса.
+    * @param  string q_category Категория вопроса: "new" - новые, ещё не сохранённые вопросы, "old" - старые.
+    * @param  int    id         Идентификатор вопроса.
     * @param  object errors     Список ошибок.
     * @return void
     */
@@ -284,48 +312,89 @@ Test = {
         return questions;
     },
 
+    /**
+    * Удаление вопроса из теста
+    *
+    * @param  string q_category Категория вопроса: "new" - новые вопросы, "old" - старые.
+    * @param  int    id         Идентификатор вопроса.
+    * @return void
+    */
     deleteQuestion: function(q_category, id) {
+        /* В зависимости от категории выбираем список вопросов */
         var questions = ('new' == q_category ?
                             this._new_questions :
                             this._questions);
 
+        /* Удаляем форму вопроса */
         questions[id].deleteForm();
+        /* И сам объект вопроса */
         delete questions[id];
     },
 
+    /**
+    * Установка настоящих идентификаторов для новых вопросов взамен временных.
+    *
+    * @param  array ids Список вида {tmp_id: new_id}.
+    * @return void
+    */
     setNewIds: function(ids) {
+        /* Сохраняем указатели на списки вопросов в области видимости функции */
         var new_questions = this._new_questions,
             old_questions = this._questions;
 
-        var setter = function(idx, elem) {
-            var q = new_questions[idx];
+        /* Задаём функцию для установки новых идентификаторов */
+        var setter = function(tmp_id, new_id) {
+            /* Находии нужный вопрос */
+            var q = new_questions[tmp_id];
+            /* Берём его данные */
             var data = q.getData();
 
-            data.question_id = elem;
+            /* Устанавливаем идентификатор */
+            data.question_id = new_id;
             q.setData(data);
+            /* И удаляем временный идентификатор */
             q.deleteTmpId();
 
+            /* Скрываем форму вопроса */
             q.hide();
 
+            /* Переносим объект вопроса в список со старыми вопросами */
             old_questions[data.question_id] = q;
-            delete new_questions[idx];
+            /* И удаляем его из списка новых вопросов */
+            delete new_questions[tmp_id];
         };
 
+        /* Обрабатываем список идентификаторов нашей функцией */
         $.each(ids, setter);
     },
 
+    /**
+    * Установка вопросов для тестирования.
+    *
+    * @param  array questions Список вопросов.
+    * @param  array container Контейнер на странице, в который будут добавляться вопросы.
+    * @return void
+    */
     setExamQuestions: function(questions, container) {
+        /* Сохраняем ссылки на необходимые атрибуты объекта в локальной области
+        видимости, чтобы к ним можно было обратиться из замыкания */
         var exam_questions = this._exam_questions;
         var factory = this._types_map;
 
+        /* Перебираем список вопросов */
         $.each(questions, function(q_id, q_data) {
+            /* Создаём объект вопроса нужного типа */
             var q_obj = factory[q_data.type]();
 
+            /* Устанавливаем идентификатор вопроса */
             q_data.question_id = q_id;
+            /* И запоминаем в объекте данные вопроса */
             q_obj.setExamData(q_data);
 
+            /* Выводим на страницу фому с вопросом */
             q_obj.renderExamForm(container);
 
+            /* И сохраняем объект вопроса в списке вопросов тестирования */
             exam_questions[q_id] = q_obj;
         });
     },
