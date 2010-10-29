@@ -54,3 +54,33 @@
 </div>
 
 <input type="button" id="btn-finish" value="Закончить тестирование" style="display: none;" />
+
+<div id="results" style="display: none;">
+    <table>
+        <tr>
+            <td class="label">Время тестирование:</td>
+            <td id="exam-time"></td>
+        </tr>
+
+        <tr>
+            <td class="label">Правильных ответов:</td>
+            <td id="exam-corr-answers"></td>
+        </tr>
+
+        <tr>
+            <td class="label">Неправильных ответов:</td>
+            <td id="exam-incorr-answers"></td>
+        </tr>
+
+        <tr>
+            <td class="label">Процент ошибок:</td>
+            <td id="exam-mistakes-perc"></td>
+        </tr>
+
+        <tr>
+            <td class="label">Результат:</td>
+            <td id="exam-result"></td>
+        </tr>
+    </table>
+    <a href="#">Далее</a>
+</div>

@@ -54,7 +54,7 @@
             </td>
 
             <td>
-                <?php echo $r->num_errors ?>,
+                <?php echo $r->num_errors ?> &ndash;
                 <?php echo round($r->num_errors / $r->num_questions * 100, 2) ?>%
             </td>
 

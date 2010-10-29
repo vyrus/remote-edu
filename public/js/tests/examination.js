@@ -72,15 +72,25 @@ function onCheckAnswersSuccess(response) {
         return;
     }
 
-    test.displayCorrectness(response.results);
+    var results = response.results;
+    test.displayCorrectness(results);
 
-    alert('Correct: ' + response.results.correct.length + '\n' +
-          'Incorrect: ' + response.results.incorrect.length + '\n' +
-          'Unanswered: ' + response.results.unanswered.length + '\n' +
-          'Time: ' + response.results.time + '\n' +
-          'Passed: ' + response.results.passed);
+    time = Math.round(results.time / 60 * 100) / 100;
+    corr_answers = results.correct.length;
+    incorr_answers = results.incorrect.length + results.unanswered.length;
+
+    num_questions = corr_answers + incorr_answers;
+    mistakes = Math.round(incorr_answers / num_questions * 100 * 100) / 100;
+    passed = (results.passed ? 'Тест сдан' : 'Тест не сдан');
+
+    $('#exam-time').text(time + ' мин');
+    $('#exam-corr-answers').text(corr_answers);
+    $('#exam-incorr-answers').text(incorr_answers);
+    $('#exam-mistakes-perc').text(mistakes + '%');
+    $('#exam-result').text(passed);
 
     $('#status').hide();
+    $('#results').show();
 }
 
 function onAjaxError(xhr, textStatus, errorThrown) {

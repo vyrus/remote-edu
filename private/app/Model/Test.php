@@ -160,6 +160,7 @@
                 SELECT *
                 FROM ' . $this->_tables['questions'] . '
                 WHERE test_id = ?
+                ORDER BY question_id ASC
             ';
 
             $stmt = $this->prepare($sql);
