@@ -20,17 +20,17 @@
 
             if (!$params['active']) {
                 $model->setCheckpointInactive(
-                    $params['checkpoint_object_id'],
-                    $params['checkpoint_object_type']
+                    $params['section_id']
                 );
             } else {
-                $model->setCheckpoint2($params['checkpoint_object_id'],
-                                       $params['checkpoint_object_type'],
-                                       $params['active'],
-                                       $params['title'],
-                                       $params['text'],
-                                       $params['type'],
-                                       $params['test_id']);
+                $model->setCheckpoint(
+                    $params['section_id'],
+                    $params['active'],
+                    $params['title'],
+                    $params['text'],
+                    $params['type'],
+                    $params['test_id']
+                );
             }
 
             $msg = 'Контрольная точка успешно изменена';

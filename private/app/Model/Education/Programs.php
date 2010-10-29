@@ -762,12 +762,12 @@ QUERY;
         * @return array
         */
         public function getCheckpointsByDiscipline($discipline_id) {
-            $sql = 'SELECT u.user_id, c.section_id, c.created
-            FROM ' . $this->_tables['checkpoints'] . ' c
+            $sql = 'SELECT u.user_id, cs.section_id, cs.created
+            FROM ' . $this->_tables['checkpoints_students'] . ' cs
             LEFT JOIN ' . $this->_tables['users'] . ' u
-            ON c.student_id = u.user_id
+            ON cs.student_id = u.user_id
             LEFT JOIN ' . $this->_tables['sections'] . ' s
-            ON s.section_id = c.section_id
+            ON s.section_id = cs.section_id
             WHERE s.discipline_id = ?';
 
             $stmt = $this->prepare($sql);
@@ -883,25 +883,23 @@ QUERY;
         /**
         * Создаёт/обновляет контрольную точку.
         *
-        * @param  int $object_id Идентификатор учебной единицы.
-        * @param  int $object_type Тип учебной единицы (программа, дисциплина, раздел).
+        * @param  int $section_id Идентификатор раздела, к которому относится контрольная точка.
         * @param  int $title Заголовок контрольной точки.
         * @param  int $text Тескт контрольной точки.
         * @param  int $type Тип контрольной точки.
         * @param  int $test_id Идентификатор теста.
         * @return void
         */
-        public function setCheckpoint2($object_id, $object_type, $active, $title, $text, $type, $test_id) {
+        public function setCheckpoint($section_id, $active, $title, $text, $type, $test_id) {
             if (empty($test_id)) {
                 $test_id = null;
             }
             $sql = '
-                INSERT INTO ' . $this->_tables['checkpoints2'] . ' (`object_id`, `object_type`, `active`, `title`, `text`, `type`, `test_id`)
-                VALUES (:object_id, :object_type, :active, :title, :text, :type, :test_id)
+                INSERT INTO ' . $this->_tables['checkpoints'] . ' (`section_id`, `active`, `title`, `text`, `type`, `test_id`)
+                VALUES (:section_id, :active, :title, :text, :type, :test_id)
                 ON DUPLICATE KEY UPDATE `active`=:active, `title`=:title, `text`=:text, `type`=:type, `test_id`=:test_id';
             $values = array(
-                ':object_id' => $object_id,
-                ':object_type' => $object_type,
+                ':section_id' => $section_id,
                 ':active' => $active,
                 ':title' => $title,
                 ':text' => $text,
@@ -912,45 +910,18 @@ QUERY;
         }
 
         /**
-        * Делает контрольную точку неактивной.
-        *
-        * @param  int $object_id Идентификатор учебной единицы.
-        * @param  int $object_type Тип учебной единицы (программа, дисциплина, раздел).
-        * @return void
-        */
-        public function setCheckpointInactive($object_id, $object_type) {
-            if (empty($test_id)) {
-                $test_id = null;
-            }
-            $sql = '
-                INSERT INTO ' . $this->_tables['checkpoints2'] . ' (`object_id`, `object_type`, `active`)
-                VALUES (:object_id, :object_type, :active)
-                ON DUPLICATE KEY UPDATE `active`=:active';
-            $values = array(
-                ':object_id' => $object_id,
-                ':object_type' => $object_type,
-                ':active' => false,
-            );
-            $this->prepare($sql)->execute($values);
-        }
-
-        /**
         * Возвращает контрольную точку.
         *
-        * @param  int $object_id Идентификатор объекта, к которому относится контрольная точка.
-        * @param  int $object_type Тип объекта (программа обучения, дисциплина, раздел).
+        * @param  int $section_id Идентификатор раздела, к которому относится контрольная точка.
         * @return array|false
         */
-        public function getCheckpoint($object_id, $object_type) {
+        public function getCheckpoint($section_id) {
             $sql = 'SELECT *
-            FROM ' . $this->_tables['checkpoints2'] . '
-            WHERE
-                object_id = :object_id AND
-                object_type = :object_type';
+            FROM ' . $this->_tables['checkpoints'] . '
+            WHERE section_id = :section_id';
 
             $values = array(
-                ':object_id'   => $object_id,
-                ':object_type' => $object_type
+                ':section_id'   => $section_id
             );
 
             $stmt = $this->prepare($sql);
@@ -960,15 +931,33 @@ QUERY;
         }
 
         /**
-        * Создаёт контрольную точку.
+        * Делает контрольную точку неактивной.
+        *
+        * @param  int $section_id Идентификатор раздела, к которому относится контрольная точка.
+        * @return void
+        */
+        public function setCheckpointInactive($section_id) {
+            $sql = '
+                INSERT INTO ' . $this->_tables['checkpoints'] . ' (`section_id`, `active`)
+                VALUES (:section_id, :active)
+                ON DUPLICATE KEY UPDATE `active`=:active';
+            $values = array(
+                ':section_id' => $section_id,
+                ':active' => false
+            );
+            $this->prepare($sql)->execute($values);
+        }
+
+        /**
+        * Устанавливает прохождение контрольной точки для студента.
         *
         * @param  int $student_id Идентификатор студента.
         * @param  int $section_id Идентификатор раздела.
         * @return void
         */
-        public function setCheckpoint($params) {
+        public function setCheckpointPass($params) {
             $sql = '
-                INSERT INTO ' . $this->_tables['checkpoints'] . ' (`student_id`, `section_id`, `created`)
+                INSERT INTO ' . $this->_tables['checkpoints_students'] . ' (`student_id`, `section_id`, `created`)
                 VALUES (:student_id, :section_id, NOW())';
             $sql_params = array(
                 ':student_id' => $params['student_id'],
@@ -978,15 +967,15 @@ QUERY;
         }
 
         /**
-        * Удаляет контрольную точку.
+        * Удаляет прохождение контрольной точки для студента.
         *
         * @param  int $student_id Идентификатор студента.
         * @param  int $section_id Идентификатор раздела.
         * @return void
         */
-        public function removeCheckpoint($params) {
+        public function removeCheckpointPass($params) {
             $sql = '
-                DELETE FROM ' . $this->_tables['checkpoints'] . '
+                DELETE FROM ' . $this->_tables['checkpoints_students'] . '
                 WHERE
                     student_id = :student_id AND
                     section_id = :section_id';

@@ -1,6 +1,10 @@
+<!--<pre><?php print_r($this->sections); ?></pre>
+<pre><?php print_r($this->materials); ?></pre>-->
 <?php $this->title = $this->discipline['title'] ?>
 <h1 class="title_discipline"><?php echo $this->discipline['title'] ?></h1>
-<p style="margin: 1em 0;"><a href="<?php echo $this->_links->get('messages.send') . $this->discipline['responsible_teacher']; ?>">Написать сообщение преподавателю</a></p>
+<p style="margin: 1em 0;">
+    <a href="<?php echo $this->_links->get('messages.send') . $this->discipline['responsible_teacher']; ?>">Написать сообщение преподавателю</a>
+</p>
 <?php
     $i = 0;
     foreach ($this->sections as $s):
@@ -22,7 +26,7 @@
                 case 'practice':
                     $title = 'Практические задания';
                     break;
-                case 'check':
+                case 'control':
                     $title = 'Контрольные задания';
                     break;
                 }
@@ -43,13 +47,25 @@
                             break;
                     }
 ?>
-        <li class="<?php echo $state; ?>"><a href="<?php echo $this->_links->get('materials.download', array('material_id' => $m['id'])) ?>"><?php echo $m['description'] ?></a></li>
+        <li class="<?php echo $state; ?>">
+            <a href="<?php echo $this->_links->get('materials.download', array('material_id' => $m['id'])) ?>"><?php echo $m['description'] ?></a>
+        </li>
 <?php
                 }
 ?>
     </ul>
 <?php
             }
+        }
+        if (isset($s->test_id)) {
+?>
+    <h3 class="title_materials">Тестовое задание</h3>
+    <ul class="materials">
+        <li>
+            <a href="/">Ссылка на тест с идентификатором <?php echo $s->test_id; ?></a>
+        </li>
+    </ul>
+<?php
         }
     endforeach;
 ?>

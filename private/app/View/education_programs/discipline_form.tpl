@@ -52,5 +52,3 @@
     </div>
 </div>
 </form>
-<h3>Контрольная точка дисциплины</h3>
-<?php $this->renderElement('checkpoint-form') ?>

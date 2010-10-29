@@ -1,4 +1,5 @@
 <?php $form_checkpoint = $this->form_checkpoint; ?>
+<!--<pre><?php //print_r($this->materials); ?></pre>-->
 <script>
     function updateCheckboxForm() {
         updateInputs();
@@ -29,8 +30,7 @@
 </script>
 <form action="<?php echo $form_checkpoint->action() ?>" method="<?php echo $form_checkpoint->method() ?>">
     <div class="form">
-        <input name="checkpoint_object_id" type="hidden" id="checkpoint_object_id" value="<?php echo $this->checkpoint_object_id; ?>" />
-        <input name="checkpoint_object_type" type="hidden" id="checkpoint_object_type" value="<?php echo $this->checkpoint_object_type; ?>" />
+        <input name="section_id" type="hidden" id="section_id" value="<?php echo $this->section_id; ?>" />
         <div class="field">
             <label for="active">Активна</label>
             <input name="active" type="checkbox" id="active" value="1" <?php if ($form_checkpoint->active->value) echo 'checked '; ?>/>
@@ -72,7 +72,7 @@
         <div class="error"><?php echo $form_checkpoint->type->error; ?></div>
         <?php endif; ?>
 
-        <div class="field" id="checkpoint_test_id_field">
+        <div class="field" id="checkpoint_test_id_field" style="display: none;">
             <label for="checkpoint_test_id">Идентификатор теста:</label>
             <input id="checkpoint_test_id" name="<?php echo $form_checkpoint->test_id->name; ?>" type="text" value="<?php echo $form_checkpoint->test_id->value; ?>" />
             <?php if (isset($form_checkpoint->test_id->error)): ?>

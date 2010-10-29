@@ -61,5 +61,3 @@
     </div>
 </div>
 </form>
-<h3>Контрольная точка направления/курса</h3>
-<?php $this->renderElement('checkpoint-form') ?>

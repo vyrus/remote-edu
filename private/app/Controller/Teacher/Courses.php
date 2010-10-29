@@ -24,6 +24,7 @@
             $this->set('checkpoints', $cp);
             $this->set('students', $programs->getStudentsByDiscipline($params['discipline_id']));
             $this->set('sections', $programs->getSectionsByDiscipline($params['discipline_id']));
+
             $this->render('teacher_courses/discipline');
         }
 /*
@@ -49,9 +50,9 @@
         /**
         * Добавление контрольной точки.
         */
-        public function action_set_checkpoint($params) {
+        public function action_set_checkpoint_pass($params) {
             $programs = Model_Education_Programs::create ();
-            $programs->setCheckpoint($params);
+            $programs->setCheckpointPass($params);
             $request = $this->getRequest();
             $this->flash (
                 'Доступ к разделу успешно открыт',
@@ -63,9 +64,9 @@
         /**
         * Удаление контрольной точки.
         */
-        public function action_remove_checkpoint($params) {
+        public function action_remove_checkpoint_pass($params) {
             $programs = Model_Education_Programs::create ();
-            $programs->removeCheckpoint($params);
+            $programs->removeCheckpointPass($params);
             $request = $this->getRequest();
             $this->flash (
                 'Доступ к разделу закрыт',

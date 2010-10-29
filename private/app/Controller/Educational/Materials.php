@@ -172,7 +172,7 @@
                              $links->get('student.programs'));
             }
 
-            $disc_id = intval($params['discipline_id']);
+            $discipline_id = intval($params['discipline_id']);
             $app_id  = intval($params['app_id']);
 
             /**
@@ -180,21 +180,15 @@
             */
 
             $disc = Model_Discipline::create();
-            $disc_data = $disc->get($disc_id);
+            $discipline_data = $disc->get($discipline_id);
 
             $section = Model_Section::create();
-            $sections = $section->getAllByDiscipline($disc_id);
-
-            $section_ids = array();
-
-            foreach ($sections as $section) {
-                $section_ids[] = $section['section_id'];
-            }
+            $sections = $section->getAllByDiscipline($discipline_id);
 
             $material = Model_Educational_Materials::create();
-            $materials = $material->getAllByDiscipline($disc_id);
+            $materials = $material->getAllByDiscipline($discipline_id);
 
-            $this->set('discipline', $disc_data);
+            $this->set('discipline', $discipline_data);
             $this->set('sections', $sections);
             $this->set('materials', $materials);
 

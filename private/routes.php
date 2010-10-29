@@ -124,10 +124,10 @@
             array('/admin/checkpoints/edit/', array('checkpoint_id'), 'checkpoints', 'edit', 'checkpoints.edit', Mvc_Router::ROUTE_REGEX),
 
             /* Добавление контрольной точки */
-            array('/teacher_courses/set_checkpoint/([0-9]+)/([0-9]+)', array('student_id', 'section_id'), 'teacher_courses', 'set_checkpoint', 'teacher.set_checkpoint', Mvc_Router::ROUTE_REGEX),
+            array('/teacher_courses/set_checkpoint_pass/([0-9]+)/([0-9]+)', array('student_id', 'section_id'), 'teacher_courses', 'set_checkpoint_pass', 'teacher.set_checkpoint_pass', Mvc_Router::ROUTE_REGEX),
 
             /* Удаление контрольной точки */
-            array('/teacher_courses/remove_checkpoint/([0-9]+)/([0-9]+)', array('student_id', 'section_id'), 'teacher_courses', 'remove_checkpoint', 'teacher.remove_checkpoint', Mvc_Router::ROUTE_REGEX),
+            array('/teacher_courses/remove_checkpoint_pass/([0-9]+)/([0-9]+)', array('student_id', 'section_id'), 'teacher_courses', 'remove_checkpoint_pass', 'teacher.remove_checkpoint_pass', Mvc_Router::ROUTE_REGEX),
 
             /**
             * @todo Нормальные ссылки для тестов.
