@@ -88,6 +88,7 @@ function onSetOptionsSuccess(response) {
 
         setQuestions();
 
+        $('#questions').show();
         $('#lnk-add-question').show();
     }
 }
@@ -198,7 +199,7 @@ function deleteQuestion(category, id, force) {
         force = false;
     }
 
-    if (!confirm('Вы действительно хотите удалить вопрос?')) {
+    if (!force && !confirm('Вы действительно хотите удалить вопрос?')) {
         return false;
     }
 

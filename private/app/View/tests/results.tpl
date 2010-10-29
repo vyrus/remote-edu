@@ -14,47 +14,8 @@
     }
 
 ?>
-<style type="text/css">
-    #results {
-        font-family: Arial, Helvetica, sans-serif;
-        font-size: 1.15em;
-    }
 
-    #results table {
-        border: 1px solid #e1e1e1;
-    }
-
-    #results table th, td {
-        padding: 0;
-        margin: 0;
-    }
-
-    #results table th {
-        background-color: #e1e1e1;
-        border-bottom: 1px solid #cccccc;
-        font-weight: normal;
-        color: #363636;
-        padding: 5px 10px;
-        text-align: left;
-    }
-
-    #results table td {
-        color: #363636;
-        padding: 3px 10px 5px 10px;
-    }
-
-    tr.odd td {
-        background-color: #ebebeb;
-    }
-
-    tr.even td {
-        background-color: #ffffff;
-    }
-
-    .extra-attempts {
-        color: #7d7d7d;
-    }
-</style>
+<link href="<?php echo $this->_links->getPath('/css/tests/results.css') ?>" rel="stylesheet" type="text/css" />
 
 <div id="results">
     <table cellspacing="0px" cellpadding="0px">
