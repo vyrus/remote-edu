@@ -297,13 +297,14 @@
                     $this->render('education_programs/section_form');
                 }
 
-                $educationPrograms->getSection ($params['section_id'], $title, $number);
+                $educationPrograms->getSection($params['section_id'], $title, $number);
 
                 $form->setValue('title', $title);
                 $form->setValue('number', $number);
 
-                $checkpoint = $educationPrograms->getCheckpoint($params['section_id']);
-                $action = $links->get('checkpoints.edit');
+                $checkpoint_model = Model_Checkpoint::create();
+                $checkpoint = $checkpoint_model->getCheckpoint($params['section_id']);
+                $action = $links->get('checkpoint.edit');
                 $form_checkpoint = Form_Checkpoint_Edit::create($action);
                 $form_checkpoint->setValue('active', $checkpoint['active']);
                 $form_checkpoint->setValue('title', $checkpoint['title']);

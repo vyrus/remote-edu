@@ -192,32 +192,6 @@ $(document).ready(function() {
                             <div id="anotation">
                                 <p align="justify">Сниппет</p>
                             </div>
-                            <div class="break" style="float: right;">
-                                <noindex>
-        <!--LiveInternet counter-->
-        <script type="text/javascript"><!--
-        document.write("<a href='http://www.liveinternet.ru/click' "+
-        "target=_blank><img src='http://counter.yadro.ru/hit?t14.3;r"+
-        escape(document.referrer)+((typeof(screen)=="undefined")?"":
-        ";s"+screen.width+"*"+screen.height+"*"+(screen.colorDepth?
-        screen.colorDepth:screen.pixelDepth))+";u"+escape(document.URL)+
-        ";"+Math.random()+
-        "' alt='' title='LiveInternet: показано число просмотров за 24"+
-        " часа, посетителей за 24 часа и за сегодня' "+
-        "border='0' width='88' height='31'><\/a>")
-        //--></script>
-        <!--/LiveInternet-->
-        <!-- Yandex.Metrika -->
-        <script src="http://mc.yandex.ru/metrika/watch.js" type="text/javascript"></script>
-        <script type="text/javascript">
-            try { var yaCounter409700 = new Ya.Metrika(409700); } catch(e){}
-        </script>
-        <noscript>
-            <div style="position: absolute;"><img src="http://mc.yandex.ru/watch/409700" alt="" /></div>
-        </noscript>
-        <!-- /Yandex.Metrika -->
-                                </noindex>
-                            </div>
                             <div id="copyryght">&copy; 2001-2009 АНО "Центр Интернет-образования"</div>
                             <div id="license">Лицензия Серия А № 266623 выдана Департаментом социальной политики Орловской области 16 ноября 2007 года.
                                 <br>Свидетельство о госаккредитации № 1351 от 30 декабря 2008 г. выдано Департаментом социальной политики Орловской области

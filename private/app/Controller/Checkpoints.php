@@ -16,7 +16,7 @@
                 $params['active'] = false;
             }
 
-            $model = Model_Education_Programs::create();
+            $model = Model_Checkpoint::create();
 
             if (!$params['active']) {
                 $model->setCheckpointInactive(
@@ -38,6 +38,32 @@
             $this->flash($msg, $server['HTTP_REFERER'], 2);
         }
 
-    }
+        /**
+        * Открывает доступ к разделу.
+        */
+        public function action_set_pass($params) {
+            $model = Model_Checkpoint::create();
+            $model->setCheckpointPass($params);
+            $request = $this->getRequest();
+            $this->flash (
+                'Доступ к разделу успешно открыт',
+                $request->server['HTTP_REFERER'],
+                3
+            );
+        }
 
-?>
+        /**
+        * Закрывает доступ к разделу.
+        */
+        public function action_remove_pass($params) {
+            $model = Model_Checkpoint::create();
+            $model->removeCheckpointPass($params);
+            $request = $this->getRequest();
+            $this->flash (
+                'Доступ к разделу закрыт',
+                $request->server['HTTP_REFERER'],
+                3
+            );
+        }
+
+    }

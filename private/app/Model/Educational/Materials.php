@@ -301,47 +301,5 @@
                 return false;
             }
         }
-
-        /**
-        * Получение списка тестов по идентификатору дисциплины.
-        *
-        * @param  int $discipline_id Идентификатор дисциплины.
-        * @return array
-        */
-        public function getTestsByDiscipline($discipline_id) {
-            $sql = '
-                SELECT s.section_id, c.test_id
-                FROM ' . $this->_tables['checkpoints'] . ' c
-                LEFT JOIN ' . $this->_tables['sections'] . ' s
-                    ON s.section_id = c.section_id
-                LEFT JOIN ' . $this->_tables['checkpoints_students'] . ' cs
-                    ON s.section_id = cs.section_id
-                WHERE
-                    s.discipline_id = :discipline_id AND
-                    cs.student_id = :student_id
-            ';
-
-            $udata = Model_User::create()->getAuth();
-            if ($udata) {
-                $params = array(
-                    ':discipline_id' => $discipline_id,
-                    ':student_id' => $udata['user_id']
-                );
-                $stmt = $this->prepare($sql);
-                $stmt->execute($params);
-
-                $materials = $stmt->fetchAll(Db_Pdo::FETCH_GROUP|Db_Pdo::FETCH_ASSOC);
-
-                function array_trim($element) {
-                    return $element[0]['test_id'];
-                }
-
-                $result = array_map("array_trim", $materials);
-
-                return $result;
-            } else {
-                return false;
-            }
-        }
     }
 ?>

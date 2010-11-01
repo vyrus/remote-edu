@@ -117,17 +117,14 @@
             /* Работа ответственного преподавателя с дисциплинами */
             array('/teacher_courses/discipline/([0-9]+)?', array('discipline_id'), 'teacher_courses', 'discipline', 'teacher.discipline', Mvc_Router::ROUTE_REGEX),
 
-            /* Работа ответственного преподавателя с курсами */
-            //array('/teacher_courses/course/([0-9]+)?', array('course_id'), 'teacher_courses', 'course', 'teacher.course', Mvc_Router::ROUTE_REGEX),
-
             /* Редактирование контрольной точки */
-            array('/admin/checkpoints/edit/', array('checkpoint_id'), 'checkpoints', 'edit', 'checkpoints.edit', Mvc_Router::ROUTE_REGEX),
+            array('/checkpoints/edit/', array('checkpoint_id'), 'checkpoints', 'edit', 'checkpoint.edit', Mvc_Router::ROUTE_REGEX),
 
             /* Добавление контрольной точки */
-            array('/teacher_courses/set_checkpoint_pass/([0-9]+)/([0-9]+)', array('student_id', 'section_id'), 'teacher_courses', 'set_checkpoint_pass', 'teacher.set_checkpoint_pass', Mvc_Router::ROUTE_REGEX),
+            array('/checkpoints/set_pass/([0-9]+)/([0-9]+)', array('student_id', 'section_id'), 'checkpoints', 'set_pass', 'checkpoint.set_pass', Mvc_Router::ROUTE_REGEX),
 
             /* Удаление контрольной точки */
-            array('/teacher_courses/remove_checkpoint_pass/([0-9]+)/([0-9]+)', array('student_id', 'section_id'), 'teacher_courses', 'remove_checkpoint_pass', 'teacher.remove_checkpoint_pass', Mvc_Router::ROUTE_REGEX),
+            array('/checkpoints/remove_pass/([0-9]+)/([0-9]+)', array('student_id', 'section_id'), 'checkpoints', 'remove_pass', 'checkpoint.remove_pass', Mvc_Router::ROUTE_REGEX),
 
             /**
             * @todo Нормальные ссылки для тестов.
@@ -251,15 +248,14 @@
                 'educational_materials/remove',
 
                 'teacher_courses/discipline',           // дисциплины, за которые ответственным назначен преподаватель
-                //'teacher_courses/course',               // курсы, за которые ответственным назначен преподаватель
-                'teacher_courses/set_checkpoint',       // добавление контрольной точки
-                'teacher_courses/remove_checkpoint',    // удаление контрольной точки
+                'checkpoints/set_pass',
+                'checkpoints/remove_pass',
             ),
 
             /* Администратор */
             Model_User::ROLE_ADMIN => array
             (
-                'admin/checkpoints/edit',                // Редактирование контрольной точки
+                'checkpoints/edit',                     // Редактирование контрольной точки
 
                 '/assignment/responsible_teacher',
                 '/assignment/students_curator',

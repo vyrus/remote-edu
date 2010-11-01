@@ -154,7 +154,7 @@
         }
 
         /**
-        * Отображение доступных материалов.
+        * Отображение доступных учебных материалов.
         */
         public function action_show(array $params = array()) {
             $links = Resources::getInstance()->links;

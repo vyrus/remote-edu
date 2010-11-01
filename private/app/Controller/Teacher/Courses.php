@@ -11,68 +11,23 @@
 
         public function action_discipline($params) {
             $programs = Model_Education_Programs::create();
+            $checkpoint = Model_Checkpoint::create();
             $user = Model_User::create();
             $udata = (object) $user->getAuth();
             $programs->getDiscipline($params['discipline_id'], $title, $labourIntensive, $coef);
             $this->set('discipline_title', $title);
-            $cp = array();
-            $checkpoints = $programs->getCheckpointsByDiscipline($params['discipline_id']);
-            foreach ($checkpoints as $checkpoint) {
-                $cp[$checkpoint['user_id']][$checkpoint['section_id']] = $checkpoint['created'];
+            $cps = array();
+            $checkpoints = $checkpoint->getCheckpointsByDiscipline($params['discipline_id']);
+            foreach ($checkpoints as $cp) {
+                $cps[$cp['user_id']][$cp['section_id']] = $cp['created'];
             }
 
-            $this->set('checkpoints', $cp);
+            $this->set('checkpoints', $cps);
             $this->set('students', $programs->getStudentsByDiscipline($params['discipline_id']));
             $this->set('sections', $programs->getSectionsByDiscipline($params['discipline_id']));
 
             $this->render('teacher_courses/discipline');
         }
-/*
-        public function action_course($params) {
-            $programs = Model_Education_Programs::create();
-            $user = Model_User::create();
-            $udata = (object) $user->getAuth();
-            $programs->getProgram($params['course_id'], 'course', $title, $labourIntensive, $paidType, $cost);
-            $this->set('course_title', $title);
-            $this->set('students', $programs->getStudentsByCourse($params['course_id']));
-            $cp = array();
-            $checkpoints = $programs->getCheckpointsByCourse($params['course_id']);
-            foreach ($checkpoints as $checkpoint) {
-                $cp[$checkpoint['user_id']][$checkpoint['section_id']] = $checkpoint['created'];
-            }
 
-            $this->set('checkpoints', $cp);
-            $this->set('students', $programs->getStudentsByCourse($params['course_id']));
-            $this->set('sections', $programs->getSectionsByCourse($params['course_id']));
-            $this->render('teacher_courses/course');
-        }
-*/
-        /**
-        * Добавление контрольной точки.
-        */
-        public function action_set_checkpoint_pass($params) {
-            $programs = Model_Education_Programs::create ();
-            $programs->setCheckpointPass($params);
-            $request = $this->getRequest();
-            $this->flash (
-                'Доступ к разделу успешно открыт',
-                $request->server['HTTP_REFERER'],
-                3
-            );
-        }
-
-        /**
-        * Удаление контрольной точки.
-        */
-        public function action_remove_checkpoint_pass($params) {
-            $programs = Model_Education_Programs::create ();
-            $programs->removeCheckpointPass($params);
-            $request = $this->getRequest();
-            $this->flash (
-                'Доступ к разделу закрыт',
-                $request->server['HTTP_REFERER'],
-                3
-            );
-        }
     }
 ?>
