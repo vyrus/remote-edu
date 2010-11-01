@@ -1,6 +1,6 @@
 <?php
 
-    /* $Id:  $ */
+    /* $Id: $ */
 
     class Controller_Checkpoints extends Mvc_Controller_Abstract {
 
@@ -9,8 +9,7 @@
         */
         public function action_edit() {
             $request = $this->getRequest();
-            $params = $request->__get('post');
-            $server = $request->__get('server');
+            $params = $request->post;
 
             if (!isset($params['active'])) {
                 $params['active'] = false;
@@ -35,7 +34,10 @@
 
             $msg = 'Контрольная точка успешно изменена';
 
-            $this->flash($msg, $server['HTTP_REFERER'], 2);
+            $links = Resources::getInstance()->links;
+            $link = $links->get('sections.edit', array('section_id' => $params['section_id']));
+
+            $this->flash($msg, $link);
         }
 
         /**
