@@ -1,6 +1,6 @@
 <?php
 
-    /* $Id: $ */
+    /* $Id:$ */
 
     class Controller_Checkpoints extends Mvc_Controller_Abstract {
 
