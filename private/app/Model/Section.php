@@ -23,10 +23,12 @@
         */
         public function getAllByDiscipline($disc_id) {
             $sql = '
-                SELECT s.*, c.test_id
+                SELECT s.*, c.test_id, t.theme AS test_theme
                 FROM ' . $this->_tables['sections'] . ' s
                 LEFT JOIN ' . $this->_tables['checkpoints'] . ' c
                     ON s.section_id = c.section_id
+                LEFT JOIN ' . $this->_tables['tests'] . ' t
+                    ON t.test_id = c.test_id
                 WHERE discipline_id = ?
                 ORDER BY number ASC
             ';

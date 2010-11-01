@@ -86,7 +86,11 @@
             natsort($question_ids);
             return $this->_hash($test_id . implode(', ', $question_ids));
         }
-
+        
+        public function getTestSecurityCode($user_id, $test_id) {
+            return $this->_hash($user_id . $test_id);
+        }
+        
         /**
         * Инициализация хранилища данных.
         *

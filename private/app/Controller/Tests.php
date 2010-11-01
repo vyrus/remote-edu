@@ -64,14 +64,22 @@
             /**
             * @todo Check if 'test_id' param is set.
             */
-            $test_id = array_shift($params);
-
-            $test = Model_Test::create();
-            $tdata = (object) $test->get($test_id);
-
+            $test_id = $params['test_id'];
+            $actual_code = $params['code'];
+            
             $user = Model_User::create();
             $udata = (object) $user->getAuth();
-
+            
+            $auth = Resources::getInstance()->auth;
+            $expected_code = $auth->getTestSecurityCode($udata->user_id, $test_id);
+            
+            if ($actual_code != $expected_code) {
+                $this->flash('Доступ к тесту закрыт', '#');
+            }
+            
+            $test = Model_Test::create();
+            $tdata = (object) $test->get($test_id);
+            
             $attempts_used  = $test->getUsedAttempts($udata->user_id, $test_id);
             $extra_attempts = $test->getExtraAttempts($udata->user_id,$test_id);
 

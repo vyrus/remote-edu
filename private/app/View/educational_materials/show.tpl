@@ -58,11 +58,12 @@
             }
         }
         if (isset($s->test_id)) {
+            $auth = Resources::getInstance()->auth;
 ?>
     <h3 class="title_materials">Тестовое задание</h3>
     <ul class="materials">
         <li>
-            <a href="/">Ссылка на тест с идентификатором <?php echo $s->test_id; ?></a>
+            <a href="<?php echo $this->_links->get('tests.examination', array('test_id' => $s->test_id, 'code' => $auth->getTestSecurityCode($this->user_id, $s->test_id))) ?>"><?php echo $s->test_theme ?></a>
         </li>
     </ul>
 <?php

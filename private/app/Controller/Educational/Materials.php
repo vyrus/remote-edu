@@ -160,16 +160,18 @@
             $links = Resources::getInstance()->links;
 
             if (!isset($params['discipline_id']) ||
-                is_int ($params['discipline_id']))
-            {
-                $this->flash('Не указан идентификатор дисциплины',
-                             $links->get('student.programs'));
+                is_int ($params['discipline_id'])) {
+                $this->flash(
+                    'Не указан идентификатор дисциплины',
+                    $links->get('student.programs')
+                );
             }
 
-            if (!isset($params['app_id']) || is_int($params['app_id']))
-            {
-                $this->flash('Не указан идентификатор заявки',
-                             $links->get('student.programs'));
+            if (!isset($params['app_id']) || is_int($params['app_id'])) {
+                $this->flash(
+                    'Не указан идентификатор заявки',
+                    $links->get('student.programs')
+                );
             }
 
             $discipline_id = intval($params['discipline_id']);
@@ -178,7 +180,10 @@
             /**
             * @todo Сделать проверку на доступность дисциплины.
             */
-
+            
+            $user = Model_User::create();
+            $udata = (object) $user->getAuth();
+            
             $disc = Model_Discipline::create();
             $discipline_data = $disc->get($discipline_id);
 
@@ -191,6 +196,7 @@
             $this->set('discipline', $discipline_data);
             $this->set('sections', $sections);
             $this->set('materials', $materials);
+            $this->set('user_id', $udata->user_id);
 
             $this->render();
         }
