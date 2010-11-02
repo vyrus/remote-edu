@@ -311,6 +311,13 @@
                 $form_checkpoint->setValue('text', $checkpoint['text']);
                 $form_checkpoint->setValue('type', $checkpoint['type']);
                 $form_checkpoint->setValue('test_id', $checkpoint['test_id']);
+
+                if ('test' == $checkpoint['type']) {
+                    $test = Model_Test::create();
+                    $tdata = $test->get($checkpoint['test_id']);
+                    $this->set('test_theme', $tdata['theme']);
+                }
+
                 $this->set('form_checkpoint', $form_checkpoint);
                 $this->set('section_id', $params['section_id']);
 

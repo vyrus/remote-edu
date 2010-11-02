@@ -269,7 +269,8 @@
                 'tests/ajax_save_options',
                 'tests/ajax_save_questions',
                 'tests/ajax_load_test',
-                'tests/ajax_delete_question'
+                'tests/ajax_delete_question',
+                'tests/ajax_load_list'
             ),
 
             /* Администратор */
@@ -316,7 +317,8 @@
                 'tests/ajax_save_options',
                 'tests/ajax_save_questions',
                 'tests/ajax_load_test',
-                'tests/ajax_delete_question'
+                'tests/ajax_delete_question',
+                'tests/ajax_load_list'
             )
         )
     );

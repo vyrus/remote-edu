@@ -425,6 +425,19 @@
 
             echo json_encode($response);
         }
+
+        public function action_ajax_load_list() {
+            $test = Model_Test::create();
+
+            $tests = $test->getAll();
+            $list = array();
+
+            foreach ($tests as $t) {
+                $list[$t->test_id] = $t->theme;
+            }
+
+            echo json_encode($list);
+        }
     }
 
 ?>
