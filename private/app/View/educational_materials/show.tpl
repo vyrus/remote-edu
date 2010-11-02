@@ -1,5 +1,3 @@
-<!--<pre><?php print_r($this->sections); ?></pre>
-<pre><?php print_r($this->materials); ?></pre>-->
 <?php $this->title = $this->discipline['title'] ?>
 <h1 class="title_discipline"><?php echo $this->discipline['title'] ?></h1>
 <p style="margin: 1em 0;">

@@ -3,6 +3,7 @@
     /* $Id$ */
 
     abstract class Model_Base extends Mvc_Model_Abstract {
+
         protected $_tables = array(
             'applications'         => 'applications',
             'apps_history'         => 'apps_history',
@@ -10,8 +11,8 @@
             'checkpoints_students' => 'checkpoints_students',
             'disciplines'          => 'disciplines',
             'edu_docs'             => 'edu_docs',
-            'extra_attempts'       => 'extra_attempts',
             'examinations'         => 'examinations',
+            'extra_attempts'       => 'extra_attempts',
             'materials'            => 'materials',
             'materials_states'     => 'materials_states',
             'payments'             => 'payments',
@@ -25,6 +26,5 @@
             'tests'                => 'tests',
             'users'                => 'users',
         );
-    }
 
-?>
+    }

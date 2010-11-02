@@ -1,6 +1,6 @@
 <?php
 
-    /* $Id:$ */
+    /* $Id: $ */
 
     class Controller_Checkpoints extends Mvc_Controller_Abstract {
 
@@ -32,40 +32,39 @@
                 );
             }
 
-            $msg = 'Контрольная точка успешно изменена';
-
             $links = Resources::getInstance()->links;
             $link = $links->get('sections.edit', array('section_id' => $params['section_id']));
-
-            $this->flash($msg, $link);
+            $this->flash('Контрольная точка успешно изменена', $link);
         }
 
         /**
         * Открывает доступ к разделу.
         */
         public function action_set_pass($params) {
-            $model = Model_Checkpoint::create();
-            $model->setCheckpointPass($params);
-            $request = $this->getRequest();
-            $this->flash (
-                'Доступ к разделу успешно открыт',
-                $request->server['HTTP_REFERER'],
-                3
-            );
+            $model_checkpoint = Model_Checkpoint::create();
+            $model_education_programs = Model_Education_Programs::create();
+
+            $model_checkpoint->setCheckpointPass($params);
+            $discipline_id = $model_education_programs->getDisciplineNumberBySection($params['section_id']);
+
+            $links = Resources::getInstance()->links;
+            $link = $links->get('teacher.discipline', array('discipline_id' => $discipline_id['discipline_id']));
+            $this->flash('Доступ к разделу успешно открыт', $link);
         }
 
         /**
         * Закрывает доступ к разделу.
         */
         public function action_remove_pass($params) {
-            $model = Model_Checkpoint::create();
-            $model->removeCheckpointPass($params);
-            $request = $this->getRequest();
-            $this->flash (
-                'Доступ к разделу закрыт',
-                $request->server['HTTP_REFERER'],
-                3
-            );
+            $model_checkpoint = Model_Checkpoint::create();
+            $model_education_programs = Model_Education_Programs::create();
+
+            $model_checkpoint->removeCheckpointPass($params);
+            $discipline_id = $model_education_programs->getDisciplineNumberBySection($params['section_id']);
+
+            $links = Resources::getInstance()->links;
+            $link = $links->get('teacher.discipline', array('discipline_id' => $discipline_id['discipline_id']));
+            $this->flash('Доступ к разделу закрыт', $link);
         }
 
     }

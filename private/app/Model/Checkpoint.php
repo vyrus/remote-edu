@@ -141,7 +141,6 @@
             $stmt->execute(array($discipline_id));
 
             return $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
-            //return null;
         }
 
     }
