@@ -5,6 +5,17 @@
     */
     class Controller_Tests extends Mvc_Controller_Abstract {
         /**
+        * Список тестов.
+        */
+        public function action_list() {
+            $test = Model_Test::create();
+            $tests = $test->getAll();
+
+            $this->set('tests', $tests);
+            $this->render();
+        }
+
+        /**
         * Создание нового теста.
         */
         public function action_create() {
@@ -31,8 +42,19 @@
         /**
         * Удаление теста.
         */
-        public function action_delete() {
-            //
+        public function action_delete(array $params) {
+            $test_id = $params['test_id'];
+
+            $links = Resources::getInstance()->links;
+            $test = Model_Test::create();
+
+            if (!$test->delete($test_id)) {
+                $link = $links->get('tests.list');
+                $this->flash('Не удалось удалить тест', $link);
+            }
+
+            $link = $links->get('tests.list');
+            $this->flash('Тест удалён', $link);
         }
 
         public function action_examination(array $params) {

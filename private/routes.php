@@ -90,6 +90,24 @@
             /* Загрузка учебных материалов */
             array('/admin/materials/remove', 'educational_materials', 'remove', 'materials.remove', Mvc_Router::ROUTE_STATIC),
 
+            /* Управление тестами */
+            array('/admin/tests', 'tests', 'list', 'tests.list', Mvc_Router::ROUTE_STATIC),
+
+            /* Создание тестов */
+            array('/admin/tests/create', 'tests', 'create', 'tests.create', Mvc_Router::ROUTE_STATIC),
+
+            /* Редактирование тестов */
+            array('/admin/tests/edit/([0-9]+)', array('test_id'), 'tests', 'edit', 'tests.edit', Mvc_Router::ROUTE_REGEX),
+
+            /* Редактирование тестов */
+            array('/admin/tests/delete/([0-9]+)', array('test_id'), 'tests', 'delete', 'tests.delete', Mvc_Router::ROUTE_REGEX),
+
+            /* Добавление дополнительной попытки сдать тест */
+            array('/admin/tests/add-extra-attempt/([0-9]+)/([0-9]+)', array('user_id', 'test_id'), 'tests', 'add_extra_attempt', 'tests.add-extra-attempt', Mvc_Router::ROUTE_REGEX),
+
+            /* Просмотр результатов сдачи теста */
+            array('/admin/tests/results/([0-9]+)', array('test_id'), 'tests', 'results', 'tests.results', Mvc_Router::ROUTE_REGEX),
+
             /* Управление заявками */
             array('/admin/applications', 'applications', 'index_by_admin', 'admin.applications', Mvc_Router::ROUTE_STATIC),
 
@@ -125,18 +143,6 @@
 
             /* Удаление контрольной точки */
             array('/checkpoints/remove_pass/([0-9]+)/([0-9]+)', array('student_id', 'section_id'), 'checkpoints', 'remove_pass', 'checkpoint.remove_pass', Mvc_Router::ROUTE_REGEX),
-
-            /**
-            * @todo Нормальные ссылки для тестов.
-            */
-            /* __Редактирование тестов__ */
-            array('/tests/edit/([0-9]+)', array('test_id'), 'tests', 'edit', 'tests.edit', Mvc_Router::ROUTE_REGEX),
-
-            /* __Добавление дополнительной попытки сдать тест__ */
-            array('/tests/add-extra-attempt/([0-9]+)/([0-9]+)', array('user_id', 'test_id'), 'tests', 'add_extra_attempt', 'tests.add-extra-attempt', Mvc_Router::ROUTE_REGEX),
-
-            /* __Результаты сдачи теста__ */
-            array('/tests/results/([0-9]+)', array('test_id'), 'tests', 'results', 'tests.results', Mvc_Router::ROUTE_REGEX),
 
             /* Инструкции для слушателя */
             array('/student', 'pages', 'display', array('page' => 'help/instructions'), 'student.index', Mvc_Router::ROUTE_STATIC),
@@ -253,6 +259,17 @@
                 'teacher_courses/discipline',           // дисциплины, за которые ответственным назначен преподаватель
                 'checkpoints/set_pass',
                 'checkpoints/remove_pass',
+
+                'tests/list',
+                'tests/create',
+                'tests/edit',
+                'tests/delete',
+                'tests/add_extra_attempt',
+                'tests/results',
+                'tests/ajax_save_options',
+                'tests/ajax_save_questions',
+                'tests/ajax_load_test',
+                'tests/ajax_delete_question'
             ),
 
             /* Администратор */
@@ -289,6 +306,17 @@
                 'education_programs/edit_program',
                 'education_programs/edit_discipline',
                 'education_programs/edit_section',
+
+                'tests/list',
+                'tests/create',
+                'tests/edit',
+                'tests/delete',
+                'tests/add_extra_attempt',
+                'tests/results',
+                'tests/ajax_save_options',
+                'tests/ajax_save_questions',
+                'tests/ajax_load_test',
+                'tests/ajax_delete_question'
             )
         )
     );

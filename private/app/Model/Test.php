@@ -14,7 +14,7 @@
         public static function create() {
             return new self();
         }
-        
+
         public function add(
             $theme, $num_questions, /*$time_limit, */$errors_limit,
             $attempts_limit
@@ -72,6 +72,26 @@
             return $row_count > 0;
         }
 
+        /**
+        * Удаление теста с указанным идентификатором.
+        *
+        * @param  int $test_id Идентификатор теста.
+        * @return boolean
+        */
+        public function delete($test_id) {
+            $sql = '
+                DELETE
+                FROM ' . $this->_tables['tests'] . '
+                WHERE test_id = ?
+            ';
+
+            $stmt = $this->prepare($sql);
+            $stmt->execute(array($test_id));
+
+            $affected = $stmt->rowCount();
+            return ($affected > 0);
+        }
+
         public function get($test_id) {
             $sql = '
                 SELECT *
@@ -84,6 +104,19 @@
             $stmt->execute(array($test_id));
 
             return $stmt->fetch(Db_Pdo::FETCH_ASSOC);
+        }
+
+        public function getAll() {
+            $sql = '
+                SELECT *
+                FROM ' . $this->_tables['tests'] . '
+            ';
+
+            $stmt = $this->prepare($sql);
+            $stmt->execute();
+            $stmt->setFetchMode(Db_Pdo::FETCH_OBJ);
+
+            return $stmt;
         }
 
         /**
