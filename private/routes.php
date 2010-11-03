@@ -184,7 +184,7 @@
             array('/student/materials/download/([0-9]+)', array('material_id'), 'educational_materials', 'get_material', 'materials.download', Mvc_Router::ROUTE_REGEX),
 
             /* Прохождение теста */
-            array('/student/test/([0-9]+)/([0-9a-z]{32})', array('test_id', 'code'), 'tests', 'examination', 'tests.examination', Mvc_Router::ROUTE_REGEX),
+            array('/student/test/([0-9]+)/([0-9]+)/([0-9a-z]{32})', array('test_id', 'section_id', 'code'), 'tests', 'examination', 'tests.examination', Mvc_Router::ROUTE_REGEX),
 
             /* Страничка помощи слушателю - как пользоваться материлами */
             array('/student/help/materials', 'pages', 'display', array('page' => 'help/materials'), 'help.materials', Mvc_Router::ROUTE_STATIC),

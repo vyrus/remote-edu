@@ -17,10 +17,16 @@ function startExamination() {
         .text('Загрузка...')
         .show();
 
+    var data = {
+        test_id: test.getId(),
+        section_id: section_id,
+        sec_code: sec_code
+    };
+
     $.ajax({
         type:     'POST',
         url:      '/tests/ajax_get_exam_questions',
-        data:     {test_id: test.getId()},
+        data:     data,
         dataType: 'json',
         success:  onGetQuestionsSuccess,
         error:    onAjaxError

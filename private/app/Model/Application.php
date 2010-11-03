@@ -132,13 +132,13 @@
             $sql = '
                 SELECT *
                 FROM ' . $this->_tables['applications'] . ' a
-                WHERE app_id = ?
+                WHERE app_id = :app_id
             ';
 
             $values = array(
                 ':app_id'          => $app_id
             );
-            
+
             $stmt = $this->prepare($sql);
             $stmt->execute($values);
             return $stmt->fetchAll(Db_PdO::FETCH_ASSOC);

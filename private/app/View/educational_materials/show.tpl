@@ -61,7 +61,9 @@
     <h3 class="title_materials">Тестовое задание</h3>
     <ul class="materials">
         <li>
-            <a href="<?php echo $this->_links->get('tests.examination', array('test_id' => $s->test_id, 'code' => $auth->getTestSecurityCode($this->user_id, $s->test_id))) ?>"><?php echo $s->test_theme ?></a>
+            <a href="<?php echo $this->_links->get('tests.examination', array('test_id'    => $s->test_id,
+                                                                              'section_id' => $s->section_id,
+                                                                              'code'       => $auth->getTestSecurityCode($this->user_id, $s->test_id, $s->section_id))) ?>"><?php echo $s->test_theme ?></a>
         </li>
     </ul>
 <?php

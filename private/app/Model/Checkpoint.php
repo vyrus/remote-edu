@@ -87,8 +87,7 @@
         /**
         * Устанавливает прохождение контрольной точки для студента.
         *
-        * @param  int $student_id Идентификатор студента.
-        * @param  int $section_id Идентификатор раздела.
+        * @param  array $params Идентификатор студента и идентификатор раздела.
         * @return void
         */
         public function setCheckpointPass($params) {

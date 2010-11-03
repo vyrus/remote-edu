@@ -285,7 +285,7 @@
             return $questions;
         }
 
-        public function start($test_id, $num_questions) {
+        public function start($test_id, $section_id, $num_questions) {
             $questions = $this->_getExamQuestions($test_id, $num_questions);
 
             if (sizeof($questions) < $num_questions) {
@@ -301,8 +301,9 @@
             $sec_code = $auth->getExamSecurityCode($test_id, $question_ids);
 
             $session->exams[$test_id] = array(
-                'sec_code' => $sec_code,
-                'timer'    => $timer
+                'sec_code'   => $sec_code,
+                'timer'      => $timer,
+                'section_id' => $section_id
             );
 
             return $questions;
@@ -337,6 +338,7 @@
                 'passed'     => null
             );
 
+            $section_id = $exams['section_id'];
             unset($exams, $session->exams[$test_id]);
 
             foreach ($answers as $q_id => $answer)
@@ -371,6 +373,17 @@
             $passed &= ($results->time > $test->time_limit ? false : true);
 
             $results->passed = $passed;
+
+            if ($passed) {
+                $user = Model_User::create();
+                $udata = (object) $user->getAuth();
+
+                $params = array('student_id' => $udata->user_id,
+                                'section_id' => $section_id);
+
+                $checkpoint = Model_Checkpoint::create();
+                $checkpoint->setCheckpointPass($params);
+            }
 
             $this->_saveExamResults($test_id, $num_errors, $test->num_questions,
                                     $results->time, $results->passed);

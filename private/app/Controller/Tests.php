@@ -62,13 +62,16 @@
             * @todo Check if 'test_id' param is set.
             */
             $test_id = $params['test_id'];
+            $section_id = $params['section_id'];
             $actual_code = $params['code'];
 
             $user = Model_User::create();
             $udata = (object) $user->getAuth();
 
             $auth = Resources::getInstance()->auth;
-            $expected_code = $auth->getTestSecurityCode($udata->user_id, $test_id);
+            $expected_code = $auth->getTestSecurityCode($udata->user_id,
+                                                        $test_id,
+                                                        $section_id);
 
             if ($actual_code != $expected_code) {
                 $this->flash('Доступ к тесту закрыт', '#');
@@ -93,6 +96,9 @@
             }
 
             $this->set('test', $tdata);
+            $this->set('section_id', $section_id);
+            $this->set('sec_code', $actual_code);
+
             $this->set('attempts_used',      $attempts_used);
             $this->set('extra_attempts',     $extra_attempts);
             $this->set('attempts_remaining', $attempts_remaining);
@@ -347,12 +353,33 @@
         public function action_ajax_get_exam_questions() {
             $request = $this->getRequest();
             $test_id = (int) $request->post['test_id'];
+            $section_id = (int) $request->post['section_id'];
+            $actual_code = $request->post['sec_code'];
+
+            $user = Model_User::create();
+            $udata = (object) $user->getAuth();
+
+            $auth = Resources::getInstance()->auth;
+            $expected_code = $auth->getTestSecurityCode($udata->user_id,
+                                                        $test_id,
+                                                        $section_id);
+
+            if ($actual_code != $expected_code) {
+                $response = array(
+                    'result' => false,
+                    'error'  => 'Доступ к тесту закрыт'
+                );
+
+                echo json_encode($response);
+                return;
+            }
 
             $test = Model_Test::create();
             $data = $test->get($test_id);
 
             try {
-                $questions = $test->start($test_id, $data['num_questions']);
+                $questions = $test->start($test_id, $section_id,
+                                          $data['num_questions']);
             }
             catch(Model_Test_Exception $e) {
                 $response = array(

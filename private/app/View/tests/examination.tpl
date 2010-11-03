@@ -10,7 +10,9 @@
 
 <script type="text/javascript">
     var test,
-        test_id = <?php echo $test->test_id ?>;
+        test_id = <?php echo $test->test_id ?>,
+        section_id = <?php echo $this->section_id ?>,
+        sec_code = '<?php echo $this->sec_code ?>';
 </script>
 
 <div id="intro">
@@ -82,5 +84,5 @@
             <td id="exam-result"></td>
         </tr>
     </table>
-    <a href="#">Далее</a>
+    <a href="<?php echo $this->_links->get('student.programs') ?>">Далее</a>
 </div>
