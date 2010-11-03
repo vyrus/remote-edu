@@ -26,8 +26,10 @@
             $model_education_students = Model_Education_Students::create();
 
             $disciplines = $model_education_students->getDisciplines($params['student_id']);
+            $disciplines_programs = $model_education_students->getDisciplinesPrograms($params['student_id']);
 
             $this->set('disciplines', $disciplines);
+            $this->set('disciplines_programs', $disciplines_programs);
             $this->render('teacher_students/disciplines');
         }
 

@@ -52,7 +52,8 @@
                 SELECT user_id, login, surname, name, patronymic
                 FROM ' . $this->_tables['users'] . '
                 WHERE
-                    role = :role AND
+                    role = :role
+                    AND
                     curator = :curator
             ';
 
@@ -80,17 +81,45 @@
                 LEFT JOIN ' . $this->_tables['disciplines'] . ' d
                     ON a.object_id = d.discipline_id
                 WHERE
-                    user_id = :student_id AND
-                    type = \'discipline\' AND
-                    status = \'signed\'
+                    a.user_id = ?
+                    AND
+                    a.type = \'discipline\'
+                    AND
+                    a.status = \'signed\'
             ';
 
-            $values = array(
-                ':student_id' => $student_id
-            );
+            $stmt = $this->prepare($sql);
+            $stmt->execute(array($student_id));
+
+            return $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
+        }
+
+        /**
+        * Получение списка дисциплин, входящих в программы,
+        * изучаемые слушателем.
+        *
+        * @param  int $student_id Идентификатор слушателя.
+        * @return array|false
+        */
+        public function getDisciplinesPrograms($student_id) {
+            $sql = '
+                SELECT d.discipline_id AS id, d.title
+                FROM ' . $this->_tables['applications'] . ' a
+                LEFT JOIN ' . $this->_tables['disciplines'] . ' d
+                    ON a.object_id = d.program_id
+                WHERE
+                    a.user_id = ?
+                    AND
+                    a.type = \'program\'
+                    AND (
+                        a.status = \'accepted\'
+                        OR
+                        a.status = \'signed\'
+                    )
+            ';
 
             $stmt = $this->prepare($sql);
-            $stmt->execute($values);
+            $stmt->execute(array($student_id));
 
             return $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
         }
