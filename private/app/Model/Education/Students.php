@@ -76,10 +76,11 @@
         */
         public function getDisciplines($student_id) {
             $sql = '
-                SELECT a.object_id AS id, d.title
+                SELECT *
                 FROM ' . $this->_tables['applications'] . ' a
-                LEFT JOIN ' . $this->_tables['disciplines'] . ' d
-                    ON a.object_id = d.discipline_id
+
+                JOIN ' . $this->_tables['sections'] . ' s
+                    ON a.object_id = s.discipline_id
                 WHERE
                     a.user_id = ?
                     AND

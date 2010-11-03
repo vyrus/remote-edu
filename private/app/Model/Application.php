@@ -160,12 +160,14 @@
                 FROM ' . $this->_tables['applications'] . ' a
 
                 LEFT JOIN ' . $this->_tables['programs'] . ' p
-                ON a.type = :type_program AND
-                   p.program_id = a.object_id
+                    ON a.type = :type_program
+                    AND
+                    p.program_id = a.object_id
 
                 LEFT JOIN ' . $this->_tables['disciplines'] . ' d
-                ON a.type = :type_discipline AND
-                   d.discipline_id = a.object_id
+                    ON a.type = :type_discipline
+                    AND
+                    d.discipline_id = a.object_id
 
                 WHERE user_id = :uid
             ';
@@ -192,10 +194,10 @@
         public function getProgram($program_id)
         {
             $sql = '
-			SELECT `title`,`labour_intensive`,`paid_type`,`cost`
-			FROM '. $this->_tables['programs'] .' p
-			WHERE
-			    `program_id`=:pid
+            SELECT `title`,`labour_intensive`,`paid_type`,`cost`
+            FROM '. $this->_tables['programs'] .' p
+            WHERE
+                `program_id`=:pid
             ';
 
             $values = array(
@@ -218,10 +220,10 @@
         public function getDiscipline($disc_id)
         {
             $sql = '
-			SELECT `program_id`,`serial_number`,`title`,`labour_intensive`,`coef`,`responsible_teacher`
-			FROM '. $this->_tables['disciplines'] .' d
-			WHERE
-			    `discipline_id`=:did
+            SELECT `program_id`,`serial_number`,`title`,`labour_intensive`,`coef`,`responsible_teacher`
+            FROM '. $this->_tables['disciplines'] .' d
+            WHERE
+                `discipline_id`=:did
             ';
 
             $values = array(
@@ -250,11 +252,14 @@
                 FROM ' . $this->_tables['applications'] . ' a
 
                 LEFT JOIN ' . $this->_tables['programs'] . ' p
-                ON p.program_id = a.object_id
+                    ON p.program_id = a.object_id
 
-                WHERE a.type = :program AND
-                      a.status IN (:accepted, :signed) AND
-                      a.user_id = :uid
+                WHERE
+                    a.type = :program
+                    AND
+                    a.status IN (:accepted, :signed)
+                    AND
+                    a.user_id = :uid
             ';
 
             $values = array(
@@ -286,10 +291,10 @@
                 FROM ' . $this->_tables['applications'] . ' a
 
                 LEFT JOIN ' . $this->_tables['disciplines'] . ' d
-                ON d.discipline_id = a.object_id
+                    ON d.discipline_id = a.object_id
 
                 LEFT JOIN ' . $this->_tables['programs'] . ' p
-                ON p.program_id = d.program_id
+                    ON p.program_id = d.program_id
 
                 WHERE a.type = :discipline AND
                       a.status IN (:accepted, :signed) AND
@@ -327,15 +332,17 @@
                 FROM ' . $this->_tables['applications'] . ' a
 
                 LEFT JOIN ' . $this->_tables['programs'] . ' p
-                ON a.type = :type_program AND
-                   p.program_id = a.object_id
+                    ON a.type = :type_program
+                    AND
+                    p.program_id = a.object_id
 
                 LEFT JOIN ' . $this->_tables['disciplines'] . ' d
-                ON a.type = :type_discipline AND
-                   d.discipline_id = a.object_id
+                    ON a.type = :type_discipline
+                    AND
+                    d.discipline_id = a.object_id
 
                 LEFT JOIN ' . $this->_tables['users'] . ' u
-                ON u.user_id = a.user_id
+                    ON u.user_id = a.user_id
             ';
             $values = array(
                 ':type_program'    => self::TYPE_PROGRAM,
@@ -438,5 +445,5 @@
             $affected = $stmt->rowCount();
             return ($affected > 0);
         }
+
     }
-?>

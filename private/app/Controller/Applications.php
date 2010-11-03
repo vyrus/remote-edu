@@ -32,43 +32,43 @@
             * (или вообще ешё не приняты/подписаны).
             */
             $apps = $app->getAllAppsInfo();
-			$paym = Model_Payment::create();
-		    foreach ($apps as $i=>$a)
-		    {
-		    	if ($a['status'] == 'signed')
-				{
-				    if ($a['program_title'])
-					{
-						//товарищ учится по всему направлению
-						$prog = $app->getProgram($a['object_id']);
-						if ($prog['paid_type'] == 'paid')
-						{
-							$paid_money = $paym->getTotal($a['app_id']);
-							$rest = $prog['cost'] - $paid_money; // (program price - paid already)
-							$rest_rate = $rest/$prog['cost']; // how many cost's parts to pay
-							$apps[$i] = array_merge($apps[$i],array('rest' => $rest, 'rest_rate' => $rest_rate));
-						}else
-						{
-							$apps[$i] = array_merge($apps[$i],array('rest' => 'free', 'rest_rate' => 'free'));
-						}
-					}else
-					{
-						//учится по дисциплине
-						$disc = $app->getDiscipline($a['object_id']);
-						$upper_prog = $app->getProgram($disc['program_id']);
-						if ($upper_prog['paid_type'] == 'paid')
-						{
-							$paid_money = $paym->getTotal($a['app_id']);
-							$rest = ($upper_prog['cost']*$disc['coef'])/100 - $paid_money; // (program price - paid already)
-							$rest_rate = $rest/(($upper_prog['cost']*$disc['coef'])/100); // how many cost's parts to pay
-							$apps[$i] = array_merge($apps[$i],array('rest' => $rest, 'rest_rate' => $rest_rate));
-						}else
-						{
-							$apps[$i] = array_merge($apps[$i],array('rest' => 'free', 'rest_rate' => 'free'));
-						}
-					}
-				}
-		    }
+            $paym = Model_Payment::create();
+            foreach ($apps as $i=>$a)
+            {
+                if ($a['status'] == 'signed')
+                {
+                    if ($a['program_title'])
+                    {
+                        //товарищ учится по всему направлению
+                        $prog = $app->getProgram($a['object_id']);
+                        if ($prog['paid_type'] == 'paid')
+                        {
+                            $paid_money = $paym->getTotal($a['app_id']);
+                            $rest = $prog['cost'] - $paid_money; // (program price - paid already)
+                            $rest_rate = $rest/$prog['cost']; // how many cost's parts to pay
+                            $apps[$i] = array_merge($apps[$i],array('rest' => $rest, 'rest_rate' => $rest_rate));
+                        }else
+                        {
+                            $apps[$i] = array_merge($apps[$i],array('rest' => 'free', 'rest_rate' => 'free'));
+                        }
+                    }else
+                    {
+                        //учится по дисциплине
+                        $disc = $app->getDiscipline($a['object_id']);
+                        $upper_prog = $app->getProgram($disc['program_id']);
+                        if ($upper_prog['paid_type'] == 'paid')
+                        {
+                            $paid_money = $paym->getTotal($a['app_id']);
+                            $rest = ($upper_prog['cost']*$disc['coef'])/100 - $paid_money; // (program price - paid already)
+                            $rest_rate = $rest/(($upper_prog['cost']*$disc['coef'])/100); // how many cost's parts to pay
+                            $apps[$i] = array_merge($apps[$i],array('rest' => $rest, 'rest_rate' => $rest_rate));
+                        }else
+                        {
+                            $apps[$i] = array_merge($apps[$i],array('rest' => 'free', 'rest_rate' => 'free'));
+                        }
+                    }
+                }
+            }
             $this->set('applications', $apps);
             $this->set('statuses', Model_Application::getStatusMap());
             $this->set ('invalidMaterialsForms', array ());
@@ -80,7 +80,7 @@
             if (empty ($requestData)) {
                 $this->render ('applications/index_by_admin');
             }
-	        // [ загрузка договора
+            // [ загрузка договора
             $invalidMaterialsForms = array ();
 
             foreach ($request->files as $key=>$item)
@@ -190,45 +190,45 @@
             $user = Model_User::create();
             $udata = (object) $user->getAuth();
             $app = Model_Application::create();
-			$paym = Model_Payment::create();
+            $paym = Model_Payment::create();
 
             $apps = $app->getAppsInfo($udata->user_id);
-		    foreach ($apps as $i=>$a)
-		    {
-		    	if ($a['status'] == 'signed')
-				{
-				    if ($a['program_title'])
-					{
-						//товарищ учится по всему направлению
-						$prog = $app->getProgram($a['object_id']);
-						if ($prog['paid_type'] == 'paid')
-						{
-							$paid_money = $paym->getTotal($a['app_id']);
-							$rest = $prog['cost'] - $paid_money; // (program price - paid already)
-							$rest_rate = $rest/$prog['cost']; // how many cost's parts to pay
-							$apps[$i] = array_merge($apps[$i],array('rest' => $rest, 'rest_rate' => $rest_rate));
-						}else
-						{
-							$apps[$i] = array_merge($apps[$i],array('rest' => 'free', 'rest_rate' => 'free'));
-						}
-					}else
-					{
-						//учится по дисциплине
-						$disc = $app->getDiscipline($a['object_id']);
-						$upper_prog = $app->getProgram($disc['program_id']);
-						if ($upper_prog['paid_type'] == 'paid')
-						{
-							$paid_money = $paym->getTotal($a['app_id']);
-							$rest = ($upper_prog['cost']*$disc['coef'])/100 - $paid_money; // (program price - paid already)
-							$rest_rate = $rest/(($upper_prog['cost']*$disc['coef'])/100); // how many cost's parts to pay
-							$apps[$i] = array_merge($apps[$i],array('rest' => $rest, 'rest_rate' => $rest_rate));
-						}else
-						{
-							$apps[$i] = array_merge($apps[$i],array('rest' => 'free', 'rest_rate' => 'free'));
-						}
-					}
-				}
-		    }
+            foreach ($apps as $i=>$a)
+            {
+                if ($a['status'] == 'signed')
+                {
+                    if ($a['program_title'])
+                    {
+                        //товарищ учится по всему направлению
+                        $prog = $app->getProgram($a['object_id']);
+                        if ($prog['paid_type'] == 'paid')
+                        {
+                            $paid_money = $paym->getTotal($a['app_id']);
+                            $rest = $prog['cost'] - $paid_money; // (program price - paid already)
+                            $rest_rate = $rest/$prog['cost']; // how many cost's parts to pay
+                            $apps[$i] = array_merge($apps[$i],array('rest' => $rest, 'rest_rate' => $rest_rate));
+                        }else
+                        {
+                            $apps[$i] = array_merge($apps[$i],array('rest' => 'free', 'rest_rate' => 'free'));
+                        }
+                    }else
+                    {
+                        //учится по дисциплине
+                        $disc = $app->getDiscipline($a['object_id']);
+                        $upper_prog = $app->getProgram($disc['program_id']);
+                        if ($upper_prog['paid_type'] == 'paid')
+                        {
+                            $paid_money = $paym->getTotal($a['app_id']);
+                            $rest = ($upper_prog['cost']*$disc['coef'])/100 - $paid_money; // (program price - paid already)
+                            $rest_rate = $rest/(($upper_prog['cost']*$disc['coef'])/100); // how many cost's parts to pay
+                            $apps[$i] = array_merge($apps[$i],array('rest' => $rest, 'rest_rate' => $rest_rate));
+                        }else
+                        {
+                            $apps[$i] = array_merge($apps[$i],array('rest' => 'free', 'rest_rate' => 'free'));
+                        }
+                    }
+                }
+            }
             $this->set('applications', $apps);
             $this->set('statuses', Model_Application::getStatusMap());
             $this->render();
@@ -237,100 +237,99 @@
 
         public function action_download_contract($params)
         {
-			$file_name = $params['file_name'];
+            $file_name = $params['file_name'];
 
-			// folder with files
-			define('BASE_DIR',ROOT.'/contracts/');
+            // folder with files
+            define('BASE_DIR',ROOT.'/contracts/');
 
-			// log file name
-			define('LOG_FILE',ROOT.'/contracts/downloads.log');
+            // log file name
+            define('LOG_FILE',ROOT.'/contracts/downloads.log');
 
             /**
             * @todo Better do $this->flash().
             */
-			if (!isset($file_name) || empty($file_name)) {
-			  die("Please specify file name for download.");
-			}
+            if (!isset($file_name) || empty($file_name)) {
+              die("Please specify file name for download.");
+            }
 
-			// Get real file name.
-			$fname = basename($file_name);
+            // Get real file name.
+            $fname = basename($file_name);
 
-			// Check if the file exists
-			function find_file($dirname, $fname, &$file_path)
-			{
-				$dir = opendir($dirname);
-				while ($file = readdir($dir))
-				{
-			    if (empty($file_path) && $file != '.' && $file != '..')
-			    {
-				      if (is_dir($dirname.'/'.$file))
-				      {
-				          find_file($dirname.'/'.$file, $fname, $file_path);
-				      }
-				      else
-				      {
-				        if (file_exists($dirname.'/'.$fname))
-				        {
-				            $file_path = $dirname.'/'.$fname;
-				            return;
-				        }
-				      }
-			    }
-			  }
-			} // find_file
+            // Check if the file exists
+            function find_file($dirname, $fname, &$file_path)
+            {
+                $dir = opendir($dirname);
+                while ($file = readdir($dir))
+                {
+                if (empty($file_path) && $file != '.' && $file != '..')
+                {
+                      if (is_dir($dirname.'/'.$file))
+                      {
+                          find_file($dirname.'/'.$file, $fname, $file_path);
+                      }
+                      else
+                      {
+                        if (file_exists($dirname.'/'.$fname))
+                        {
+                            $file_path = $dirname.'/'.$fname;
+                            return;
+                        }
+                      }
+                }
+              }
+            } // find_file
 
-			// get full file path (including subfolders)
-			$file_path = '';
-			find_file(BASE_DIR, $fname, $file_path);
+            // get full file path (including subfolders)
+            $file_path = '';
+            find_file(BASE_DIR, $fname, $file_path);
 
             /**
             * @todo $this->flash().
             */
-			if (!is_file($file_path)) {
-			  die("File does not exist. Make sure you specified correct file name.");
-			}
+            if (!is_file($file_path)) {
+              die("File does not exist. Make sure you specified correct file name.");
+            }
 
-			// file size in bytes
-			$fsize = filesize($file_path);
-			$fext = 'doc';
-			$mtype = 'application/msword';
-			$asfname = 'contract.doc';
+            // file size in bytes
+            $fsize = filesize($file_path);
+            $fext = 'doc';
+            $mtype = 'application/msword';
+            $asfname = 'contract.doc';
 
-			// set headers
-			header("Pragma: public");
-			header("Expires: 0");
-			header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-			header("Cache-Control: public");
-			header("Content-Description: File Transfer");
-			header("Content-Type: $mtype");
-			header("Content-Disposition: attachment; filename=\"$asfname\"");
-			header("Content-Transfer-Encoding: binary");
-			header("Content-Length: " . $fsize);
+            // set headers
+            header("Pragma: public");
+            header("Expires: 0");
+            header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+            header("Cache-Control: public");
+            header("Content-Description: File Transfer");
+            header("Content-Type: $mtype");
+            header("Content-Disposition: attachment; filename=\"$asfname\"");
+            header("Content-Transfer-Encoding: binary");
+            header("Content-Length: " . $fsize);
 
-			// download
-			// @readfile($file_path);
-			$file = @fopen($file_path,"rb");
-			if ($file) {
-			  while(!feof($file)) {
-			    print(fread($file, 1024*8));
-			    flush();
-			    if (connection_status()!=0) {
-			      @fclose($file);
-			      die();
-			    }
-			  }
-			  @fclose($file);
-			}
+            // download
+            // @readfile($file_path);
+            $file = @fopen($file_path,"rb");
+            if ($file) {
+              while(!feof($file)) {
+                print(fread($file, 1024*8));
+                flush();
+                if (connection_status()!=0) {
+                  @fclose($file);
+                  die();
+                }
+              }
+              @fclose($file);
+            }
 
-			$f = @fopen(LOG_FILE, 'a+');
-			if ($f) {
-			  @fputs($f, date("m.d.Y g:ia")."  ".$_SERVER['REMOTE_ADDR']."  ".$fname."\n");
-			  @fclose($f);
-			}
+            $f = @fopen(LOG_FILE, 'a+');
+            if ($f) {
+              @fputs($f, date("m.d.Y g:ia")."  ".$_SERVER['REMOTE_ADDR']."  ".$fname."\n");
+              @fclose($f);
+            }
         }
 
-        public function action_change_app_status($params)
-        {
+        public function action_change_app_status($params) {
             $links = Resources::getInstance()->links;
 
             $user = Model_User::create();
@@ -344,15 +343,16 @@
 
             if ('signed' == $new_status) {
                 $programs = Model_Education_Programs::create();
+                $model_checkpoint = Model_Checkpoint::create();
                 $app_info = $app->getAppInfo($app_id);
                 if ('discipline' == $app_info[0]['type']) {
                     $first_section = $programs->getFirstSectionOfDiscipline($app_info[0]['object_id']);
-                    $programs->setCheckpoint(array('student_id' => $app_info[0]['user_id'], 'section_id' => $first_section[0]['section_id']));
+                    $model_checkpoint->setCheckpoint(array('student_id' => $app_info[0]['user_id'], 'section_id' => $first_section[0]['section_id']));
                 }
                 if ('program' == $app_info[0]['type']) {
                     $first_discipline = $programs->getFirstDisciplineOfProgram($app_info[0]['object_id']);
                     $first_section = $programs->getFirstSectionOfDiscipline($first_discipline[0]['discipline_id']);
-                    $programs->setCheckpoint(array('student_id' => $app_info[0]['user_id'], 'section_id' => $first_section[0]['section_id']));
+                    $model_checkpoint->setCheckpoint(array('student_id' => $app_info[0]['user_id'], 'section_id' => $first_section[0]['section_id']));
                 }
             }
 
@@ -387,6 +387,5 @@
 
             $this->flash($msg, $return_url);
         }
-    }
 
-?>
+    }

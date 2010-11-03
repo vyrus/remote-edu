@@ -132,9 +132,9 @@
             $sql = 'SELECT u.user_id, cs.section_id, cs.created
             FROM ' . $this->_tables['checkpoints_students'] . ' cs
             LEFT JOIN ' . $this->_tables['users'] . ' u
-            ON cs.student_id = u.user_id
+                ON cs.student_id = u.user_id
             LEFT JOIN ' . $this->_tables['sections'] . ' s
-            ON s.section_id = cs.section_id
+                ON s.section_id = cs.section_id
             WHERE s.discipline_id = ?';
 
             $stmt = $this->prepare($sql);

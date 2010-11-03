@@ -871,11 +871,11 @@
                 FROM `users`' . ($usersRole == 'all' ? '' : ' WHERE `role`=:role');
             $stmt = $this->prepare($sql);
             $params = array();
-            
+
             if ($usersRole != 'all') {
                 $params[':role'] = $usersRole;
             }
-            
+
             $stmt->execute($params);
 
             return $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
@@ -949,5 +949,5 @@
 
             return $stmt->execute($values);
         }
+
     }
-?>

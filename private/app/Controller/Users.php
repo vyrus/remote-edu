@@ -311,18 +311,18 @@
         public function action_restore_passwd() {
             /* Берём менеджер ссылок */
             $links = Resources::getInstance()->links;
-            
+
             /* Получаем ссылку на страницу восстановления пароля */
             $action = $links->get('users.restore-passwd');
             /* Инициализируем форму */
             $form = Form_Profile_RestorePasswd::create($action);
-            
+
             /* Передаём форму в шаблон */
             $this->set('form', $form);
-            
+
             $request = $this->getRequest();
             $method = $form->method();
-            
+
             /* Если данных от формы нет, выводим страницу */
             if (empty($request->$method)) {
                 $this->render();
@@ -330,15 +330,15 @@
 
             /* Создаём модель для работы с пользователями */
             $user = Model_User::create();
-            
+
             /* Если в форме что-то не заполнено, просим исправить */
             if (!$form->validate($request, $user)) {
                 $this->render();
             }
-            
+
             /* Получаем данные пользователя */
             $udata = (object) $user->getInfoByLogin($form->login->value);
-            
+
             /* Генерируем код восстановления */
             $code = $user->getPasswdRestoreCode($udata->user_id);
 
@@ -347,67 +347,67 @@
             $postman->sendPasswdRestore(
                 $udata->user_id, $udata->email, $code
             );
-            
-            
+
+
             $msg = 'Ссылка для восстановления пароля отправлена на указанный ' .
-                   'при регистрации адрес электронной почты. Она будет ' . 
+                   'при регистрации адрес электронной почты. Она будет ' .
                    'действовать только в течении текущего дня.';
             $link = $links->get('users.login');
-            
+
             $this->flash($msg, $link, false);
         }
-        
+
         /**
         * Смена пароля.
         */
         public function action_reset_passwd(array $params) {
             $params = (object) $params;
-            
+
             /* Берём менеджер ссылок */
             $links = Resources::getInstance()->links;
-            
+
             /* Создаём модель пользователя */
             $user = Model_User::create();
             /* Генерируем защитный код */
             $code = $user->getPasswdRestoreCode($params ->user_id);
-            
+
             /* Проверяем код */
             if ($code != $params->code) {
-                $msg = 'Ошибка: недейстительная ссылка для смены пароля'; 
+                $msg = 'Ошибка: недейстительная ссылка для смены пароля';
                 $link = $links->get('users.restore-passwd');
-                
+
                 $this->flash($msg, $link, false);
             }
-            
+
             $opts = array('user_id' => $params->user_id,
                           'code'    => $params->code);
-            
+
             /* Получаем ссылку на страницу смены пароля */
             $action = $links->get('users.reset-passwd', $opts);
-            
+
             /* Инициализируем форму */
             $form = Form_Profile_ResetPasswd::create($action);
             $this->set('form', $form);
-            
+
             $request = $this->getRequest();
             $method  = $form->method();
-            
+
             /* Если данных от формы нет, выводим страницу */
             if (empty($request->$method)) {
                 $this->render();
             }
-            
+
             /* Если данные не прошли проверку, выводим ошибки */
             if (!$form->validate($request)) {
                 $this->render();
             }
-            
+
             $uid    = $params->user_id;
             $passwd = $form->new_passwd->value;
-            
+
             /* Обновляем пароль */
             $result = $user->setPasswd($uid, $passwd);
-            
+
             if ($result) {
                 $msg = 'Пароль успешно изменён';
                 $link = $links->get('users.login');
@@ -415,11 +415,11 @@
                 $msg = 'Не удалось изменить пароль';
                 $link = $links->get('users.reset-passwd', $opts);
             }
-            
+
             /* Выводим сообщение, удалось ли сменить пароль или нет */
             $this->flash($msg, $link, false);
         }
-        
+
         /**
         * Отображение информации об авторизованном пользователе.
         */
@@ -444,30 +444,30 @@
             $this->set('rolesCaptions', $this->_roles_captions);
             $this->render('users/users_list');
         }
-        
+
         /**
         * Редактирование расширенного профиля слушателя.
         */
         public function action_profile_extended_by_student() {
             /* Подгружаем менеджер ссылок */
             $links = Resources::getInstance()->links;
-            
+
             /* Создаём экземпляры необходимых моделей */
             $user     = Model_User::create();
             $region   = Model_Region::create();
             $locality = Model_Locality::create();
-            
+
             /* Получаем данные пользователя */
             $udata = (object) $user->getAuth();
-            
+
             /* Создаём объект формы расширенного профиля */
             $action = $links->get('student.extended-profile');
             $form = Form_Profile_Student_Extended::create($action);
             $this->set('form', $form);
-            
+
             $request = $this->getRequest();
             $method = $form->method();
-            
+
             /* Если данных формы нет в запросе, */
             if (empty($request->$method))
             {
@@ -476,61 +476,61 @@
                 {
                     /* то загружаем данные базового профиля */
                     $info = $user->getUserInfo($udata->user_id);
-                    
+
                     /* И выводим их в форме */
                     $form->setValue('surname',    $info['surname']);
                     $form->setValue('name',       $info['name']);
                     $form->setValue('patronymic', $info['patronymic']);
-                    
+
                     /* Загружаем расширенный профиль */
                     $profile = $user->getExtendedProfile($udata->user_id);
-                    
+
                     /* И наполняем форму данными из него */
                     $profile->passport->toForm($form);
                     $profile->edu_doc->toForm($form);
                     $profile->phones->toForm($form);
-                    
+
                     /* Получаем по идентификаторам название региона и города */
                     $r_name = $region->getName($profile->passport->regionId);
                     $l_name = $locality->getFullName(
                         $profile->passport->cityId
                     );
-                    
+
                     /* Передаём их в форму */
                     $form->setValue('region', $r_name);
                     $form->setValue('city',   $l_name);
                 }
-                
+
                 /* Отображаем страничку с формой */
                 $this->render();
             }
-            
+
             /* Если же в запросе содержатся заполненные поля формы, */
             if (!$form->validate($request, $region, $locality)) {
                 /* проверяем их и выводим ошибки */
                 $this->render();
             }
-            
+
             /* Если данные прошли проверку, заполняем ими контейнеры */
-            $snp = (object) array('surname'    => $form->surname->value, 
-                                  'name'       => $form->name->value, 
+            $snp = (object) array('surname'    => $form->surname->value,
+                                  'name'       => $form->name->value,
                                   'patronymic' => $form->patronymic->value);
-            
+
             $passport = Model_User_Passport::create()->fromForm($form);
             $edu_doc  = Model_User_EduDoc::create()->fromForm($form);
             $phones   = Model_User_Phones::create()->fromForm($form);
-            
+
             /* Обновляем фамилию-имя-отчество */
             $user->updateSNP($udata->user_id, $snp);
-            
+
             /* Сохраняем паспортные данные */
             if(!$user->savePassport($udata->user_id, $passport)) {
                 $msg = 'Ошибка при сохранении паспортных данных';
                 $alias = 'student.extended-profile';
-                
+
                 $this->flash($msg, $links->get($alias), false);
             }
-            
+
             /* Если в форме нет данных о документе об образовании, */
             if (empty($edu_doc->type)) {
                 /* то удаляем возможные записи, если раньше они были внесены */
@@ -540,26 +540,25 @@
             elseif (!$user->saveEduDoc($udata->user_id, $edu_doc)) {
                 $msg = 'Ошибка при сохранении данных документа об образовании';
                 $alias = 'student.extended-profile';
-                
+
                 $this->flash($msg, $links->get($alias), false);
             }
-            
+
             /* Если в форме нет данных о телефонах */
             if (empty($phones->mobile) && empty($phones->stationary)) {
                 /* удаляем возможные записи из базы */
                 $user->deletePhones($udata->user_id);
             }
             /* Иначе сохраняем новые телефоны */
-            elseif (!$user->savePhones($udata->user_id, $phones))
-            {
+            elseif (!$user->savePhones($udata->user_id, $phones)) {
                 $msg = 'Ошибка при сохранении телефонов';
-				$alias = 'student.extended-profile';
-                
+                $alias = 'student.extended-profile';
+
                 $this->flash($msg, $links->get($alias), false);
             }
-                               
+
             /* Выводим сообщение об успешном редактировании профиля */
-            $this->flash('Ваш профиль успешно обновлён', 
+            $this->flash('Ваш профиль успешно обновлён',
                          $links->get('student.apply'), false);
         }
 
@@ -569,25 +568,25 @@
         public function action_view_profile($params) {
             /* Получаем из параметров запроса идентификатор пользователя */
             $user_id = $params['user_id'];
-            
+
             /* Получаем базовый профиль пользователя */
             $user = Model_User::create();
             $base_profile = (object) $user->getUserInfo($user_id);
-            
+
             /* Если пользователь - не слушатель, */
             if (Model_User::ROLE_STUDENT !== $base_profile->role) {
                 /* отказываемся выводить профиль :) */
-                $msg  = 'Невозможно отобразить профиль, так как указанный ' . 
+                $msg  = 'Невозможно отобразить профиль, так как указанный ' .
                         'пользователь не является слушателем';
                 $alias = 'admin.applications';
-                
+
                 $link = Resources::getInstance()->links->get($alias);
                 $this->flash($msg, $link, false);
             }
-            
+
             /* Получаем данные расширенного профиля */
             $ex_profile = $user->getExtendedProfile($user_id);
-            
+
             /* И скармливаем всё представлению */
             $this->set('base_profile', $base_profile);
             $this->set('ex_profile',   $ex_profile);
@@ -604,9 +603,9 @@
             $links = Resources::getInstance()->links;
             $this->flash('Авторизация потеряна', $links->get('index'), 0);
             //$this->render($redirect_link);
-        }    
-        
-        public function action_edit_account($params) { 
+        }
+
+        public function action_edit_account($params) {
             $links = Resources::getInstance()->links;
 
             $opts = array('user_id' => $params['user_id']);
@@ -646,5 +645,5 @@
 
             $this->render('users/edit_account');
         }
+
     }
-?>
