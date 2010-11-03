@@ -1,5 +1,6 @@
 <?php
     class Controller_Messages extends Mvc_Controller_Abstract {
+
         public function action_send() {
             $links = Resources::getInstance()->links;
 
@@ -12,8 +13,8 @@
 
             if (count($args)) {
                 $form->setValue('recipient', $args[0]['to_id']);
-            }            
-        
+            }
+
             $this->set('form', $form);
             $method = $form->method();
 
@@ -25,18 +26,18 @@
             if (empty($requestData) || !$form->validate($request)) {
                 $this->render('messages/send');
             }
-                        
+
             /**
             * @todo Form_Abstract automatically processes values for all defined
             * fields to protect them from XSS.
-            */            
-                        
+            */
+
             $messageId = $messages->sendMessage($requestData['recipient'], htmlspecialchars($requestData['subject']), htmlspecialchars($requestData['message']));
-            
+
             if (isset($_FILES['attachment'])) {
                 $messages->addAttachments($messageId, $_FILES['attachment']);
             }
-            
+
             $this->flash('Сообщение отправлено', $links->get('messages.inbox'), 3);
         }
 
@@ -83,14 +84,14 @@
             $this->set('message', $message);
             $this->render('/messages/message');
         }
-        
+
         public function action_attachment($params) {
             $messages = new Model_Messages();
-            
+
             if (!$messages->getAttachment($params['attachment_id'])) {
                 $links = Resources::getInstance()->links;
                 $this->flash('Запрошено несуществующее вложение или у Вас недостаточно прав для загрузки вложения', $links->get('messages.inbox'), 3);
             }
         }
+
     }
-?>

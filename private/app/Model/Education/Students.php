@@ -1,24 +1,18 @@
 <?php
 
-    /* $Id: Students.php $ */
+    /* $Id: $ */
 
     /**
     * Модель для работы со студентами.
     */
-    class Model_Education_Students extends Mvc_Model_Abstract {
-        /**
-        * Название таблицы с пользователями в БД.
-        *
-        * @var string
-        */
-        protected $_table = 'users';
+    class Model_Education_Students extends Model_Base {
 
         /**
         * Кэш данных авторизации.
         *
         * @var array
         */
-        protected static $_auth_cache = null;
+        //protected static $_auth_cache = null;
 
         /**
         * Создание экземпляра модели.
@@ -37,7 +31,7 @@
         public function getStudentList() {
             $sql = '
                 SELECT user_id, login
-                FROM ' . $this->_table . '
+                FROM ' . $this->_tables['users'] . '
                 WHERE role = ?
             ';
 
@@ -56,7 +50,7 @@
         public function getListenerList($curator_id) {
             $sql = '
                 SELECT user_id, login, surname, name, patronymic
-                FROM ' . $this->_table . '
+                FROM ' . $this->_tables['users'] . '
                 WHERE
                     role = :role AND
                     curator = :curator
@@ -72,6 +66,33 @@
 
             return $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
         }
-    }
 
-?>
+        /**
+        * Получение списка отдельных дисциплин, изучаемых слушателем.
+        *
+        * @param  int $student_id Идентификатор слушателя.
+        * @return array|false
+        */
+        public function getDisciplines($student_id) {
+            $sql = '
+                SELECT a.object_id AS id, d.title
+                FROM ' . $this->_tables['applications'] . ' a
+                LEFT JOIN ' . $this->_tables['disciplines'] . ' d
+                    ON a.object_id = d.discipline_id
+                WHERE
+                    user_id = :student_id AND
+                    type = \'discipline\' AND
+                    status = \'signed\'
+            ';
+
+            $values = array(
+                ':student_id' => $student_id
+            );
+
+            $stmt = $this->prepare($sql);
+            $stmt->execute($values);
+
+            return $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
+        }
+
+    }

@@ -135,6 +135,12 @@
             /* Работа ответственного преподавателя с дисциплинами */
             array('/teacher_courses/discipline/([0-9]+)?', array('discipline_id'), 'teacher_courses', 'discipline', 'teacher.discipline', Mvc_Router::ROUTE_REGEX),
 
+            /* Работа куратора со своими слушателями */
+            array('/teacher_students/', array(), 'teacher_students', 'index', 'teacher.students', Mvc_Router::ROUTE_REGEX),
+
+            /* Работа куратора с дисциплинами своих слушателей */
+            array('/teacher_students/disciplines/([0-9]+)?', array('student_id'), 'teacher_students', 'disciplines', 'teacher.student_disciplines', Mvc_Router::ROUTE_REGEX),
+
             /* Редактирование контрольной точки */
             array('/checkpoints/edit/', array('checkpoint_id'), 'checkpoints', 'edit', 'checkpoint.edit', Mvc_Router::ROUTE_REGEX),
 
@@ -322,5 +328,3 @@
             )
         )
     );
-
-?>
