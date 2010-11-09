@@ -23,9 +23,10 @@
 
         /**
         * Отображение списка дисциплин слушателя.
+        *
+        * @params['student_id'] Идентификатор студента.
         */
         public function action_disciplines($params) {
-            $model_checkpoint = Model_Checkpoint::create();
             $model_education_students = Model_Education_Students::create();
             $model_user = Model_User::create();
 
@@ -34,18 +35,44 @@
 
             $user_info = $model_user->getUserInfo($params['student_id']);
 
-/*            $checkpoints = $model_checkpoint->getCheckpointsByDiscipline($params['discipline_id']);
-            $cps = array();
-            foreach ($checkpoints as $cp) {
-                $cps[$cp['user_id']][$cp['section_id']] = $cp['created'];
-            }
-*/
-            $this->set('user_info', $user_info);
             $this->set('disciplines', $disciplines);
             $this->set('disciplines_programs', $disciplines_programs);
-            //$this->set('checkpoints', $cps);
+            $this->set('user_id', $params['student_id']);
+            $this->set('user_info', $user_info);
 
             $this->render('teacher_students/disciplines');
+        }
+
+        /**
+        * Отображение куратору успеваемости слушателя по дисциплине.
+        *
+        * @params['student_id'] Идентификатор студента.
+        * @params['discipline_id'] Идентификатор дисциплины.
+        */
+        public function action_discipline($params) {
+            $model_checkpoint = Model_Checkpoint::create();
+            $model_education_programs = Model_Education_Programs::create();
+            $model_education_students = Model_Education_Students::create();
+            $model_user = Model_User::create();
+
+            $checkpoints = $model_checkpoint->getCheckpointsSectionsByDiscipline($params);
+/*            $cps = array();
+            foreach ($checkpoints as $cp) {
+                $cps[$cp['user_id']][$cp['section_title']] = $cp['created'];
+            }
+*/
+            $model_education_programs->getDiscipline($params['discipline_id'], $title, $labourIntensive, $coef);
+
+            $user_info = $model_user->getUserInfo($params['student_id']);
+
+            $this->set('discipline_title', $title);
+            $this->set('checkpoints', $checkpoints);
+            $this->set('students', $model_education_programs->getStudentsByDiscipline($params['discipline_id']));
+            $this->set('sections', $model_education_programs->getSectionsByDiscipline($params['discipline_id']));
+            $this->set('user_id', $params['student_id']);
+            $this->set('user_info', $user_info);
+
+            $this->render('teacher_students/discipline');
         }
 
     }

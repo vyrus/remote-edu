@@ -139,7 +139,10 @@
             array('/teacher_students/', array(), 'teacher_students', 'index', 'teacher.students', Mvc_Router::ROUTE_REGEX),
 
             /* Работа куратора с дисциплинами своих слушателей */
-            array('/teacher_students/disciplines/([0-9]+)?', array('student_id'), 'teacher_students', 'disciplines', 'teacher.student_disciplines', Mvc_Router::ROUTE_REGEX),
+            array('/teacher_students/disciplines/([0-9]+)', array('student_id'), 'teacher_students', 'disciplines', 'teacher.student_disciplines', Mvc_Router::ROUTE_REGEX),
+
+            /* Отображение куратору успеваемости слушателя по дисциплине */
+            array('/teacher_students/discipline/([0-9]+)/([0-9]+)', array('student_id', 'discipline_id'), 'teacher_students', 'discipline', 'teacher.student_discipline', Mvc_Router::ROUTE_REGEX),
 
             /* Редактирование контрольной точки */
             array('/checkpoints/edit/', array('checkpoint_id'), 'checkpoints', 'edit', 'checkpoint.edit', Mvc_Router::ROUTE_REGEX),
@@ -265,6 +268,10 @@
                 'teacher_courses/discipline',           // дисциплины, за которые ответственным назначен преподаватель
                 'checkpoints/set_pass',
                 'checkpoints/remove_pass',
+
+                '/teacher_students/',                   // интерфейс "Мои слушатели"
+                '/teacher_students/disciplines/',
+                '/teacher_students/discipline/',
 
                 'tests/list',
                 'tests/create',

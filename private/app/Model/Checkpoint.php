@@ -142,4 +142,33 @@
             return $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
         }
 
+        /**
+        * Возвращает прогресс обучения студента по дисциплине (список
+        * разделов дисциплины в совокупности с контрольными точками).
+        *
+        * @param  int $discipline_id Идентификатор дисциплины.
+        * @return array
+        */
+        public function getCheckpointsSectionsByDiscipline($params) {
+            $sql = 'SELECT s.title, cs.created
+            FROM ' . $this->_tables['sections'] . ' s
+            LEFT JOIN ' . $this->_tables['checkpoints_students'] . ' cs
+                ON
+                    s.section_id = cs.section_id
+                    AND
+                    cs.student_id = :student_id
+            WHERE
+                s.discipline_id = :discipline_id';
+
+            $sql_params = array(
+                ':student_id' => $params['student_id'],
+                ':discipline_id' => $params['discipline_id'],
+            );
+
+            $stmt = $this->prepare($sql);
+            $stmt->execute($sql_params);
+
+            return $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
+        }
+
     }

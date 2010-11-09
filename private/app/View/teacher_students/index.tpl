@@ -1,4 +1,4 @@
-<h3>Мои слушатели</h3>
+<h2>Мои слушатели</h2>
 <?php if (count($this->listeners)): ?>
 <ul>
 <?php foreach($this->listeners as $listener): ?>

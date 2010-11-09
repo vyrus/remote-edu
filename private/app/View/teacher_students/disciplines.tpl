@@ -1,7 +1,25 @@
-<h2>Слушатель <?php printf('%s %s %s', $this->user_info['surname'], $this->user_info['name'], $this->user_info['patronymic']); ?></h2>
+<h2>
+    <a href="<?php echo $this->_links->get('teacher.students'); ?>">Мои слушатели</a>
+    &gt; <?php printf('%s %s %s', $this->user_info['surname'], $this->user_info['name'], $this->user_info['patronymic']); ?>
+</h2>
 <h3>Отдельные дисциплины, изучаемые слушателем</h3>
-<pre><?php print_r($this->disciplines); ?></pre>
-<h3>Дисциплины, входящие в программы, изучаемые слушателем</h3>
-<pre><?php print_r($this->disciplines_programs); ?></pre>
+<?php if (count($this->disciplines)): ?>
+<ul>
+<?php foreach($this->disciplines as $discipline): ?>
+    <li><a href="<?php echo $this->_links->get('teacher.student_discipline', array('student_id' => $this->user_id, 'discipline_id' => $discipline['id'])) ?>"><?php echo $discipline['title']; ?></a></li>
+<?php endforeach; ?>
+</ul>
+<?php else: ?>
+<p>Cлушатель не изучает ни одной отдельной дисциплины.</p>
+<?php endif; ?>
 
-<pre><?php //print_r($this->checkpoints); ?></pre>
+<h3>Дисциплины, входящие в программы, изучаемые слушателем</h3>
+<?php if (count($this->disciplines_programs)): ?>
+<ul>
+<?php foreach($this->disciplines_programs as $discipline): ?>
+    <li><a href="<?php echo $this->_links->get('teacher.student_discipline', array('student_id' => $this->user_id, 'discipline_id' => $discipline['id'])) ?>"><?php echo $discipline['title']; ?></a></li>
+<?php endforeach; ?>
+</ul>
+<?php else: ?>
+<p>Cлушатель не изучает ни одной дисциплины, входящей в программу.</p>
+<?php endif; ?>

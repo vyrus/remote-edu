@@ -8,13 +8,6 @@
     class Model_Education_Students extends Model_Base {
 
         /**
-        * Кэш данных авторизации.
-        *
-        * @var array
-        */
-        //protected static $_auth_cache = null;
-
-        /**
         * Создание экземпляра модели.
         *
         * @return Model_Education_Students
@@ -76,11 +69,10 @@
         */
         public function getDisciplines($student_id) {
             $sql = '
-                SELECT *
+                SELECT a.object_id AS id, d.title
                 FROM ' . $this->_tables['applications'] . ' a
-
-                JOIN ' . $this->_tables['sections'] . ' s
-                    ON a.object_id = s.discipline_id
+                JOIN ' . $this->_tables['disciplines'] . ' d
+                    ON a.object_id = d.discipline_id
                 WHERE
                     a.user_id = ?
                     AND
