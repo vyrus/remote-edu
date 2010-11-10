@@ -4,12 +4,10 @@
     <a href="<?php echo $this->_links->get('messages.send') . $this->discipline['responsible_teacher']; ?>">Написать сообщение преподавателю</a>
 </p>
 <?php
-    $i = 0;
     foreach ($this->sections as $s):
-        $i++;
         $s = (object) $s;
 ?>
-    <h2 class="title_section">Раздел <?php echo $i . '. ' . $s->title ?></h2>
+    <h2 class="title_section">Раздел <?php echo $s->number . '. ' . $s->title ?></h2>
 <?php
         $materials = array();
         if (!empty($this->materials[$s->section_id])) {
@@ -54,9 +52,8 @@
     </ul>
 <?php
             }
-        }
-        if (isset($s->test_id)) {
-            $auth = Resources::getInstance()->auth;
+            if (isset($s->test_id)) {
+                $auth = Resources::getInstance()->auth;
 ?>
     <h3 class="title_materials">Тестовое задание</h3>
     <ul class="materials">
@@ -67,6 +64,7 @@
         </li>
     </ul>
 <?php
+            }
         }
     endforeach;
 ?>
