@@ -1,5 +1,7 @@
 <?php
+
     class Controller_Educational_Materials extends Mvc_Controller_Abstract {
+
         public function action_edit($params) {
             $links = Resources::getInstance()->links;
 
@@ -200,6 +202,5 @@
 
             $this->render();
         }
-    }
 
-?>
+    }

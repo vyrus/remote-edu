@@ -180,6 +180,12 @@
             /* Доступные для слушателя учебные программы */
             array('/student/programs', 'education_programs', 'available', 'student.programs', Mvc_Router::ROUTE_STATIC),
 
+            /* Интерфейс слушателя "Зачётная книжка" */
+            array('/student/record_book', 'Student_RecordBook', 'index', 'student.record_book', Mvc_Router::ROUTE_STATIC),
+
+            /* Отображение слушателю истории обучения по дисциплине */
+            array('/student/record_book/discipline/([0-9]+)', array('discipline_id'), 'Student_RecordBook', 'discipline', 'student.record_book.discipline', Mvc_Router::ROUTE_REGEX),
+
             /* Отображение слушателю доступных материалов */
             array('/student/materials/show/([0-9]+)/([0-9]+)', array('discipline_id', 'app_id'), 'educational_materials', 'show', 'materials.show', Mvc_Router::ROUTE_REGEX),
 
@@ -194,6 +200,9 @@
 
             /* Страничка помощи слушателю - как начать обучение */
             array('/student/help/how-to-start', 'pages', 'display', array('page' => 'help/how-to-start'), 'help.how-to-start', Mvc_Router::ROUTE_STATIC),
+
+            /* Download contract by student */
+            array('/student/download_contract/([0-9a-z]{32})', array('file_name'), 'applications', 'download_contract', 'applications.download_contract', Mvc_Router::ROUTE_REGEX),
 
             /* Страница с ценами */
             array('/price', 'pages', 'display', array('page' => 'price'), 'price', Mvc_Router::ROUTE_STATIC),
@@ -220,10 +229,7 @@
             array('/ajax/autocomplete/region', 'ajax', 'autocomplete_region', 'ajax.autocomplete-region', Mvc_Router::ROUTE_STATIC),
 
             /* Автодополнение при выборе города */
-            array('/ajax/autocomplete/city', 'ajax', 'autocomplete_city', 'ajax.autocomplete-city', Mvc_Router::ROUTE_STATIC),
-
-            /* Download contract by student */
-            array('/student/download_contract/([0-9a-z]{32})', array('file_name'), 'applications', 'download_contract', 'applications.download_contract', Mvc_Router::ROUTE_REGEX)
+            array('/ajax/autocomplete/city', 'ajax', 'autocomplete_city', 'ajax.autocomplete-city', Mvc_Router::ROUTE_STATIC)
         ),
 
         /* Права доступа к разделам сайта */
@@ -252,6 +258,9 @@
                 'educational_materials/show',
                 'education_programs/available',
 
+                'student/record_book/index',              // интерфейс "Зачётная книжка"
+                'student/record_book/discipline',
+
                 'tests/examination',
                 'tests/ajax_get_exam_questions',
                 'tests/ajax_check_exam_questions',
@@ -269,9 +278,9 @@
                 'checkpoints/set_pass',
                 'checkpoints/remove_pass',
 
-                '/teacher_students/',                   // интерфейс "Мои слушатели"
-                '/teacher_students/disciplines/',
-                '/teacher_students/discipline/',
+                'teacher_students',                    // интерфейс "Мои слушатели"
+                'teacher_students/disciplines',
+                'teacher_students/discipline',
 
                 'tests/list',
                 'tests/create',
@@ -291,9 +300,9 @@
             (
                 'checkpoints/edit',                     // Редактирование контрольной точки
 
-                '/assignment/responsible_teacher',
-                '/assignment/students_curator',
-                '/assignment',
+                'assignment/responsible_teacher',
+                'assignment/students_curator',
+                'assignment',
 
                 'users/register_employee_by_admin',     // учебные материалы, доступные для слушателя
                 'users/users_list',

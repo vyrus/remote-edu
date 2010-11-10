@@ -56,13 +56,7 @@
             $model_user = Model_User::create();
 
             $checkpoints = $model_checkpoint->getCheckpointsSectionsByDiscipline($params);
-/*            $cps = array();
-            foreach ($checkpoints as $cp) {
-                $cps[$cp['user_id']][$cp['section_title']] = $cp['created'];
-            }
-*/
             $model_education_programs->getDiscipline($params['discipline_id'], $title, $labourIntensive, $coef);
-
             $user_info = $model_user->getUserInfo($params['student_id']);
 
             $this->set('discipline_title', $title);

@@ -19,7 +19,7 @@
     /* ссылки, доступные только слушателю */
     $student_elements = array(
         'Учебная комната'	      => $this->_links->get('student.programs'),
-        'Зачетная книжка' 		  => '#',
+        'Зачетная книжка' 		  => $this->_links->get('student.record_book'),
         'Инструкция пользователю' => $this->_links->get('help.materials')
     );
 
