@@ -1,5 +1,7 @@
 <?php
+
     class Model_Education_Programs extends Model_Base {
+
         const CHECK_BY_PARENT_ID = 0;
         const CHECK_BY_OWN_ID = 1;
 
@@ -735,7 +737,7 @@ QUERY;
             $stmt = $this->prepare($sql);
             $stmt->execute(array($discipline_id));
 
-            return $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
+            return $stmt->fetch(Db_Pdo::FETCH_ASSOC);
         }
 
         /**
