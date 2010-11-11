@@ -378,11 +378,8 @@
                 $user = Model_User::create();
                 $udata = (object) $user->getAuth();
 
-                $params = array('student_id' => $udata->user_id,
-                                'section_id' => $section_id);
-
                 $checkpoint = Model_Checkpoint::create();
-                $checkpoint->setCheckpointPass($params);
+                $checkpoint->setNextSectionPass($udata->user_id, $section_id);
             }
 
             $this->_saveExamResults($test_id, $num_errors, $test->num_questions,

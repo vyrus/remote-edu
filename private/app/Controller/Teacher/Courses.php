@@ -39,6 +39,8 @@
 
             $model_education_programs->getDiscipline($params['discipline_id'], $title, $labourIntensive, $coef);
 
+            //$this->set('next', $model_checkpoint->setNextSectionPass(3, 4));
+
             $this->set('discipline_title', $title);
             $this->set('checkpoints', $cps);
             $this->set('students', $model_education_programs->getStudentsByDiscipline($params['discipline_id']));

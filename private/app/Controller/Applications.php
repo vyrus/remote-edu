@@ -347,12 +347,12 @@
                 $app_info = $app->getAppInfo($app_id);
                 if ('discipline' == $app_info[0]['type']) {
                     $first_section = $programs->getFirstSectionOfDiscipline($app_info[0]['object_id']);
-                    $model_checkpoint->setCheckpointPass(array('student_id' => $app_info[0]['user_id'], 'section_id' => $first_section['section_id']));
+                    $model_checkpoint->setCheckpointPass($app_info[0]['user_id'], $first_section['section_id']);
                 }
                 if ('program' == $app_info[0]['type']) {
                     $first_discipline = $programs->getFirstDisciplineOfProgram($app_info[0]['object_id']);
                     $first_section = $programs->getFirstSectionOfDiscipline($first_discipline[0]['discipline_id']);
-                    $model_checkpoint->setCheckpointPass(array('student_id' => $app_info[0]['user_id'], 'section_id' => $first_section['section_id']));
+                    $model_checkpoint->setCheckpointPass($app_info[0]['user_id'], $first_section['section_id']);
                 }
             }
 

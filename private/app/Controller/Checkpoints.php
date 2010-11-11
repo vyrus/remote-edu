@@ -44,7 +44,7 @@
             $model_checkpoint = Model_Checkpoint::create();
             $model_education_programs = Model_Education_Programs::create();
 
-            $model_checkpoint->setCheckpointPass($params);
+            $model_checkpoint->setCheckpointPass($params['student_id'], $params['section_id']);
             $discipline_id = $model_education_programs->getDisciplineNumberBySection($params['section_id']);
 
             $links = Resources::getInstance()->links;
@@ -59,7 +59,7 @@
             $model_checkpoint = Model_Checkpoint::create();
             $model_education_programs = Model_Education_Programs::create();
 
-            $model_checkpoint->removeCheckpointPass($params);
+            $model_checkpoint->removeCheckpointPass($params['student_id'], $params['section_id']);
             $discipline_id = $model_education_programs->getDisciplineNumberBySection($params['section_id']);
 
             $links = Resources::getInstance()->links;
