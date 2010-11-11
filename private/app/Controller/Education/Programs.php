@@ -1,5 +1,7 @@
 <?php
+
     class Controller_Education_Programs extends Mvc_Controller_Abstract {
+
         public function action_index () {
             $educationPrograms = Model_Education_Programs::create();
             $this->set('directions', $educationPrograms->getDirections());
@@ -97,33 +99,32 @@
         public function action_add_section ($params) {
             $links = Resources::getInstance()->links;
 
-            $this->set ('buttonCaption', 'Добавить');
-
             $request = $this->getRequest ();
-            $request->set ('discipline', $params['discipline_id']);
+            $request->set('discipline', $params['discipline_id']);
 
             $opts = array('discipline_id' => $params['discipline_id']);
             $action = $links->get('sections.add', $opts);
 
             $form = Form_Section_Add::create ($action);
-            $this->set ('form', $form);
+            $this->set('form', $form);
             $method = $form->method ();
-            if (empty ($request->$method)) {
-                $this->render ('education_programs/section_form');
+
+            if (empty($request->$method)) {
+                $this->render('education_programs/section_form');
             }
 
-            $educationPrograms = Model_Education_Programs::create ();
+            $educationPrograms = Model_Education_Programs::create();
 
-            if (! $form->validate ($request, $educationPrograms)) {
-                $this->render ("education_programs/section_form");
+            if (! $form->validate($request, $educationPrograms)) {
+                $this->render("education_programs/section_form");
             }
 
-            $educationPrograms->createSection (
+            $educationPrograms->createSection(
                 $form->discipline->value,
                 $form->title->value,
                 $form->number->value
             );
-            $this->flash (
+            $this->flash(
                 'Раздел успешно добавлен',
                 $links->get('admin.programs'),
                 3

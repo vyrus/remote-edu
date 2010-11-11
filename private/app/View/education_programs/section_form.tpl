@@ -1,6 +1,5 @@
 <?php
     $form = $this->form;
-    $form_checkpoint = $this->form_checkpoint;
 
     if (isset($form->discipline)) {
         $discipline = $form->discipline;
@@ -44,5 +43,13 @@
         </div>
     </div>
 </form>
+
+<?php
+    if (isset($this->form_checkpoint)) {
+        $form_checkpoint = $this->form_checkpoint;
+?>
 <h3>Контрольная точка раздела</h3>
-<?php $this->renderElement('checkpoint-form') ?>
+<?php
+        $this->renderElement('checkpoint-form');
+    }
+?>
