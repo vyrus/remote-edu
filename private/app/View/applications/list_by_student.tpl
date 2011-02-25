@@ -59,29 +59,29 @@
 					{
 						if ($app['program_title'])
 						{
-							if ($app['rest'] == 'free')
+							if ($app['rest'] === 'free')
 							{
 								echo "бесплатное направление";
-							}elseif ($app['rest'] == 0)
+							}elseif ($app['rest'] <= 0)
 							{
 								echo "направление оплачено";
 							}else
 							{
 								echo "задолженность по оплате ".$app['rest'];
-								echo " рублей,<br> что составляет ".$app['rest_rate']." от общей суммы";
+								echo " рублей,<br> что составляет ".$app['rest_rate']." % от общей суммы";
 							}
 						}else
 						{
-							if ($app['rest'] == 'free')
+							if ($app['rest'] === 'free')
 							{
 								echo "бесплатная дисциплина";
-							}elseif ($app['rest'] == 0)
+							}elseif ($app['rest'] <= 0)
 							{
 								echo "дисциплина оплачена";
 							}else
 							{
 								echo "задолженность по оплате ".$app['rest'];
-								echo " рублей,<br> что составляет ".$app['rest_rate']." от общей суммы";
+								echo " рублей,<br> что составляет ".$app['rest_rate']." % от общей суммы";
 							}
 						}
 					} ?>

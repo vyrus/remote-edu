@@ -28,11 +28,11 @@
     <div class="error"><?php echo $field->error ?></div>
     <?php endif; ?>
     
-    <?php /* Проверка пароля */ $field = $form->passwd_check ?>
+    <?php /* Подтверждение пароля */ $field = $form->passwd_check ?>
     <br>
     <div class="field">
       <input name="<?php echo $field->name ?>" type="password" id="passwd" value="<?php echo $field->value ?>" /> 
-      <label for="passwd">Проверка пароля:</label>
+      <label for="passwd">Подтверждение пароля:</label>
     </div>
     
     <?php /* Email */ $field = $form->email ?>

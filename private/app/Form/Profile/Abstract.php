@@ -98,7 +98,10 @@
             $this->addField('surname')
                  ->setValidator('/^[А-ЯЁ]{1}[а-яё]{1,}$/xu')
                  ->setError(
-                     'Фамилия должны состоять минимум из 2-х букв русского (первая - заглавная)'
+                    'Фамилия должна состоять минимум из 2-х букв русского алфавита (первая - заглавная)'
+                 )
+                 ->setHint(
+                    '*Фамилия должна состоять минимум из 2-х букв русского алфавита'
                  );
         }
 
@@ -108,6 +111,9 @@
                  ->setValidator('/^[А-ЯЁ]{1}[а-яё]{1,}$/xu')
                  ->setError(
                      'Имя должно состоять минимум из 2-х букв кириллицы (первая - заглавная)'
+                 )
+                 ->setHint(
+                      '*Имя должно состоять минимум из 2-х букв кириллицы'
                  );
         }
 
@@ -117,6 +123,9 @@
                  ->setValidator('/^[А-ЯЁ]{1}[а-яё]{1,}$/xu')
                  ->setError(
                      'Отчество должно состоять минимум из 2-х букв кириллицы (первая - заглавная)'
+                 )
+                 ->setHint(
+                    '*Отчество должно состоять минимум из 2-х букв кириллицы'
                  );
         }
 
@@ -124,40 +133,46 @@
             return
             $this->addField('birthday')
                  ->setValidator(self::DATE_REGEX)
-                 ->setError('Введите дату в формате дд.мм.гггг');
+                 ->setError('Введите дату в формате дд.мм.гггг')
+                 ->setHint('*Формат - дд.мм.гггг');
         }
 
         protected function _addPassportSeries() {
             return
             $this->addField('passport_series')
                  ->setValidator('/^[0-9]{4}$/ixu')
-                 ->setError('Серия паспорта должна состоять из 4-х цифр');
+                 ->setError('Серия паспорта должна состоять из 4-х цифр')
+                 ->setHint('*4 цифры');
         }
 
         protected function _addPassportNumber() {
             return
             $this->addField('passport_number')
                  ->setValidator('/^[0-9]{6}$/ixu')
-                 ->setError('Номер паспорта должен состоять из 6-х цифр');
+                 ->setError('Номер паспорта должен состоять из 6-х цифр')
+                 ->setHint('*6 цифр');
         }
 
         protected function _addPassportGivenBy() {
             return
             $this->addField('passport_given_by')
                  ->setValidator('/^[0-9а-яё.,-\s]+$/ixu')
-                 ->setError('Введите, кем выдан паспорт');
+                 ->setError('Введите, кем выдан паспорт')
+                 ->setHint('*Введите, кем выдан паспорт');
         }
 
         protected function _addPassportGivenDate() {
             return
             $this->addField('passport_given_date')
                  ->setValidator(self::DATE_REGEX)
-                 ->setError('Введите дату в формате дд.мм.гггг');
+                 ->setError('Введите дату в формате дд.мм.гггг')
+                 ->setHint('*Формат - дд.мм.гггг');
         }
 
         protected function _addRegion() {
             return
-            $this->addField('region');
+            $this->addField('region')
+                  ->setHint('*Введите Ваш регион');
         }
 
         protected function _addRegionId() {
@@ -167,7 +182,8 @@
 
         protected function _addCity() {
             return
-            $this->addField('city');
+            $this->addField('city')
+                  ->setHint('*Введите Ваш город');
         }
 
         protected function _addCityId() {
@@ -179,24 +195,28 @@
             return
             $this->addField('street')
                  ->setValidator('/^[0-9а-яё.,-\\/\s]+$/ixu')
-                 ->setError('Введите улицу');
+                 ->setError('Введите улицу')
+                 ->setHint('*Введите Вашу улицу');
         }
 
         protected function _addHouse() {
             return
             $this->addField('house')
                  ->setValidator('/^[0-9а-яё.,-\\/\s]+$/ixu')
-                 ->setError('Введите номер дома');
+                 ->setError('Неверный формат ввода')
+                 ->setHint('*Введите номер Вашего дома');
         }
 
         protected function _addFlat() {
             return
-            $this->addField('flat');
+            $this->addField('flat')
+                 ->setHint('*Введите номер Вашей квартиры');
         }
 
         protected function _addEduDocType() {
             return
-            $this->addField('doc_type');
+            $this->addField('doc_type')
+                 ->setHint('*Выберите тип документа о Вашем образовании');
         }
 
         protected function _addEduDocCustomType() {
@@ -206,27 +226,32 @@
 
         protected function _addEduDocNumber() {
             return
-            $this->addField('doc_number');
+            $this->addField('doc_number')
+                 ->setHint('*Введите номер документа');
         }
 
         protected function _addExitYear() {
             return
-            $this->addField('exit_year');
+            $this->addField('exit_year')
+                 ->setHint('*Год Вашего выпуска из учебного заведения');
         }
 
         protected function _addSpeciality() {
             return
-            $this->addField('speciality');
+            $this->addField('speciality')
+                 ->setHint('Введите Вашу специальность');
         }
 
         protected function _addQualification() {
             return
-            $this->addField('qualification');
+            $this->addField('qualification')
+                 ->setHint('Введите Вашу квалификацию');
         }
 
         protected function _addPhoneMobile() {
             return
-            $this->addField('phone_mobile');
+            $this->addField('phone_mobile')
+                 ->setHint('Формат ввода - +7 (xxx) xxx-xx-xx');
         }
 
         protected function _addPhoneStationary() {

@@ -53,5 +53,4 @@
     <a href="" id="lnk-add-question">Добавить вопрос</a>
     <a href="" id="lnk-show-all"></a>
     <a href="" id="lnk-hide-all"></a>
-    <a href="" id="lnk-toggle-all"></a>
 </div>

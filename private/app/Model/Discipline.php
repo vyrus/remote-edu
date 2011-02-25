@@ -33,7 +33,7 @@
                 return $discs;
             }
 
-            /* Если платная, то берём общую сумму платажей по заявке */
+            /* Если платная, то берём общую сумму платежей по заявке */
             $payment = Model_Payment::create();
             $payment_total = $payment->getTotal($app_id);
 
@@ -51,6 +51,69 @@
             /* По коэффициентам дисциплин рассчитываем, какие из них доступны */
             $discs = $this->_getAllowed($discs, $payment_total, $cost_total);
             return $discs;
+        }
+        
+        /**
+        * Получение списка всех дисциплин из программы. Для каждой дисциплины
+        * рассчитывается, активна ли она или нет. Если нет - то сколько она стоит и сколько
+        * за нее уже заплачено
+        *
+        * @param  int   $program_id    Идентификатор программы.
+        * @param  mixed $paid_type     Тип программы (платная или бесплатная).
+        * @param  int   $cost          Стоимость программы.
+        * @param  int   $payment_total Сколько заплачено за программу.
+        * @return array Список дисциплин.
+        */
+        public function getDisciplines($program_id, $paid_type, $cost, $payment_total) {
+            /* Если $payment_total == null, то значит не поступило ни одного платежа */
+            $payment_total = ((null == $payment_total) ? 0 : $payment_total);
+            
+            /* Получаем список всех дисциплин в программе */
+            $discs = $this->_getDisciplinesByProgramId($program_id);
+            
+            /* определяем, какой процент от программы уже оплачен */
+            $percent_paid = ((0 == $cost) ? 0 : round($payment_total / $cost * 100));
+            
+            $disciplines = array();
+            
+            /* если сумма заплачена полностью или программа бесплатная */
+            if ($percent_paid >= 100 || Model_Education_Programs::PAID_TYPE_FREE == $paid_type) {
+                foreach ($discs as $d) {
+                    /* присваиваем полям стоимость дисциплины и сколько за нее заплатили соответствующие значения */
+                    $d['disc_cost'] = $d['disc_paid'] = ($cost / 100) * $d['coef'];
+                    $d['active'] = true;
+                    $disciplines[] = $d;
+                }
+            }
+            else {
+                foreach ($discs as $d) {
+                    $d['disc_cost'] = ($cost / 100) * $d['coef'];
+                    /* если стоимость дисциплины меньше, чем заплатили - то она доступна */
+                    if ($d['disc_cost'] <= $payment_total) {
+                        $d['disc_paid'] = $d['disc_cost'];
+                        /* дисциплина доступна */
+                        $d['active'] = true;
+                    }
+                    /* в ином случае - если заплатили хоть что-то - то заносим это в disc_paid,
+                    чтобы потом выводить пользователю, например, заплачено 20р из 40р */
+                    elseif ($payment_total >= 0) {
+                        $d['disc_paid'] = $payment_total;
+                        /* дисциплина недоступна */
+                        $d['active'] = false;
+                    }
+                    /* в ином случае заносим в disc_paid 0 */
+                    else {
+                        $d['disc_paid'] = 0;
+                        /* дисциплина недоступна */
+                        $d['active'] = false;
+                    }
+                    
+                    $payment_total -= $d['disc_cost'];
+                    $disciplines[] = $d;
+                }
+            }
+            
+            return $disciplines;
         }
 
         /**

@@ -181,10 +181,6 @@
     }
 </script>
 <style type="text/css">
-    select.educationProgramItems {
-        width                       : 200px;
-        margin-right                : 15px;
-    }
     input.addButton,
     input.editButton,
     input.removeButton,

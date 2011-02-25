@@ -102,7 +102,7 @@ $(document).ready(function() {
                         <?php /* Если пользователь не авторизован, не выводим меню дистанционки */ ?>
                         <?php if (false !== Model_User::create()->getAuth()): ?>
                             <div class="leftblock">
-                                <div class="topic-leftblock"><span><b>Д</b>истанционка</span></div>
+                                <div class="topic-leftblock"><span><b>С</b>истема&nbsp;<b>ДО</b></span></div>
                                 <div class="cntnt-leftblock">
                                     <div>
                                         <ul id="accordion_no">

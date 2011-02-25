@@ -15,7 +15,7 @@
         /**
         * Добавление нового платежа по заявке.
         *
-        * @param  float $amount Рзамер платежа.
+        * @param  float $amount Размер платежа.
         * @param  int   $app_id Идентификатор заявки.
         * @return boolean
         */

@@ -396,3 +396,10 @@ table.checkpoints table tr:hover td {
 .table_simple th {
     border: #ccc 1px solid;
 }
+
+/*  */
+
+select.educationProgramItems {
+	width                       : 300px;
+	margin-right                : 15px;
+}

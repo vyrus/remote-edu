@@ -24,7 +24,7 @@
                             $action = $this->_links->get('checkpoint.remove_pass', array('student_id' => $student['user_id'], 'section_id' => $section['section_id']));
                             $action_title = 'отменить доступ';
                         } else {
-                            $created = '&mdash';
+                            $created = '&mdash;';
                             $status = 'не доступен';
                             $action = $this->_links->get('checkpoint.set_pass', array('student_id' => $student['user_id'], 'section_id' => $section['section_id']));
                             $action_title = 'сделать доступным';

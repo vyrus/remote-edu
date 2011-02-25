@@ -587,6 +587,14 @@ QUERY;
                 FROM ' . $this->_tables['programs'] . '
                 WHERE program_id = ?
             ';
+            /*$sql = '
+                SELECT pr.*, SUM(pm.amount) AS total_sum
+                FROM ' . $this->_tables['programs'] . ' pr
+                LEFT JOIN ' . $this->_tables['payments'] . ' pm
+                     ON pm.app_id = pr.program_id
+                
+                WHERE program_id = :program_id
+            ';*/
 
             $stmt = $this->prepare($sql);
             $stmt->execute(array($program_id));

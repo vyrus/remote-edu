@@ -622,7 +622,7 @@
             if (empty($requestData)) {
                 if (($userInfo = $users->getUserInfo($params['user_id'])) === FALSE) {
                     $this->flash('Пользователь не существует',
-                                 $links->get('users.list'), 10);
+                                 $links->get('users.list') . 'all/', 10);
                 }
 
                 $form->setValue('surname', $userInfo['surname']);
@@ -640,7 +640,7 @@
                 );
                 $users->setUserInfo($userInfo);
                 $this->flash('Данные пользователя успешно изменены',
-                             $links->get('users.list'), 10);
+                             $links->get('users.list') . 'all/', 10);
             }
 
             $this->render('users/edit_account');

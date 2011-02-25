@@ -205,7 +205,7 @@
                         {
                             $paid_money = $paym->getTotal($a['app_id']);
                             $rest = $prog['cost'] - $paid_money; // (program price - paid already)
-                            $rest_rate = $rest/$prog['cost']; // how many cost's parts to pay
+                            $rest_rate = round(($rest/$prog['cost'])*100, 2); // how many cost's parts to pay
                             $apps[$i] = array_merge($apps[$i],array('rest' => $rest, 'rest_rate' => $rest_rate));
                         }else
                         {
@@ -220,7 +220,7 @@
                         {
                             $paid_money = $paym->getTotal($a['app_id']);
                             $rest = ($upper_prog['cost']*$disc['coef'])/100 - $paid_money; // (program price - paid already)
-                            $rest_rate = $rest/(($upper_prog['cost']*$disc['coef'])/100); // how many cost's parts to pay
+                            $rest_rate = round($rest/(($upper_prog['cost']*$disc['coef'])/100) * 100, 2); // how many cost's parts to pay
                             $apps[$i] = array_merge($apps[$i],array('rest' => $rest, 'rest_rate' => $rest_rate));
                         }else
                         {

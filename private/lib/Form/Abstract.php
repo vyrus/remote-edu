@@ -49,6 +49,13 @@
         protected $_values = array();
         
         /**
+        * Список подсказок для полей формы.
+        * 
+        * @var array
+        */
+        protected $_hints = array();        
+        
+        /**
         * Кэш для запрошенных объектов-полей.
         * 
         * @see self::__get()
@@ -71,7 +78,7 @@
         * 
         * @var boolean
         */
-        protected $_valid;
+        protected $_valid = true;
         
         /**
         * Значение атрибута "action" тега "form".
@@ -201,6 +208,25 @@
         }
         
         /**
+        * Установка текста подсказки. По умолчанию значение идентификатор поля
+        * устанавливается в предыдущий использованный идентификатор.
+        * 
+        * @param  string $hint Текст подсказки.
+        * @param  string $id    Идентификатор поля.
+        * @return Form_Abstract Fluent interface.
+        */
+        public function setHint($hint, $id = null) {
+            /* Определяем индентификатор и устанавливаем подсказку */
+            $id = (null !== $id ? $id : $this->_getLastId());
+            $this->_hints[$id] = $hint;
+            
+            /* Запоминаем использованный идентификатор */
+            $this->_setLastId($id);
+                        
+            return $this;
+        }
+        
+        /**
         * Возвращает значение атрибута "action".
         * 
         * @return string
@@ -256,7 +282,9 @@
                     $this->setValidationError($id, $field['error']);
                 } else {
                     /* Иначе запоминаем значение */
+                    //$this->setValidationHint($id, $field['hint']);
                     $this->setValue($id, $value);
+                    
                 }
             }
             
@@ -312,7 +340,7 @@
             $this->_errors[$id] = $error;
             /* Не забываем удалить закэшированный объект поля */
             $this->_deleteFromCache($id);
-        }
+        }  
         
         /**
         * Установка последнего использованного идентификатора поля. Используется
@@ -475,12 +503,17 @@
                 $field['error'] = $this->_errors[$id];
             }
             
+            /* Если есть подсказки для этого поля, добавляем в массив */
+            if (isset($this->_hints[$id])) {
+                $field['hint'] = $this->_hints[$id];
+            }
+            
             /* Если есть значения для поля - в массив */
             $field['value'] = '';
             if (isset($this->_values[$id])) {
                 $field['value'] = $this->_values[$id];
             }
-            
+            $field['all_fields'] = $this->_fields;
             /* Преобразуем массив в объект */
             $field = (object) $field;
             /* Заносим в кэш */

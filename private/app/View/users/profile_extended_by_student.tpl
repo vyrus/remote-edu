@@ -71,7 +71,11 @@
 
 <form action="<?php echo $form->action() ?>" method="<?php echo $form->method() ?>">
 <div class="form">
-    <h3>Заполните, пожалуйста, "Подробную анкету слушателя":</h3>
+    <?php if ($form->valid()): ?>
+        <h3>Заполните, пожалуйста, "Подробную анкету слушателя":</h3>
+    <?php else: ?>
+        <h3><font color='red'>При заполнении были допущены ошибки</font></h3>
+    <?php endif; ?>
     <?php /* Фамилия */ $field = $form->surname ?>
     <br><br>
     <div class="field">
@@ -80,7 +84,9 @@
     </div>
     
             <?php if (isset($field->error)): ?>
-            <div class="error"><?php echo $field->error ?></div>
+                <div class="error"><?php echo $field->error ?></div>
+            <?php elseif (isset($field->hint)): ?>
+                <div><font size='1'><?php echo $field->hint ?></font></div>
             <?php endif; ?>
         
     <?php /* Имя */ $field = $form->name ?>
@@ -91,7 +97,9 @@
     </div>
     
             <?php if (isset($field->error)): ?>
-            <div class="error"><?php echo $field->error ?></div>
+                <div class="error"><?php echo $field->error ?></div>
+            <?php elseif (isset($field->hint)): ?>
+                <div><font size='1'><?php echo $field->hint ?></font></div>
             <?php endif; ?>
         
     <?php /* Отчество */ $field = $form->patronymic ?>
@@ -102,7 +110,9 @@
     </div>
     
             <?php if (isset($field->error)): ?>
-            <div class="error"><?php echo $field->error ?></div>
+                <div class="error"><?php echo $field->error ?></div>
+            <?php elseif (isset($field->hint)): ?>
+                <div><font size='1'><?php echo $field->hint ?></font></div>
             <?php endif; ?>
     
     <?php /* Дата рождения */ $field = $form->birthday ?>
@@ -113,7 +123,9 @@
     </div>
     
             <?php if (isset($field->error)): ?>
-            <div class="error"><?php echo $field->error ?></div>
+                <div class="error"><?php echo $field->error ?></div>
+            <?php elseif (isset($field->hint)): ?>
+                <div><font size='1'><?php echo $field->hint ?></font></div>
             <?php endif; ?>
             
     <?php /* Серия паспорта */ $field = $form->passport_series ?>
@@ -124,7 +136,9 @@
     </div>
     
             <?php if (isset($field->error)): ?>
-            <div class="error"><?php echo $field->error ?></div>
+                <div class="error"><?php echo $field->error ?></div>
+            <?php elseif (isset($field->hint)): ?>
+                <div><font size='1'><?php echo $field->hint ?></font></div>
             <?php endif; ?>
 
     <?php /* Номер паспорта */ $field = $form->passport_number ?>
@@ -135,7 +149,9 @@
     </div>
     
             <?php if (isset($field->error)): ?>
-            <div class="error"><?php echo $field->error ?></div>
+                <div class="error"><?php echo $field->error ?></div>
+            <?php elseif (isset($field->hint)): ?>
+                <div><font size='1'><?php echo $field->hint ?></font></div>
             <?php endif; ?>
     
     <?php /* Кем выдан паспорт */ $field = $form->passport_given_by ?>
@@ -146,7 +162,9 @@
     </div>
     
             <?php if (isset($field->error)): ?>
-            <div class="error"><?php echo $field->error ?></div>
+                <div class="error"><?php echo $field->error ?></div>
+            <?php elseif (isset($field->hint)): ?>
+                <div><font size='1'><?php echo $field->hint ?></font></div>
             <?php endif; ?>
 
     <?php /* Дата выдачи паспорта */ $field = $form->passport_given_date ?>
@@ -157,7 +175,9 @@
     </div>
     
             <?php if (isset($field->error)): ?>
-            <div class="error"><?php echo $field->error ?></div>
+                <div class="error"><?php echo $field->error ?></div>
+            <?php elseif (isset($field->hint)): ?>
+                <div><font size='1'><?php echo $field->hint ?></font></div>
             <?php endif; ?>
 
     <?php /* Область/край */ $field = $form->region ?>
@@ -171,7 +191,9 @@
     </div>
   
             <?php if (isset($field->error)): ?>
-            <div class="error"><?php echo $field->error ?></div>
+                <div class="error"><?php echo $field->error ?></div>
+            <?php elseif (isset($field->hint)): ?>
+                <div><font size='1'><?php echo $field->hint ?></font></div>
             <?php endif; ?>
 
     <?php /* Город */ $field = $form->city ?>
@@ -185,7 +207,9 @@
     </div>
     
             <?php if (isset($field->error)): ?>
-            <div class="error"><?php echo $field->error ?></div>
+                <div class="error"><?php echo $field->error ?></div>
+            <?php elseif (isset($field->hint)): ?>
+                <div><font size='1'><?php echo $field->hint ?></font></div>
             <?php endif; ?>
     
     <?php /* Улица */ $field = $form->street ?>
@@ -196,8 +220,10 @@
     </div>
     
             <?php if (isset($field->error)): ?>
-            <div class="error"><?php echo $field->error ?></div>
-            <?php endif; ?>        
+                <div class="error"><?php echo $field->error ?></div>
+            <?php elseif (isset($field->hint)): ?>
+                <div><font size='1'><?php echo $field->hint ?></font></div>
+            <?php endif; ?>       
     
     <?php /* Дом/корпус */ $field = $form->house ?>
     <br>
@@ -207,8 +233,10 @@
     </div>
     
             <?php if (isset($field->error)): ?>
-            <div class="error"><?php echo $field->error ?></div>
-            <?php endif; ?>        
+                <div class="error"><?php echo $field->error ?></div>
+            <?php elseif (isset($field->hint)): ?>
+                <div><font size='1'><?php echo $field->hint ?></font></div>
+            <?php endif; ?>      
     
     <?php /* Квартира/комната */ $field = $form->flat ?>
     <br>
@@ -218,8 +246,10 @@
     </div>
     
             <?php if (isset($field->error)): ?>
-            <div class="error"><?php echo $field->error ?></div>
-            <?php endif; ?>        
+                <div class="error"><?php echo $field->error ?></div>
+            <?php elseif (isset($field->hint)): ?>
+                <div><font size='1'><?php echo $field->hint ?></font></div>
+            <?php endif; ?>      
     
     <?php /* Вид документа об образовании */ $field = $form->doc_type ?>
     <br>
@@ -242,7 +272,9 @@
     </div>
     
             <?php if (isset($field->error)): ?>
-            <div class="error"><?php echo $field->error ?></div>
+                <div class="error"><?php echo $field->error ?></div>
+            <?php elseif (isset($field->hint)): ?>
+                <div><font size='1'><?php echo $field->hint ?></font></div>
             <?php endif; ?>
             
     <?php /* Иной вид документа */ $field = $form->doc_custom_type ?>
@@ -253,7 +285,9 @@
     </div>
     
             <?php if (isset($field->error)): ?>
-            <div class="error"><?php echo $field->error ?></div>
+                <div class="error"><?php echo $field->error ?></div>
+            <?php elseif (isset($field->hint)): ?>
+                <div><font size='1'><?php echo $field->hint ?></font></div>
             <?php endif; ?>
             
     <?php /* Номер документа */ $field = $form->doc_number ?>
@@ -264,7 +298,9 @@
     </div>
     
             <?php if (isset($field->error)): ?>
-            <div class="error"><?php echo $field->error ?></div>
+                <div class="error"><?php echo $field->error ?></div>
+            <?php elseif (isset($field->hint)): ?>
+                <div><font size='1'><?php echo $field->hint ?></font></div>
             <?php endif; ?>
             
     <?php /* Год окончания */ $field = $form->exit_year ?>
@@ -275,7 +311,9 @@
     </div>
     
             <?php if (isset($field->error)): ?>
-            <div class="error"><?php echo $field->error ?></div>
+                <div class="error"><?php echo $field->error ?></div>
+            <?php elseif (isset($field->hint)): ?>
+                <div><font size='1'><?php echo $field->hint ?></font></div>
             <?php endif; ?>
     
     <?php /* Специальность */ $field = $form->speciality ?>
@@ -286,7 +324,9 @@
     </div>                      
     
             <?php if (isset($field->error)): ?>
-            <div class="error"><?php echo $field->error ?></div>
+                <div class="error"><?php echo $field->error ?></div>
+            <?php elseif (isset($field->hint)): ?>
+                <div><font size='1'><?php echo $field->hint ?></font></div>
             <?php endif; ?>
             
     <?php /* Квалификация */ $field = $form->qualification ?>
@@ -297,7 +337,9 @@
     </div>
     
             <?php if (isset($field->error)): ?>
-            <div class="error"><?php echo $field->error ?></div>
+                <div class="error"><?php echo $field->error ?></div>
+            <?php elseif (isset($field->hint)): ?>
+                <div><font size='1'><?php echo $field->hint ?></font></div>
             <?php endif; ?>
             
     <?php /* Мобильный телефон */ $field = $form->phone_mobile ?>
@@ -308,7 +350,9 @@
     </div>
     
             <?php if (isset($field->error)): ?>
-            <div class="error"><?php echo $field->error ?></div>
+                <div class="error"><?php echo $field->error ?></div>
+            <?php elseif (isset($field->hint)): ?>
+                <div><font size='1'><?php echo $field->hint ?></font></div>
             <?php endif; ?>
             
     <?php /* Стационарный телефон */ $field = $form->phone_stationary ?>
@@ -319,7 +363,9 @@
     </div>
     
             <?php if (isset($field->error)): ?>
-            <div class="error"><?php echo $field->error ?></div>
+                <div class="error"><?php echo $field->error ?></div>
+            <?php elseif (isset($field->hint)): ?>
+                <div><font size='1'><?php echo $field->hint ?></font></div>
             <?php endif; ?>
             
     <br>

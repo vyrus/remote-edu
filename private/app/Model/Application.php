@@ -248,31 +248,37 @@
         */
         public function getProcessedAppsForPrograms($user_id) {
             $sql = '
-                SELECT a.app_id, a.object_id, a.status, p.paid_type
+                SELECT a.app_id, a.object_id, a.status, p.title, p.paid_type, p.cost, SUM( pm.amount ) AS total_sum
                 FROM ' . $this->_tables['applications'] . ' a
-
+                
                 LEFT JOIN ' . $this->_tables['programs'] . ' p
                     ON p.program_id = a.object_id
-
+                
+                LEFT JOIN ' . $this->_tables['payments'] . ' pm
+                    ON pm.app_id = a.app_id
+                    
                 WHERE
-                    a.type = :program
+                    a.type =  :program
                     AND
-                    a.status IN (:accepted, :signed)
+                    a.status IN (:accepted,  :signed)
                     AND
                     a.user_id = :uid
+                
+                GROUP BY a.app_id, a.object_id, a.status, p.paid_type, p.cost
             ';
-
             $values = array(
                 ':uid'      => $user_id,
                 ':program'  => Model_Application::TYPE_PROGRAM,
                 ':accepted' => self::STATUS_ACCEPTED,
                 ':signed'   => self::STATUS_SIGNED
             );
-
+            
             $stmt = $this->prepare($sql);
             $stmt->execute($values);
-
+            
+            
             $apps = $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
+            
             return $apps;
         }
 
@@ -287,7 +293,7 @@
         public function getProcessedAppsForDisciplines($user_id) {
             $sql = '
                 SELECT a.app_id, a.object_id, a.status, p.program_id,
-                       p.paid_type, d.coef
+                       p.paid_type, p.cost, d.title, d.coef, SUM(pm.amount) AS total_sum
                 FROM ' . $this->_tables['applications'] . ' a
 
                 LEFT JOIN ' . $this->_tables['disciplines'] . ' d
@@ -295,10 +301,15 @@
 
                 LEFT JOIN ' . $this->_tables['programs'] . ' p
                     ON p.program_id = d.program_id
+                    
+                LEFT JOIN ' . $this->_tables['payments'] . ' pm
+                    ON pm.app_id = a.app_id
 
                 WHERE a.type = :discipline AND
                       a.status IN (:accepted, :signed) AND
                       a.user_id = :uid
+                GROUP BY a.app_id, a.object_id, a.status, p.program_id,
+                      p.paid_type, p.cost, d.title, d.coef
             ';
 
             $values = array(
