@@ -32,6 +32,7 @@
             return TRUE;
         }
 
+        /*
         private function validateNumber (Model_Education_Programs $educationPrograms, Http_Request $request) {
             if ($educationPrograms->sectionNumberExists ($request->section, $this->number->value, Model_Education_Programs::CHECK_BY_OWN_ID)) {
                 $educationPrograms->getSection ($request->section, $title, $number);
@@ -46,12 +47,13 @@
 
             return TRUE;
         }
+        */
 
         public function validate (Http_Request $request, Model_Education_Programs $educationPrograms) {
             return (
                 (parent::validate($request)) &&
-                ($this->validateTitle($educationPrograms, $request)) &&
-                ($this->validateNumber ($educationPrograms, $request))
+                ($this->validateTitle($educationPrograms, $request)) //&&
+                //($this->validateNumber ($educationPrograms, $request))
             );
         }
 

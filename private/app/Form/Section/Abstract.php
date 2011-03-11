@@ -14,7 +14,8 @@
                 ->setError ('Название раздела -- последовательность символов длинной не менее 3 символов и не более 256');
             return $this;
         }
-
+    
+        /*
         private function addNumber () {
             $this
                 ->addField ('number')
@@ -22,6 +23,7 @@
                 ->setError ('Номер раздела должен быть задан целым числом');
             return $this;
         }
+        */
 
         public function __construct($action) {
             $this
@@ -29,7 +31,8 @@
                 ->setMethod(self::METHOD_POST)
                 ->addDiscipline ()
                 ->addTitle ()
-                ->addNumber ();
+                ;
+                //->addNumber ();
         }
     }
 ?>

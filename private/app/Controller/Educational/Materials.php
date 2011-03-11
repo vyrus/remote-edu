@@ -6,7 +6,7 @@
             $links = Resources::getInstance()->links;
 
             $opts = array('material_id' => $params['material_id']);
-            $action = $links->get('materials.edit', $opts);
+            $action = $links->get('materials.teacher.edit', $opts);
             $form = Form_Materials_Edit::create($action);
 
             $educationalMaterials = Model_Educational_Materials::create ();
@@ -18,7 +18,7 @@
             if (empty($requestData)) {
                 if (($materialInfo = $educationalMaterials->getMaterialInfo($params['material_id'])) === FALSE) {
                     $this->flash('Учебный материал не существует или был загружен не Вами',
-                                 $links->get('admin.materials'), 5);
+                                 $links->get('teacher.materials'), 5);
                 }
 
                 $form->setValue('description', $materialInfo['description']);
@@ -32,7 +32,7 @@
                 );
                 $educationalMaterials->updateMaterialInfo($materialInfo);
                 $this->flash('Данные материала были успешно изменены',
-                             $links->get('admin.materials'), 5);
+                             $links->get('teacher.materials'), 5);
             }
 
             $this->render('educational_materials/edit');
@@ -45,15 +45,28 @@
             $this->set('disciplines', $educationPrograms->getDirectionsDisciplines());
             $this->set('sections', $educationPrograms->getDisciplinesSections());
             $this->set('invalidMaterialsForms', array ());
-
-            $request = $this->getRequest ();
+            
+            $this->set('mapProgramDiscipline', $educationPrograms->getMapProgramDiscipline());
+            $this->set('mapDisciplineSection', $educationPrograms->getMapDisciplineSection());
+            
+            /*$request = $this->getRequest ();
             $requestData = $request->post;
-            $educationalMaterials = Model_Educational_Materials::create ();
-
+            $educationalMaterials = Model_Educational_Materials::create ();*/
+            
+            $educationMaterials=Model_Educational_Materials::create();
+            $mats = $educationMaterials->getMaterialsByAdmin();
+            foreach ($mats as &$ari) {
+                foreach ($ari as &$ar) {
+                    $ar['type_rus'] =  $educationMaterials::$MATERIAL_TYPES_CAPTIONS[$ar['type']];
+                    unset($ar['type']);
+                }
+            }
+            $this->set('materials', $mats);
             $this->set('programID', (isset ($requestData['programsSelect'])) ? ($requestData['programsSelect']) : (-1));
             $this->set('disciplineID', (isset ($requestData['disciplinesSelect'])) ? ($requestData['disciplinesSelect']) : (-1));
             $this->set('sectionID',	(isset ($requestData['sectionsSelect'])) ? ($requestData['sectionsSelect']) : (-1));
-            $this->set('materials',	$educationalMaterials->getMaterials ($requestData));
+            //$this->set('materials',	$educationalMaterials->getMaterials ($requestData));
+            
             $this->render('educational_materials/index_by_admin');
         }
 
@@ -69,24 +82,27 @@
             $request = $this->getRequest ();
             $requestData = $request->post;
             $educationalMaterials = Model_Educational_Materials::create ();
-            $removeSuccess = TRUE;
+            $removeSuccess = true;
 
             if (!empty($requestData)) {
-                foreach ($requestData as $materialID => $value) {
+                $ar = explode (',',$requestData["materialDeleteInfo"]);
+                //print_r($ar);
+                foreach ($ar as $materialID) {
                     if ($materialID != 'all') {
+                        //var_dump($materialID);
                         $removeSuccess = $removeSuccess && $educationalMaterials->removeMaterial($materialID);
                     }
                 }
             }
 
             $links = Resources::getInstance()->links;
-
             $this->flash(
                 $removeSuccess ?
                     'Материалы успешно удалены' :
                     'Некоторые материалы не были удалены(возможно, Вы предприняли попытку удалить материал, который не был загружен Вами)',
-                $links->get('admin.materials'), 10
+                $links->get('teacher.materials'), 10
             );
+            
         }
 
         public function action_upload () {
@@ -96,11 +112,12 @@
             $this->set ('disciplines',	$educationPrograms->getDirectionsDisciplines	());
             $this->set ('sections', 	$educationPrograms->getDisciplinesSections		());
             $this->set ('invalidMaterialsForms', array ());
+            $this->set('nextDialog','materials.teacher.upload');
 
 
             $links = Resources::getInstance()->links;
 
-            $action = $links->get('materials.upload');
+            $action = $links->get('materials.teacher.upload');
             $form = Form_Materials_Upload::create ($action);
 
             $request        = $this->getRequest ();
@@ -145,7 +162,7 @@
 
             $this->flash (
                 'Все материалы успешно загружены',
-                $links->get('admin.materials'),
+                $links->get('teacher.materials'),
                 3
             );
         }
@@ -153,6 +170,27 @@
         public function action_get_material ($params) {
             $educationalMaterials = Model_Educational_Materials::create ();
             $educationalMaterials->getMaterial ($params['material_id']);
+        }
+        
+        public function action_save_order() {
+            $mat = Model_Educational_Materials::create ();
+
+            $data = explode(',', $_POST['materialOrderInfo']);
+
+            for ($i = 0; $i < count($data); $i++) {
+                $mat->editMaterialNumber (
+                    $data[$i],
+                    $i
+                );
+            }
+
+            $links = Resources::getInstance()->links;
+
+            $this->flash (
+                'Порядок материалов успешно изменён',
+                $links->get('teacher.materials'),
+                3
+            );
         }
 
         /**

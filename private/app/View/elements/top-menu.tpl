@@ -10,7 +10,7 @@
     $admin_elements = array(
         'Регистрация пользователя'      => $this->_links->get('admin.users'),
         'Формирование учебных программ' => $this->_links->get('admin.programs'),
-        'Загрузка материалов'           => $this->_links->get('admin.materials'),
+        'Загрузка материалов'           => $this->_links->get('teacher.materials'),
         'Заявки на обучение'            => $this->_links->get('admin.applications'),
     );
     
@@ -22,7 +22,7 @@
         * @todo А что здесь за действие должно быть?
         */
         'Пользователи' => '#',
-        'Материалы'    => $this->_links->get('admin.materials'),
+        'Материалы'    => $this->_links->get('teacher.materials'),
     );
     
     /* ссылки, доступные только слушателю */	        

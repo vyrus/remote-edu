@@ -1,18 +1,20 @@
 <?php
 
+    //! Данный интерфейс целиком перенесен в раздел "Формирование учебных программ" для админа
+
     /* ссылки, доступные пользователю, независимо от прав доступа*/
     $generic_elements = array();
 
     /* ссылки, доступные только админу */
     $admin_elements = array(
-        'Список материалов'   => $this->_links->get('admin.materials'),
-        'Загрузить материалы' => $this->_links->get('materials.upload')
+        'Список материалов'   => $this->_links->get('teacher.materials'),
+        'Загрузить материалы' => $this->_links->get('materials.teacher.upload')
     );
 
     /* ссылки, доступные только преподу */
     $teacher_elements = array(
-        'Список материалов'   => $this->_links->get('admin.materials'),
-        'Загрузить материалы' => $this->_links->get('materials.upload')
+        'Список материалов'   => $this->_links->get('teacher.materials'),
+        'Загрузить материалы' => $this->_links->get('materials.teacher.upload')
     );
 
     /* ссылки, доступные только слушателю */

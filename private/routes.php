@@ -56,6 +56,9 @@
 
             /* Удаление учебных программ */
             array('/admin/programs/remove/(direction|course)/([0-9]+)', array('program_type', 'program_id'), 'education_programs', 'remove_program', 'programs.remove', Mvc_Router::ROUTE_REGEX),
+            
+            /* !Сохранение порядка учебных программ */
+            array('/admin/programs/save-order', array(), 'education_programs', 'save_program_order', 'programs.save-order', Mvc_Router::ROUTE_REGEX),
 
             /* Добавление дисциплин */
             array('/admin/disciplines/add/([0-9]+)', array('speciality_id'), 'education_programs', 'add_discipline', 'disciplines.add', Mvc_Router::ROUTE_REGEX),
@@ -77,18 +80,49 @@
 
             /* Удаление разделов */
             array('/admin/sections/remove/([0-9]+)', array('section_id'), 'education_programs', 'remove_section', 'sections.remove', Mvc_Router::ROUTE_REGEX),
+            
+            /* !Сохранение порядка разделов(секций) */
+            array('/admin/sections/save-order', array(), 'education_programs', 'save_section_order', 'sections.save-order', Mvc_Router::ROUTE_REGEX),
 
-            /* Управление учебными материалами администратором */
-            array('/admin/materials', 'educational_materials', 'index', 'admin.materials', Mvc_Router::ROUTE_STATIC),
+            /*! Редактирование материалов администратором */
+            array('/admin/materials/edit/([0-9]+)', array('material_id'), 'education_programs', 'edit_material', 'materials.admin.edit', Mvc_Router::ROUTE_REGEX),
+
+            /*! Загрузка учебных материалов */
+            //array('/admin/materials/upload/([0-9]+)', array('section_id'),  'education_programs', 'upload_material', 'materials.upload', Mvc_Router::ROUTE_REGEX),
+            array('/admin/materials/upload', 'education_programs', 'upload_material', 'materials.admin.upload', Mvc_Router::ROUTE_STATIC),
+
+            /*! Удаление учебных материалов */
+            //array('/admin/materials/remove/([0-9]+)', array('material_id'), 'education_programs', 'remove_material', 'materials.remove', Mvc_Router::ROUTE_REGEX),
+            array('/admin/materials/remove', 'education_programs', 'remove_material', 'materials.admin.remove', Mvc_Router::ROUTE_STATIC),
+            
+            /*! Сохрание порядка материалов */
+            array('/admin/materials/save-order', 'education_programs', 'save_material_order', 'materials.admin.save-order', Mvc_Router::ROUTE_STATIC),
+            
+            /* Управление учебными материалами преподователем */
+            array('/admin/materials', 'educational_materials', 'index', 'teacher.materials', Mvc_Router::ROUTE_STATIC),
+            
+            /*! Редактирование материалов преподователем */
+            array('/teacher/materials/edit/([0-9]+)', array('material_id'), 'educational_materials', 'edit', 'materials.teacher.edit', Mvc_Router::ROUTE_REGEX),
+
+            /*! Загрузка учебных преподователем */
+            array('/teacher/materials/upload', 'educational_materials', 'upload', 'materials.teacher.upload', Mvc_Router::ROUTE_STATIC),
+
+            /*! Удаление учебных преподователем */
+            //array('/admin/materials/remove/([0-9]+)', array('material_id'), 'education_programs', 'remove_material', 'materials.remove', Mvc_Router::ROUTE_REGEX),
+            array('/teacher/materials/remove', 'educational_materials', 'remove', 'materials.teacher.remove', Mvc_Router::ROUTE_STATIC),
+            
+            /*! Сохрание порядка преподователем */
+            array('/teacher/materials/save-order', 'educational_materials', 'save_order', 'materials.teacher.save-order', Mvc_Router::ROUTE_STATIC),
+
 
             /* Редактирование материалов администратором */
-            array('/admin/materials/edit/([0-9]+)', array('material_id'), 'educational_materials', 'edit', 'materials.edit', Mvc_Router::ROUTE_REGEX),
+            //array('/admin/materials/edit/([0-9]+)', array('material_id'), 'educational_materials', 'edit_material', 'materials.edit', Mvc_Router::ROUTE_REGEX),
 
             /* Загрузка учебных материалов */
-            array('/admin/materials/upload', 'educational_materials', 'upload', 'materials.upload', Mvc_Router::ROUTE_STATIC),
+            //array('/admin/materials/upload', 'educational_materials', 'upload_material', 'materials.upload', Mvc_Router::ROUTE_STATIC),
 
-            /* Загрузка учебных материалов */
-            array('/admin/materials/remove', 'educational_materials', 'remove', 'materials.remove', Mvc_Router::ROUTE_STATIC),
+            /* Удаление учебных материалов */
+            //array('/admin/materials/remove', 'educational_materials', 'remove_material', 'materials.remove', Mvc_Router::ROUTE_STATIC),
 
             /* Управление тестами */
             array('/admin/tests', 'tests', 'list', 'tests.list', Mvc_Router::ROUTE_STATIC),

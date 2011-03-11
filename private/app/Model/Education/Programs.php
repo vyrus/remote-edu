@@ -246,6 +246,7 @@ QUERY;
 SELECT *
 FROM `programs`
 WHERE `edu_type`='direction'
+ORDER BY `number`
 QUERY;
 
                 $this->_cache['directions'] = $this->query($sql)->fetchAll(PDO::FETCH_ASSOC);
@@ -260,6 +261,7 @@ QUERY;
 SELECT *
 FROM `programs`
 WHERE `edu_type`='course'
+ORDER BY `number`
 QUERY;
 
             return $this->query($sql)->fetchAll(PDO::FETCH_ASSOC);
@@ -273,8 +275,7 @@ SELECT *
 FROM `disciplines`
 ORDER BY `program_id`,`serial_number`
 QUERY;
-
-                $this->_cache['disciplines'] = $this->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+            $this->_cache['disciplines'] = $this->query($sql)->fetchAll(PDO::FETCH_ASSOC);
             }
 
             return $this->_cache['disciplines'];
@@ -443,19 +444,39 @@ WHERE
 QUERY;
 
             $params = array(
-                ':title'			=> $title,
+                ':title'		=> $title,
                 ':labour_intensive'	=> $labourIntensive,
                 ':paid_type'		=> $paidType,
                 ':program_id'		=> $programID,
                 ':program_type'		=> $type,
-                ':cost'				=>($cost) ?($cost) :(NULL),
+                ':cost'			=>($cost) ?($cost) :(NULL),
             );
 
             $this
                 ->prepare($sql)
                 ->execute($params);
         }
+        
+        public function editProgramNumber($programID, $number) {
+            $sql =
+<<<QUERY
+UPDATE `programs`
+SET
+    `number`=:number
+WHERE
+    `program_id`=:program_id
+QUERY;
 
+            $params = array(
+                ':number'    => $number,
+                ':program_id'    => $programID
+            );
+
+            $this
+                ->prepare($sql)
+                ->execute($params);
+        }
+        
         public function getDiscipline($disciplineID, &$title, &$labourIntensive, &$coef) {
             $sql =
 <<<QUERY
@@ -516,7 +537,7 @@ QUERY;
                 ->prepare($sql)
                 ->execute($params);
         }
-
+        
         public function getSection($sectionID, &$title, &$number) {
             $sql =
 <<<QUERY
@@ -532,6 +553,7 @@ QUERY;
             $getSectionStmt->fetch(PDO::FETCH_BOUND);
         }
 
+/*
         public function editSection($sectionID, $title, $number) {
             $sql =
 <<<QUERY
@@ -547,6 +569,47 @@ QUERY;
                 ':title'		=> $title,
                 ':number'		=> $number,
                 ':section_id'	=> $sectionID,
+            );
+
+            $this
+                ->prepare($sql)
+                ->execute($params);
+        }
+*/
+        
+        public function editSection($sectionID, $title) {
+            $sql =
+<<<QUERY
+UPDATE `sections`
+SET
+    `title`=:title
+WHERE
+    `section_id`=:section_id
+QUERY;
+
+            $params = array(
+                ':title'	=> $title,
+                ':section_id'	=> $sectionID
+            );
+
+            $this
+                ->prepare($sql)
+                ->execute($params);
+        }
+        
+        public function editSectionNumber($sectionID, $number) {
+            $sql =
+<<<QUERY
+UPDATE `sections`
+SET
+    `number`=:number
+WHERE
+    `section_id`=:section_id
+QUERY;
+
+            $params = array(
+                ':number'       => $number,
+                ':section_id'   => $sectionID
             );
 
             $this
@@ -804,4 +867,103 @@ QUERY;
             return $stmt->fetch(Db_Pdo::FETCH_ASSOC);
         }
 
+        /*
+         
+        В ЖОПУ!!! Это не си, посему работа с деревьями в жопу!!!
+        
+         static function buildTreeFromArrays($a,$b) {
+            $c = array();
+            foreach ($a as $i => $ar) {
+                if (!isset($c[$ar['val']])) {
+                    $c[$ar['val']['val']] = $ar['val'];
+                    $c[$ar['val']['sons']] = array();
+                }
+                $t = each($c);
+                array_push ($c[$ar['val']['sons']], $t['value']);
+            }
+            return $c;
+        }
+        */
+        
+       
+        /*
+        Возвращает дерево Программа->Дисциплина->Секция
+        */
+        
+        /*
+        public function getMapsPDS() {
+            Все-таки, придется разбить этот запрос на два
+             $sql = 'SELECT DISTINCT program_id, discipline_id, section_id
+                FROM programs LEFT JOIN (disciplines LEFT JOIN sections USING (discipline_id)) USING (program_id);';
+            $stmt = $this->prepare($sql);
+            $stmt->execute();
+            $a = $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
+            
+            $b = array();
+            for ($i = 0; $i < count($a); $i++) {
+                foreach ($a[$i] as $key => $val) {
+                    $b[$key][$i] = $val;
+                }
+            }
+            $c = $this->buildMapFromArrays($b['discipline_id'],$b['section_id']);
+            $d = $this->buildMapFromArrays($b['program_id'], $b['discipline_id']);
+            //$d = array_unique($d);
+            print "discipline -> section\n";
+            print_r($c);
+            print "program -> discipline\n";
+            print_r($d);
+            return $d;
+        }
+        */
+        
+        static function buildMapFromArrays($a,$b) {
+            $c = array();
+            reset($b);
+            foreach ($a as $val) {
+                if (!isset($c[$val])) {
+                    $c[$val] = array();
+                }
+                $t = each($b);
+                array_push($c[$val], $t['value']);
+            }
+            return $c;
+        }
+        
+        public function getMapProgramDiscipline() {
+            $sql = 'SELECT DISTINCT program_id, discipline_id
+                FROM programs LEFT JOIN disciplines USING (program_id);';
+            $stmt = $this->prepare($sql);
+            $stmt->execute();
+            $a = $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
+            
+            $b = array();
+            for ($i = 0; $i < count($a); $i++) {
+                foreach ($a[$i] as $key => $val) {
+                    $b[$key][$i] = $val;
+                }
+            }
+            $c = $this->buildMapFromArrays($b['program_id'], $b['discipline_id']);
+            /*print "discipline -> section\n";
+            print_r($c);*/
+            return $c;
+        }
+        
+        public function getMapDisciplineSection() {
+            $sql = 'SELECT DISTINCT discipline_id, section_id
+                FROM disciplines LEFT JOIN sections USING (discipline_id);';
+            $stmt = $this->prepare($sql);
+            $stmt->execute();
+            $a = $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
+            
+            $b = array();
+            for ($i = 0; $i < count($a); $i++) {
+                foreach ($a[$i] as $key => $val) {
+                    $b[$key][$i] = $val;
+                }
+            }
+            $c = $this->buildMapFromArrays($b['discipline_id'],$b['section_id']);
+            /*print "program -> discipline\n";
+            print_r($c);*/
+            return $c;
+        }
     }

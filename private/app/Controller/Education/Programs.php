@@ -9,6 +9,18 @@
             $this->set('disciplines', $educationPrograms->getDirectionsDisciplines());
             $this->set('sections', $educationPrograms->getDisciplinesSections());
 
+            //$this->set('mapsPDS', $educationPrograms->getMapsPDS());
+            
+            $educationMaterials=Model_Educational_Materials::create();
+            $mats = $educationMaterials->getMaterialsByAdmin();
+            foreach ($mats as &$ari) {
+                foreach ($ari as &$ar) {
+                    $ar['type_rus'] =  $educationMaterials::$MATERIAL_TYPES_CAPTIONS[$ar['type']];
+                    unset($ar['type']);
+                }
+            }
+            $this->set('materials', $mats);
+            
             $this->render("education_programs/index");
         }
 
@@ -301,7 +313,7 @@
                 $educationPrograms->getSection($params['section_id'], $title, $number);
 
                 $form->setValue('title', $title);
-                $form->setValue('number', $number);
+                //$form->setValue('number', $number);
 
                 $checkpoint_model = Model_Checkpoint::create();
                 $checkpoint = $checkpoint_model->getCheckpoint($params['section_id']);
@@ -334,8 +346,8 @@
 
             $educationPrograms->editSection (
                 $params['section_id'],
-                $form->title->value,
-                $form->number->value
+                $form->title->value //,
+                //$form->number->value
             );
 
             $this->flash (
@@ -344,7 +356,31 @@
                 3
             );
         }
+        
+        /**
+         * Сохранение порядка направлений/курсов
+        */
+        public function action_save_program_order() {
+            $educationPrograms = Model_Education_Programs::create();
 
+            $data = explode(',', $_POST['programOrderInfo']);
+
+            for ($i = 0; $i < count($data); $i++) {
+                $educationPrograms->editProgramNumber (
+                    $data[$i],
+                    $i
+                );
+            }
+
+            $links = Resources::getInstance()->links;
+            
+            $this->flash (  
+                'Порядок направлений/курсов успешно изменён',
+                $links->get('admin.programs'),
+                3   // откуда взялась эта волшебная цифра?
+            );
+        }
+        
         /**
         * Сохранение порядка дисциплин в направлении.
         */
@@ -366,6 +402,30 @@
                 'Порядок дисциплин успешно изменён',
                 $links->get('admin.programs'),
                 3
+            );
+        }
+        
+        /**
+         * Сохранение порядка разделов(секций)
+        */
+        public function action_save_section_order() {
+            $educationPrograms = Model_Education_Programs::create();
+
+            $data = explode(',', $_POST['sectionOrderInfo']);
+
+            for ($i = 0; $i < count($data); $i++) {
+                $educationPrograms->editSectionNumber (
+                    $data[$i],
+                    $i+1 // нумерация разделов с единицы
+                );
+            }
+
+            $links = Resources::getInstance()->links;
+            
+            $this->flash (  
+                'Порядок разделов успешно изменён',
+                $links->get('admin.programs'),
+                3   // откуда взялась эта волшебная цифра?
             );
         }
 
@@ -496,6 +556,294 @@
 
             $this->set('programs',    $avail_programs);
             $this->set('disciplines', $avail_disciplines);
+
+            $this->render();
+        }
+        
+    /*
+     Блок работы с материалами
+    */
+        public function action_edit_material($params) {
+            $links = Resources::getInstance()->links;
+
+            $opts = array('material_id' => $params['material_id']);
+            $action = $links->get('materials.admin.edit', $opts);
+            $form = Form_Materials_Edit::create($action);
+
+            $educationalMaterials = Model_Educational_Materials::create ();
+            $this->set('form', $form);
+            $request = $this->getRequest();
+            $method = $form->method();
+            $requestData = $request->$method;
+
+            if (empty($requestData)) {
+                if (($materialInfo = $educationalMaterials->getMaterialInfo($params['material_id'])) === FALSE) {
+                    $this->flash('Учебный материал не существует или был загружен не Вами',
+                                 //$links->get('admin.materials'),
+                                 $links->get('admin.programs'),
+                                 5
+                            );
+                }
+
+                $form->setValue('description', $materialInfo['description']);
+                $form->setValue('type', $materialInfo['type']);
+            }
+            else if ($form->validate($request)) {
+                $materialInfo = array(
+                    'id' => $params['material_id'],
+                    'description' => $requestData['description'],
+                    'type' => $requestData['type'],
+                );
+                $educationalMaterials->updateMaterialInfo($materialInfo);
+                $this->flash('Данные материала были успешно изменены',
+                             //$links->get('admin.materials'),
+                             $links->get('admin.programs'),
+                             5
+                        );
+            }
+
+            $this->render('educational_materials/edit');
+            //$this->render('education_materials/edit');
+        }
+        
+        public function action_save_material_order() {
+            $mat = Model_Educational_Materials::create ();
+
+            $data = explode(',', $_POST['materialOrderInfo']);
+
+            for ($i = 0; $i < count($data); $i++) {
+                $mat->editMaterialNumber (
+                    $data[$i],
+                    $i
+                );
+            }
+
+            $links = Resources::getInstance()->links;
+
+            $this->flash (
+                'Порядок материалов успешно изменён',
+                $links->get('admin.programs'),
+                3
+            );
+        }
+
+        // что это еще за функции???
+        // видимо, после объединения интерфейсов, они становятся ненужными
+
+        public function action_index_material () {
+            $educationPrograms = Model_Education_Programs::create ();
+            $this->set('directions', $educationPrograms->getDirections());
+            $this->set('courses', $educationPrograms->getCourses());
+            $this->set('disciplines', $educationPrograms->getDirectionsDisciplines());
+            $this->set('sections', $educationPrograms->getDisciplinesSections());
+            $this->set('invalidMaterialsForms', array ());
+
+            $request = $this->getRequest ();
+            $requestData = $request->post;
+            $educationalMaterials = Model_Educational_Materials::create ();
+
+            $this->set('programID', (isset ($requestData['programsSelect'])) ? ($requestData['programsSelect']) : (-1));
+            $this->set('disciplineID', (isset ($requestData['disciplinesSelect'])) ? ($requestData['disciplinesSelect']) : (-1));
+            $this->set('sectionID',	(isset ($requestData['sectionsSelect'])) ? ($requestData['sectionsSelect']) : (-1));
+            //$this->set('materials',	$educationalMaterials->getMaterials ($requestData));
+            
+            $educationMaterials=Model_Educational_Materials::create();
+            $mats = $educationMaterials->getMaterialsByAdmin();
+            foreach ($mats as &$ari) {
+                foreach ($ari as &$ar) {
+                    $ar['type_rus'] =  $educationMaterials::$MATERIAL_TYPES_CAPTIONS[$ar['type']];
+                    unset($ar['type']);
+                }
+            }
+            $this->set('materials', $mats);
+            
+            $this->render('educational_materials/index_by_admin');
+            //$this->render('education_materials/index_by_admin');
+        }
+
+        // что это еще за функции???
+    
+        public function action_index_by_admin_material () {
+            $this->action_index_material ();
+        }
+
+        public function action_index_by_student_material () {
+            $this->action_index_material ();
+        }
+
+        /*
+        public function action_remove_material () {
+            $request = $this->getRequest ();
+            $requestData = $request->post;
+            $educationalMaterials = Model_Educational_Materials::create ();
+            $removeSuccess = TRUE;
+
+            if (!empty($requestData)) {
+                foreach ($requestData as $materialID => $value) {
+                    if ($materialID != 'all') {
+                        $removeSuccess = $removeSuccess && $educationalMaterials->removeMaterial($materialID);
+                    }
+                }
+            }
+
+            $links = Resources::getInstance()->links;
+
+            $this->flash(
+                $removeSuccess ?
+                    'Материалы успешно удалены' :
+                    'Некоторые материалы не были удалены(возможно, Вы предприняли попытку удалить материал, который не был загружен Вами)',
+                //$links->get('admin.materials'),
+                $links->get('admin.programs'),
+                10
+            );
+        }
+        */
+        
+        public function action_remove_material () {
+            $request = $this->getRequest ();
+            $requestData = $request->post;
+            $educationalMaterials = Model_Educational_Materials::create ();
+            $removeSuccess = TRUE;
+            
+            //var_dump($requestData["materialDeleteInfo"]);
+
+            if (!empty($requestData)) {
+                $ar = explode (',',$requestData["materialDeleteInfo"]);
+                //var_dump($ar);
+                foreach ($ar as $materialID => $value) {
+                    if ($materialID != 'all') {
+                        //var_dump($value);
+                        $removeSuccess = $removeSuccess && $educationalMaterials->removeMaterial($value);
+                    }
+                }
+            }
+
+            $links = Resources::getInstance()->links;
+
+            $this->flash(
+                $removeSuccess ?
+                    'Материалы успешно удалены' :
+                    'Некоторые материалы не были удалены(возможно, Вы предприняли попытку удалить материал, который не был загружен Вами)',
+                //$links->get('admin.materials'),
+                $links->get('admin.programs'),
+                10
+            );
+        }
+
+        public function action_upload_material () {
+            $educationPrograms = Model_Education_Programs::create ();
+            $this->set ('directions',	$educationPrograms->getDirections());
+            $this->set ('courses',	$educationPrograms->getCourses());
+            $this->set ('disciplines',	$educationPrograms->getDirectionsDisciplines());
+            $this->set ('sections', 	$educationPrograms->getDisciplinesSections());
+            $this->set ('invalidMaterialsForms', array ());
+            $this->set('nextDialog','materials.admin.upload');
+
+
+            $links = Resources::getInstance()->links;
+
+            $action = $links->get('materials.admin.upload');
+            $form = Form_Materials_Upload::create ($action);
+
+            $request        = $this->getRequest ();
+            $method 		= $form->method ();
+            $requestData	= $request->$method;
+            if (empty ($requestData)) {
+                //$this->render ('educational_materials/upload');
+                $this->render ('educational_materials/upload');
+            }
+
+            $invalidMaterialsForms = array ();
+            if (count ($requestData['material'])) {
+                $educationalMaterials = Model_Educational_Materials::create ();
+
+                foreach ($requestData['material'] as $i => $material) {
+                    $request->set (
+                        'get',
+                        array (
+                            'description' => $material['description'],
+                            'section' => $material['section'],
+                            'filename' => $request->files['fileReference' . $i]['name'],
+                            'type' => $material['type'],
+                        )
+                    );
+
+                    $materialForm = Form_Materials_Upload::create ('');
+                    $materialForm->setMethod (Form_Abstract::METHOD_GET);
+                    if (! $materialForm->validate ($request)) {
+                        $invalidMaterialsForms[] = $materialForm;
+                    }
+                    else {
+                        $educationalMaterials->addMaterial($material['description'], $material['section'], $material['type'], $request->files['fileReference' . $i]);
+                    }
+                }
+            }
+
+            if (! empty ($invalidMaterialsForms)) {
+                $this->set('invalidMaterialsForms', $invalidMaterialsForms);
+                $this->render('educational_materials/upload');
+            }
+
+            $links = Resources::getInstance()->links;
+
+            $this->flash (
+                'Все материалы успешно загружены',
+                //$links->get('admin.materials'),
+                $links->get('admin.programs'),
+                3
+            );
+        }
+
+        // так, при условии, что скачиваем один материал за один щелчок
+        public function action_get_material ($params) {
+            $educationalMaterials = Model_Educational_Materials::create ();
+            $educationalMaterials->getMaterial ($params['material_id']);
+        }
+
+        /**
+        * Отображение доступных учебных материалов.
+        */
+        public function action_show_material(array $params = array()) {
+            $links = Resources::getInstance()->links;
+
+            if (!isset($params['discipline_id']) ||
+                is_int ($params['discipline_id'])) {
+                $this->flash(
+                    'Не указан идентификатор дисциплины',
+                    $links->get('student.programs')
+                );
+            }
+
+            if (!isset($params['app_id']) || is_int($params['app_id'])) {
+                $this->flash(
+                    'Не указан идентификатор заявки',
+                    $links->get('student.programs')
+                );
+            }
+
+            $discipline_id = intval($params['discipline_id']);
+            $app_id  = intval($params['app_id']);
+
+            /**
+            * @todo Сделать проверку на доступность дисциплины.
+            */
+            
+            $user = Model_User::create();
+            $udata = (object) $user->getAuth();
+            
+            $disc = Model_Discipline::create();
+            $discipline_data = $disc->get($discipline_id);
+
+            $section = Model_Section::create();
+            $sections = $section->getAllByDiscipline($discipline_id);
+
+            $material = Model_Educational_Materials::create();
+            $materials = $material->getAllByDiscipline($discipline_id);
+
+            $this->set('discipline', $discipline_data);
+            $this->set('sections', $sections);
+            $this->set('materials', $materials);
+            $this->set('user_id', $udata->user_id);
 
             $this->render();
         }

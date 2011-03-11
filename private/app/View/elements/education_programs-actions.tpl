@@ -10,11 +10,17 @@
         //'Формирование порядка изучения дисциплин' => '#',
         'Назначение отвественных преподавателей'  => $this->_links->get('admin.responsible-teachers'),
         'Назначение кураторов'                    => $this->_links->get('admin.curators'),
-        'Инструкция'                              => $this->_links->get('help.programs')
+        'Инструкция'                              => $this->_links->get('help.programs'),
+        // работа с материалами
+        'Загрузить материалы' => $this->_links->get('materials.admin.upload')
     );
 
     /* ссылки, доступные только преподу */
-    $teacher_elements = array();
+    $teacher_elements = array(
+        // Тичеру здесь ничего не доступно!
+         // работа с материалами
+        //'Загрузить материалы' => $this->_links->get('materials.upload')
+    );
 
     /* ссылки, доступные только слушателю */
     $student_elements = array(

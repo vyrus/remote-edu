@@ -46,6 +46,7 @@
         }
 
         public function removeMaterial ($materialID) {
+            //var_dump($materialID);
             $user = Model_User::create();
             $udata = (object) $user->getAuth();
             $sql = 'SELECT `filename` FROM `materials` WHERE `id`=:material_id' . ($udata->role != Model_User::ROLE_ADMIN ? ' AND `uploader`=:uploader_id' : '');
@@ -72,10 +73,27 @@
 
             return TRUE;
         }
+        
+        public function editMaterialNumber($ID, $number) {
+            $sql = "UPDATE `materials` SET `number`=:number WHERE `id`=:id";
 
+            $params = array(
+                ':number'   => $number,
+                ':id'       => $ID
+            );
+
+            $this
+                ->prepare($sql)
+                ->execute($params);
+        }
+
+        // без 100 грамм не разберешься
         public function getMaterials ($filter) {
-            $sql = 'SELECT `materials`.`id` as `id`,`materials`.`description` as `description`,`materials`.`type` AS `type`
-                FROM `materials`';
+            $sql = 'SELECT DISTINCT `materials`.`id` as `id`,`materials`.`description` as `description`,`materials`.`type` AS `type`,
+                `materials`.`section` AS `section` FROM `materials`';
+            /*$sql = 'SELECT `materials`.`id` as `id`,`materials`.`description` as `description`,`materials`.`type` AS `type`,
+                `materials`.`section` AS `section` FROM `materials` ORDER BY `materials`.`number`';*/
+                
             $user = Model_User::create();
             $udata = (object) $user->getAuth();
 
@@ -91,7 +109,7 @@
                 $queryParams = array(
                     ':permitted_user' => $udata->user_id,
                 );
-                $condition = ' WHERE (uploader=:permitted_user OR materials.section=sections.section_id AND sections.discipline_id=disciplines.discipline_id AND disciplines.responsible_teacher=:permitted_user)';
+                $condition = ' WHERE (materials.uploader=:permitted_user OR materials.section=sections.section_id AND sections.discipline_id=disciplines.discipline_id AND disciplines.responsible_teacher=:permitted_user)';
             }
 
             do {
@@ -128,13 +146,41 @@
                 );
             } while(0);
 
-
-            $sql .= $tables . $condition;
+            $order = ' ORDER BY `materials`.`number`'; //!
+            
+            $sql .= $tables . $condition . $order;
 
             $stmt = $this->prepare ($sql);
             $stmt->execute ($queryParams);
+            
+            $a = ($stmt->fetchAll (PDO::FETCH_ASSOC));
+            //var_dump($a);
 
-            return $stmt->fetchAll (PDO::FETCH_ASSOC);
+            return $a;
+        }
+        
+        public function getMaterialsByAdmin() {
+            $arNoFilter = array (
+                'programsSelect' => -1,
+                'disciplinesSelect' => -1,
+                'sectionsSelect' => -1
+            );
+            $matPrim = $this->getMaterials($arNoFilter);
+            $matAll = array();
+            
+            //var_dump($matPrim);
+            
+            foreach ($matPrim as $rec) {
+                $matAll[$rec['section']] = array();
+            }
+            
+            foreach ($matPrim as $rec) {
+                $len =count($matAll[$rec['section']]);
+                $matAll[$rec['section']][$len]['id'] = $rec['id'];
+                $matAll[$rec['section']][$len]['description'] = $rec['description'];
+                $matAll[$rec['section']][$len]['type'] = $rec['type'];                
+            }
+            return $matAll;
         }
 
         public function getMaterialInfo($materialId) {
@@ -301,5 +347,8 @@
                 return false;
             }
         }
+    
+        
     }
+    
 ?>
