@@ -1,4 +1,5 @@
 <?php
+    echo 'asdasd';
     $directions     = $this->directions;
     $courses        = $this->courses;
     $disciplines    = $this->disciplines;

@@ -318,16 +318,16 @@
         */
         public function getAllByDiscipline($discipline_id) {
             $sql = '
-                SELECT m.section, s.number, m.id, m.description, ms.state, m.type
+                SELECT DISTINCT m.section, s.number, m.id, m.description, ms.state, m.type
                 FROM ' . $this->_tables['sections'] . ' s
                 LEFT JOIN ' . $this->_tables['checkpoints_students'] . ' cs
                     ON s.section_id = cs.section_id
                 LEFT JOIN ' . $this->_tables['materials'] . ' m
                     ON s.section_id = m.section
                 LEFT JOIN ' . $this->_tables['materials_states'] . ' ms
-                    ON m.id = ms.material_id
+                    ON m.id = ms.material_id AND ms.student_id = :student_id
                 WHERE
-                    discipline_id = :discipline_id AND
+                    s.discipline_id = :discipline_id AND
                     cs.student_id = :student_id
                 ORDER BY number ASC
             ';

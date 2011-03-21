@@ -57,7 +57,7 @@
             $mats = $educationMaterials->getMaterialsByAdmin();
             foreach ($mats as &$ari) {
                 foreach ($ari as &$ar) {
-                    $ar['type_rus'] =  $educationMaterials::$MATERIAL_TYPES_CAPTIONS[$ar['type']];
+                    $ar['type_rus'] =  Model_Educational_Materials::$MATERIAL_TYPES_CAPTIONS[$ar['type']];
                     unset($ar['type']);
                 }
             }

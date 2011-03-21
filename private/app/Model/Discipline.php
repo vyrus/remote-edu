@@ -147,7 +147,7 @@
                 SELECT *
                 FROM ' . $this->_tables['disciplines'] . '
                 WHERE program_id = ?
-                ORDER BY discipline_id ASC
+                ORDER BY serial_number ASC
             ';
 
             $stmt = $this->prepare($sql);
