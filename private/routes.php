@@ -88,7 +88,6 @@
             array('/admin/materials/edit/([0-9]+)', array('material_id'), 'education_programs', 'edit_material', 'materials.admin.edit', Mvc_Router::ROUTE_REGEX),
 
             /*! Загрузка учебных материалов */
-            //array('/admin/materials/upload/([0-9]+)', array('section_id'),  'education_programs', 'upload_material', 'materials.upload', Mvc_Router::ROUTE_REGEX),
             array('/admin/materials/upload', 'education_programs', 'upload_material', 'materials.admin.upload', Mvc_Router::ROUTE_STATIC),
 
             /*! Удаление учебных материалов */
@@ -108,21 +107,10 @@
             array('/teacher/materials/upload', 'educational_materials', 'upload', 'materials.teacher.upload', Mvc_Router::ROUTE_STATIC),
 
             /*! Удаление учебных преподователем */
-            //array('/admin/materials/remove/([0-9]+)', array('material_id'), 'education_programs', 'remove_material', 'materials.remove', Mvc_Router::ROUTE_REGEX),
             array('/teacher/materials/remove', 'educational_materials', 'remove', 'materials.teacher.remove', Mvc_Router::ROUTE_STATIC),
             
             /*! Сохрание порядка преподователем */
             array('/teacher/materials/save-order', 'educational_materials', 'save_order', 'materials.teacher.save-order', Mvc_Router::ROUTE_STATIC),
-
-
-            /* Редактирование материалов администратором */
-            //array('/admin/materials/edit/([0-9]+)', array('material_id'), 'educational_materials', 'edit_material', 'materials.edit', Mvc_Router::ROUTE_REGEX),
-
-            /* Загрузка учебных материалов */
-            //array('/admin/materials/upload', 'educational_materials', 'upload_material', 'materials.upload', Mvc_Router::ROUTE_STATIC),
-
-            /* Удаление учебных материалов */
-            //array('/admin/materials/remove', 'educational_materials', 'remove_material', 'materials.remove', Mvc_Router::ROUTE_STATIC),
 
             /* Управление тестами */
             array('/admin/tests', 'tests', 'list', 'tests.list', Mvc_Router::ROUTE_STATIC),

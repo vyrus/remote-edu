@@ -237,6 +237,8 @@
             $this->set('sections', $sections);
             $this->set('materials', $materials);
             $this->set('user_id', $udata->user_id);
+            
+            //print_r($materials);
 
             $this->render();
         }

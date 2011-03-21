@@ -552,31 +552,7 @@ QUERY;
 
             $getSectionStmt->fetch(PDO::FETCH_BOUND);
         }
-
-/*
-        public function editSection($sectionID, $title, $number) {
-            $sql =
-<<<QUERY
-UPDATE `sections`
-SET
-    `title`=:title,
-    `number`=:number
-WHERE
-    `section_id`=:section_id
-QUERY;
-
-            $params = array(
-                ':title'		=> $title,
-                ':number'		=> $number,
-                ':section_id'	=> $sectionID,
-            );
-
-            $this
-                ->prepare($sql)
-                ->execute($params);
-        }
-*/
-        
+      
         public function editSection($sectionID, $title) {
             $sql =
 <<<QUERY
@@ -866,55 +842,6 @@ QUERY;
 
             return $stmt->fetch(Db_Pdo::FETCH_ASSOC);
         }
-
-        /*
-         
-        В ЖОПУ!!! Это не си, посему работа с деревьями в жопу!!!
-        
-         static function buildTreeFromArrays($a,$b) {
-            $c = array();
-            foreach ($a as $i => $ar) {
-                if (!isset($c[$ar['val']])) {
-                    $c[$ar['val']['val']] = $ar['val'];
-                    $c[$ar['val']['sons']] = array();
-                }
-                $t = each($c);
-                array_push ($c[$ar['val']['sons']], $t['value']);
-            }
-            return $c;
-        }
-        */
-        
-       
-        /*
-        Возвращает дерево Программа->Дисциплина->Секция
-        */
-        
-        /*
-        public function getMapsPDS() {
-            Все-таки, придется разбить этот запрос на два
-             $sql = 'SELECT DISTINCT program_id, discipline_id, section_id
-                FROM programs LEFT JOIN (disciplines LEFT JOIN sections USING (discipline_id)) USING (program_id);';
-            $stmt = $this->prepare($sql);
-            $stmt->execute();
-            $a = $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
-            
-            $b = array();
-            for ($i = 0; $i < count($a); $i++) {
-                foreach ($a[$i] as $key => $val) {
-                    $b[$key][$i] = $val;
-                }
-            }
-            $c = $this->buildMapFromArrays($b['discipline_id'],$b['section_id']);
-            $d = $this->buildMapFromArrays($b['program_id'], $b['discipline_id']);
-            //$d = array_unique($d);
-            print "discipline -> section\n";
-            print_r($c);
-            print "program -> discipline\n";
-            print_r($d);
-            return $d;
-        }
-        */
         
         static function buildMapFromArrays($a,$b) {
             $c = array();

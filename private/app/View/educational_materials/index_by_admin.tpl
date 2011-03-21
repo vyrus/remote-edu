@@ -376,15 +376,6 @@
 </nobr>
 
 <script type="text/javascript">
-	/*
-	ЗА ЭТО НАДО РОГЗАМИ СЕЧЬ!!!
-	var programsTypeSelect = $('#programsTypeSelect');
-	var programsSelect = $('#programsSelect');
-	var disciplinesSelect = $('#disciplinesSelect');
-	var sectionsSelect = $('#sectionsSelect');
-	var materialsSelect = $('#materialsSelect');
-	*/
-	
 	var programsTypeSelect = document.getElementById('programsTypeSelect');
 	var programsSelect = document.getElementById('programsSelect');
 	var disciplinesSelect = document.getElementById('disciplinesSelect');

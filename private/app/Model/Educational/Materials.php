@@ -27,8 +27,24 @@
         }
 
         public function addMaterial ($description, $section, $type, $originalFileInfo) {
+            
+            // криво, но для админа сойдет вполне, производительность там не критична
+            $max_num_sql = 'SELECT MAX(number)+1 AS max_val FROM materials WHERE section = :section';
+            
+            $max_num_params = array (
+                ':section' => $section
+            );
+            
+            $stmt = $this->prepare($max_num_sql);
+            $stmt->execute($max_num_params);
+            $a = ($stmt->fetchAll (PDO::FETCH_ASSOC));
+            $number = $a[0]['max_val'];
+            
             $filename = $this->storage->storeFile($originalFileInfo['tmp_name']);
-            $sql = 'INSERT INTO ' . $this->_tables['materials'] . ' (`description`, `original_filename`, `mime_type`, `filename`, `section`, `type`, `uploader`) VALUES (:description, :original_filename, :mime_type, :filename, :section, :type, :uploader)';
+            $sql = 'INSERT INTO ' . $this->_tables['materials'] .
+            ' (`description`, `original_filename`, `mime_type`, `filename`, `section`, `type`, `uploader`, `number`)
+            VALUES (:description, :original_filename, :mime_type, :filename, :section, :type, :uploader, :number)';
+            
             $user = Model_User::create();
             $udata = (object) $user->getAuth();
             $params = array (
@@ -38,7 +54,8 @@
                 ':filename' => $filename,
                 ':section' => $section,
                 ':type' => $type,
-                ':uploader' => $udata->user_id
+                ':uploader' => $udata->user_id,
+                ':number' => $number
             );
 
             $this->prepare ($sql)
@@ -292,6 +309,7 @@
                 ON      m.id = ms.material_id AND
                         ms.student_id = :student_id
                 WHERE   m.section = :section_id
+                ORDER BY m.number ASC
             ';
 
             $materials = array();
@@ -329,7 +347,7 @@
                 WHERE
                     s.discipline_id = :discipline_id AND
                     cs.student_id = :student_id
-                ORDER BY number ASC
+                ORDER BY m.number ASC
             ';
 
             $udata = Model_User::create()->getAuth();
@@ -339,6 +357,9 @@
                     ':student_id' => $udata['user_id']
                 );
                 $stmt = $this->prepare($sql);
+                
+                //var_dump($stmt);
+                
                 $stmt->execute($params);
 
                 $materials = $stmt->fetchAll(Db_Pdo::FETCH_GROUP|Db_Pdo::FETCH_ASSOC);
