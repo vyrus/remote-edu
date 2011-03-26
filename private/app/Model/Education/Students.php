@@ -95,6 +95,7 @@
         * @return array|false
         */
         public function getDisciplinesPrograms($student_id) {
+            /*
             $sql = '
                 SELECT d.discipline_id AS id, d.title
                 FROM ' . $this->_tables['applications'] . ' a
@@ -110,10 +111,28 @@
                         a.status = \'signed\'
                     )
             ';
+            */
+            
+            $sql = '
+                SELECT d.discipline_id AS id, d.title AS d_title, p.title as p_title
+                FROM ' . $this->_tables['applications'] . ' a
+                LEFT JOIN ' . $this->_tables['disciplines'] . ' d
+                    ON a.object_id = d.program_id
+                LEFT JOIN ' . $this->_tables['programs'] . ' p
+                    ON d.program_id = p.program_id
+                WHERE
+                    a.user_id = ?
+                    AND
+                    a.type = \'program\'
+                    AND (
+                        a.status = \'accepted\'
+                        OR
+                        a.status = \'signed\'
+                    )
+            ';
 
             $stmt = $this->prepare($sql);
             $stmt->execute(array($student_id));
-
             return $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
         }
 

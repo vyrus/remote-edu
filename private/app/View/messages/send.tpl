@@ -1,5 +1,6 @@
 <?php
     $recipients = $this->recipients;
+    //print_r($recipients);
     $form = $this->form;
 ?>
 
@@ -15,12 +16,13 @@
 
 <script type="text/javascript">
     var attachmentId = 0;
+    var recipientsCount = <?php echo count($this->recipients); ?>;
     var recipients = {
 <?php foreach ($recipients as $i => $recipient): ?>
         '<?php echo $i; ?>':{'name':'<?php echo $recipient['recipient_name']; ?>','desc':"<?php foreach ($recipient['recipient_description'] as $i => $desc) {echo $desc . '<br />';} ?>"},
 <?php endforeach; ?>
     };
-
+    
     function showRecipientDescription() {
         var recId = recipientsSelect.val();
 
@@ -36,6 +38,11 @@
 
     function fillRecipientsSelect() {
         $.each(recipients, function (key, value) {var option = new Option(value.name, key); recipientsSelect.append(option);});
+        /*for (var i = 0; i < recipientsCount; i++) {
+            alert(recipients[i].key);
+            var option = new Option(recipients[i].name, recipients[i].key);
+            recipientsSelect.add(option); 
+        }*/
     }
 
     function showSelectRecipientDialog() {
@@ -50,9 +57,30 @@
         selectRecipientDialog.dialog('open');
     }
 
+    /*
     function selectRecipient() {
         recipientId.val(recipientsSelect.val());
         selectRecipientButton.text(recipients[recipientsSelect.val()].name);
+        selectRecipientDialog.dialog('close');
+    }
+    */
+    
+    function selectRecipient() {
+        var str = '';
+        var delimiter = '';
+        selectRecipientButton.text('    ');
+        for (var i = 0; i < recipientsSelect[0].length; i++) {
+            if (recipientsSelect[0].options[i].selected) {
+                str += delimiter;
+                str += recipientsSelect[0].options[i].value;
+                selectRecipientButton.text(selectRecipientButton[0].text + delimiter + recipientsSelect[0].options[i].text);    // бредовая строка, не правда ли? Такой вот он этот jQuery
+                delimiter = ',';
+            }
+        }
+        
+        //alert (str);
+
+        recipientId.val(str);
         selectRecipientDialog.dialog('close');
     }
 
@@ -104,7 +132,7 @@
 <tr><td colspan="2"><input type="button" value="Отправить" onclick="submitForm()" /></td></tr>
 </table>
 </form>
-<div id="selectRecipientDialog"><select id="recipientsSelect" size="10" style="width: 100%;"></select></div>
+<div id="selectRecipientDialog"><select id="recipientsSelect" multiple="on" size="10" style="width: 100%;"></select></div>
 <div id="recipientDescription"></div>
 
 <script type="text/javascript">
@@ -113,7 +141,7 @@
     var selectRecipientDialog = $('#selectRecipientDialog');
     var selectRecipientButton = $('#selectRecipientButton');
     var recipientDescription = $('#recipientDescription');
-
+    
     recipientDescription.dialog(
         {
             autoOpen: false,

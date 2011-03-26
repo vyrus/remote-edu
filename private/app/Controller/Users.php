@@ -32,7 +32,8 @@
                     "зарегистрирован",
                     "обучается",
                     и тд';
-            $this->flash($msg, $links->get('admin.users'));
+                    
+            $this->flash($msg, $links->get('users.list') . 'all/', 3);
         }
 
         /**

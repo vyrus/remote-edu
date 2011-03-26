@@ -134,7 +134,8 @@
             $educationPrograms->createSection(
                 $form->discipline->value,
                 $form->title->value,
-                $form->number->value
+                isset($sections[$form->discipline->value]) ? count($sections[$form->discipline->value]) : 0
+                //$form->number->value
             );
             $this->flash(
                 'Раздел успешно добавлен',

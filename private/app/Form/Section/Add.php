@@ -24,7 +24,7 @@
 			
 			return true;
 		}
-		
+		/*
 		private function validateNumber (Model_Education_Programs $educationPrograms) {
 			if ($educationPrograms->sectionNumberExists ($this->discipline->value, $this->number->value)) {
 				$this->invalidate();
@@ -38,14 +38,15 @@
 			
 			return true;
 		}
+		*/
 		
 		public function validate (Http_Request $request, Model_Education_Programs $educationPrograms) {
 			return (
 				(parent::validate($request)) &&
 				($this->setValue ('discipline', $request->discipline)) &&
 				($this->validateDiscipline ($educationPrograms)) &&
-				($this->validateTitle($educationPrograms)) &&
-				($this->validateNumber ($educationPrograms))
+				($this->validateTitle($educationPrograms))// &&
+				//($this->validateNumber ($educationPrograms))
 			);
 		}
 

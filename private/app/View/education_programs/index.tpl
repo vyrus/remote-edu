@@ -1,5 +1,4 @@
 <?php
-    echo 'asdasd';
     $directions     = $this->directions;
     $courses        = $this->courses;
     $disciplines    = $this->disciplines;
@@ -141,13 +140,24 @@
      // работа с блоком разделов(секций) 
 
     function addSection () {
-        if (disciplinesSelect.selectedIndex == -1) {
-            alert ('Необходимо выбрать дисциплину');
-            return;
-        }
-
+        if (programsTypeSelect.value == 'direction') {
+            if (disciplinesSelect.selectedIndex == -1) {
+                alert ('Необходимо выбрать дисциплину');
+                return;
+            }
         window.location = '<?php echo $this->_links->get('sections.add') ?>' + 
-                          disciplinesSelect.options[disciplinesSelect.selectedIndex].value + '/';
+                disciplinesSelect.options[disciplinesSelect.selectedIndex].value + '/';
+                
+        } else {
+            
+            if ((programsSelect.selectedIndex == -1)) {
+                alert ('Необходимо выбрать курс');
+                return;
+            }
+            window.location = '<?php echo $this->_links->get('sections.add') ?>' + 
+                programsSelect.options[programsSelect.selectedIndex].value + '/';
+        
+        }
     }
 
     function removeSection () {

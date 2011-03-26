@@ -57,7 +57,7 @@
             /* Удаление учебных программ */
             array('/admin/programs/remove/(direction|course)/([0-9]+)', array('program_type', 'program_id'), 'education_programs', 'remove_program', 'programs.remove', Mvc_Router::ROUTE_REGEX),
             
-            /* !Сохранение порядка учебных программ */
+            /* Сохранение порядка учебных программ */
             array('/admin/programs/save-order', array(), 'education_programs', 'save_program_order', 'programs.save-order', Mvc_Router::ROUTE_REGEX),
 
             /* Добавление дисциплин */
@@ -81,35 +81,34 @@
             /* Удаление разделов */
             array('/admin/sections/remove/([0-9]+)', array('section_id'), 'education_programs', 'remove_section', 'sections.remove', Mvc_Router::ROUTE_REGEX),
             
-            /* !Сохранение порядка разделов(секций) */
+            /* Сохранение порядка разделов(секций) */
             array('/admin/sections/save-order', array(), 'education_programs', 'save_section_order', 'sections.save-order', Mvc_Router::ROUTE_REGEX),
 
-            /*! Редактирование материалов администратором */
+            /* Редактирование материалов администратором */
             array('/admin/materials/edit/([0-9]+)', array('material_id'), 'education_programs', 'edit_material', 'materials.admin.edit', Mvc_Router::ROUTE_REGEX),
 
-            /*! Загрузка учебных материалов */
+            /* Загрузка учебных материалов */
             array('/admin/materials/upload', 'education_programs', 'upload_material', 'materials.admin.upload', Mvc_Router::ROUTE_STATIC),
 
-            /*! Удаление учебных материалов */
-            //array('/admin/materials/remove/([0-9]+)', array('material_id'), 'education_programs', 'remove_material', 'materials.remove', Mvc_Router::ROUTE_REGEX),
+            /* Удаление учебных материалов */
             array('/admin/materials/remove', 'education_programs', 'remove_material', 'materials.admin.remove', Mvc_Router::ROUTE_STATIC),
             
-            /*! Сохрание порядка материалов */
+            /* Сохрание порядка материалов */
             array('/admin/materials/save-order', 'education_programs', 'save_material_order', 'materials.admin.save-order', Mvc_Router::ROUTE_STATIC),
             
             /* Управление учебными материалами преподователем */
             array('/admin/materials', 'educational_materials', 'index', 'teacher.materials', Mvc_Router::ROUTE_STATIC),
             
-            /*! Редактирование материалов преподователем */
+            /* Редактирование материалов преподователем */
             array('/teacher/materials/edit/([0-9]+)', array('material_id'), 'educational_materials', 'edit', 'materials.teacher.edit', Mvc_Router::ROUTE_REGEX),
 
-            /*! Загрузка учебных преподователем */
+            /* Загрузка учебных преподователем */
             array('/teacher/materials/upload', 'educational_materials', 'upload', 'materials.teacher.upload', Mvc_Router::ROUTE_STATIC),
 
-            /*! Удаление учебных преподователем */
+            /* Удаление учебных преподователем */
             array('/teacher/materials/remove', 'educational_materials', 'remove', 'materials.teacher.remove', Mvc_Router::ROUTE_STATIC),
             
-            /*! Сохрание порядка преподователем */
+            /* Сохрание порядка преподователем */
             array('/teacher/materials/save-order', 'educational_materials', 'save_order', 'materials.teacher.save-order', Mvc_Router::ROUTE_STATIC),
 
             /* Управление тестами */
@@ -203,6 +202,7 @@
             array('/student/programs', 'education_programs', 'available', 'student.programs', Mvc_Router::ROUTE_STATIC),
 
             /* Интерфейс слушателя "Зачётная книжка" */
+            //array('/student/record_book', 'Student_RecordBook', 'index', 'student.record_book', Mvc_Router::ROUTE_STATIC),
             array('/student/record_book', 'Student_RecordBook', 'index', 'student.record_book', Mvc_Router::ROUTE_STATIC),
 
             /* Отображение слушателю истории обучения по дисциплине */
@@ -236,7 +236,8 @@
             array('/messages/inbox/([0-9]+)?', array('page'), 'messages', 'inbox', 'messages.inbox', Mvc_Router::ROUTE_REGEX),
 
             /* Оправка сообщения */
-            array('/messages/send/([0-9]+)?', array('to_id'), 'messages', 'send', 'messages.send', Mvc_Router::ROUTE_REGEX),
+            //array('/messages/send/([0-9]+)?', array('to_id'), 'messages', 'send', 'messages.send', Mvc_Router::ROUTE_REGEX),
+            array('/messages/send', 'messages', 'send', 'messages.send', Mvc_Router::ROUTE_STATIC),
 
             /* Чтение сообщения */
             array('/messages/read/([0-9]+)', array('message_id'), 'messages', 'message', 'messages.read', Mvc_Router::ROUTE_REGEX),

@@ -7,7 +7,7 @@
             $args = func_get_args();
 
             $request = $this->getRequest();
-
+            
             $action = $links->get('messages.send');
             $form = new Form_Message_Send($action);
 
@@ -22,6 +22,8 @@
             $recipients = $messages->getRecipientsList();
             $this->set('recipients', $recipients);
             $requestData = $request->$method;
+            
+            //print_r($requestData);
 
             if (empty($requestData) || !$form->validate($request)) {
                 $this->render('messages/send');
@@ -31,12 +33,24 @@
             * @todo Form_Abstract automatically processes values for all defined
             * fields to protect them from XSS.
             */
-
+            
+            $recipients = explode (',',$requestData['recipient']);
+            foreach ($recipients as $rec) {
+                $messageId = $messages->sendMessage($rec, htmlspecialchars($requestData['subject']), htmlspecialchars($requestData['message']));
+                
+                // надо глянуть этот момент с точки зрения производительности
+                if (isset($_FILES['attachment'])) {
+                    $messages->addAttachments($messageId, $_FILES['attachment']);
+                }
+            }
+            
+            /*
             $messageId = $messages->sendMessage($requestData['recipient'], htmlspecialchars($requestData['subject']), htmlspecialchars($requestData['message']));
 
             if (isset($_FILES['attachment'])) {
                 $messages->addAttachments($messageId, $_FILES['attachment']);
             }
+            */
 
             $this->flash('Сообщение отправлено', $links->get('messages.inbox'), 3);
         }
@@ -61,6 +75,9 @@
             $request = $this->getRequest();
             $method = 'post';
             $requestData = $request->$method;
+            
+            print_r($requestData);
+            
 
             foreach($requestData['messages'] as $i => $value) {
                 $messages->removeMessage($i);

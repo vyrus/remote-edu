@@ -35,11 +35,22 @@
 
             $user_info = $model_user->getUserInfo($params['student_id']);
 
-            $this->set('disciplines', $disciplines);
-            $this->set('disciplines_programs', $disciplines_programs);
+            $this->set('disciplines', $disciplines);            
             $this->set('user_id', $params['student_id']);
             $this->set('user_info', $user_info);
-
+            
+            //print_r ($disciplines_programs);
+            
+            $res = array();
+            foreach ($disciplines_programs as $val) {
+                $r = array();
+                $r['d_title'] = $val['d_title'];
+                $r['id'] = $val['id'];
+                $res[$val['p_title']][] = $r;
+            }
+            
+            $this->set('disciplines_programs', $res);
+        
             $this->render('teacher_students/disciplines');
         }
 

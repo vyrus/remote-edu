@@ -20,8 +20,21 @@
             $disciplines_programs = $model_education_students->getDisciplinesPrograms($udata->user_id);
 
             $this->set('disciplines', $disciplines);
-            $this->set('disciplines_programs', $disciplines_programs);
+            //$this->set('disciplines_programs', $disciplines_programs);
             $this->set('user_id', $udata->user_id);
+            
+                        
+            $res = array();
+            foreach ($disciplines_programs as $val) {
+                $r = array();
+                $r['d_title'] = $val['d_title'];
+                $r['id'] = $val['id'];
+                $res[$val['p_title']][] = $r;
+            }
+            
+            $this->set('disciplines_programs', $res);
+            
+            //print_r($res);
 
             $this->render('student_recordbook/index');
         }

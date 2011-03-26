@@ -245,7 +245,7 @@
 
                 foreach ($recipients as $i => $recipient) {
                     $retval[$recipient['user_id']] = array(
-                        'recipient_name' => $recipient['surname'] . ' ' . mb_substr($recipient['surname'], 0, 1, 'utf-8') . '. ' . mb_substr($recipient['patronymic'], 0, 1, 'utf-8') . '.',
+                        'recipient_name' => $recipient['surname'] . ' ' . mb_substr($recipient['name'], 0, 1, 'utf-8') . '. ' . mb_substr($recipient['patronymic'], 0, 1, 'utf-8') . '.',
                         'recipient_description' => array(),
                     );
                 }
@@ -285,7 +285,7 @@
                     $curator = $stmt->fetch(Db_Pdo::FETCH_ASSOC);
 
                     $retval[$curatorId[0]] = array(
-                        'recipient_name' => $curator['surname'] . ' ' . mb_substr($curator['surname'], 0, 1, 'utf-8') . '. ' . mb_substr($curator['patronymic'], 0, 1, 'utf-8') . '.',
+                        'recipient_name' => 'Куратор: ' . $curator['surname'] . ' ' . mb_substr($curator['name'], 0, 1, 'utf-8') . '. ' . mb_substr($curator['patronymic'], 0, 1, 'utf-8') . '.',
                         'recipient_description' => array('Куратор'),
                     );
 
@@ -317,7 +317,7 @@
 
                     foreach ($students as $i => $student) {
                         $retval[$student['user_id']] = array(
-                            'recipient_name' => $student['surname'] . ' ' . mb_substr($student['surname'], 0, 1, 'utf-8') . '. ' . mb_substr($student['patronymic'], 0, 1, 'utf-8') . '.',
+                            'recipient_name' => $student['surname'] . ' ' . mb_substr($student['name'], 0, 1, 'utf-8') . '. ' . mb_substr($student['patronymic'], 0, 1, 'utf-8') . '.',
                             'recipient_description' => array(),
                         );
                     }

@@ -811,7 +811,7 @@ QUERY;
         * @return array
         */
         public function getStudentsByDiscipline($discipline_id) {
-            $sql = 'SELECT u.user_id, u.name, u.surname, u.patronymic
+            $sql = 'SELECT DISTINCT u.user_id, u.name, u.surname, u.patronymic
             FROM ' . $this->_tables['users'] . ' u
             LEFT JOIN ' . $this->_tables['applications'] . ' a
             ON u.user_id = a.user_id
