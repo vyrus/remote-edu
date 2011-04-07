@@ -2,6 +2,8 @@
     $recipients = $this->recipients;
     //print_r($recipients);
     $form = $this->form;
+    $filterExists = $this->filterExists;
+    //$filterExists = false;
 ?>
 
 <style type="text/css">
@@ -16,10 +18,10 @@
 
 <script type="text/javascript">
     var attachmentId = 0;
-    var recipientsCount = <?php echo count($this->recipients); ?>;
+    //var recipientsCount = <?php echo count($this->recipients); ?>;
     var recipients = {
 <?php foreach ($recipients as $i => $recipient): ?>
-        '<?php echo $i; ?>':{'name':'<?php echo $recipient['recipient_name']; ?>','desc':"<?php foreach ($recipient['recipient_description'] as $i => $desc) {echo $desc . '<br />';} ?>"},
+    '<?php echo $i; ?>':{'name':'<?php echo $recipient['recipient_name']; ?>','desc':"<?php foreach ($recipient['recipient_description'] as $i => $desc) {echo $desc . '<br />';} ?>",'role' :"<?php if ($filterExists) echo $recipient['role']; ?>"},
 <?php endforeach; ?>
     };
     
@@ -35,14 +37,40 @@
     function hideRecipientDescription() {
         recipientDescription.dialog('close');
     }
+    
+    function clearRecipientSelect() {
+        while (recipientsSelect[0].firstChild) {
+            recipientsSelect[0].removeChild (recipientsSelect[0].firstChild);
+        }
+    }
 
     function fillRecipientsSelect() {
-        $.each(recipients, function (key, value) {var option = new Option(value.name, key); recipientsSelect.append(option);});
-        /*for (var i = 0; i < recipientsCount; i++) {
-            alert(recipients[i].key);
-            var option = new Option(recipients[i].name, recipients[i].key);
-            recipientsSelect.add(option); 
-        }*/
+        if (<?php if ($filterExists) echo 'true'; else echo 'false'; ?>) {
+            clearRecipientSelect();
+            var recipientsFiltered = {};
+            var b = false;
+            //var b = true;
+            for (var key in recipients) {
+                var val = recipients[key];
+                switch (recipientsType[0].selectedIndex) {
+                    case 0:
+                        b = true;
+                        break;
+                    case 1:
+                        b = (val.role == 'teacher');
+                        break;
+                    case 2:
+                        b = (val.role == 'student');
+                        break;
+                }
+                if (b) {
+                    recipientsFiltered[key] = val;
+                }
+            }
+            $.each(recipientsFiltered, function (key, value) {var option = new Option(value.name, key); recipientsSelect.append(option);});
+        } else {
+            $.each(recipients, function (key, value) {var option = new Option(value.name, key); recipientsSelect.append(option);});
+        }
     }
 
     function showSelectRecipientDialog() {
@@ -132,12 +160,25 @@
 <tr><td colspan="2"><input type="button" value="Отправить" onclick="submitForm()" /></td></tr>
 </table>
 </form>
-<div id="selectRecipientDialog"><select id="recipientsSelect" multiple="on" size="10" style="width: 100%;"></select></div>
+<div id="selectRecipientDialog">
+    <?php
+    if ($filterExists)
+    echo
+    "<select id='recipientsType' size=1 onchange='fillRecipientsSelect()'>
+        <option>Все</option>
+        <option>Преподователи</option>
+        <option>Студенты</option>
+    </select>"
+    ?>
+    <select id="recipientsSelect" multiple="on" size="10" style="width: 100%;">
+    </select>
+</div>
 <div id="recipientDescription"></div>
 
 <script type="text/javascript">
     var recipientId = $("#sendMessageForm > :input[name='recipient']");
     var recipientsSelect = $('#recipientsSelect');
+    var recipientsType = $('#recipientsType');
     var selectRecipientDialog = $('#selectRecipientDialog');
     var selectRecipientButton = $('#selectRecipientButton');
     var recipientDescription = $('#recipientDescription');

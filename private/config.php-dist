@@ -8,6 +8,11 @@
 
         /* Базовый адрес */
         'base_url' => '<base-url>',
+        
+        /* Директории для хранения */
+        'storage' => array (
+            'messages_attachments' => '../private/attachments'
+        ),
 
         /* Настройки соединения с БД */
         'db' => array

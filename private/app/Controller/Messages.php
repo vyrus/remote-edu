@@ -17,6 +17,12 @@
 
             $this->set('form', $form);
             $method = $form->method();
+            
+            $user = Model_User::create();
+            $udata = $user->getAuth();
+            //print_r($udata);
+            
+            $this->set('filterExists', ($udata['role'] == Model_User::ROLE_ADMIN));
 
             $messages = new Model_Messages();
             $recipients = $messages->getRecipientsList();
@@ -35,13 +41,13 @@
             */
             
             $recipients = explode (',',$requestData['recipient']);
+            $messageIds = array();
             foreach ($recipients as $rec) {
-                $messageId = $messages->sendMessage($rec, htmlspecialchars($requestData['subject']), htmlspecialchars($requestData['message']));
-                
-                // надо глянуть этот момент с точки зрения производительности
-                if (isset($_FILES['attachment'])) {
-                    $messages->addAttachments($messageId, $_FILES['attachment']);
+                $messageIds[] = $messages->sendMessage($rec, htmlspecialchars($requestData['subject']), htmlspecialchars($requestData['message']));
                 }
+                
+            if (isset($_FILES['attachment'])) {
+                    $messages->addAttachments($messageIds, $_FILES['attachment']);
             }
             
             /*
@@ -76,8 +82,7 @@
             $method = 'post';
             $requestData = $request->$method;
             
-            print_r($requestData);
-            
+            //print_r($requestData);
 
             foreach($requestData['messages'] as $i => $value) {
                 $messages->removeMessage($i);

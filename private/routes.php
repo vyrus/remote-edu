@@ -2,7 +2,7 @@
 
     /* $Id$ */
 
-    return array(
+    return array(        
         /* Маршруты */
         'routes' => array
         (
@@ -254,6 +254,7 @@
             /* Автодополнение при выборе города */
             array('/ajax/autocomplete/city', 'ajax', 'autocomplete_city', 'ajax.autocomplete-city', Mvc_Router::ROUTE_STATIC)
         ),
+        
 
         /* Права доступа к разделам сайта */
         'permissions' => array

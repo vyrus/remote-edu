@@ -33,7 +33,8 @@
                     "обучается",
                     и тд';
                     
-            $this->flash($msg, $links->get('users.list') . 'all/', 3);
+            //$this->render( $links->get('users.list') . 'all/');       
+            $this->flash($msg, $links->get('users.list') . 'all/', 0);
         }
 
         /**

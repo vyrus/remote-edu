@@ -17,8 +17,9 @@
                     $filename = md5($path . rand (0, 0xFFFFFF));
                 } while (file_exists($this->directory . '/' . $filename));
             }
-
+            
             if (@move_uploaded_file($path, $this->directory . '/' . $filename) === FALSE) {
+                //var_dump($this->directory . '/' . $filename);
                 throw new Exception ('Невозможно сохранить файл на сервере');
             }
 

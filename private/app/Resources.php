@@ -113,6 +113,8 @@
 
         protected function get_attachments_storage() {
             $config = $this->_config['storage'];
+            
+            //var_dump($config);
 
             $storage = new Storage($config['messages_attachments']);
 

@@ -138,7 +138,7 @@
             return $this->lastInsertId();
         }
 
-        public function addAttachments($message, $files) {
+        public function addAttachments($messageIDs, $files) {
             $storage = Resources::getInstance()->attachments_storage;
             
             $sql = 'INSERT INTO `message_attachment`(`message`,`original_filename`,`mime_type`,`filename`)
@@ -146,6 +146,20 @@
             $stmt = $this->prepare($sql);
             
             foreach ($files['name'] as $i => $value) {
+                $filename = $storage->storeFile($files['tmp_name'][$i]);
+                foreach ($messageIDs as $message) {
+                    $params = array(
+                        ':message' => $message,
+                        ':original_filename' => $files['name'][$i],
+                        ':mime_type' => $files['type'][$i],
+                        ':filename' => $filename
+                    );
+                    
+                    $stmt->execute($params);
+                }
+            }
+            
+            /*foreach ($files['name'] as $i => $value) {
                 $filename = $storage->storeFile($files['tmp_name'][$i]);
                 $params = array(
                     ':message' => $message,
@@ -155,7 +169,7 @@
                 );
                 
                 $stmt->execute($params);
-            }
+            }*/
         }
         
         public function getAttachments($message) {
@@ -176,13 +190,31 @@
             $attachments = $this->getAttachments($messageId);
             $storage = Resources::getInstance()->attachments_storage;
             
+            // да, надо было перепроектировать все-таки...
+            $sql = "SELECT COUNT(filename) AS file_count, filename FROM message_attachment
+                    GROUP BY filename HAVING filename = ANY
+                    (SELECT filename FROM message_attachment WHERE message = :message_id)";
+            $params = array(
+                    ':message_id' => $messageId,
+                );
+            $stmt = $this->prepare($sql);
+            $stmt->execute($params);
+            $attachmentsCountInfo = $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
+            
+            $fileCountAr = array();
+            foreach ($attachmentsCountInfo as $rec) {
+                $fileCountAr[$rec['filename']] = $rec['file_count'];
+            }
+            unset($attachmentsCountInfo);
+            
             foreach ($attachments as $i => $attachment) {
-                $storage->removeFile($attachment['filename']);
-                                
+                if ($fileCountAr[$attachment['filename']] == 1)
+                    $storage->removeFile($attachment['filename']);
+                    
                 $sql = 'DELETE FROM `message_attachment`
-                    WHERE `id`=:arrachment_id';                
+                    WHERE `id`=:attachment_id';
                 $params = array(
-                    ':arrachment_id' => $attachment['id'],
+                    ':attachment_id' => $attachment['id'],
                 );
                 
                 $this->prepare($sql)->execute($params);
@@ -236,7 +268,7 @@
             $retval = array();
 
             if ($this->userRole == Model_User::ROLE_ADMIN) {
-                $sql = 'SELECT `user_id`,`name`,`surname`,`patronymic`
+                $sql = 'SELECT `user_id`,`name`,`surname`,`patronymic`,`role`
                     FROM `users`
                     WHERE `role`<>\'admin\'';
                 $stmt = $this->prepare($sql);
@@ -247,6 +279,7 @@
                     $retval[$recipient['user_id']] = array(
                         'recipient_name' => $recipient['surname'] . ' ' . mb_substr($recipient['name'], 0, 1, 'utf-8') . '. ' . mb_substr($recipient['patronymic'], 0, 1, 'utf-8') . '.',
                         'recipient_description' => array(),
+                        'role' => $recipient['role'],
                     );
                 }
 
