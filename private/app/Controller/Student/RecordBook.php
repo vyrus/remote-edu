@@ -34,7 +34,7 @@
             
             $this->set('disciplines_programs', $res);
             
-            //print_r($res);
+            //print_r($disciplines_programs);
 
             $this->render('student_recordbook/index');
         }

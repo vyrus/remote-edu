@@ -138,7 +138,6 @@
         $('#attachment' + attachmentId).remove();
     }
 </script>
-
 <h3>Отправка сообщения</h3>
 <form id="sendMessageForm" enctype="multipart/form-data" action="<?php echo $form->action(); ?>" method="<?php echo $form->method(); ?>">
 <input name="<?php echo $form->recipient->name; ?>" type="hidden" value="<?php echo $form->recipient->value; ?>"/>
@@ -182,7 +181,9 @@
     var selectRecipientDialog = $('#selectRecipientDialog');
     var selectRecipientButton = $('#selectRecipientButton');
     var recipientDescription = $('#recipientDescription');
+
     
+
     recipientDescription.dialog(
         {
             autoOpen: false,
@@ -193,7 +194,6 @@
             width: 'auto',
         }
     );
-
     selectRecipientDialog.dialog(
         {
             autoOpen: false,

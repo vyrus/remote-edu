@@ -30,7 +30,7 @@
                 LEFT JOIN ' . $this->_tables['tests'] . ' t
                     ON t.test_id = c.test_id
                 WHERE discipline_id = ?
-                ORDER BY number ASC
+                ORDER BY s.number ASC
             ';
 
             $stmt = $this->prepare($sql);
@@ -40,3 +40,4 @@
             return $sections;
         }
     }
+?>

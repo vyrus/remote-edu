@@ -16,7 +16,7 @@
 
             if (empty($params)) {
                 $this->flash('Не указан идентификатор заявки',
-                             $links->get('admin.applications'));
+                             $links->get('admin.applications', array ('sort_field' => 'fio', 'sort_direction' => 'asc')));
             }
 
             $app_id = intval(array_shift($params));
@@ -45,7 +45,7 @@
                 $msg = 'Платёж успешно добавлен';
             }
 
-            $this->flash($msg, $links->get('admin.applications'));
+            $this->flash($msg, $links->get('admin.applications',array ('sort_field' => 'fio', 'sort_direction' => 'asc')));
         }
     }
 

@@ -122,10 +122,9 @@
         {
             $sql = '
                 INSERT INTO ' . $this->_tables['users'] . '
-                (login, passwd, role, email, surname, name, patronymic, status)
+                (login, passwd, role, email, surname, name, patronymic, status, date_reg)
                 VALUES
-                (:login, :passwd, :role, :email, :surname, :name, :patronymic,
-                :status)
+                (:login, :passwd, :role, :email, :surname, :name, :patronymic, :status, NOW())
             ';
 
             if (null !== $passwd) {
@@ -866,17 +865,40 @@
             return $retval;
         }
 
-        public function getUsersList($usersRole) {
-            $sql = 'SELECT `user_id`,`login`,`role`,`name`,`surname`,`patronymic`
-                FROM `users`' . ($usersRole == 'all' ? '' : ' WHERE `role`=:role');
-            $stmt = $this->prepare($sql);
+        public function getUsersList($usersRole, $sortField, $sortDirection) {
+            $sql = 'SELECT `user_id`,`login`,`role`,`name`,`surname`,`patronymic`, `date_reg`
+				FROM `users`' . ($usersRole == 'all' ? '' : ' WHERE `role`=:role');  
+				//' ORDER BY :sort_field :sort_direction';
+			// знаю, костыль, но что делать, если строка выше, написанная логически верно, работать не изволит
+			switch ($sortField) {
+				case 'id': $sql .= " ORDER BY user_id"; break; 
+				case 'login': $sql .= " ORDER BY login"; break;
+				case 'role': $sql .= " ORDER BY role"; break;
+				case 'date_reg': $sql .= " ORDER BY date_reg"; break;
+			}
+			if ($sortField == 'fio') {
+				if ($sortDirection == 'asc') $sql .= " ORDER BY surname ASC, name ASC, patronymic ASC";
+				else if ($sortDirection == 'desc') $sql .= " ORDER BY surname DESC, name DESC, patronymic DESC";
+			} else {
+				if ($sortDirection == 'asc') $sql .= " ASC";
+				else if ($sortDirection == 'desc') $sql .= " DESC";
+			}
+
+			//echo '<pre>';var_dump($sortDirection);echo '</pre>'; 
+			//echo '<pre>';var_dump($sql);echo '</pre>'; 
+
             $params = array();
 
             if ($usersRole != 'all') {
-                $params[':role'] = $usersRole;
+				$params[':role'] = $usersRole;
             }
+			//$params[':sort_field'] = $sortField;
+			//$params[':sort_direction'] = ' ' . $sortDirection;
 
+			$stmt = $this->prepare($sql);
             $stmt->execute($params);
+
+			//echo '<pre>';var_dump($params );echo '</pre>';
 
             return $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
         }

@@ -12,7 +12,8 @@
             $form = new Form_Message_Send($action);
 
             if (count($args)) {
-                $form->setValue('recipient', $args[0]['to_id']);
+                //$form->setValue('recipients', $args[0]['to_id']);
+				$form->setValue('recipient', $args[0][0]);
             }
 
             $this->set('form', $form);

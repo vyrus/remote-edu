@@ -11,7 +11,7 @@
         'Регистрация пользователя'      => $this->_links->get('admin.users'),
         'Формирование учебных программ' => $this->_links->get('admin.programs'),
         'Загрузка материалов'           => $this->_links->get('teacher.materials'),
-        'Заявки на обучение'            => $this->_links->get('admin.applications'),
+        'Заявки на обучение'            => $this->_links->get('admin.applications',array ('sort_field' => 'fio', 'sort_direction' => 'asc')),
     );
     
     /* ссылки, доступные только преподу */	        

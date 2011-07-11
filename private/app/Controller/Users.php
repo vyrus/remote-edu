@@ -34,7 +34,7 @@
                     и тд';
                     
             //$this->render( $links->get('users.list') . 'all/');       
-            $this->flash($msg, $links->get('users.list') . 'all/', 0);
+            $this->flash($msg, $links->get('users.list') . 'all/fio/asc/', 0);
         }
 
         /**
@@ -441,8 +441,10 @@
 
         public function action_users_list($params) {
             $users = Model_User::create();
-            $this->set('users', $users->getUsersList($params['filter']));
+            $this->set('users', $users->getUsersList($params['filter'], $params['sort_field'], $params['sort_direction']));
             $this->set('filter', $params['filter']);
+            $this->set('sortField', $params['sort_field']);
+            $this->set('sortDirection', $params['sort_direction']);
             $this->set('rolesCaptions', $this->_roles_captions);
             $this->render('users/users_list');
         }
@@ -624,7 +626,7 @@
             if (empty($requestData)) {
                 if (($userInfo = $users->getUserInfo($params['user_id'])) === FALSE) {
                     $this->flash('Пользователь не существует',
-                                 $links->get('users.list') . 'all/', 10);
+                                 $links->get('users.list') . 'all/fio/asc/', 5);
                 }
 
                 $form->setValue('surname', $userInfo['surname']);
@@ -642,7 +644,7 @@
                 );
                 $users->setUserInfo($userInfo);
                 $this->flash('Данные пользователя успешно изменены',
-                             $links->get('users.list') . 'all/', 10);
+                             $links->get('users.list') . 'all/fio/asc/', 3);
             }
 
             $this->render('users/edit_account');

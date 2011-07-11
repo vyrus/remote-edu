@@ -9,7 +9,7 @@
     $admin_elements = array(
         'Регистрация сотрудника' => $this->_links->get('employee.register'),
         'Регистрация слушателя'  => $this->_links->get('student.register'),
-        'Список пользователей'   => $this->_links->get('users.list', array('filter' => 'all')),
+        'Список пользователей'   => $this->_links->get('users.list', array('filter' => 'all', 'sort_field' => 'fio', 'sort_direction' => 'asc')),
         'Инструкция'             => $this->_links->get('help.registration')
     );
 

@@ -19,8 +19,8 @@
         /**
         * Список поданных заявок для админа.
         */
-        public function action_index_by_admin()
-        {
+        public function action_index_by_admin($params = array())
+		{
             $user = Model_User::create();
             $udata = (object) $user->getAuth();
             /**
@@ -31,7 +31,21 @@
             * @todo Выводить только заявки, которые ещё не полностью оплачены
             * (или вообще ешё не приняты/подписаны).
             */
-            $apps = $app->getAllAppsInfo();
+
+			
+			$request	= $this->getRequest ();
+			if ((!$params) && (($requestData = $request->post) || ($requestData = $request->get))) {
+				$params['sort_field'] = $requestData['sort_field'];
+				$params['sort_direction'] = $requestData['sort_direction'];
+			}
+
+			/*if (($params === array())) {
+				$params['sort_field'] = 'fio';
+				$params['sort_direction'] = 'asc';
+				
+			}*/
+			
+			$apps = $app->getAllAppsInfo($params['sort_field'],$params['sort_direction']);
             $paym = Model_Payment::create();
             foreach ($apps as $i=>$a)
             {
@@ -71,16 +85,19 @@
             }
             $this->set('applications', $apps);
             $this->set('statuses', Model_Application::getStatusMap());
-            $this->set ('invalidMaterialsForms', array ());
+
+			$this->set('invalidMaterialsForms', array ());
+			$this->set('links', Resources::getInstance()->links);
+			$this->set('sortField', $params['sort_field']);
+			$this->set('sortDirection', $params['sort_direction']);
 
             $contract = Model_Contract::create ();
 
-            $request	= $this->getRequest ();
             $requestData	= $request->files;
-            if (empty ($requestData)) {
+			if (empty ($requestData)) {
                 $this->render ('applications/index_by_admin');
-            }
-            // [ загрузка договора
+			}
+            // загрузка договора
             $invalidMaterialsForms = array ();
 
             foreach ($request->files as $key=>$item)
@@ -92,7 +109,10 @@
             $request->set (
                 'get',
                 array (
-                    'filename'		=> $request->files['fileReference' . $app_id]['name'],
+					'filename'		=> $request->files['fileReference' . $app_id]['name'],
+					'sort_field'	 => $params['sort_field'],
+					'sort_direction' => $params['sort_direction'],
+
                 )
             );
 
@@ -120,11 +140,11 @@
 
             $links = Resources::getInstance()->links;
 
-            $this->flash (
+			$this->flash (
                 'Договор успешно загружен',
-                $links->get('admin.applications'),
+				$links->get('admin.applications',array ('sort_field' => $params['sort_field'], 'sort_direction' => $params['sort_direction'])),
                 3
-            );
+			);
         }
 
         /**
@@ -167,17 +187,30 @@
             }
 
             $app = Model_Application::create();
-            $app->apply($udata->user_id, $object_id, $type);
+			if ($app->apply($udata->user_id, $object_id, $type)) { // заявка корректна
 
-            $return_url = $links->get('student.applications');
+	            $return_url = $links->get('student.applications');
 
-            $msg = 'Вы успешно подали заявку на учебный курс.<p>
-              Через 10 сек. Вас автоматически перенаправят на страницу просмотра
-              поданых Вами <a href="' . $return_url . '" title=Мои заявки> заявок</a>.
-              <p>
-              Также, Вы можете, не дожидаясь перенаправления, перейти на страницу
-              <a href="' . $links->get('student.apply') . '" title=Авторизация>Мой новый курс</a> и
-              подать зявку на ещё один учебный курс!';
+    	        $msg = 'Вы успешно подали заявку на учебный курс.<p>
+        	      Через 10 сек. Вас автоматически перенаправят на страницу просмотра
+            	  поданых Вами <a href="' . $return_url . '" title=Мои заявки> заявок</a>.
+               	  <p>
+	              Также, Вы можете, не дожидаясь перенаправления, перейти на страницу
+    	          <a href="' . $links->get('student.apply') . '" title=Авторизация>Мой новый курс</a> и
+        	      подать зявку на ещё один учебный курс!';
+			} else { // заявка дубликат
+
+	            $return_url = $links->get('student.apply');
+
+    	        $msg = 'Заявка на эту дисциплину была подана вами ранее.
+        	      Через 10 сек. Вас автоматически перенаправят на страницу просмотра
+            	  поданых Вами <a href="' . $return_url . '" title=Мои заявки> заявок</a>.
+               	  <p>
+	              Также, Вы можете, не дожидаясь перенаправления, перейти на страницу
+    	          <a href="' . $links->get('student.apply') . '" title=Авторизация>Мой новый курс</a> и
+        	      подать зявку на ещё один учебный курс!';
+			}
+
 
             $this->flash($msg, $return_url, 10);
         }
@@ -358,7 +391,7 @@
 
             $map = Model_Application::getStatusMap();
             $this->flash('Заявка ' . $map[$new_status],
-                         $links->get('admin.applications'));
+                         $links->get('admin.applications',array ('sort_field' => 'fio', 'sort_direction' => 'asc')));
 
             $this->render();
         }
@@ -370,7 +403,7 @@
         */
         public function action_delete(array $params = array()) {
             $links = Resources::getInstance()->links;
-            $return_url = $links->get('admin.applications');
+            $return_url = $links->get('admin.applications',array ('sort_field' => 'fio', 'sort_direction' => 'asc'));
 
             if (empty($params)) {
                 $this->flash('Не указан номер заявки', $return_url);

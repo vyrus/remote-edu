@@ -1,22 +1,22 @@
 -- phpMyAdmin SQL Dump
--- version 3.3.7deb5build0.10.10.1
+-- version 3.3.7deb5
 -- http://www.phpmyadmin.net
 --
--- Host: localhost
--- Generation Time: Mar 11, 2011 at 02:30 PM
--- Server version: 5.1.49
--- PHP Version: 5.3.3-1ubuntu9.3
+-- Хост: localhost
+-- Время создания: Июл 11 2011 г., 11:16
+-- Версия сервера: 5.1.49
+-- Версия PHP: 5.3.3-7+squeeze3
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
 --
--- Database: `dist`
+-- База данных: `remote_edu`
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `applications`
+-- Структура таблицы `applications`
 --
 
 CREATE TABLE IF NOT EXISTS `applications` (
@@ -26,13 +26,14 @@ CREATE TABLE IF NOT EXISTS `applications` (
   `type` enum('program','discipline') NOT NULL,
   `status` enum('applied','declined','accepted','signed') DEFAULT NULL,
   `contract_filename` varchar(255) DEFAULT NULL,
+  `date_app` date DEFAULT NULL,
   PRIMARY KEY (`app_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=10 ;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `apps_history`
+-- Структура таблицы `apps_history`
 --
 
 CREATE TABLE IF NOT EXISTS `apps_history` (
@@ -45,7 +46,7 @@ CREATE TABLE IF NOT EXISTS `apps_history` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `checkpoints`
+-- Структура таблицы `checkpoints`
 --
 
 CREATE TABLE IF NOT EXISTS `checkpoints` (
@@ -61,7 +62,7 @@ CREATE TABLE IF NOT EXISTS `checkpoints` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `checkpoints_students`
+-- Структура таблицы `checkpoints_students`
 --
 
 CREATE TABLE IF NOT EXISTS `checkpoints_students` (
@@ -74,7 +75,7 @@ CREATE TABLE IF NOT EXISTS `checkpoints_students` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `disciplines`
+-- Структура таблицы `disciplines`
 --
 
 CREATE TABLE IF NOT EXISTS `disciplines` (
@@ -86,12 +87,12 @@ CREATE TABLE IF NOT EXISTS `disciplines` (
   `labour_intensive` smallint(6) DEFAULT NULL,
   `responsible_teacher` int(11) DEFAULT NULL,
   PRIMARY KEY (`discipline_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=7 ;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `edu_docs`
+-- Структура таблицы `edu_docs`
 --
 
 CREATE TABLE IF NOT EXISTS `edu_docs` (
@@ -105,12 +106,12 @@ CREATE TABLE IF NOT EXISTS `edu_docs` (
   `qualification` varchar(256) NOT NULL,
   PRIMARY KEY (`edu_doc_id`),
   KEY `fk_edu_docs_users` (`user_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `examinations`
+-- Структура таблицы `examinations`
 --
 
 CREATE TABLE IF NOT EXISTS `examinations` (
@@ -123,12 +124,12 @@ CREATE TABLE IF NOT EXISTS `examinations` (
   `passed` enum('true','false') NOT NULL,
   `created` datetime NOT NULL,
   PRIMARY KEY (`examination_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `extra_attempts`
+-- Структура таблицы `extra_attempts`
 --
 
 CREATE TABLE IF NOT EXISTS `extra_attempts` (
@@ -141,7 +142,7 @@ CREATE TABLE IF NOT EXISTS `extra_attempts` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `localities`
+-- Структура таблицы `localities`
 --
 
 CREATE TABLE IF NOT EXISTS `localities` (
@@ -152,12 +153,12 @@ CREATE TABLE IF NOT EXISTS `localities` (
   `type` enum('аал','арбан','аул','волость','высел','г','городок','д','дп','ж/д_будка','ж/д_казарм','ж/д_оп','ж/д_платф','ж/д_пост','ж/д_рзд','ж/д_ст','заимка','казарма','кв-л','кордон','кп','м','мкр','нп','остров','п','п/о','п/р','п/ст','пгт','погост','починок','промзона','рзд','рп','с','с/а','с/о','с/п','с/с','сл','снт','ст','ст-ца','тер','у','х') NOT NULL,
   PRIMARY KEY (`locality_id`),
   KEY `fk_localities_regions` (`region_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `materials`
+-- Структура таблицы `materials`
 --
 
 CREATE TABLE IF NOT EXISTS `materials` (
@@ -171,12 +172,12 @@ CREATE TABLE IF NOT EXISTS `materials` (
   `uploader` int(11) DEFAULT NULL,
   `number` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=12 ;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `materials_states`
+-- Структура таблицы `materials_states`
 --
 
 CREATE TABLE IF NOT EXISTS `materials_states` (
@@ -188,7 +189,7 @@ CREATE TABLE IF NOT EXISTS `materials_states` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `message`
+-- Структура таблицы `message`
 --
 
 CREATE TABLE IF NOT EXISTS `message` (
@@ -200,12 +201,12 @@ CREATE TABLE IF NOT EXISTS `message` (
   `read` enum('read','unread') DEFAULT NULL,
   `time` int(11) DEFAULT NULL,
   PRIMARY KEY (`message_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `message_attachment`
+-- Структура таблицы `message_attachment`
 --
 
 CREATE TABLE IF NOT EXISTS `message_attachment` (
@@ -215,12 +216,12 @@ CREATE TABLE IF NOT EXISTS `message_attachment` (
   `mime_type` varchar(255) DEFAULT NULL,
   `filename` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `passports`
+-- Структура таблицы `passports`
 --
 
 CREATE TABLE IF NOT EXISTS `passports` (
@@ -240,12 +241,12 @@ CREATE TABLE IF NOT EXISTS `passports` (
   KEY `fk_passports_users` (`user_id`),
   KEY `fk_passports_regions` (`region_id`),
   KEY `fk_passports_localities` (`city_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `payments`
+-- Структура таблицы `payments`
 --
 
 CREATE TABLE IF NOT EXISTS `payments` (
@@ -255,12 +256,12 @@ CREATE TABLE IF NOT EXISTS `payments` (
   `created` datetime DEFAULT NULL,
   PRIMARY KEY (`payment_id`),
   KEY `fk_payments_applications` (`app_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=12 ;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `phones`
+-- Структура таблицы `phones`
 --
 
 CREATE TABLE IF NOT EXISTS `phones` (
@@ -270,12 +271,12 @@ CREATE TABLE IF NOT EXISTS `phones` (
   `mobile` varchar(32) DEFAULT NULL,
   PRIMARY KEY (`phones_id`),
   KEY `fk_phones_users` (`user_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `programs`
+-- Структура таблицы `programs`
 --
 
 CREATE TABLE IF NOT EXISTS `programs` (
@@ -288,12 +289,12 @@ CREATE TABLE IF NOT EXISTS `programs` (
   `cost` decimal(9,2) unsigned DEFAULT NULL,
   `number` int(11) NOT NULL,
   PRIMARY KEY (`program_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=4 ;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `questions`
+-- Структура таблицы `questions`
 --
 
 CREATE TABLE IF NOT EXISTS `questions` (
@@ -302,12 +303,12 @@ CREATE TABLE IF NOT EXISTS `questions` (
   `type` enum('pick-one') NOT NULL,
   `data` text NOT NULL,
   PRIMARY KEY (`question_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `regions`
+-- Структура таблицы `regions`
 --
 
 CREATE TABLE IF NOT EXISTS `regions` (
@@ -315,12 +316,12 @@ CREATE TABLE IF NOT EXISTS `regions` (
   `code` tinyint(2) unsigned zerofill NOT NULL,
   `name` char(40) NOT NULL,
   PRIMARY KEY (`region_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sections`
+-- Структура таблицы `sections`
 --
 
 CREATE TABLE IF NOT EXISTS `sections` (
@@ -329,12 +330,12 @@ CREATE TABLE IF NOT EXISTS `sections` (
   `title` varchar(256) DEFAULT NULL,
   `number` tinyint(4) DEFAULT NULL,
   PRIMARY KEY (`section_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=13 ;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tests`
+-- Структура таблицы `tests`
 --
 
 CREATE TABLE IF NOT EXISTS `tests` (
@@ -345,12 +346,12 @@ CREATE TABLE IF NOT EXISTS `tests` (
   `attempts_limit` int(11) NOT NULL,
   `errors_limit` int(11) NOT NULL,
   PRIMARY KEY (`test_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `users`
+-- Структура таблицы `users`
 --
 
 CREATE TABLE IF NOT EXISTS `users` (
@@ -364,6 +365,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `patronymic` varchar(64) DEFAULT NULL,
   `status` enum('active','inactive') NOT NULL DEFAULT 'inactive',
   `curator` int(11) DEFAULT NULL,
+  `date_reg` date DEFAULT NULL,
   PRIMARY KEY (`user_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=10 ;
 

@@ -5,7 +5,7 @@
 
     /* ссылки, доступные только админу */
     $admin_elements = array(
-        'Список поданных заявок' => $this->_links->get('admin.applications'),
+        'Список поданных заявок' => $this->_links->get('admin.applications',array ('sort_field' => 'fio', 'sort_direction' => 'asc')),
         'Инструкция' => '#'
     );
 

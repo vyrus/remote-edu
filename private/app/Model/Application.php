@@ -85,23 +85,30 @@
             return self::$_status_map;
         }
 
+
         /**
         * Подача заявки.
         *
         * @param  int $user_id   Идентификатор пользователя.
         * @param  int $object_id Идентификатор объекта.
         * @param  int $type      Тип объекта (программа/дисциплины).
-        * @return void
+        * @return bool 			 Подана ли успешно. Если не успешно, то причиной считается факт дубликата
         */
         public function apply($user_id, $object_id, $type) {
-            /**
-            * @todo Проверять на дубликаты заявок.
-            */
+
+			// Проверка на дубликаты
+			// !!!Здесь не учитывается тот факт, что студент может хотеть подписаться 
+			// на программу целиком, при том, что он уже подписан на отдельные ее дисциплины
+			// Считается, что это разные вещи
+			//
+
+			if ($this->getAppInfoByData ($user_id, $object_id, $type)) 
+				return false;
 
             $sql = '
                 INSERT INTO ' . $this->_tables['applications'] . '
-                (user_id, object_id, type, status)
-                VALUES (:uid, :oid, :type, :status)
+                (user_id, object_id, type, status, date_app)
+                VALUES (:uid, :oid, :type, :status, NOW())
             ';
 
             $status = self::STATUS_APPLIED;
@@ -118,9 +125,35 @@
 
             /* Добавляем запись в историю прохождения заявки */
             $app_id = $this->lastInsertId();
-            $this->_addHistory($app_id, $status);
+			$this->_addHistory($app_id, $status);
+			return true;
         }
 
+		/**
+		* Поиск неотклоненной заявки по идентификатору пользоталя, объекта, и типу объекта.
+		*
+        * @param  int $user_id   Идентификатор пользователя.
+        * @param  int $object_id Идентификатор объекта.
+        * @param  int $type      Тип объекта (программа/дисциплины).
+        * @return  array		 Массив с данными о заявке
+		*/
+		public function getAppInfoByData($user_id, $object_id, $type) {
+			$sql = 'SELECT * FROM ' . $this->_tables['applications'] .
+			' WHERE user_id = :uid AND object_id = :oid AND type = :type AND status <> "declined" LIMIT 1';
+			
+			$values = array (
+                ':uid'    => $user_id,
+                ':oid'    => $object_id,
+                ':type'   => $type
+			);
+
+			$stmt = $this->prepare($sql);
+			$stmt->execute($values);
+
+			return $stmt->fetchAll(Db_PdO::FETCH_ASSOC);
+		}
+
+		
         /**
         * Получение информации о заявке пользователя с текущими статусами и названиями
         * программ/дисциплин.
@@ -330,12 +363,15 @@
         * Получение списка всех поданных заявок с текущими статусами и названиями
         * программ/дисциплин.
         *
-        * @return array
+		* @param string $sortField Естественное обобщение понятия поля, для осуществления сортировки
+		* @param string $sortDirection Направвление сортировки 
+   
+		* @return array
         */
-        public function getAllAppsInfo()
-        {
+        public function getAllAppsInfo($sortField, $sortDirection) 
+		{
             $sql = '
-                SELECT a.app_id, a.status, u.user_id, u.name, u.surname, a.object_id,
+				SELECT a.app_id, a.status, u.user_id, u.name, u.surname, a.object_id, a.date_app,
                        u.patronymic, u.login,
                        contract_filename,
                        p.title AS program_title,
@@ -353,11 +389,27 @@
                     d.discipline_id = a.object_id
 
                 LEFT JOIN ' . $this->_tables['users'] . ' u
-                    ON u.user_id = a.user_id
+					ON u.user_id = a.user_id
             ';
-            $values = array(
-                ':type_program'    => self::TYPE_PROGRAM,
-                ':type_discipline' => self::TYPE_DISCIPLINE
+
+			switch ($sortField) {
+				case 'status': $sql .= ' ORDER BY a.status'; break;
+				case 'date_app': $sql .= ' ORDER BY a.date_app'; break;
+			}
+
+			if ($sortField == 'fio') {
+				if ($sortDirection == 'asc') $sql .= " ORDER BY u.surname ASC, u.name ASC, u.patronymic ASC";
+				else if ($sortDirection == 'desc') $sql .= " ORDER BY u.surname DESC, u.name DESC, u.patronymic DESC";
+			} else {
+				if ($sortDirection == 'asc') $sql .= " ASC";
+				else if ($sortDirection == 'desc') $sql .= " DESC";
+			}
+
+			$values = array(
+				//':sort_direction' => $sort_direction,
+				//':sort_field'	=> $sort_field,
+				':type_program'    => self::TYPE_PROGRAM,
+				':type_discipline' => self::TYPE_DISCIPLINE
             );
 
             $stmt = $this->prepare($sql);

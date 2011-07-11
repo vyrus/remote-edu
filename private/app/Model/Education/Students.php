@@ -129,6 +129,7 @@
                         OR
                         a.status = \'signed\'
                     )
+				ORDER BY d.serial_number
             ';
 
             $stmt = $this->prepare($sql);

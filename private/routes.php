@@ -30,11 +30,13 @@
             /* Управление пользователями */
             array('/admin/users', 'users', 'index_by_admin', 'admin.users', Mvc_Router::ROUTE_STATIC),
 
+			// одинаковые!?
             /* Управление пользователями */
-            array('/admin/users', 'users', 'index_by_admin', 'admin.users', Mvc_Router::ROUTE_STATIC),
+            //array('/admin/users', 'users', 'index_by_admin', 'admin.users', Mvc_Router::ROUTE_STATIC),
 
             /* Список пользователей */
-            array('/admin/users/list/(all|admin|teacher|student)?', array('filter'), 'users', 'users_list', 'users.list', Mvc_Router::ROUTE_REGEX),
+            //array('/admin/users/list/(all|admin|teacher|student)?', array('filter'), 'users', 'users_list', 'users.list', Mvc_Router::ROUTE_REGEX),
+			array('/admin/users/list/(all|admin|teacher|student)/(id|login|fio|role|date_reg)/(asc|desc)', array('filter','sort_field','sort_direction'), 'users', 'users_list', 'users.list', Mvc_Router::ROUTE_REGEX),
 
             /* Редактирование аккаунтов */
             array('/admin/users/edit/([0-9]+)', array('user_id'), 'users', 'edit_account', 'users.edit', Mvc_Router::ROUTE_REGEX),
@@ -130,7 +132,8 @@
             array('/admin/tests/results/([0-9]+)', array('test_id'), 'tests', 'results', 'tests.results', Mvc_Router::ROUTE_REGEX),
 
             /* Управление заявками */
-            array('/admin/applications', 'applications', 'index_by_admin', 'admin.applications', Mvc_Router::ROUTE_STATIC),
+            //array('/admin/applications', 'applications', 'index_by_admin', 'admin.applications', Mvc_Router::ROUTE_STATIC),
+            array('/admin/applications/(fio|status|date_app)/(asc|desc)', array('sort_field', 'sort_direction'), 'applications', 'index_by_admin', 'admin.applications', Mvc_Router::ROUTE_REGEX),
 
             /* Изменение статусы заявки администратором */
             array('/admin/applications/change-status/(accepted|declined|signed)/([0-9]+)', array('new_status', 'app_id'), 'applications', 'change_app_status', 'applications.change-status', Mvc_Router::ROUTE_REGEX),
@@ -223,7 +226,8 @@
             /* Страничка помощи слушателю - как начать обучение */
             array('/student/help/how-to-start', 'pages', 'display', array('page' => 'help/how-to-start'), 'help.how-to-start', Mvc_Router::ROUTE_STATIC),
 
-            /* Download contract by student */
+			/* Download contract by student */
+			/* Загрузка договора для студента*/
             array('/student/download_contract/([0-9a-z]{32})', array('file_name'), 'applications', 'download_contract', 'applications.download_contract', Mvc_Router::ROUTE_REGEX),
 
             /* Страница с ценами */
