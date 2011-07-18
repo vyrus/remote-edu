@@ -777,7 +777,8 @@
                 $a = (object) $a;
 
                 if (Model_Education_Programs::PAID_TYPE_FREE == $a->paid_type && Model_Application::STATUS_ACCEPTED == $a->status ||
-                        Model_Education_Programs::PAID_TYPE_PAID == $a->paid_type && Model_Application::STATUS_SIGNED == $a->status) {
+                        Model_Education_Programs::PAID_TYPE_PAID == $a->paid_type && Model_Application::STATUS_SIGNED == $a->status ||
+                        Model_Education_Programs::PAID_TYPE_PAID == $a->paid_type && Model_Application::STATUS_PREPAID == $a->status) {
                     $discs = $disc->getAllowed($a->object_id, $a->paid_type, $a->app_id);
                     $programData = $program->getProgramInfo($a->object_id);
                     $programData['disciplines'] = $discs;
@@ -792,7 +793,8 @@
                 $a = (object) $a;
 
                 if (Model_Education_Programs::PAID_TYPE_PAID == $a->paid_type) {
-                    if (Model_Application::STATUS_SIGNED !== $a->status) {
+					if ((Model_Application::STATUS_SIGNED !== $a->status) &&
+					 (Model_Application::STATUS_PREPAID !== $a->status))  {
                         continue;
                     }
 

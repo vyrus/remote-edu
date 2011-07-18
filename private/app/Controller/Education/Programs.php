@@ -462,6 +462,7 @@
 
             /* Получаем список заявок на образовательные программы */
             $program_apps = $app->getProcessedAppsForPrograms($udata->user_id);
+			//echo '<pre>';var_dump($program_apps	);echo '</pre>'; 
 
             /* Перебираем его */
             foreach ($program_apps as $a)
@@ -479,7 +480,7 @@
                     /* Или если программа платная */
                     Model_Education_Programs::PAID_TYPE_PAID == $a['paid_type'] &&
                     /* и договор по заявке подписан, */
-                    Model_Application::STATUS_SIGNED == $a['status']
+                    (Model_Application::STATUS_SIGNED == $a['status'] || Model_Application::STATUS_PREPAID == $a['status'])
                 )
                 {
                     /* То получаем список доступных дисциплин */
@@ -508,6 +509,7 @@
 
             /* Получаем список заявок на отдельные дисциплины */
             $disc_app = $app->getProcessedAppsForDisciplines($udata->user_id);
+			//echo '<pre>';var_dump($disc_app );echo '</pre>'; 
 
             /* Перебираем его */
             foreach ($disc_app as $a)
@@ -520,7 +522,7 @@
                 if (Model_Education_Programs::PAID_TYPE_PAID == $a['paid_type'])
                 {
                     /* и договор по заявке ещё не подписан, */
-                    if (Model_Application::STATUS_SIGNED !== $a['status'])
+                    if (Model_Application::STATUS_SIGNED !== $a['status'] && Model_Application::STATUS_PREPAID != $a['status'])
                     {
                         /* то переходим к следующей заявке */
                         continue;

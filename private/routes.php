@@ -132,11 +132,11 @@
             array('/admin/tests/results/([0-9]+)', array('test_id'), 'tests', 'results', 'tests.results', Mvc_Router::ROUTE_REGEX),
 
             /* Управление заявками */
-            //array('/admin/applications', 'applications', 'index_by_admin', 'admin.applications', Mvc_Router::ROUTE_STATIC),
-            array('/admin/applications/(fio|status|date_app)/(asc|desc)', array('sort_field', 'sort_direction'), 'applications', 'index_by_admin', 'admin.applications', Mvc_Router::ROUTE_REGEX),
+            array('/admin/applications', 'applications', 'index_by_admin', 'admin.applications', Mvc_Router::ROUTE_STATIC),
+            //array('/admin/applications/(fio|status|date_app)/(asc|desc)', array('sort_field', 'sort_direction'), 'applications', 'index_by_admin', 'admin.applications', Mvc_Router::ROUTE_REGEX),
 
             /* Изменение статусы заявки администратором */
-            array('/admin/applications/change-status/(accepted|declined|signed)/([0-9]+)', array('new_status', 'app_id'), 'applications', 'change_app_status', 'applications.change-status', Mvc_Router::ROUTE_REGEX),
+            array('/admin/applications/change-status/(accepted|declined|signed|finished)/([0-9]+)', array('new_status', 'app_id'), 'applications', 'change_app_status', 'applications.change-status', Mvc_Router::ROUTE_REGEX),
 
             /* Удаление заявки администратором */
             array('/admin/applications/delete/([0-9]+)', array('app_id'), 'applications', 'delete', 'applications.delete', Mvc_Router::ROUTE_REGEX),

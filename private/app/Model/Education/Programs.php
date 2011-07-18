@@ -781,6 +781,7 @@ QUERY;
             $sql = 'SELECT *
             FROM ' . $this->_tables['sections'] . ' s
             WHERE s.discipline_id = ? AND s.number = 1';
+			print ($sql);
             $stmt = $this->prepare($sql);
             $stmt->execute(array($discipline_id));
 

@@ -6,12 +6,13 @@
         /**
         * форма для подачи заявки слушателем.
         */
+
         public function action_index_by_student()
         {
             $educationPrograms = Model_Education_Programs::create ();
-            $this->set ('directions',	$educationPrograms->getDirections 				());
-            $this->set ('courses', 		$educationPrograms->getCourses 					());
-            $this->set ('disciplines',	$educationPrograms->getDirectionsDisciplines 	());
+            $this->set ('directions',   $educationPrograms->getDirections());
+            $this->set ('courses',      $educationPrograms->getCourses());
+            $this->set ('disciplines',  $educationPrograms->getDirectionsDisciplines());
 
             $this->render();
         }
@@ -19,8 +20,9 @@
         /**
         * Список поданных заявок для админа.
         */
-        public function action_index_by_admin($params = array())
+        public function action_index_by_admin(/*$params = array*/)
 		{
+
             $user = Model_User::create();
             $udata = (object) $user->getAuth();
             /**
@@ -30,27 +32,32 @@
             /**
             * @todo Выводить только заявки, которые ещё не полностью оплачены
             * (или вообще ешё не приняты/подписаны).
+			* DONE!
             */
-
+                       
+			$request = $this->getRequest ();
+			//echo '<pre>';var_dump($request );echo '</pre>';
+			//die();
 			
-			$request	= $this->getRequest ();
-			if ((!$params) && (($requestData = $request->post) || ($requestData = $request->get))) {
-				$params['sort_field'] = $requestData['sort_field'];
-				$params['sort_direction'] = $requestData['sort_direction'];
-			}
+			$params = array();
+			($requestData = $request->post) || ($requestData = $request->get);
+			$params['sort_field'] = (isset($requestData['sort_field'])) ? $requestData['sort_field'] : 'fio';
+			$params['sort_direction'] = (isset($requestData['sort_field'])) ? $requestData['sort_direction'] : 'asc';
+			$params['filter_status'] = (isset($requestData['filter_status'])) ? $requestData['filter_status'] : 'work';
+			$params['filter_name'] = (isset($requestData['sort_field'])) ? $requestData['filter_name'] : 'all';
+			$params['filter_object_type'] = (isset($requestData['sort_field'])) ? $requestData['filter_object_type'] : 'all';  
+			$params['filter_object_id'] = (isset($requestData['sort_field'])) ? $requestData['filter_object_id'] : 'all' ;
 
-			/*if (($params === array())) {
-				$params['sort_field'] = 'fio';
-				$params['sort_direction'] = 'asc';
-				
-			}*/
-			
-			$apps = $app->getAllAppsInfo($params['sort_field'],$params['sort_direction']);
-            $paym = Model_Payment::create();
+			//print_r($params);	
+
+			$apps = $app->getAllAppsInfo($params['sort_field'],$params['sort_direction'],
+				$params['filter_status'],$params['filter_name'],$params['filter_object_type'],$params['filter_object_id']);
             foreach ($apps as $i=>$a)
             {
                 if ($a['status'] == 'signed')
                 {
+				$apps[$i] = $app->addInfoIntoKortegAboutPaidState($a);
+				/*
                     if ($a['program_title'])
                     {
                         //товарищ учится по всему направлению
@@ -65,7 +72,7 @@
                         {
                             $apps[$i] = array_merge($apps[$i],array('rest' => 'free', 'rest_rate' => 'free'));
                         }
-                    }else
+                    }elseif  ($a['discipline_title'])
                     {
                         //учится по дисциплине
                         $disc = $app->getDiscipline($a['object_id']);
@@ -80,23 +87,55 @@
                         {
                             $apps[$i] = array_merge($apps[$i],array('rest' => 'free', 'rest_rate' => 'free'));
                         }
-                    }
+					}
+				 */
                 }
+				 
             }
-            $this->set('applications', $apps);
-            $this->set('statuses', Model_Application::getStatusMap());
 
-			$this->set('invalidMaterialsForms', array ());
+			$listNames = $app->getListUsersApps();
+			$listObjects = $app->getListObjectsApps();
+
+			$listPrograms = array();
+			$listDisciplines = array();
+			foreach ($listObjects as $korteg) {
+				if ($korteg['type'] == 'program') {
+					$listPrograms[] = array (
+						'object_id' => $korteg['object_id'],
+						'title' => $korteg['program_title']
+					);
+				} else if ($korteg['type'] == 'discipline') {
+					$listDisciplines[] = array (
+						'object_id' => $korteg['object_id'],
+						'title' => $korteg['discipline_title']
+					);
+				}
+			}
+
+			$this->set('applications', $apps);
+			$this->set('statuses', Model_Application::getStatusMap());
+
+			$this->set('listNames', $listNames);
+			$this->set('listPrograms', $listPrograms);
+			$this->set('listDisciplines', $listDisciplines);
+
+            $this->set('invalidMaterialsForms', array ());
 			$this->set('links', Resources::getInstance()->links);
-			$this->set('sortField', $params['sort_field']);
+
+            $this->set('sortField', $params['sort_field']);
 			$this->set('sortDirection', $params['sort_direction']);
+
+			$this->set('filterStatus', $params['filter_status']);
+            $this->set('filterName', $params['filter_name']);
+            $this->set('filterObjectType', $params['filter_object_type']);
+            $this->set('filterObjectId', $params['filter_object_id']);
 
             $contract = Model_Contract::create ();
 
-            $requestData	= $request->files;
-			if (empty ($requestData)) {
-                $this->render ('applications/index_by_admin');
-			}
+            $requestData = $request->files;
+            if (empty ($requestData)) {
+            	$this->render ('applications/index_by_admin');
+            }
             // загрузка договора
             $invalidMaterialsForms = array ();
 
@@ -109,10 +148,13 @@
             $request->set (
                 'get',
                 array (
-					'filename'		=> $request->files['fileReference' . $app_id]['name'],
-					'sort_field'	 => $params['sort_field'],
-					'sort_direction' => $params['sort_direction'],
-
+                	'filename'       => $request->files['fileReference' . $app_id]['name'],
+                    'sort_field'     => $params['sort_field'],
+                    'sort_direction' => $params['sort_direction'],
+					'filterStatus'	 => $params['filter_status'],
+		            'filterName'	 => $params['filter_name'],
+		            'filterObjectType'=> $params['filter_object_type'],
+		            'filterObjectId '=> $params['filter_object_id']
                 )
             );
 
@@ -134,17 +176,18 @@
             }
 
             if (! empty ($invalidMaterialsForms)) {
-                $this->set		('invalidMaterialsForms', $invalidMaterialsForms);
-                $this->render	('educational_materials/upload');
+                $this->set ('invalidMaterialsForms', $invalidMaterialsForms);
+                $this->render ('educational_materials/upload');
             }
 
             $links = Resources::getInstance()->links;
 
-			$this->flash (
-                'Договор успешно загружен',
-				$links->get('admin.applications',array ('sort_field' => $params['sort_field'], 'sort_direction' => $params['sort_direction'])),
-                3
-			);
+            $this->flash (
+ 	           'Договор успешно загружен',
+			   //$links->get('admin.applications',array ('sort_field' => $params['sort_field'], 'sort_direction' => $params['sort_direction'])),
+			   $links->get('admin.applications'),
+			   3
+		  	);
         }
 
         /**
@@ -187,29 +230,29 @@
             }
 
             $app = Model_Application::create();
-			if ($app->apply($udata->user_id, $object_id, $type)) { // заявка корректна
+                        if ($app->apply($udata->user_id, $object_id, $type)) { // заявка корректна
 
-	            $return_url = $links->get('student.applications');
+                    $return_url = $links->get('student.applications');
 
-    	        $msg = 'Вы успешно подали заявку на учебный курс.<p>
-        	      Через 10 сек. Вас автоматически перенаправят на страницу просмотра
-            	  поданых Вами <a href="' . $return_url . '" title=Мои заявки> заявок</a>.
-               	  <p>
-	              Также, Вы можете, не дожидаясь перенаправления, перейти на страницу
-    	          <a href="' . $links->get('student.apply') . '" title=Авторизация>Мой новый курс</a> и
-        	      подать зявку на ещё один учебный курс!';
-			} else { // заявка дубликат
+                $msg = 'Вы успешно подали заявку на учебный курс.<p>
+                      Через 10 сек. Вас автоматически перенаправят на страницу просмотра
+                  поданых Вами <a href="' . $return_url . '" title=Мои заявки> заявок</a>.
+                  <p>
+                      Также, Вы можете, не дожидаясь перенаправления, перейти на страницу
+                  <a href="' . $links->get('student.apply') . '" title=Авторизация>Мой новый курс</a> и
+                      подать зявку на ещё один учебный курс!';
+                        } else { // заявка дубликат
 
-	            $return_url = $links->get('student.apply');
+                    $return_url = $links->get('student.apply');
 
-    	        $msg = 'Заявка на эту дисциплину была подана вами ранее.
-        	      Через 10 сек. Вас автоматически перенаправят на страницу просмотра
-            	  поданых Вами <a href="' . $return_url . '" title=Мои заявки> заявок</a>.
-               	  <p>
-	              Также, Вы можете, не дожидаясь перенаправления, перейти на страницу
-    	          <a href="' . $links->get('student.apply') . '" title=Авторизация>Мой новый курс</a> и
-        	      подать зявку на ещё один учебный курс!';
-			}
+                $msg = 'Заявка на эту дисциплину была подана вами ранее.
+                      Через 10 сек. Вас автоматически перенаправят на страницу просмотра
+                  поданых Вами <a href="' . $return_url . '" title=Мои заявки> заявок</a>.
+                  <p>
+                      Также, Вы можете, не дожидаясь перенаправления, перейти на страницу
+                  <a href="' . $links->get('student.apply') . '" title=Авторизация>Мой новый курс</a> и
+                      подать зявку на ещё один учебный курс!';
+                        }
 
 
             $this->flash($msg, $return_url, 10);
@@ -223,13 +266,15 @@
             $user = Model_User::create();
             $udata = (object) $user->getAuth();
             $app = Model_Application::create();
-            $paym = Model_Payment::create();
+            //$paym = Model_Payment::create();
 
             $apps = $app->getAppsInfo($udata->user_id);
             foreach ($apps as $i=>$a)
             {
                 if ($a['status'] == 'signed')
-                {
+				{ 
+				$apps[$i] = $app->addInfoIntoKortegAboutPaidState($a);
+				/*
                     if ($a['program_title'])
                     {
                         //товарищ учится по всему направлению
@@ -259,7 +304,8 @@
                         {
                             $apps[$i] = array_merge($apps[$i],array('rest' => 'free', 'rest_rate' => 'free'));
                         }
-                    }
+					}
+				 */
                 }
             }
             $this->set('applications', $apps);
@@ -380,6 +426,7 @@
                 $app_info = $app->getAppInfo($app_id);
                 if ('discipline' == $app_info[0]['type']) {
                     $first_section = $programs->getFirstSectionOfDiscipline($app_info[0]['object_id']);
+					//echo '<pre>';var_dump($app_info );echo '</pre>'; die();
                     $model_checkpoint->setCheckpointPass($app_info[0]['user_id'], $first_section['section_id']);
                 }
                 if ('program' == $app_info[0]['type']) {
@@ -389,9 +436,17 @@
                 }
             }
 
+			/**
+			 * TODO
+			 * Надо сделать проверку правильности изменения статуса на "окончена" через контрольную точку
+			 *
+			 */
+
             $map = Model_Application::getStatusMap();
             $this->flash('Заявка ' . $map[$new_status],
-                         $links->get('admin.applications',array ('sort_field' => 'fio', 'sort_direction' => 'asc')));
+               //          $links->get('admin.applications',array ('sort_field' => 'fio', 'sort_direction' => 'asc')));
+				//$links->get('admin.applications',array ('sort_field' => $params['sort_field'], 'sort_direction' => $params['sort_direction'])),5);
+				$links->get('admin.applications'),5);
 
             $this->render();
         }
@@ -400,10 +455,13 @@
         * Удаление заявки из базы данных.
         *
         * @todo Удалять ли платежи из базы при удалении заявки?
+		* Зачем нукжно вообще удалять заявки??? Какому бизнес-процессу это соответствует?
         */
-        public function action_delete(array $params = array()) {
+		public function action_delete(/*array*/ $params/* = array()*/) {
             $links = Resources::getInstance()->links;
-            $return_url = $links->get('admin.applications',array ('sort_field' => 'fio', 'sort_direction' => 'asc'));
+            //$return_url = $links->get('admin.applications',array ('sort_field' => 'fio', 'sort_direction' => 'asc'));
+			//$return_url = $links->get('admin.applications',array ('sort_field' => $params['sort_field'], 'sort_direction' => $params['sort_direction']));
+			$return_url = $links->get('admin.applications');
 
             if (empty($params)) {
                 $this->flash('Не указан номер заявки', $return_url);
