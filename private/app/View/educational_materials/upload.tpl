@@ -385,8 +385,10 @@
     </table>
 </div>
 
-<h3>Загрузить материалы</h3>
-<form id="educationalMaterials" name="educationalMaterials" method="post" action="<?php echo $this->_links->get($this->nextDialog);/*$this->_links->get('materials.upload')*/ ?>" enctype="multipart/form-data">
+<h3>Загрузить материалы</h3><?php var_dump($this->back); ?>
+<form id="educationalMaterials" name="educationalMaterials" method="post" action="<?php echo isset($this->back) ?
+$this->_links->get($this->back) :
+$this->_links->get('materials.teacher.upload'); ?>" enctype="multipart/form-data">
 </form>
 <a href="javascript:createEducationalMaterial(null, null, null, null, null, null)">добавить материал</a>
 <a href="javascript:document.educationalMaterials.submit()">загрузить</a>

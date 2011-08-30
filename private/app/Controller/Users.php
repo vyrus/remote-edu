@@ -441,10 +441,13 @@
 
         public function action_users_list($params) {
             $users = Model_User::create();
-            $this->set('users', $users->getUsersList($params['filter'], $params['sort_field'], $params['sort_direction']));
-            $this->set('filter', $params['filter']);
-            $this->set('sortField', $params['sort_field']);
-            $this->set('sortDirection', $params['sort_direction']);
+            $filter = array_key_exists('filter', $params) ? $params['filter'] : 'all';
+            $sort_field = array_key_exists('sort_field', $params) ? $params['sort_field'] : 'fio';
+            $sort_direction = array_key_exists('sort_direction', $params) ? $params['sort_direction'] : 'asc';
+            $this->set('users', $users->getUsersList($filter, $sort_field, $sort_direction));
+            $this->set('filter', $filter);
+            $this->set('sortField', $sort_field);
+            $this->set('sortDirection', $sort_direction);
             $this->set('rolesCaptions', $this->_roles_captions);
             $this->render('users/users_list');
         }

@@ -67,7 +67,8 @@
             $page = count($args) ? $args[0]['page'] : 0;
 
             $messages = new Model_Messages();
-            $inbox = $messages->getInbox($page, $messagesTotalNumber);
+            $inbox = $messages->getInbox($page);
+            $messagesTotalNumber = $messages->getInboxCount();
 
             $this->set('inbox', $inbox);
             $this->set('messagesTotalNumber', $messagesTotalNumber);

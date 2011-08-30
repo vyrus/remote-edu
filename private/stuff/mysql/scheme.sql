@@ -1,9 +1,9 @@
 -- phpMyAdmin SQL Dump
--- version 3.3.7deb5
+-- version 3.3.7deb6
 -- http://www.phpmyadmin.net
 --
 -- Хост: localhost
--- Время создания: Июл 11 2011 г., 11:16
+-- Время создания: Авг 23 2011 г., 18:12
 -- Версия сервера: 5.1.49
 -- Версия PHP: 5.3.3-7+squeeze3
 
@@ -19,16 +19,18 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 -- Структура таблицы `applications`
 --
 
-CREATE TABLE IF NOT EXISTS `applications` (
+CREATE TABLE `applications` (
   `app_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(10) unsigned NOT NULL,
   `object_id` int(10) unsigned NOT NULL,
   `type` enum('program','discipline') NOT NULL,
-  `status` enum('applied','declined','accepted','signed') DEFAULT NULL,
+  `status` enum('applied','declined','accepted','signed','prepaid','finished') DEFAULT NULL,
   `contract_filename` varchar(255) DEFAULT NULL,
   `date_app` date DEFAULT NULL,
-  PRIMARY KEY (`app_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=10 ;
+  PRIMARY KEY (`app_id`),
+  KEY `index_object` (`object_id`),
+  KEY `index_user` (`user_id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=20 ;
 
 -- --------------------------------------------------------
 
@@ -36,20 +38,20 @@ CREATE TABLE IF NOT EXISTS `applications` (
 -- Структура таблицы `apps_history`
 --
 
-CREATE TABLE IF NOT EXISTS `apps_history` (
+CREATE TABLE `apps_history` (
   `app_id` int(10) unsigned NOT NULL,
-  `status` enum('applied','declined','accepted','signed') DEFAULT NULL,
+  `status` enum('applied','declined','accepted','signed','prepaid','finished') NOT NULL DEFAULT 'applied',
   `modifed` datetime NOT NULL,
-  PRIMARY KEY (`app_id`)
+  PRIMARY KEY (`app_id`,`status`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
-
+/*
 --
 -- Структура таблицы `checkpoints`
 --
 
-CREATE TABLE IF NOT EXISTS `checkpoints` (
+CREATE TABLE `checkpoints` (
   `section_id` int(11) NOT NULL,
   `active` tinyint(1) NOT NULL DEFAULT '1',
   `title` varchar(255) NOT NULL,
@@ -65,10 +67,55 @@ CREATE TABLE IF NOT EXISTS `checkpoints` (
 -- Структура таблицы `checkpoints_students`
 --
 
-CREATE TABLE IF NOT EXISTS `checkpoints_students` (
+CREATE TABLE `checkpoints_students` (
   `section_id` int(11) NOT NULL,
   `student_id` int(11) NOT NULL,
   `created` datetime DEFAULT NULL,
+  PRIMARY KEY (`section_id`,`student_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+*/
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `controls`
+--
+
+CREATE TABLE `controls` (
+  `control_id` int(11) NOT NULL AUTO_INCREMENT,
+  `control_material_id` int(11) DEFAULT NULL,
+  `section_id` int(11) NOT NULL,
+  `active` tinyint(1) NOT NULL DEFAULT '1',
+  `auto_set_credit` tinyint(1) NOT NULL DEFAULT '0',
+  `control_material_type` enum('practice','control','test','credit') DEFAULT NULL,
+  PRIMARY KEY (`control_id`),
+  KEY `index_materail_id` (`control_material_id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=89 ;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `controls_students`
+--
+
+CREATE TABLE `controls_students` (
+  `control_id` int(11) NOT NULL,
+  `student_id` int(11) NOT NULL,
+  `mark` enum('no','m2','yes','m3','m4','m5') NOT NULL,
+  `control_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`control_id`,`student_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `credited_sections_students`
+--
+
+CREATE TABLE `credited_sections_students` (
+  `section_id` int(11) NOT NULL,
+  `student_id` int(11) NOT NULL,
+  `created_date` datetime DEFAULT NULL,
   PRIMARY KEY (`section_id`,`student_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
@@ -78,7 +125,7 @@ CREATE TABLE IF NOT EXISTS `checkpoints_students` (
 -- Структура таблицы `disciplines`
 --
 
-CREATE TABLE IF NOT EXISTS `disciplines` (
+CREATE TABLE `disciplines` (
   `discipline_id` int(11) NOT NULL AUTO_INCREMENT,
   `program_id` int(11) DEFAULT NULL,
   `serial_number` int(11) NOT NULL,
@@ -86,8 +133,9 @@ CREATE TABLE IF NOT EXISTS `disciplines` (
   `coef` tinyint(4) DEFAULT NULL,
   `labour_intensive` smallint(6) DEFAULT NULL,
   `responsible_teacher` int(11) DEFAULT NULL,
-  PRIMARY KEY (`discipline_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=7 ;
+  PRIMARY KEY (`discipline_id`),
+  KEY `index_program` (`program_id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=8 ;
 
 -- --------------------------------------------------------
 
@@ -95,7 +143,7 @@ CREATE TABLE IF NOT EXISTS `disciplines` (
 -- Структура таблицы `edu_docs`
 --
 
-CREATE TABLE IF NOT EXISTS `edu_docs` (
+CREATE TABLE `edu_docs` (
   `edu_doc_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(10) unsigned DEFAULT NULL,
   `type` enum('diploma-high','diploma-medium','custom') NOT NULL,
@@ -106,7 +154,7 @@ CREATE TABLE IF NOT EXISTS `edu_docs` (
   `qualification` varchar(256) NOT NULL,
   PRIMARY KEY (`edu_doc_id`),
   KEY `fk_edu_docs_users` (`user_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
 
 -- --------------------------------------------------------
 
@@ -114,7 +162,7 @@ CREATE TABLE IF NOT EXISTS `edu_docs` (
 -- Структура таблицы `examinations`
 --
 
-CREATE TABLE IF NOT EXISTS `examinations` (
+CREATE TABLE `examinations` (
   `examination_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `test_id` int(11) NOT NULL,
@@ -123,8 +171,9 @@ CREATE TABLE IF NOT EXISTS `examinations` (
   `num_questions` int(11) NOT NULL,
   `passed` enum('true','false') NOT NULL,
   `created` datetime NOT NULL,
-  PRIMARY KEY (`examination_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  PRIMARY KEY (`examination_id`),
+  KEY `index_user_test` (`user_id`,`test_id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=7 ;
 
 -- --------------------------------------------------------
 
@@ -132,7 +181,7 @@ CREATE TABLE IF NOT EXISTS `examinations` (
 -- Структура таблицы `extra_attempts`
 --
 
-CREATE TABLE IF NOT EXISTS `extra_attempts` (
+CREATE TABLE `extra_attempts` (
   `user_id` int(11) NOT NULL,
   `test_id` int(11) NOT NULL,
   `extra_attempts` int(11) NOT NULL,
@@ -145,7 +194,7 @@ CREATE TABLE IF NOT EXISTS `extra_attempts` (
 -- Структура таблицы `localities`
 --
 
-CREATE TABLE IF NOT EXISTS `localities` (
+CREATE TABLE `localities` (
   `locality_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `region_id` int(10) unsigned NOT NULL,
   `code` smallint(3) unsigned zerofill NOT NULL,
@@ -153,7 +202,7 @@ CREATE TABLE IF NOT EXISTS `localities` (
   `type` enum('аал','арбан','аул','волость','высел','г','городок','д','дп','ж/д_будка','ж/д_казарм','ж/д_оп','ж/д_платф','ж/д_пост','ж/д_рзд','ж/д_ст','заимка','казарма','кв-л','кордон','кп','м','мкр','нп','остров','п','п/о','п/р','п/ст','пгт','погост','починок','промзона','рзд','рп','с','с/а','с/о','с/п','с/с','сл','снт','ст','ст-ца','тер','у','х') NOT NULL,
   PRIMARY KEY (`locality_id`),
   KEY `fk_localities_regions` (`region_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=691 ;
 
 -- --------------------------------------------------------
 
@@ -161,7 +210,7 @@ CREATE TABLE IF NOT EXISTS `localities` (
 -- Структура таблицы `materials`
 --
 
-CREATE TABLE IF NOT EXISTS `materials` (
+CREATE TABLE `materials` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `description` varchar(255) DEFAULT NULL,
   `original_filename` varchar(255) DEFAULT NULL,
@@ -171,8 +220,9 @@ CREATE TABLE IF NOT EXISTS `materials` (
   `type` enum('lecture','practice','control') DEFAULT 'lecture',
   `uploader` int(11) DEFAULT NULL,
   `number` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=12 ;
+  PRIMARY KEY (`id`),
+  KEY `index_section` (`section`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=64 ;
 
 -- --------------------------------------------------------
 
@@ -180,7 +230,7 @@ CREATE TABLE IF NOT EXISTS `materials` (
 -- Структура таблицы `materials_states`
 --
 
-CREATE TABLE IF NOT EXISTS `materials_states` (
+CREATE TABLE `materials_states` (
   `student_id` int(11) NOT NULL,
   `material_id` int(11) NOT NULL,
   `state` enum('downloaded','last') DEFAULT NULL
@@ -192,16 +242,17 @@ CREATE TABLE IF NOT EXISTS `materials_states` (
 -- Структура таблицы `message`
 --
 
-CREATE TABLE IF NOT EXISTS `message` (
+CREATE TABLE `message` (
   `message_id` int(11) NOT NULL AUTO_INCREMENT,
-  `from` int(11) DEFAULT NULL,
-  `to` int(11) DEFAULT NULL,
+  `from` int(11) NOT NULL,
+  `to` int(11) NOT NULL,
   `subject` varchar(255) DEFAULT NULL,
   `message` text,
   `read` enum('read','unread') DEFAULT NULL,
   `time` int(11) DEFAULT NULL,
-  PRIMARY KEY (`message_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
+  PRIMARY KEY (`message_id`),
+  KEY `index_to_from` (`to`,`from`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=10 ;
 
 -- --------------------------------------------------------
 
@@ -209,14 +260,26 @@ CREATE TABLE IF NOT EXISTS `message` (
 -- Структура таблицы `message_attachment`
 --
 
-CREATE TABLE IF NOT EXISTS `message_attachment` (
+CREATE TABLE `message_attachment` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `message` int(11) DEFAULT NULL,
   `original_filename` varchar(255) DEFAULT NULL,
   `mime_type` varchar(255) DEFAULT NULL,
   `filename` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `opened_sections_students`
+--
+
+CREATE TABLE `opened_sections_students` (
+  `section_id` int(11) NOT NULL,
+  `student_id` int(11) NOT NULL,
+  PRIMARY KEY (`section_id`,`student_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -224,7 +287,7 @@ CREATE TABLE IF NOT EXISTS `message_attachment` (
 -- Структура таблицы `passports`
 --
 
-CREATE TABLE IF NOT EXISTS `passports` (
+CREATE TABLE `passports` (
   `passport_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(10) unsigned NOT NULL,
   `series` smallint(4) unsigned zerofill NOT NULL,
@@ -241,7 +304,7 @@ CREATE TABLE IF NOT EXISTS `passports` (
   KEY `fk_passports_users` (`user_id`),
   KEY `fk_passports_regions` (`region_id`),
   KEY `fk_passports_localities` (`city_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
 
 -- --------------------------------------------------------
 
@@ -249,14 +312,14 @@ CREATE TABLE IF NOT EXISTS `passports` (
 -- Структура таблицы `payments`
 --
 
-CREATE TABLE IF NOT EXISTS `payments` (
+CREATE TABLE `payments` (
   `payment_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `app_id` int(10) unsigned NOT NULL,
   `amount` decimal(9,2) unsigned DEFAULT NULL,
   `created` datetime DEFAULT NULL,
   PRIMARY KEY (`payment_id`),
   KEY `fk_payments_applications` (`app_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=12 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=29 ;
 
 -- --------------------------------------------------------
 
@@ -264,14 +327,14 @@ CREATE TABLE IF NOT EXISTS `payments` (
 -- Структура таблицы `phones`
 --
 
-CREATE TABLE IF NOT EXISTS `phones` (
+CREATE TABLE `phones` (
   `phones_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(10) unsigned DEFAULT NULL,
   `stationary` varchar(16) DEFAULT NULL,
   `mobile` varchar(32) DEFAULT NULL,
   PRIMARY KEY (`phones_id`),
   KEY `fk_phones_users` (`user_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
 
 -- --------------------------------------------------------
 
@@ -279,7 +342,7 @@ CREATE TABLE IF NOT EXISTS `phones` (
 -- Структура таблицы `programs`
 --
 
-CREATE TABLE IF NOT EXISTS `programs` (
+CREATE TABLE `programs` (
   `program_id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(256) DEFAULT NULL,
   `labour_intensive` smallint(6) DEFAULT NULL,
@@ -297,13 +360,13 @@ CREATE TABLE IF NOT EXISTS `programs` (
 -- Структура таблицы `questions`
 --
 
-CREATE TABLE IF NOT EXISTS `questions` (
+CREATE TABLE `questions` (
   `question_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `test_id` int(10) unsigned NOT NULL,
   `type` enum('pick-one') NOT NULL,
   `data` text NOT NULL,
   PRIMARY KEY (`question_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=9 ;
 
 -- --------------------------------------------------------
 
@@ -311,12 +374,12 @@ CREATE TABLE IF NOT EXISTS `questions` (
 -- Структура таблицы `regions`
 --
 
-CREATE TABLE IF NOT EXISTS `regions` (
+CREATE TABLE `regions` (
   `region_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `code` tinyint(2) unsigned zerofill NOT NULL,
   `name` char(40) NOT NULL,
   PRIMARY KEY (`region_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=99 ;
 
 -- --------------------------------------------------------
 
@@ -324,13 +387,14 @@ CREATE TABLE IF NOT EXISTS `regions` (
 -- Структура таблицы `sections`
 --
 
-CREATE TABLE IF NOT EXISTS `sections` (
+CREATE TABLE `sections` (
   `section_id` int(11) NOT NULL AUTO_INCREMENT,
   `discipline_id` int(11) DEFAULT NULL,
   `title` varchar(256) DEFAULT NULL,
   `number` tinyint(4) DEFAULT NULL,
-  PRIMARY KEY (`section_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=13 ;
+  PRIMARY KEY (`section_id`),
+  KEY `index_discipline` (`discipline_id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=20 ;
 
 -- --------------------------------------------------------
 
@@ -338,7 +402,7 @@ CREATE TABLE IF NOT EXISTS `sections` (
 -- Структура таблицы `tests`
 --
 
-CREATE TABLE IF NOT EXISTS `tests` (
+CREATE TABLE `tests` (
   `test_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `theme` varchar(256) NOT NULL,
   `num_questions` int(11) NOT NULL,
@@ -346,7 +410,7 @@ CREATE TABLE IF NOT EXISTS `tests` (
   `attempts_limit` int(11) NOT NULL,
   `errors_limit` int(11) NOT NULL,
   PRIMARY KEY (`test_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=16 ;
 
 -- --------------------------------------------------------
 
@@ -354,7 +418,7 @@ CREATE TABLE IF NOT EXISTS `tests` (
 -- Структура таблицы `users`
 --
 
-CREATE TABLE IF NOT EXISTS `users` (
+CREATE TABLE `users` (
   `user_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `login` varchar(64) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
   `passwd` varchar(32) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,

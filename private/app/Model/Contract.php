@@ -6,7 +6,8 @@
         public function __construct () {
             parent::__construct ();
 
-            $this->storage = new Storage ('../private/contracts');
+            //$this->storage = new Storage ('../private/contracts');
+            $this->storage = Resources::getInstance()->contracts_storage;
         }
 
         public static function create() {

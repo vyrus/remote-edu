@@ -11,7 +11,9 @@
         
         /* Директории для хранения */
         'storage' => array (
-            'messages_attachments' => '../private/attachments'
+            'materials' => '../private/materials',
+            'contracts' => '../private/contracts',
+            'messages_attachments' => '../private/attachments',
         ),
 
         /* Настройки соединения с БД */

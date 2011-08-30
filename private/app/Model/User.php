@@ -714,6 +714,7 @@
                 }
             }
 
+
             return $retval;
         }
 
@@ -760,113 +761,192 @@
             $this->prepare($sql)->execute($params);
         }
 
-        public function getStudentResponsibleTeachers() {
-            $udata = (object) $this->getAuth();
+	    /**
+		* Возвращает список преподавателей, ответсвенных за дисцилины, изучаемых студентом и его куратора
+		*
+		* @return array
+	    */
+        public function getResponsibleTeacherInfoForStudent() {
 
-            $app = Model_Application::create();
-            $program = Model_Education_Programs::create();
-            $disc = Model_Discipline::create();
-            $payment = Model_Payment::create();
+            $udata = $this->getAuth(); 
 
-            $availPrograms = array();
-            $availDisciplines = array();
+            $sql = '
+                SELECT u.user_id, \'#curator\' AS title, u.surname, u.name, u.patronymic
+                FROM ' . $this->_tables['users'] . ' u
+                WHERE u.user_id = (SELECT curator FROM ' . $this->_tables['users'] . ' WHERE user_id = :uid)
+                UNION DISTINCT
+                SELECT u.user_id, d.title, u.surname, u.name, u.patronymic 
+                FROM ' . $this->_tables['applications'] . ' a 
+                LEFT JOIN ' . $this->_tables['disciplines'] . ' d 
+                    ON d.discipline_id = a.object_id AND a.type = \'discipline\' 
+                LEFT JOIN ' . $this->_tables['users'] . ' u 
+                    ON d.responsible_teacher = u.user_id 
+                WHERE a.status IN (\'signed\', \'prepaid\') AND a.user_id = :uid AND a.type = \'discipline\'
+                UNION DISTINCT
+                SELECT u.user_id, d.title, u.surname, u.name, u.patronymic 
+                FROM ' . $this->_tables['applications'] . ' a 
+                LEFT JOIN ' . $this->_tables['programs'] . ' p
+                    ON p.program_id = a.object_id AND a.type = \'program\'
+                LEFT JOIN ' . $this->_tables['disciplines'] . ' d
+                    ON d.program_id = p.program_id
+                LEFT JOIN ' . $this->_tables['users'] . ' u 
+                    ON d.responsible_teacher = u.user_id 
+                WHERE a.status IN (\'signed\', \'prepaid\') AND a.user_id = :uid AND a.type = \'program\'
+                ';
 
-            $programApps = $app->getProcessedAppsForPrograms($udata->user_id);
+            $values = array (':uid' => $udata['user_id']);
 
-            foreach ($programApps as $a) {
-                $a = (object) $a;
-
-                if (Model_Education_Programs::PAID_TYPE_FREE == $a->paid_type && Model_Application::STATUS_ACCEPTED == $a->status ||
-                        Model_Education_Programs::PAID_TYPE_PAID == $a->paid_type && Model_Application::STATUS_SIGNED == $a->status ||
-                        Model_Education_Programs::PAID_TYPE_PAID == $a->paid_type && Model_Application::STATUS_PREPAID == $a->status) {
-                    $discs = $disc->getAllowed($a->object_id, $a->paid_type, $a->app_id);
-                    $programData = $program->getProgramInfo($a->object_id);
-                    $programData['disciplines'] = $discs;
-
-                    $availPrograms[] = $programData;
-                }
-            }
-
-            $discApp = $app->getProcessedAppsForDisciplines($udata->user_id);
-
-            foreach ($discApp as $a) {
-                $a = (object) $a;
-
-                if (Model_Education_Programs::PAID_TYPE_PAID == $a->paid_type) {
-					if ((Model_Application::STATUS_SIGNED !== $a->status) &&
-					 (Model_Application::STATUS_PREPAID !== $a->status))  {
-                        continue;
-                    }
-
-                    $paymentTotal = $payment->getTotal($a->app_id);
-
-                    if (null === $paymentTotal) {
-                        continue;
-                    }
-
-                    $programData = $program->getProgramInfo($a->program_id);
-                    $programCost = $programData['cost'];
-
-                    $totalCost = round($a->coef / 100, 3) * $programCost;
-
-                    if ($paymentTotal < $totalCost) {
-                        continue;
-                    }
-
-                }
-                elseif (Model_Education_Programs::PAID_TYPE_FREE == $a->paid_type) {
-                    if (Model_Application::STATUS_ACCEPTED !== $a->status)
-                    {
-                        continue;
-                    }
-                }
-
-                $disc = Model_Discipline::create()->get($a->object_id);
-                $availDisciplines[] = $disc;
-            }
-
-            $retval = array();
-            $sql = 'SELECT `name`,`surname`,`patronymic` FROM `users` WHERE `user_id`=:user_id';
             $stmt = $this->prepare($sql);
+            $stmt->execute($values);
 
-            foreach ($availPrograms as $i => $program) {
-                if ($program['edu_type'] == 'course') {
-                    $stmt->execute(array(':user_id' => $program['responsible_teacher']));
-                    $teacher = $stmt->fetch(Db_Pdo::FETCH_ASSOC);
-
-                    if (isset($retval[$program['responsible_teacher']])) {
-                        $retval[$program['responsible_teacher']]['recipient_description'][] = 'отвественный за курсы \'' . $program['title'] .  '\',';
-                    }
-                    else {
-                        $retval[$program['responsible_teacher']] = array(
-                            'recipient_name' => $teacher['surname'] . ' ' . mb_substr($teacher['surname'], 0, 1, 'utf-8') . '. ' . mb_substr($teacher['patronymic'], 0, 1, 'utf-8') . '.',
-                            'recipient_description' => array('отвественный за курсы \'' . $program['title'] . '\''),
-                        );
-                    }
+            $a = $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
+            //print_r($a); die();
+            
+            // результирующий массив
+            $res = array();
+            if (is_array($a)) {
+                // выбираем ключи для будущего массива
+                $keys = array_unique(array_map(function ($x) { return ($x['user_id']); }, $a));
+                // для каждого ключа
+                foreach ($keys as $y) {
+                    // отфильтровавыем те значения, которые соответствуют ключу
+                    $c = array_filter($a, function ($x) use ($y) { return $x['user_id'] == $y; } );
+                    // выбираем те поля, которые относятся к ключу как 1-к-1
+                    $cur = current($c);
+                    $res[$y]['recipient_name'] =  $cur['surname'] . ' ' . $cur['name'] . ' ' . $cur['patronymic'];
+                    // группируем в одно поле те поля, которые относятся к ключу как 1-к-много
+                    $res[$y]['recipient_description'] = array_reduce(
+                        $c, 
+                        function ($z, $x) { $z[] = ($x['title'] == '#curator') ? 'Куратор' :  'Преподаватель по дисциплине \"' . $x['title'] . '\"'; return $z; }, 
+                        array()
+                    );
                 }
-                else {
-                    $availDisciplines = array_merge($availDisciplines, $program['disciplines']);
-                }
-            }
+            } 
 
-            foreach ($availDisciplines as $i => $disc) {
-                $stmt->execute(array(':user_id' => $disc['responsible_teacher']));
-                $teacher = $stmt->fetch(Db_Pdo::FETCH_ASSOC);
+            //print_r($res); die();
 
-                if (isset($retval[$disc['responsible_teacher']])) {
-                    $retval[$disc['responsible_teacher']]['recipient_description'][] = 'отвественный за дисциплину \'' . $disc['title'] . '\'';
-                }
-                else {
-                    $retval[$disc['responsible_teacher']] = array(
-                        'recipient_name' => $teacher['surname'] . ' ' . mb_substr($teacher['surname'], 0, 1, 'utf-8') . '. ' . mb_substr($teacher['patronymic'], 0, 1, 'utf-8') . '.',
-                        'recipient_description' => array('отвественный за дисциплину \'' . $disc['title'] . '\''),
+            return $res;
+        }
+
+	    /**
+		* Возвращает информацию а студентах обучающихся у преподавателя и слушателей, у которых он куратор
+		*
+		* @return array
+	    */
+        public function getStudentsInfoForResponsibleTeacher () {
+
+            $udata = $this->getAuth(); 
+
+            $sql = '
+                SELECT u.user_id, \'#curator\' AS title, u.surname, u.name, u.patronymic
+                FROM ' . $this->_tables['users'] . ' u
+                WHERE curator = :uid
+                UNION DISTINCT
+                SELECT u.user_id, d.title, u.surname, u.name, u.patronymic 
+                FROM ' . $this->_tables['applications'] . ' a 
+                LEFT JOIN ' . $this->_tables['disciplines'] . ' d 
+                    ON d.discipline_id = a.object_id AND a.type = \'discipline\' 
+                LEFT JOIN ' . $this->_tables['users'] . ' u 
+                    ON a.user_id = u.user_id
+                WHERE a.status IN (\'signed\', \'prepaid\') AND d.responsible_teacher = :uid AND a.type = \'discipline\'
+                UNION DISTINCT
+                SELECT u.user_id, d.title, u.surname, u.name, u.patronymic 
+                FROM ' . $this->_tables['applications'] . ' a 
+                LEFT JOIN ' . $this->_tables['programs'] . ' p
+                    ON p.program_id = a.object_id AND a.type = \'program\'
+                LEFT JOIN ' . $this->_tables['disciplines'] . ' d
+                    ON d.program_id = p.program_id
+                LEFT JOIN ' . $this->_tables['users'] . ' u 
+                    ON a.user_id = u.user_id
+                WHERE a.status IN (\'signed\', \'prepaid\') AND d.responsible_teacher = :uid AND a.type = \'program\'
+                ';
+
+            $values = array (':uid' => $udata['user_id']);
+
+            $stmt = $this->prepare($sql);
+            $stmt->execute($values);
+
+            $a = $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
+            //print_r($a); die();
+            
+            // результирующий массив
+            $res = array();
+            if ($a) {
+                // выбираем ключи для будущего массива
+                $keys = array_unique(array_map(function ($x) { return ($x['user_id']); }, $a));
+                // для каждого ключа
+                foreach ($keys as $y) {
+                    // отфильтровавыем те значения, которые соответствуют ключу
+                    $c = array_filter($a, function ($x) use ($y) { return $x['user_id'] == $y; } );
+                    // выбираем те поля, которые относятся к ключу как 1-к-1
+                    $cur = current($c);
+                    $res[$y]['recipient_name'] =  $cur['surname'] . ' ' . $cur['name'] . ' ' . $cur['patronymic'];
+                    // группируем в одно поле те поля, которые относятся к ключу как 1-к-много
+                    $res[$y]['recipient_description'] = array_reduce(
+                        $c, 
+                        function ($z,$x) { $z[] = ($x['title'] == '#curator') ? 'Курируемый слушатель' :  'Изучает дисциплину \"' . $x['title'] . '\"'; return $z; },
+                        array()
                     );
                 }
             }
 
-            return $retval;
+            //print_r($res);
+
+            return $res;
         }
 
+	    /**
+		* Возвращает список всех преподователей вместе с информацией об дисциплинах, за которую они ответственны
+		*
+		* @return array
+	    */
+        public function getAllTeachersResponsibleInfo() {
+
+            $sql = 'SELECT u.user_id, d.title, u.surname, u.name, u.patronymic 
+                    FROM ' . $this->_tables['disciplines'] . ' d 
+                    LEFT JOIN ' . $this->_tables['users'] . ' u 
+                        ON d.responsible_teacher = u.user_id';
+
+            $stmt = $this->prepare($sql);
+            $stmt->execute();
+
+            $a = $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
+            //print_r($a); die();
+            
+            // результирующий массив
+            $res = array();
+            if ($a) {
+                // выбираем ключи для будущего массива
+                $keys = array_unique(array_map(function ($x) { return ($x['user_id']); }, $a));
+                // для каждого ключа
+                foreach ($keys as $y) {
+                    // отфильтровавыем те значения, которые соответствуют ключу
+                    $c = array_filter($a, function ($x) use ($y) { return $x['user_id'] == $y; } );
+                    // выбираем те поля, которые относятся к ключу как 1-к-1
+                    $cur = current($c);
+                    $res[$y]['recipient_name'] =  $cur['surname'] . ' ' . $cur['name'] . ' ' . $cur['patronymic'];
+                    // группируем в одно поле те поля, которые относятся к ключу как 1-к-много
+                    $res[$y]['recipient_description'] = array_reduce(
+                        $c, 
+                        function ($z,$x) { $z[] = 'Отвественный за дисциплину \"' . $x['title'] . '\"'; return $z; },
+                        array()
+                    );
+                }
+            }
+
+            //print_r($res);
+
+            return $res;
+        }
+
+	    /**
+		* Возвращает список всех пользователей
+		*
+        * @param string $userRole Фильтр по роли пользователя
+        * @param string $sortField Поле сортировки
+        * @param string $sortDirection Направление сортировки
+		* @return bool|array
+	    */
         public function getUsersList($usersRole, $sortField, $sortDirection) {
             $sql = 'SELECT `user_id`,`login`,`role`,`name`,`surname`,`patronymic`, `date_reg`
 				FROM `users`' . ($usersRole == 'all' ? '' : ' WHERE `role`=:role');  
@@ -886,25 +966,24 @@
 				else if ($sortDirection == 'desc') $sql .= " DESC";
 			}
 
-			//echo '<pre>';var_dump($sortDirection);echo '</pre>'; 
-			//echo '<pre>';var_dump($sql);echo '</pre>'; 
-
             $params = array();
 
             if ($usersRole != 'all') {
 				$params[':role'] = $usersRole;
             }
-			//$params[':sort_field'] = $sortField;
-			//$params[':sort_direction'] = ' ' . $sortDirection;
 
 			$stmt = $this->prepare($sql);
             $stmt->execute($params);
 
-			//echo '<pre>';var_dump($params );echo '</pre>';
-
             return $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
         }
 
+	    /**
+		* Возвращает информацию о заданном пользователе
+		*
+		* @param int $userId
+		* @return bool|array
+	    */
         public function getUserInfo($userId) {
             $sql = 'SELECT `role`,`name`,`surname`,`patronymic`
                 FROM `users`
@@ -918,6 +997,12 @@
             return $stmt->fetch(Db_Pdo::FETCH_ASSOC);
         }
 
+	    /**
+		* Изменяет информацию о заданном пользователе
+		*
+		* @param array $userInfo
+		* @return void
+	    */
         public function setUserInfo($userInfo) {
             $sql = 'UPDATE `users`
                 SET `name`=:name,`surname`=:surname,`patronymic`=:patronymic,`role`=:role

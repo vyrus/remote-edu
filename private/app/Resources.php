@@ -111,14 +111,31 @@
             return $links;
         }
 
+        /**
+        * Инициализация хранилища вложений к сообщениям.
+        *
+        * @return Storage
+        */
         protected function get_attachments_storage() {
-            $config = $this->_config['storage'];
-            
-            //var_dump($config);
+            return new Storage($this->_config['storage']['messages_attachments']);
+        }
 
-            $storage = new Storage($config['messages_attachments']);
+        /**
+        * Инициализация хранилища договоров.
+        *
+        * @return Storage
+        */
+        protected function get_contracts_storage() {
+            return new Storage($this->_config['storage']['contracts']);
+        }
 
-            return $storage;
+        /**
+        * Инициализация хранилища учебных материалов.
+        *
+        * @return Storage
+        */
+        protected function get_materials_storage() {
+            return new Storage($this->_config['storage']['materials']);
         }
 
         /**

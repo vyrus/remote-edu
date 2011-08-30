@@ -61,6 +61,30 @@
         * @params['discipline_id'] Идентификатор дисциплины.
         */
         public function action_discipline($params) {
+
+            $model_credit = Model_Credit::create();
+            $model_control_work = Model_ControlWork::create();
+            $model_education_programs = Model_Education_Programs::create();
+            $model_user = Model_User::create();
+
+            $model_education_programs->getDiscipline($params['discipline_id'], $title, $labourIntensive, $coef);
+            
+            $this->set('test_results', $model_control_work->getStudentTestResultsByDiscipline($params['student_id'], $params['discipline_id']));
+            $this->set('credits', $model_credit->getStudentCreditsByDiscipline($params['student_id'], $params['discipline_id']));
+            $this->set('control_works', $model_control_work->getStudentMarksByDiscipline($params['student_id'], $params['discipline_id']));
+            $this->set('control_names_map', $model_control_work->getControlNamesMap());
+            $this->set('mark_names_map', $model_control_work->getMarkNamesMap());
+            $this->set('discipline_title', $title);
+            $this->set('sections', $model_education_programs->getSectionsByDiscipline($params['discipline_id']));
+
+            $this->set('user_id', $params['student_id']);
+            $this->set('user_info', $model_user->getUserInfo($params['student_id']));
+
+            $this->render('teacher_students/discipline');
+        }
+        
+    	/*
+        public function action_discipline($params) {
             $model_checkpoint = Model_Checkpoint::create();
             $model_education_programs = Model_Education_Programs::create();
             $model_education_students = Model_Education_Students::create();
@@ -74,10 +98,9 @@
             $this->set('checkpoints', $checkpoints);
             $this->set('students', $model_education_programs->getStudentsByDiscipline($params['discipline_id']));
             $this->set('sections', $model_education_programs->getSectionsByDiscipline($params['discipline_id']));
-            $this->set('user_id', $params['student_id']);
-            $this->set('user_info', $user_info);
 
             $this->render('teacher_students/discipline');
         }
+	*/
 
     }

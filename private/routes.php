@@ -24,8 +24,14 @@
             /* Восстановление пароля: запрос на восстановление */
             array('/restore-password', 'users', 'restore_passwd', 'users.restore-passwd', Mvc_Router::ROUTE_STATIC),
 
-            /* Восстановление пароля: установка нового пароля */
-            array('/restore-password/([0-9]+)/([0-9a-z]{32})', array('user_id', 'code'), 'users', 'reset_passwd', 'users.reset-passwd', Mvc_Router::ROUTE_REGEX),
+            /* Восстановление пароля: установка нового пароля пользователя, потерявшего пароль */
+            array('/restore-password/([0-9]+)/([0-9a-z]{32})?', array('user_id', 'code'), 'users', 'reset_passwd', 'users.reset-passwd', Mvc_Router::ROUTE_REGEX),
+
+            /* Редактирование профиля пользователя */
+            array('/profile', 'profile', 'profile_index', 'profile.edit', Mvc_Router::ROUTE_STATIC),
+
+            /* Восстановление пароля: установка нового пароля залогинившегося пользователя */
+            array('/restore-password/by-auth',  'profile', 'reset_passwd', 'profile.reset-passwd', Mvc_Router::ROUTE_STATIC),
 
             /* Управление пользователями */
             array('/admin/users', 'users', 'index_by_admin', 'admin.users', Mvc_Router::ROUTE_STATIC),
@@ -36,7 +42,7 @@
 
             /* Список пользователей */
             //array('/admin/users/list/(all|admin|teacher|student)?', array('filter'), 'users', 'users_list', 'users.list', Mvc_Router::ROUTE_REGEX),
-			array('/admin/users/list/(all|admin|teacher|student)/(id|login|fio|role|date_reg)/(asc|desc)', array('filter','sort_field','sort_direction'), 'users', 'users_list', 'users.list', Mvc_Router::ROUTE_REGEX),
+			array('/admin/users/list/(all|admin|teacher|student)?/(id|login|fio|role|date_reg)?/(asc|desc)?', array('filter','sort_field','sort_direction'), 'users', 'users_list', 'users.list', Mvc_Router::ROUTE_REGEX),
 
             /* Редактирование аккаунтов */
             array('/admin/users/edit/([0-9]+)', array('user_id'), 'users', 'edit_account', 'users.edit', Mvc_Router::ROUTE_REGEX),
@@ -87,16 +93,20 @@
             array('/admin/sections/save-order', array(), 'education_programs', 'save_section_order', 'sections.save-order', Mvc_Router::ROUTE_REGEX),
 
             /* Редактирование материалов администратором */
-            array('/admin/materials/edit/([0-9]+)', array('material_id'), 'education_programs', 'edit_material', 'materials.admin.edit', Mvc_Router::ROUTE_REGEX),
+            //array('/admin/materials/edit/([0-9]+)', array('material_id'), 'education_programs', 'edit_material', 'materials.admin.edit', Mvc_Router::ROUTE_REGEX),
+            array('/admin/materials/edit/([0-9]+)', array('material_id'), 'educational_materials', 'edit', 'materials.admin.edit', Mvc_Router::ROUTE_REGEX),
 
             /* Загрузка учебных материалов */
-            array('/admin/materials/upload', 'education_programs', 'upload_material', 'materials.admin.upload', Mvc_Router::ROUTE_STATIC),
+            //array('/admin/materials/upload', 'education_programs', 'upload_material', 'materials.admin.upload', Mvc_Router::ROUTE_STATIC),
+            array('/admin/materials/upload', 'educational_materials', 'upload', 'materials.admin.upload', Mvc_Router::ROUTE_STATIC),
 
             /* Удаление учебных материалов */
-            array('/admin/materials/remove', 'education_programs', 'remove_material', 'materials.admin.remove', Mvc_Router::ROUTE_STATIC),
+            //array('/admin/materials/remove', 'education_programs', 'remove_material', 'materials.admin.remove', Mvc_Router::ROUTE_STATIC),
+            array('/admin/materials/remove', 'educational_materials', 'remove', 'materials.admin.remove', Mvc_Router::ROUTE_STATIC),
             
             /* Сохрание порядка материалов */
-            array('/admin/materials/save-order', 'education_programs', 'save_material_order', 'materials.admin.save-order', Mvc_Router::ROUTE_STATIC),
+            //array('/admin/materials/save-order', 'education_programs', 'save_material_order', 'materials.admin.save-order', Mvc_Router::ROUTE_STATIC),
+            array('/admin/materials/save-order', 'educational_materials', 'save_order', 'materials.admin.save-order', Mvc_Router::ROUTE_STATIC),
             
             /* Управление учебными материалами преподователем */
             array('/admin/materials', 'educational_materials', 'index', 'teacher.materials', Mvc_Router::ROUTE_STATIC),
@@ -156,8 +166,42 @@
             /* Инструкции для администратора по формированию программ  */
             array('/admin/help/programs', 'pages', 'display',  array('page' => 'help/programs'), 'help.programs', Mvc_Router::ROUTE_STATIC),
 
+			//!!!
+            /* Инструкции для преподаваетля по формированию контрольных работ  */
+            array('/teacher/help/programs', 'pages', 'display',  array('page' => 'help/teacher_courses'), 'help.teacher_courses', Mvc_Router::ROUTE_STATIC),
+
+			/* Индексная страница с дисциплинами для формирования контрольных работ  */
+			array('/control_works/index_by_teacher', 'controlWork', 'index_by_teacher', 'teacher.control_works.index', Mvc_Router::ROUTE_STATIC),
+
+			/* Индексная страница с дисциплинами для формирования контрольных работ  */
+			array('/control_works/discipline/([0-9]+)?', array('discipline_id'), 'controlWork', 'discipline', 'teacher.control_works.discipline', Mvc_Router::ROUTE_REGEX),
+
+			/* Делание контрольных работ активными */
+			array('/control_works/set_active/', 'controlWork', 'set_active', 'teacher.control_works.set_active', Mvc_Router::ROUTE_STATIC),
+
+			/* Делание контрольных работ неактивными */
+			array('/control_works/set_nonactive/', 'controlWork', 'set_nonactive', 'teacher.control_works.set_nonactive', Mvc_Router::ROUTE_STATIC),
+
+			/* Делание контрольной работы зачетом раздела  */
+			array('/control_works/set_auto_set_credit/([0-9]+)?', array('control_id'), 'controlWork', 'set_auto_set_credit', 'teacher.control_works.set_auto_set_credit', Mvc_Router::ROUTE_REGEX),
+
+			/* Добавление контрольной работы в дисциплину  */
+			array('/control_works/add/([0-9]+)?', array('discipline_id'), 'controlWork', 'add', 'teacher.control_works.add', Mvc_Router::ROUTE_REGEX),
+
+			/* Удаление контрольной работы */
+			array('/control_works/remove/([0-9]+)?', array('control_id'), 'controlWork', 'remove', 'teacher.control_works.remove', Mvc_Router::ROUTE_REGEX),
+
             /* Работа ответственного преподавателя с дисциплинами */
             array('/teacher_courses/discipline/([0-9]+)?', array('discipline_id'), 'teacher_courses', 'discipline', 'teacher.discipline', Mvc_Router::ROUTE_REGEX),
+
+			/* Открыть разделы для слушателей */
+			array('/teacher_courses/open_section/', 'openSection', 'set_open', 'teacher.sections.set_open', Mvc_Router::ROUTE_STATIC),
+
+			/* Закрыть разделы для слушателей */
+			array('/teacher_courses/close_section/', 'openSection', 'set_close', 'teacher.sections.set_close', Mvc_Router::ROUTE_STATIC),
+
+			/* Проставить оценки слушателям */
+			array('/teacher_courses/set_mark/', 'controlWork', 'set_marks', 'teacher.set_marks', Mvc_Router::ROUTE_STATIC),
 
             /* Работа куратора со своими слушателями */
             array('/teacher_students/', array(), 'teacher_students', 'index', 'teacher.students', Mvc_Router::ROUTE_REGEX),
@@ -212,7 +256,7 @@
             array('/student/record_book/discipline/([0-9]+)', array('discipline_id'), 'Student_RecordBook', 'discipline', 'student.record_book.discipline', Mvc_Router::ROUTE_REGEX),
 
             /* Отображение слушателю доступных материалов */
-            array('/student/materials/show/([0-9]+)/([0-9]+)', array('discipline_id', 'app_id'), 'educational_materials', 'show', 'materials.show', Mvc_Router::ROUTE_REGEX),
+            array('/student/materials/show/([0-9]+)', array('discipline_id'), 'educational_materials', 'show', 'materials.show', Mvc_Router::ROUTE_REGEX),
 
             /* Скачивание материалов */
             array('/student/materials/download/([0-9]+)', array('material_id'), 'educational_materials', 'get_material', 'materials.download', Mvc_Router::ROUTE_REGEX),
@@ -303,8 +347,18 @@
                 'educational_materials/remove',
 
                 'teacher_courses/discipline',           // дисциплины, за которые ответственным назначен преподаватель
-                'checkpoints/set_pass',
-                'checkpoints/remove_pass',
+
+                'controlWorks/discipline',              // работа с контрольными работами
+			    'controlWork/index_by_teacher',
+		        'controlWork/discipline',
+    	        'controlWork/set_active', 
+        		'controlWork/set_nonactive', 
+		        'controlWork/set_auto_set_credit',
+		        'controlWork/add',
+                'controlWork/remove',
+
+                'checkpoints/set_pass',         // к удалению
+                'checkpoints/remove_pass',     // к удалению
 
                 'teacher_students',                    // интерфейс "Мои слушатели"
                 'teacher_students/disciplines',

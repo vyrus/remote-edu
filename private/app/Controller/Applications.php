@@ -21,120 +21,94 @@
         * Список поданных заявок для админа.
         */
         public function action_index_by_admin(/*$params = array*/)
-		{
+        {
 
             $user = Model_User::create();
             $udata = (object) $user->getAuth();
-            /**
-            * @todo Paginator.
-            */
+
             $app = Model_Application::create();
-            /**
-            * @todo Выводить только заявки, которые ещё не полностью оплачены
-            * (или вообще ешё не приняты/подписаны).
-			* DONE!
-            */
                        
-			$request = $this->getRequest ();
-			//echo '<pre>';var_dump($request );echo '</pre>';
-			//die();
-			
-			$params = array();
-			($requestData = $request->post) || ($requestData = $request->get);
-			$params['sort_field'] = (isset($requestData['sort_field'])) ? $requestData['sort_field'] : 'fio';
-			$params['sort_direction'] = (isset($requestData['sort_field'])) ? $requestData['sort_direction'] : 'asc';
-			$params['filter_status'] = (isset($requestData['filter_status'])) ? $requestData['filter_status'] : 'work';
-			$params['filter_name'] = (isset($requestData['sort_field'])) ? $requestData['filter_name'] : 'all';
-			$params['filter_object_type'] = (isset($requestData['sort_field'])) ? $requestData['filter_object_type'] : 'all';  
-			$params['filter_object_id'] = (isset($requestData['sort_field'])) ? $requestData['filter_object_id'] : 'all' ;
+            $request = $this->getRequest ();
+            //echo '<pre>';var_dump($request );echo '</pre>';
+            //die();
+            
+            $params = array();
+            ($requestData = $request->post) || ($requestData = $request->get);
+            $params['sort_field'] = (isset($requestData['sort_field'])) ? $requestData['sort_field'] : 'fio';
+            $params['sort_direction'] = (isset($requestData['sort_field'])) ? $requestData['sort_direction'] : 'asc';
+            $params['filter_status'] = (isset($requestData['filter_status'])) ? $requestData['filter_status'] : 'work';
+            $params['filter_name'] = (isset($requestData['sort_field'])) ? $requestData['filter_name'] : 'all';
+            $params['filter_object_type'] = (isset($requestData['sort_field'])) ? $requestData['filter_object_type'] : 'all';  
+            $params['filter_object_id'] = (isset($requestData['sort_field'])) ? $requestData['filter_object_id'] : 'all' ;
+            $params['page'] = (isset($requestData['page']) && $requestData['save_page_num']) ? intval($requestData['page']) : 0 ;
 
-			//print_r($params);	
+            //print_r($params);    
 
-			$apps = $app->getAllAppsInfo($params['sort_field'],$params['sort_direction'],
-				$params['filter_status'],$params['filter_name'],$params['filter_object_type'],$params['filter_object_id']);
-            foreach ($apps as $i=>$a)
-            {
-                if ($a['status'] == 'signed')
-                {
-				$apps[$i] = $app->addInfoIntoKortegAboutPaidState($a);
-				/*
-                    if ($a['program_title'])
-                    {
-                        //товарищ учится по всему направлению
-                        $prog = $app->getProgram($a['object_id']);
-                        if ($prog['paid_type'] == 'paid')
-                        {
-                            $paid_money = $paym->getTotal($a['app_id']);
-                            $rest = $prog['cost'] - $paid_money; // (program price - paid already)
-                            $rest_rate = $rest/$prog['cost']; // how many cost's parts to pay
-                            $apps[$i] = array_merge($apps[$i],array('rest' => $rest, 'rest_rate' => $rest_rate));
-                        }else
-                        {
-                            $apps[$i] = array_merge($apps[$i],array('rest' => 'free', 'rest_rate' => 'free'));
-                        }
-                    }elseif  ($a['discipline_title'])
-                    {
-                        //учится по дисциплине
-                        $disc = $app->getDiscipline($a['object_id']);
-                        $upper_prog = $app->getProgram($disc['program_id']);
-                        if ($upper_prog['paid_type'] == 'paid')
-                        {
-                            $paid_money = $paym->getTotal($a['app_id']);
-                            $rest = ($upper_prog['cost']*$disc['coef'])/100 - $paid_money; // (program price - paid already)
-                            $rest_rate = $rest/(($upper_prog['cost']*$disc['coef'])/100); // how many cost's parts to pay
-                            $apps[$i] = array_merge($apps[$i],array('rest' => $rest, 'rest_rate' => $rest_rate));
-                        }else
-                        {
-                            $apps[$i] = array_merge($apps[$i],array('rest' => 'free', 'rest_rate' => 'free'));
-                        }
-					}
-				 */
+            $appsFull = $app->getAllAppsInfo($params['sort_field'],$params['sort_direction'],
+                $params['filter_status'],$params['filter_name'],$params['filter_object_type'],$params['filter_object_id'],$params['page']);
+            $apps = & $appsFull['data'];
+            $pageCount = ceil($appsFull['count'] / Model_Application::APPS_ON_PAGE);
+
+            foreach ($apps as $i=>$a) {
+                if ($a['status'] == 'accepted') {
+                    $modelEducProg = Model_Education_Programs::create();
+                    if ($a['type'] == 'program') {
+                        $apps[$i]['paid_type'] = $modelEducProg->getProgramPaidType($a['object_id']);
+                    } elseif ($a['type'] == 'discipline') {
+                        $programId = $modelEducProg->getProgramIdByDiscipline($a['object_id']);
+                        $apps[$i]['paid_type'] = $modelEducProg->getProgramPaidType($programId);
+                    }
+                } elseif ($a['status'] == 'signed') {
+                    $apps[$i] = $app->addInfoIntoKortegAboutPaidState($a);
                 }
-				 
+                 
             }
 
-			$listNames = $app->getListUsersApps();
-			$listObjects = $app->getListObjectsApps();
+            $listObjects = $app->getListObjectsApps();
+            $listNames = $app->getListUsersApps();
 
-			$listPrograms = array();
-			$listDisciplines = array();
-			foreach ($listObjects as $korteg) {
-				if ($korteg['type'] == 'program') {
-					$listPrograms[] = array (
-						'object_id' => $korteg['object_id'],
-						'title' => $korteg['program_title']
-					);
-				} else if ($korteg['type'] == 'discipline') {
-					$listDisciplines[] = array (
-						'object_id' => $korteg['object_id'],
-						'title' => $korteg['discipline_title']
-					);
-				}
-			}
+            $listPrograms = array();
+            $listDisciplines = array();
+            foreach ($listObjects as $korteg) {
+                if ($korteg['type'] == 'program') {
+                    $listPrograms[] = array (
+                        'object_id' => $korteg['object_id'],
+                        'title' => $korteg['program_title']
+                    );
+                } else if ($korteg['type'] == 'discipline') {
+                    $listDisciplines[] = array (
+                        'object_id' => $korteg['object_id'],
+                        'title' => $korteg['discipline_title']
+                    );
+                }
+            }
 
-			$this->set('applications', $apps);
-			$this->set('statuses', Model_Application::getStatusMap());
+            $this->set('applications', $apps);
+            $this->set('statuses', Model_Application::getStatusMap());
 
-			$this->set('listNames', $listNames);
-			$this->set('listPrograms', $listPrograms);
-			$this->set('listDisciplines', $listDisciplines);
+            $this->set('listNames', $listNames);
+            $this->set('listPrograms', $listPrograms);
+            $this->set('listDisciplines', $listDisciplines);
 
             $this->set('invalidMaterialsForms', array ());
-			$this->set('links', Resources::getInstance()->links);
+            $this->set('links', Resources::getInstance()->links);
 
             $this->set('sortField', $params['sort_field']);
-			$this->set('sortDirection', $params['sort_direction']);
+            $this->set('sortDirection', $params['sort_direction']);
 
-			$this->set('filterStatus', $params['filter_status']);
+            $this->set('filterStatus', $params['filter_status']);
             $this->set('filterName', $params['filter_name']);
             $this->set('filterObjectType', $params['filter_object_type']);
             $this->set('filterObjectId', $params['filter_object_id']);
 
-            $contract = Model_Contract::create ();
+            $this->set('page', $params['page']);
+            $this->set('pageCount', $pageCount);
+
+            $contract = Model_Contract::create();
 
             $requestData = $request->files;
             if (empty ($requestData)) {
-            	$this->render ('applications/index_by_admin');
+                $this->render ('applications/index_by_admin');
             }
             // загрузка договора
             $invalidMaterialsForms = array ();
@@ -148,13 +122,13 @@
             $request->set (
                 'get',
                 array (
-                	'filename'       => $request->files['fileReference' . $app_id]['name'],
+                    'filename'       => $request->files['fileReference' . $app_id]['name'],
                     'sort_field'     => $params['sort_field'],
                     'sort_direction' => $params['sort_direction'],
-					'filterStatus'	 => $params['filter_status'],
-		            'filterName'	 => $params['filter_name'],
-		            'filterObjectType'=> $params['filter_object_type'],
-		            'filterObjectId '=> $params['filter_object_id']
+                    'filterStatus'     => $params['filter_status'],
+                    'filterName'     => $params['filter_name'],
+                    'filterObjectType'=> $params['filter_object_type'],
+                    'filterObjectId '=> $params['filter_object_id']
                 )
             );
 
@@ -183,11 +157,11 @@
             $links = Resources::getInstance()->links;
 
             $this->flash (
- 	           'Договор успешно загружен',
-			   //$links->get('admin.applications',array ('sort_field' => $params['sort_field'], 'sort_direction' => $params['sort_direction'])),
-			   $links->get('admin.applications'),
-			   3
-		  	);
+                'Договор успешно загружен',
+               //$links->get('admin.applications',array ('sort_field' => $params['sort_field'], 'sort_direction' => $params['sort_direction'])),
+               $links->get('admin.applications'),
+               3
+              );
         }
 
         /**
@@ -272,9 +246,9 @@
             foreach ($apps as $i=>$a)
             {
                 if ($a['status'] == 'signed')
-				{ 
-				$apps[$i] = $app->addInfoIntoKortegAboutPaidState($a);
-				/*
+                { 
+                $apps[$i] = $app->addInfoIntoKortegAboutPaidState($a);
+                /*
                     if ($a['program_title'])
                     {
                         //товарищ учится по всему направлению
@@ -304,8 +278,8 @@
                         {
                             $apps[$i] = array_merge($apps[$i],array('rest' => 'free', 'rest_rate' => 'free'));
                         }
-					}
-				 */
+                    }
+                 */
                 }
             }
             $this->set('applications', $apps);
@@ -420,13 +394,14 @@
             $app = Model_Application::create();
             $app->setAppStatus($new_status, $app_id);
 
+            /*
             if ('signed' == $new_status) {
                 $programs = Model_Education_Programs::create();
                 $model_checkpoint = Model_Checkpoint::create();
                 $app_info = $app->getAppInfo($app_id);
                 if ('discipline' == $app_info[0]['type']) {
                     $first_section = $programs->getFirstSectionOfDiscipline($app_info[0]['object_id']);
-					//echo '<pre>';var_dump($app_info );echo '</pre>'; die();
+                    //echo '<pre>';var_dump($app_info );echo '</pre>'; die();
                     $model_checkpoint->setCheckpointPass($app_info[0]['user_id'], $first_section['section_id']);
                 }
                 if ('program' == $app_info[0]['type']) {
@@ -435,18 +410,19 @@
                     $model_checkpoint->setCheckpointPass($app_info[0]['user_id'], $first_section['section_id']);
                 }
             }
+            */
 
-			/**
-			 * TODO
-			 * Надо сделать проверку правильности изменения статуса на "окончена" через контрольную точку
-			 *
-			 */
+            /**
+             * @TODO
+             * Надо сделать проверку правильности изменения статуса на "окончена" через контрольную точку
+             *
+             */
 
             $map = Model_Application::getStatusMap();
             $this->flash('Заявка ' . $map[$new_status],
                //          $links->get('admin.applications',array ('sort_field' => 'fio', 'sort_direction' => 'asc')));
-				//$links->get('admin.applications',array ('sort_field' => $params['sort_field'], 'sort_direction' => $params['sort_direction'])),5);
-				$links->get('admin.applications'),5);
+                //$links->get('admin.applications',array ('sort_field' => $params['sort_field'], 'sort_direction' => $params['sort_direction'])),5);
+                $links->get('admin.applications'),5);
 
             $this->render();
         }
@@ -455,13 +431,13 @@
         * Удаление заявки из базы данных.
         *
         * @todo Удалять ли платежи из базы при удалении заявки?
-		* Зачем нукжно вообще удалять заявки??? Какому бизнес-процессу это соответствует?
+        * Зачем нукжно вообще удалять заявки??? Какому бизнес-процессу это соответствует?
         */
-		public function action_delete(/*array*/ $params/* = array()*/) {
+        public function action_delete(/*array*/ $params/* = array()*/) {
             $links = Resources::getInstance()->links;
             //$return_url = $links->get('admin.applications',array ('sort_field' => 'fio', 'sort_direction' => 'asc'));
-			//$return_url = $links->get('admin.applications',array ('sort_field' => $params['sort_field'], 'sort_direction' => $params['sort_direction']));
-			$return_url = $links->get('admin.applications');
+            //$return_url = $links->get('admin.applications',array ('sort_field' => $params['sort_field'], 'sort_direction' => $params['sort_direction']));
+            $return_url = $links->get('admin.applications');
 
             if (empty($params)) {
                 $this->flash('Не указан номер заявки', $return_url);

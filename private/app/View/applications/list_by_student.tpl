@@ -72,7 +72,7 @@
 							}else
 							{
 								echo "задолженность по оплате ".$app['rest'];
-								echo " рублей,<br> что составляет ".$app['rest_rate']." % от общей суммы";
+								echo " рублей,<br> что составляет " . round($app['rest_rate'] * 100, 2) . "% от общей суммы";
 							}
 						}elseif ($app['discipline_title'])	{
 							if ($app['rest'] === 'free')
@@ -84,7 +84,7 @@
 							}else
 							{
 								echo "задолженность по оплате ".$app['rest'];
-								echo " рублей,<br> что составляет ".$app['rest_rate']." % от общей суммы";
+								echo " рублей,<br> что составляет " . round($app['rest_rate'] * 100, 2) . "% от общей суммы";
 							}
 						}
 					}elseif ($app['status'] == 'prepaid')

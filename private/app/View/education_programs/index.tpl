@@ -5,6 +5,8 @@
     $sections       = $this->sections;
     $materials      = $this->materials;
     
+    $back = $this->back;
+
     //var_dump($materials);
 
     foreach ($sections as $i => $disciplineSections) {
@@ -189,147 +191,141 @@
             sectionOrder += sectionsSelect.options[i].value;
         }
         document.forms[0].sectionOrderInfo.value = sectionOrder;
-        document.forms[0].action = '<?php echo $this->_links->get('sections.save-order') ?>';
-        document.forms[0].submit();
+    document.forms[0].action = '<?php echo $this->_links->get('sections.save-order') ?>';
+    document.forms[0].submit();
+}
+
+// работа с блоком материалов
+
+// тут не понятно, как лучше-то реализовать
+function addMaterial() {
+    //window.location = '<?php echo $this->_links->get('materials.admin.upload') ?>' ;
+    document.forms[1].submit();
+}
+
+function removeMaterial () {
+    if (materialsSelect.selectedIndex == -1) {
+        alert ('Необходимо выбрать один/несколько материалов');
+        return;
     }
     
-    // работа с блоком материалов
-    
-    // тут не понятно, как лучше-то реализовать
-    function addMaterial() {
-        /*
-        if (sectionsSelect.selectedIndex == -1) {
-            alert ('Необходимо выбрать дисциплину');
-            return;
-        }
-        */
-        window.location = '<?php echo $this->_links->get('materials.admin.upload') ?>' ;//+ 
-                          //sectionsSelect.options[sectionsSelect.selectedIndex].value + '/';
-    }
-    
-    function removeMaterial () {
-        if (materialsSelect.selectedIndex == -1) {
-            alert ('Необходимо выбрать один/несколько материалов');
-            return;
-        }
-        
-        var materialDelete = '';
-        var first = true;
-        for (var i = 0; i < materialsSelect.length; i++) {
-            if (materialsSelect.options[i].selected) {
-                if (first) {
-                    first = false;
-                } else {
-                    materialDelete += ',';
-                }
-                materialDelete += materialsSelect.options[i].value;
+    var materialDelete = '';
+    var first = true;
+    for (var i = 0; i < materialsSelect.length; i++) {
+        if (materialsSelect.options[i].selected) {
+            if (first) {
+                first = false;
+            } else {
+                materialDelete += ',';
             }
-        }
-        
-        document.forms[0].materialDeleteInfo.value = materialDelete;
-        document.forms[0].action = '<?php echo $this->_links->get('materials.admin.remove') ?>';
-        document.forms[0].submit();
-
-    }
-    
-    function editMaterial() {
-        if (materialsSelect.selectedIndex == -1) {
-            alert ('Необходимо выбрать материал');
-            return;
-        }
-
-        window.location = '<?php echo $this->_links->get('materials.admin.edit') ?>' + 
-                          materialsSelect.options[materialsSelect.selectedIndex].value + '/';
-    }
-    
-    function saveMaterialOrder() {
-        var materialOrder = '';
-        for (var i = 0; i < materialsSelect.length; i++) {
-            if (i > 0) {
-                materialOrder += ',';
-            }
-            materialOrder += materialsSelect.options[i].value;
-        }
-        document.forms[0].materialOrderInfo.value = materialOrder;
-        document.forms[0].action = '<?php echo $this->_links->get('materials.admin.save-order') ?>';
-        document.forms[0].submit();
-    }
-    
-    function downloadMaterial() {
-        if (materialsSelect.selectedIndex == -1) {
-            alert ('Необходимо выбрать материал');
-            return;
-        }
-        
-        /*for (var i=0; i < materialsSelect.length; i++) {
-            if (materialsSelect.options[i].selected) {
-                // что же тут дкелать???   
-            }
-        }*/
-        
-        window.location = '<?php echo $this->_links->get('materials.download') ?>' + 
-                          materialsSelect.options[materialsSelect.selectedIndex].value + '/';      
-    }
-
-    // общие функции
-
-    function clearSelect (select) {
-        while (select.firstChild) {
-            select.removeChild (select.firstChild);
-        }
-    }
-
-    function updateSelect (parentSelect, select, items, clear) {
-        for (var i = 0; i < clear.length; i++) {
-            clearSelect (clear[i]);
-        }
-
-        var selectItems = items[parentSelect.options[parentSelect.selectedIndex].value];
-        if (selectItems) {
-            for (var i = 0; i < selectItems.length; i++) {
-                select.options[i] = new Option (selectItems[i].title, selectItems[i].id);
-            }
+            materialDelete += materialsSelect.options[i].value;
         }
     }
     
-    // функции подъема строки в выборбоксе вверх и вниз
-    
-    function down(select) {
-        if (select.selectedIndex < select.length) {
-            var tempText = select.options[select.selectedIndex + 1].text;
-            var tempValue = select.options[select.selectedIndex + 1].value;
-            select.options[select.selectedIndex + 1].text = select.options[select.selectedIndex].text;
-            select.options[select.selectedIndex + 1].value = select.options[select.selectedIndex].value;
-            select.options[select.selectedIndex].text = tempText;
-            select.options[select.selectedIndex].value = tempValue;
-            select.selectedIndex = select.selectedIndex + 1;
+    document.forms[0].materialDeleteInfo.value = materialDelete;
+    document.forms[0].action = '<?php echo $this->_links->get('materials.admin.remove') ?>';
+    document.forms[0].submit();
+
+}
+
+function editMaterial() {
+    if (materialsSelect.selectedIndex == -1) {
+        alert ('Необходимо выбрать материал');
+        return;
+    }
+
+    window.location = '<?php echo $this->_links->get('materials.admin.edit') ?>' + 
+                      materialsSelect.options[materialsSelect.selectedIndex].value + '/';
+}
+
+function saveMaterialOrder() {
+    var materialOrder = '';
+    for (var i = 0; i < materialsSelect.length; i++) {
+        if (i > 0) {
+            materialOrder += ',';
         }
+        materialOrder += materialsSelect.options[i].value;
+    }
+    document.forms[0].materialOrderInfo.value = materialOrder;
+    document.forms[0].action = '<?php echo $this->_links->get('materials.admin.save-order') ?>';
+    document.forms[0].submit();
+}
+
+function downloadMaterial() {
+    if (materialsSelect.selectedIndex == -1) {
+        alert ('Необходимо выбрать материал');
+        return;
     }
     
-    function up(select) {
-        if (select.selectedIndex > 0) {
-            var tempText = select.options[select.selectedIndex - 1].text;
-            var tempValue = select.options[select.selectedIndex - 1].value;
-            select.options[select.selectedIndex - 1].text = select.options[select.selectedIndex].text;
-            select.options[select.selectedIndex - 1].value = select.options[select.selectedIndex].value;
-            select.options[select.selectedIndex].text = tempText;
-            select.options[select.selectedIndex].value = tempValue;
-            select.selectedIndex = select.selectedIndex - 1;
+    /*for (var i=0; i < materialsSelect.length; i++) {
+        if (materialsSelect.options[i].selected) {
+            // что же тут дкелать???   
+        }
+    }*/
+    
+    window.location = '<?php echo $this->_links->get('materials.download') ?>' + 
+                      materialsSelect.options[materialsSelect.selectedIndex].value + '/';      
+}
+
+// общие функции
+
+function clearSelect (select) {
+    while (select.firstChild) {
+        select.removeChild (select.firstChild);
+    }
+}
+
+function updateSelect (parentSelect, select, items, clear) {
+    for (var i = 0; i < clear.length; i++) {
+        clearSelect (clear[i]);
+    }
+
+    var selectItems = items[parentSelect.options[parentSelect.selectedIndex].value];
+    if (selectItems) {
+        for (var i = 0; i < selectItems.length; i++) {
+            select.options[i] = new Option (selectItems[i].title, selectItems[i].id);
         }
     }
+}
+
+// функции подъема строки в выборбоксе вверх и вниз
+
+function down(select) {
+    if (select.selectedIndex < select.length) {
+        var tempText = select.options[select.selectedIndex + 1].text;
+        var tempValue = select.options[select.selectedIndex + 1].value;
+        select.options[select.selectedIndex + 1].text = select.options[select.selectedIndex].text;
+        select.options[select.selectedIndex + 1].value = select.options[select.selectedIndex].value;
+        select.options[select.selectedIndex].text = tempText;
+        select.options[select.selectedIndex].value = tempValue;
+        select.selectedIndex = select.selectedIndex + 1;
+    }
+}
+
+function up(select) {
+    if (select.selectedIndex > 0) {
+        var tempText = select.options[select.selectedIndex - 1].text;
+        var tempValue = select.options[select.selectedIndex - 1].value;
+        select.options[select.selectedIndex - 1].text = select.options[select.selectedIndex].text;
+        select.options[select.selectedIndex - 1].value = select.options[select.selectedIndex].value;
+        select.options[select.selectedIndex].text = tempText;
+        select.options[select.selectedIndex].value = tempValue;
+        select.selectedIndex = select.selectedIndex - 1;
+    }
+}
 
 </script>
 <style type="text/css">
-    input.addButton,
-    input.editButton,
-    input.removeButton,
-    input.upButton,
-    input.downButton {
-        border                      : 1px solid #AAAAAA;
-        background-color            : #FFFFFF;
-        width                       : 25px;
-        height                      : 25px;
-    }
+input.addButton,
+input.editButton,
+input.removeButton,
+input.upButton,
+input.downButton {
+    border                      : 1px solid #AAAAAA;
+    background-color            : #FFFFFF;
+    width                       : 25px;
+    height                      : 25px;
+}
 </style>
 <form method="post">
 <input type="hidden" id="programOrderInfo" name="programOrderInfo">
@@ -337,6 +333,7 @@
 <input type="hidden" id="sectionOrderInfo" name="sectionOrderInfo">
 <input type="hidden" id="materialOrderInfo" name="materialOrderInfo">
 <input type="hidden" id="materialDeleteInfo" name="materialDeleteInfo">
+<input type="hidden" name="back" value="admin.programs">
 <table cellspacing="0" cellpadding="0">
 <tr><td><select id="programsTypeSelect" onchange="switchProgramsType ();"><option value="direction">Направления</option><option value="course">Курсы</option></select></td><td>Дисциплины</td><td>Разделы</td></tr>
 <tr>
@@ -398,6 +395,9 @@
     </td>
 </tr>
 </table>
+</form>
+<form action="<?php echo $this->_links->get('materials.admin.upload') ?>" method="post">
+<input type="hidden" name="back" value="<?php echo $back; ?>" >
 </form>
 <script type="text/javascript">
     var programsTypeSelect    = document.getElementById ('programsTypeSelect');

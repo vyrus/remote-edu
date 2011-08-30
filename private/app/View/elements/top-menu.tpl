@@ -1,6 +1,6 @@
 <?php
 
-	/* ссылки, доступные пользователю, независимо от прав доступа */	    
+    /* ссылки, доступные пользователю, независимо от прав доступа */	    
     $generic_elements = array(
         'Главная'  => $this->_links->get('index'),
         //'Ошибки' => 'error'
@@ -8,6 +8,7 @@
     
     /* ссылки, доступные только админу */	        
     $admin_elements = array(
+	'Профиль'                       => $this->_links->get('profile.edit'),
         'Регистрация пользователя'      => $this->_links->get('admin.users'),
         'Формирование учебных программ' => $this->_links->get('admin.programs'),
         'Загрузка материалов'           => $this->_links->get('teacher.materials'),
@@ -16,6 +17,7 @@
     
     /* ссылки, доступные только преподу */	        
     $teacher_elements = array(
+	'Профиль'  => $this->_links->get('profile.edit'),
         'Мои курсы'     => '/teacher_courses/index',
         'Мои слушатели' => '/teacher_students/index',
         /**
@@ -27,6 +29,7 @@
     
     /* ссылки, доступные только слушателю */	        
     $student_elements = array(
+	'Профиль'        => $this->_links->get('profile.edit'),
         'Моё меню'       => $this->_links->get('student.index'),
         'Мои курсы'      => $this->_links->get('student.programs'),
         //'Материалы'      => 'educational_materials/index_by_student/',

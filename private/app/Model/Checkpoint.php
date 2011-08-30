@@ -177,11 +177,11 @@
                 $next_discipline = $stmt->fetch(Db_Pdo::FETCH_ASSOC);
 
                 $model_education_programs = Model_Education_Programs::create();
-                $next_section = $model_education_programs->getFirstSectionOfDiscipline($next_discipline['discipline_id']);
+                $next_section = $model_education_programs->getFirstSectionIdOfDiscipline($next_discipline['discipline_id']);
             }
 
             if ($next_section) {
-                return $this->setCheckpointPass($student_id, $next_section['section_id']);
+                return $this->setCheckpointPass($student_id, $next_section);
             }
 
             return false;
@@ -240,3 +240,4 @@
         }
 
     }
+?>

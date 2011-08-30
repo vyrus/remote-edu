@@ -46,11 +46,15 @@
 	}
 
 	function filterSelectOnchange(field) {
-		if (sort_field_cur == field) {
-			sort_direction_cur = getDirectionReverse(sort_direction_cur);
-		} else {
-			sort_direction_cur = 'asc';	
-		}
+        if (field == undefined) {
+            field = sort_field_cur;
+        } else {
+            if (sort_field_cur == field) {
+                sort_direction_cur = getDirectionReverse(sort_direction_cur);
+            } else {
+                sort_direction_cur = 'asc';	
+            }
+        }
 		window.location = '<?php echo $links->get("users.list"); ?>' + $('#filter').val() + '/' + field + '/' +	sort_direction_cur + '/';
 	}
 

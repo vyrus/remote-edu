@@ -13,6 +13,9 @@
 	$filterObjectType = $this->filterObjectType;
 	$filterObjectId = $this->filterObjectId;
 
+    $page = $this->page;
+    $pageCount = $this->pageCount;
+
 	$links = $this->links;
 	
 	//print_r($this->applications);
@@ -25,6 +28,12 @@
 			echo "<img src = '$s'>";			
 		}
 	}
+
+    function _reformatMysqlDate($date) {
+        if (!$date) return "&mdash";
+        return date('d.m.Y', strtotime($date));
+    }
+
 ?>
 <style type="text/css">
     tr.odd, th.odd {
@@ -119,6 +128,11 @@
 		
 	}
 
+    function pageOnClick(page) {
+        document.forms[0].save_page_num.value = 1;
+		document.forms[0].page.value = page;
+        document.forms[0].submit();
+    }
 
 	function initFilter() {
 		document.forms[0].filter_name.value = "<?php echo $filterName; ?>";
@@ -169,6 +183,8 @@
 <input name="filter_status" type="hidden">
 <input name="filter_object_id" type="hidden">
 <input name="filter_object_type" type="hidden">
+<input name="page" type="hidden" value="<?php echo $page; ?>">
+<input name="save_page_num" type="hidden" value="0">
 Предмет:
 <select id="filter_object_select" onchange = 'filterObjectSelectOnChange()' style="width: 320px;">
 	<option value="all">--Любое направление/дисциплина--</option>
@@ -208,7 +224,7 @@
 <button onclick="document.forms[0].submit()">фильтр</button>
 </form>
 <br>
-<table class="materials" border="0" cellspacing="2" cellpadding="0">
+<table  class="materials" border="0" cellspacing="2" cellpadding="0">
     <tr class="odd">
     <th class="description">Заявка</th>
     <th class="description" onclick = 'sortSelectOnchange("fio");'><?php showSortArrow("fio", $sortField, $sortDirection); ?>Слушатель</th>
@@ -234,9 +250,9 @@
             <?php endif; ?>
             <a href="<?php echo $this->_links->get('users.profile', array('user_id' => $app['user_id'])); ?>" title="Подробная анкета слушателя" target="_blank">&rarr;</a>
             </td>
-            <td width='10%'><?php echo $this->statuses[$app['status']] ?></td>
-			<td width='15%'>
-				<?php echo $app['date_app']; ?>
+            <td width='10%' align="center"><?php echo $this->statuses[$app['status']] ?></td>
+			<td width='15%' align="center">
+				<?php echo _reformatMysqlDate($app['date_app']); ?>
 			</td>
             <td width='30%'> <?php
             	switch ($app['status']):
@@ -270,6 +286,9 @@
                                 <div id="errorContainer"></div>
                                 </div>
                             </form>
+                            <?php if ($app['paid_type'] == 'free'): ?>
+                                <button class="addButton" name='endApp' onclick="changeStatus('signed',<?php echo $app['app_id'] ?>);">договор не требуется</button>
+                            <?php endif; ?>
                         <?php else: ?>
                             Договор загружен
                             <button class="addButton" name='signedApp' onclick="changeStatus('signed', <?php echo $app['app_id'] ?>);">договор подписан</button>
@@ -281,31 +300,35 @@
 						{
 							if ($app['rest'] === 'free')
 							{
-								echo "бесплатное направление";
-							}elseif ($app['rest'] <= 0)
+								echo "бесплатное направление";?>
+                                <button class="addButton" name='endApp' onclick="changeStatus('finished',<?php echo $app['app_id'] ?>);">окончить заявку</button><?php
+							}elseif ($app['rest'] <= 0) // оставлена в целях совместимости, в ближайшем будущем следует упразднить
 							{
 								echo "направление оплачено";
+                                ?> <button class="addButton" name='endApp' onclick="changeStatus('finished',<?php echo $app['app_id'] ?>);">окончить заявку</button><?php
 							}else
 							{
 								echo "задолженность по оплате ".$app['rest'];
 								echo " рублей,<br> что составляет " . round($app['rest_rate'] * 100, 2) . "% от общей суммы"; ?>
 		                        <button class="addButton" name='delApp' onclick="addPayment(<?php echo $app['app_id'] ?>);">добавить платёж</button>
-		                        <button class="addButton" name='delApp' onclick="deleteApp(<?php echo $app['app_id'] ?>);">удалить</button> <?php
+		                       <?php
 							}
 						}else
 						{
 							if ($app['rest'] === 'free')
 							{
-								echo "бесплатная дисциплина";
-							}elseif ($app['rest'] <= 0)
+								echo "бесплатная дисциплина";?>
+                                <button class="addButton" name='endApp' onclick="changeStatus('finished',<?php echo $app['app_id'] ?>);">окончить заявку</button><?php
+							}elseif ($app['rest'] <= 0) // оставлена в целях совместимости, в ближайшем будущем следует упразднить
 							{
 								echo "дисциплина оплачена";
+                                ?> <button class="addButton" name='endApp' onclick="changeStatus('finished',<?php echo $app['app_id'] ?>);">окончить заявку</button><?php
 							}else
 							{
 								echo "задолженность по оплате ".$app['rest'];
 								echo " рублей,<br> что составляет " . round($app['rest_rate'] * 100, 2) . "% от общей суммы"; ?>
 		                        <button class="addButton" name='delApp' onclick="addPayment(<?php echo $app['app_id'] ?>);">добавить платёж</button>
-		                        <button class="addButton" name='delApp' onclick="deleteApp(<?php echo $app['app_id'] ?>);">удалить</button> <?php
+		                        <?php
 							}
 						} 
                         break; ?> <br> <?php
@@ -326,6 +349,14 @@
         </tr>
     <?php endforeach; ?>
 </table>
+<br>
+<?php for ($i=0; $i < $pageCount; $i++):
+    if ($page != $i): ?>
+        [<a href="javascript:pageOnClick(<?php echo $i; ?>)" ><?php echo $i+1; ?></a>]&nbsp;
+    <?php else: ?>
+        [<?php echo $i+1; ?>]&nbsp;
+    <?php endif; ?>
+<?php endfor; ?>
 <script type="text/javascript">
 
 	filterStatus = document.getElementById('filter_status_select');

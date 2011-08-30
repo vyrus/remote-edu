@@ -21,6 +21,7 @@
 	
 	$materials = $this->materials;
 	$materialTypes = Model_Educational_Materials::$MATERIAL_TYPES_CAPTIONS;
+
 ?>
 
 <style type="text/css">

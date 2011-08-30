@@ -6,8 +6,10 @@
 	/* ссылки, доступные только преподу*/	        
     $teacher_user_action_elements = array(
         'Наполнение системы' => '/educational_materials/upload',
+	'Работа со слушателями' => '/teacher_courses/index',
+	'Формирование контрольных работ' => '/control_works/index_by_teacher',
         //'Общение с администратором' => '#',
-        'Инструкция' => '#'
+        'Инструкция' => $this->_links->get('help.teacher_courses')
     );
 
 	/* ссылки, доступные только слушателю*/	        

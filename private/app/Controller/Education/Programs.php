@@ -1,5 +1,7 @@
 <?php
 
+    /* $Id$ */
+
     class Controller_Education_Programs extends Mvc_Controller_Abstract {
 
         public function action_index () {
@@ -20,6 +22,7 @@
                 }
             }
             $this->set('materials', $mats);
+            $this->set('back','admin.programs');
             
             $this->render("education_programs/index");
         }
@@ -134,7 +137,7 @@
             $educationPrograms->createSection(
                 $form->discipline->value,
                 $form->title->value,
-                isset($sections[$form->discipline->value]) ? count($sections[$form->discipline->value]) : 0
+                isset($sections[$form->discipline->value]) ? count($sections[$form->discipline->value])  : 0
                 //$form->number->value
             );
             $this->flash(
@@ -316,6 +319,8 @@
                 $form->setValue('title', $title);
                 //$form->setValue('number', $number);
 
+                /*
+                Схема контрольных точек изменена, посему сей код закомментирован
                 $checkpoint_model = Model_Checkpoint::create();
                 $checkpoint = $checkpoint_model->getCheckpoint($params['section_id']);
                 $action = $links->get('checkpoint.edit');
@@ -325,6 +330,7 @@
                 $form_checkpoint->setValue('text', $checkpoint['text']);
                 $form_checkpoint->setValue('type', $checkpoint['type']);
                 $form_checkpoint->setValue('test_id', $checkpoint['test_id']);
+                 
 
                 if ('test' == $checkpoint['type']) {
                     $test = Model_Test::create();
@@ -333,6 +339,7 @@
                 }
 
                 $this->set('form_checkpoint', $form_checkpoint);
+                 */
                 $this->set('section_id', $params['section_id']);
 
                 $educationalMaterials = Model_Educational_Materials::create();
@@ -432,130 +439,23 @@
 
         /**
         * Отображение доступных для слушателя программ и дисциплин.
+        * Все доступные дисциплины сохраняются в сесиию
         */
         public function action_available() {
             /* Получаем данные слушателя */
             $user = Model_User::create();
             $udata = (object) $user->getAuth();
 
-            $app     = Model_Application::create();
-            $program = Model_Education_Programs::create();
-            $disc    = Model_Discipline::create();
-            $payment = Model_Payment::create();
+            $session = Resources_Abstract::getInstance()->session;
+            unset($session->availDisciplines);
 
-            /* Список доступных направлений и их доступных дисциплин */
-            $avail_programs = array();
-            /* Список недоступных направлений и их дисциплин
-            (не оплачены) */
-            $not_avail_programs = array();
-            
-            /* Список доступных дисциплин (которые покупались отдельно от
-            программ) */
-            $avail_disciplines = array();
-            /* Список недоступных дисциплин (которые покупались отдельно от
-            программ и неоплачены) */
-            $not_avail_disciplines = array();
-            
-            /**
-            * @todo This needs some serious refactoring, though...
-            */
+            $student = Model_Education_Students::create();
+            $avail_programs = $student->getAvailDisciplinesForPrograms($udata->user_id);
+            $avail_disciplines = $student->getAvailDisciplinesSeparate($udata->user_id);
 
-            /* Получаем список заявок на образовательные программы */
-            $program_apps = $app->getProcessedAppsForPrograms($udata->user_id);
-			//echo '<pre>';var_dump($program_apps	);echo '</pre>'; 
-
-            /* Перебираем его */
-            foreach ($program_apps as $a)
-            {
-                //$a = (object) $a;
-
-                if
-                (
-                    /* Если программа бесплатная */
-                    Model_Education_Programs::PAID_TYPE_FREE == $a['paid_type'] &&
-                    /* и заявка принята администратором, */
-                    (Model_Application::STATUS_ACCEPTED == $a['status'] ||
-                     Model_Application::STATUS_SIGNED == $a['status'])
-                    ||
-                    /* Или если программа платная */
-                    Model_Education_Programs::PAID_TYPE_PAID == $a['paid_type'] &&
-                    /* и договор по заявке подписан, */
-                    (Model_Application::STATUS_SIGNED == $a['status'] || Model_Application::STATUS_PREPAID == $a['status'])
-                )
-                {
-                    /* То получаем список доступных дисциплин */
-                    /*$discs = $disc->getAllowed($a['object_id'],
-                                               $a['paid_type'],
-                                               $a['app_id']);*/
-                    
-                    $a['disciplines'] = $disc->getDisciplines($a['object_id'],
-                                                              $a['paid_type'],
-                                                              $a['cost'],
-                                                              $a['total_sum']);
-                    /* Получаем информацию о программе */
-                    //$program_data = $program->getProgramInfo($a->object_id);
-                    /* А также сколько за нее заплатили */
-                    //$program_data['total_sum'] = $payment->getTotal($a->app_id);
-                    /* Добавляем доступные дисциплины */
-                    //$program_data['disciplines'] = $discs;
-                    //$a['disciplines'] = $discs;
-                    /* Добавляем номер заявки */
-                    //$program_data['app_id'] = $a->app_id;
-
-                    /* И вносим программу в список доступных */
-                    $avail_programs[] = $a;
-                }
-            }
-
-            /* Получаем список заявок на отдельные дисциплины */
-            $disc_app = $app->getProcessedAppsForDisciplines($udata->user_id);
-			//echo '<pre>';var_dump($disc_app );echo '</pre>'; 
-
-            /* Перебираем его */
-            foreach ($disc_app as $a)
-            {
-                $a['cost'] = ((null === $a['cost']) ? 0 : $a['cost']);
-                $a['total_sum'] = ((null === $a['total_sum']) ? 0 : $a['total_sum']);
-                $a['disc_sum'] = ($a['cost'] / 100) * $a['coef'];
-                
-                /* Если программа, которой принадлежит дисциплина, платная */
-                if (Model_Education_Programs::PAID_TYPE_PAID == $a['paid_type'])
-                {
-                    /* и договор по заявке ещё не подписан, */
-                    if (Model_Application::STATUS_SIGNED !== $a['status'] && Model_Application::STATUS_PREPAID != $a['status'])
-                    {
-                        /* то переходим к следующей заявке */
-                        continue;
-                    }
-                    
-                    $active = (($a['disc_sum'] - $a['total_sum'] <= 0) ? true : false);
-                }
-                /* Если же программа бесплатная */
-                elseif (Model_Education_Programs::PAID_TYPE_FREE == $a['paid_type'])
-                {
-                    /* и администратор ещё не принял заявку, */
-                    if (Model_Application::STATUS_ACCEPTED !== $a['status'])
-                    {
-                        /* то переходим к следующей заявке */
-                        continue;
-                    }
-                    $active = true;
-                }
-                
-                /* Получаем данные дисциплины */
-                //$program->getDiscipline($a->object_id, $title, $_, $_, $_);
-                
-                /* И заносим её в список доступных */
-                $disc = array(
-                    'discipline_id' => $a['object_id'],
-                    'title'         => $a['title'],
-                    'app_id'        => $a['app_id'],
-                    'disc_sum'      => $a['disc_sum'],
-                    'total_sum'     => $a['total_sum'],
-                    'active'        => $active
-                );
-                $avail_disciplines[] = $disc;
-            }
+            //echo 'Test message in file: '.__FILE__.', on line: '.__LINE__; print_r($avail_programs);
+            //echo 'Test message in file: '.__FILE__.', on line: '.__LINE__; print_r($avail_disciplines);
+            //var_dump ($session->availDisciplines); die();
 
             $this->set('programs',    $avail_programs);
             $this->set('disciplines', $avail_disciplines);
@@ -563,9 +463,9 @@
             $this->render();
         }
         
-    /*
-     Блок работы с материалами
-    */
+        /*
+         Блок работы с материалами отныне в моделе с материалами Model_Educational_Materials
+         
         public function action_edit_material($params) {
             $links = Resources::getInstance()->links;
 
@@ -630,9 +530,6 @@
             );
         }
 
-        // что это еще за функции???
-        // видимо, после объединения интерфейсов, они становятся ненужными
-
         public function action_index_material () {
             $educationPrograms = Model_Education_Programs::create ();
             $this->set('directions', $educationPrograms->getDirections());
@@ -664,8 +561,6 @@
             //$this->render('education_materials/index_by_admin');
         }
 
-        // что это еще за функции???
-    
         public function action_index_by_admin_material () {
             $this->action_index_material ();
         }
@@ -674,34 +569,7 @@
             $this->action_index_material ();
         }
 
-        /*
-        public function action_remove_material () {
-            $request = $this->getRequest ();
-            $requestData = $request->post;
-            $educationalMaterials = Model_Educational_Materials::create ();
-            $removeSuccess = TRUE;
-
-            if (!empty($requestData)) {
-                foreach ($requestData as $materialID => $value) {
-                    if ($materialID != 'all') {
-                        $removeSuccess = $removeSuccess && $educationalMaterials->removeMaterial($materialID);
-                    }
-                }
-            }
-
-            $links = Resources::getInstance()->links;
-
-            $this->flash(
-                $removeSuccess ?
-                    'Материалы успешно удалены' :
-                    'Некоторые материалы не были удалены(возможно, Вы предприняли попытку удалить материал, который не был загружен Вами)',
-                //$links->get('admin.materials'),
-                $links->get('admin.programs'),
-                10
-            );
-        }
-        */
-        
+         
         public function action_remove_material () {
             $request = $this->getRequest ();
             $requestData = $request->post;
@@ -801,54 +669,6 @@
         public function action_get_material ($params) {
             $educationalMaterials = Model_Educational_Materials::create ();
             $educationalMaterials->getMaterial ($params['material_id']);
-        }
-
-        /**
-        * Отображение доступных учебных материалов.
-        */
-        public function action_show_material(array $params = array()) {
-            $links = Resources::getInstance()->links;
-
-            if (!isset($params['discipline_id']) ||
-                is_int ($params['discipline_id'])) {
-                $this->flash(
-                    'Не указан идентификатор дисциплины',
-                    $links->get('student.programs')
-                );
-            }
-
-            if (!isset($params['app_id']) || is_int($params['app_id'])) {
-                $this->flash(
-                    'Не указан идентификатор заявки',
-                    $links->get('student.programs')
-                );
-            }
-
-            $discipline_id = intval($params['discipline_id']);
-            $app_id  = intval($params['app_id']);
-
-            /**
-            * @todo Сделать проверку на доступность дисциплины.
-            */
-            
-            $user = Model_User::create();
-            $udata = (object) $user->getAuth();
-            
-            $disc = Model_Discipline::create();
-            $discipline_data = $disc->get($discipline_id);
-
-            $section = Model_Section::create();
-            $sections = $section->getAllByDiscipline($discipline_id);
-
-            $material = Model_Educational_Materials::create();
-            $materials = $material->getAllByDiscipline($discipline_id);
-
-            $this->set('discipline', $discipline_data);
-            $this->set('sections', $sections);
-            $this->set('materials', $materials);
-            $this->set('user_id', $udata->user_id);
-
-            $this->render();
-        }
+        }*/
 
     }

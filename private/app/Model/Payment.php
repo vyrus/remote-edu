@@ -21,7 +21,7 @@
 		public function isAppPrepaid ($app_id) { 
 			$app = Model_Application::create();
 			$paym = Model_Payment::create();
-			list($a) = $app->getAppInfo($app_id); 
+			$a = $app->getAppInfo($app_id); 
 			//print_r($a); die();
 			if ($a['type'] == 'program') {
 				//товарищ учится по всему направлению

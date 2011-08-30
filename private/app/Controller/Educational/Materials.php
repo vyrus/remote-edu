@@ -16,11 +16,14 @@
             $requestData = $request->$method;
 
             if (empty($requestData)) {
+                /*
                 if (($materialInfo = $educationalMaterials->getMaterialInfo($params['material_id'])) === FALSE) {
                     $this->flash('Учебный материал не существует или был загружен не Вами',
-                                 $links->get('teacher.materials'), 5);
+                        $links->get('teacher.materials'), 5);
                 }
+                 */
 
+                $materialInfo = $educationalMaterials->getMaterialInfo($params['material_id']); 
                 $form->setValue('description', $materialInfo['description']);
                 $form->setValue('type', $materialInfo['type']);
             }
@@ -30,9 +33,14 @@
                     'description' => $requestData['description'],
                     'type' => $requestData['type'],
                 );
-                $educationalMaterials->updateMaterialInfo($materialInfo);
-                $this->flash('Данные материала были успешно изменены',
-                             $links->get('teacher.materials'), 5);
+                $result = $educationalMaterials->updateMaterialInfo($materialInfo);
+                if ($result) {
+                    $this->flash('Данные материала были успешно изменены',
+                        $links->get('teacher.materials'), 5);
+                } else {
+                    $this->flash('Данные материала не были изменены. Возможно, Вы предприняли попытку удалить материал, который принадлежит дисциплине, за которую Вы не назначены ответственным',
+                        $links->get('teacher.materials'), 5);
+                }
             }
 
             $this->render('educational_materials/edit');
@@ -95,25 +103,28 @@
                 }
             }
 
+            if (!array_key_exists('back',$requestData)) 
+                $requestData['back'] = 'teacher.materials';
+
             $links = Resources::getInstance()->links;
             $this->flash(
                 $removeSuccess ?
                     'Материалы успешно удалены' :
-                    'Некоторые материалы не были удалены(возможно, Вы предприняли попытку удалить материал, который не был загружен Вами)',
-                $links->get('teacher.materials'), 10
+                    'Некоторые материалы не были удалены. Возможно, Вы предприняли попытку удалить материал, который  принадлежит дисциплине, за которую Вы не назначены ответственным',
+                $links->get($requestData['back']), 10
             );
             
         }
 
         public function action_upload () {
+            $result = false;
+
             $educationPrograms = Model_Education_Programs::create ();
             $this->set ('directions',	$educationPrograms->getDirections 				());
             $this->set ('courses',		$educationPrograms->getCourses 					());
             $this->set ('disciplines',	$educationPrograms->getDirectionsDisciplines	());
             $this->set ('sections', 	$educationPrograms->getDisciplinesSections		());
             $this->set ('invalidMaterialsForms', array ());
-            $this->set('nextDialog','materials.teacher.upload');
-
 
             $links = Resources::getInstance()->links;
 
@@ -123,10 +134,18 @@
             $request        = $this->getRequest ();
             $method 		= $form->method ();
             $requestData	= $request->$method;
-            if (empty ($requestData)) {
+
+            if (!array_key_exists('back', $requestData)) 
+                $requestData['back'] = 'teacher.materials';
+            $this->set('back',$requestData['back']);
+                
+            if (count($requestData) == 1) {
+
                 $this->render ('educational_materials/upload');
             }
-
+            
+            //print_r($requestData); die();
+            
             $invalidMaterialsForms = array ();
             if (count ($requestData['material'])) {
                 $educationalMaterials = Model_Educational_Materials::create ();
@@ -148,7 +167,7 @@
                         $invalidMaterialsForms[] = $materialForm;
                     }
                     else {
-                        $educationalMaterials->addMaterial($material['description'], $material['section'], $material['type'], $request->files['fileReference' . $i]);
+                        $result = $educationalMaterials->addMaterial($material['description'], $material['section'], $material['type'], $request->files['fileReference' . $i]);
                     }
                 }
             }
@@ -160,11 +179,11 @@
 
             $links = Resources::getInstance()->links;
 
-            $this->flash (
-                'Все материалы успешно загружены',
-                $links->get('teacher.materials'),
-                3
-            );
+            if ($result) {
+                $this->flash ('Все материалы успешно загружены', $links->get($requestData['back']), 3);
+            } else {
+                $this->flash ('Во время загрузке материалов произошли ошибки. Возможно Вы пытаетесь загрузить матераил в дисциплину, за которую не назначены ответственным', $links->get($requestData['back']), 3);
+            }
         }
 
         public function action_get_material ($params) {
@@ -173,12 +192,15 @@
         }
         
         public function action_save_order() {
+            $result = true;
             $mat = Model_Educational_Materials::create ();
+            $request = $this->getRequest ();
+            $requestData = $request->post;
 
-            $data = explode(',', $_POST['materialOrderInfo']);
+            $data = explode(',', $requestData['materialOrderInfo']);
 
             for ($i = 0; $i < count($data); $i++) {
-                $mat->editMaterialNumber (
+                $result = $result && $mat->editMaterialNumber (
                     $data[$i],
                     $i
                 );
@@ -186,17 +208,33 @@
 
             $links = Resources::getInstance()->links;
 
-            $this->flash (
-                'Порядок материалов успешно изменён',
-                $links->get('teacher.materials'),
-                3
-            );
+            if (!array_key_exists('back',$requestData)) 
+                $requestData['back'] = 'teacher.materials';
+
+            if ($result) {
+                $this->flash (
+                    'Порядок материалов успешно изменён',
+                    $links->get($requestData['back']),
+                    3
+                );
+            } else {
+                $this->flash (
+                    'Во время изменения порядка материалов произощли ошибки. Возможно Вы пытаетесь изменить порядок в  дисциплине, за которую не назначены ответственным',
+                    $links->get($requestData['back']),
+                    3
+                );
+            
+            }
         }
 
         /**
         * Отображение доступных учебных материалов.
         */
         public function action_show(array $params = array()) {
+
+            $a = Model_Test::create();
+            $a->test();
+
             $links = Resources::getInstance()->links;
 
             if (!isset($params['discipline_id']) ||
@@ -207,40 +245,56 @@
                 );
             }
 
-            if (!isset($params['app_id']) || is_int($params['app_id'])) {
-                $this->flash(
-                    'Не указан идентификатор заявки',
-                    $links->get('student.programs')
-                );
-            }
-
             $discipline_id = intval($params['discipline_id']);
-            $app_id  = intval($params['app_id']);
 
-            /**
-            * @todo Сделать проверку на доступность дисциплины.
-            */
-            
             $user = Model_User::create();
             $udata = (object) $user->getAuth();
+
+            $session = Resources_Abstract::getInstance()->session;
+
+            // если данных о доступных дисциплинах нет - вычислить
+            if (!isset($session->availDisciplines)) {
+                $student = Model_Education_Students::create();
+                $avail_programs = $student->getAvailDisciplinesForPrograms($udata->user_id);
+                $avail_disciplines = $student->getAvailDisciplinesSeparate($udata->user_id);
+            }
+
+            $discipline_open = in_array($discipline_id, $session->availDisciplines);
             
-            $disc = Model_Discipline::create();
-            $discipline_data = $disc->get($discipline_id);
+            if ($discipline_open) { // дисциплина доступна
+                
+                $disc = Model_Discipline::create();
+                $discipline_data = $disc->get($discipline_id);
 
-            $section = Model_Section::create();
-            $sections = $section->getAllByDiscipline($discipline_id);
+                $section = Model_Section::create();
+                $sections = $section->getAllByDiscipline($discipline_id);
 
-            $material = Model_Educational_Materials::create();
-            $materials = $material->getAllByDiscipline($discipline_id);
+                $modelApps = Model_Application::create();
+                $statuses = $modelApps->getAppsStatus($discipline_id, $udata->user_id); //== Model_Application::STATUS_FINISHED;
+                $statusFinished = array_key_exists(Model_Application::STATUS_FINISHED, $statuses);
 
-            $this->set('discipline', $discipline_data);
-            $this->set('sections', $sections);
-            $this->set('materials', $materials);
-            $this->set('user_id', $udata->user_id);
-            
-            //print_r($materials);
+                $material = Model_Educational_Materials::create();
+                $materials = $material->getAllByDiscipline($discipline_id, $statusFinished);
 
-            $this->render();
+                $control_work = Model_ControlWork::create();
+                $tests = $control_work->getTestsByDiscipline($discipline_id);
+
+                $this->set('discipline', $discipline_data);
+                $this->set('sections', $sections);
+                $this->set('materials', $materials);
+                $this->set('tests', $tests);
+                $this->set('user_id', $udata->user_id);
+                
+                //print_r($materials);
+
+                $this->render();
+            } else {
+                $this->flash(
+                    'Данная дисциплина на данный Вам недоступна. Возможно Вы не полностью оплатили заявку по данной дисциплине или программе, содержащей данную дисциплину, либо вообще не подавали заявку на ее изучение.',
+                    $links->get('student.programs'),
+                    5
+                );
+            }
         }
 
     }

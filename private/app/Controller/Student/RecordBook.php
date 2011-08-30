@@ -11,6 +11,7 @@
         * Отображение списка дисциплин слушателя.
         */
         public function action_index() {
+
             $model_education_students = Model_Education_Students::create();
             $model_user = Model_User::create();
 
@@ -18,11 +19,6 @@
 
             $disciplines = $model_education_students->getDisciplines($udata->user_id);
             $disciplines_programs = $model_education_students->getDisciplinesPrograms($udata->user_id);
-
-            $this->set('disciplines', $disciplines);
-            //$this->set('disciplines_programs', $disciplines_programs);
-            $this->set('user_id', $udata->user_id);
-            
                         
             $res = array();
             foreach ($disciplines_programs as $val) {
@@ -33,8 +29,8 @@
             }
             
             $this->set('disciplines_programs', $res);
-            
-            //print_r($disciplines_programs);
+            $this->set('disciplines', $disciplines);
+            $this->set('user_id', $udata->user_id);
 
             $this->render('student_recordbook/index');
         }
@@ -45,27 +41,36 @@
         * @params int discipline_id Идентификатор дисциплины.
         */
         public function action_discipline($params) {
-            $model_checkpoint = Model_Checkpoint::create();
+            //$model_checkpoint = Model_Checkpoint::create();
+            $model_credit = Model_Credit::create();
+            $model_control_work = Model_ControlWork::create();
             $model_education_programs = Model_Education_Programs::create();
-            $model_education_students = Model_Education_Students::create();
+            //$model_education_students = Model_Education_Students::create();
             $model_user = Model_User::create();
 
             $udata = (object) $model_user->getAuth();
 
-            $checkpoints = $model_checkpoint->getCheckpointsSectionsByDiscipline(
+            /*$checkpoints = $model_checkpoint->getCheckpointsSectionsByDiscipline(
                 array(
                     'student_id' => $udata->user_id,
                     'discipline_id' => $params['discipline_id']
                 )
-            );
+            );*/
+
             $model_education_programs->getDiscipline($params['discipline_id'], $title, $labourIntensive, $coef);
-            $user_info = $model_user->getUserInfo($udata->user_id);
+            //$user_info = $model_user->getUserInfo($udata->user_id);
+            //
+            $this->set('test_results', $model_control_work->getStudentTestResultsByDiscipline($udata->user_id, $params['discipline_id']));
+            $this->set('credits', $model_credit->getStudentCreditsByDiscipline($udata->user_id, $params['discipline_id']));
+            $this->set('control_works', $model_control_work->getStudentMarksByDiscipline($udata->user_id, $params['discipline_id']));
+            $this->set('control_names_map', $model_control_work->getControlNamesMap());
+            $this->set('mark_names_map', $model_control_work->getMarkNamesMap());
 
             $this->set('discipline_title', $title);
-            $this->set('checkpoints', $checkpoints);
-            $this->set('students', $model_education_programs->getStudentsByDiscipline($params['discipline_id']));
+            //$this->set('checkpoints', $checkpoints);
+            //$this->set('students', $model_education_programs->getStudentsByDiscipline($params['discipline_id']));
             $this->set('sections', $model_education_programs->getSectionsByDiscipline($params['discipline_id']));
-            $this->set('user_id', $udata->user_id);
+            //$this->set('user_id', $udata->user_id);
 
             $this->render('student_recordbook/discipline');
         }

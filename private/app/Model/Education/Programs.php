@@ -1,5 +1,7 @@
 <?php
 
+    /* $Id$ */
+
     class Model_Education_Programs extends Model_Base {
 
         const CHECK_BY_PARENT_ID = 0;
@@ -237,6 +239,7 @@ QUERY;
             $this
                 ->prepare($sql)
                 ->execute($params);
+
         }
 
         public function getDirections() {
@@ -593,26 +596,8 @@ QUERY;
                 ->execute($params);
         }
 
-        /**
-        * Возвращает список всех дисциплин, входящих в образовательную
-        * программу.
-        *
-        * @param  int $program_id Идентификатор программы.
-        * @return array
-        */
-        public function getDisciplinesByProgramId($program_id) {
-            $sql = '
-                SELECT discipline_id, title, coef
-                FROM ' . $this->_tables['disciplines'] . '
-                WHERE program_id = ?
-            ';
-
-            $stmt = $this->prepare($sql);
-            $stmt->execute(array($program_id));
-
-            $discs = $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
-            return $discs;
-        }
+	//public function getDisciplineByProgramId($program_id) {
+	// перенесена в Discipline.php 
 
         /**
         * Получение всей информации об образовательной программе.
@@ -639,6 +624,81 @@ QUERY;
             $stmt->execute(array($program_id));
 
             return $stmt->fetch(Db_Pdo::FETCH_ASSOC);
+        }
+
+        /**
+        * Получение типа дисциплины по платности (платная/бесплатная)
+        *
+        * @param  int $program_id Идентификатор программы.
+        * @return array|false
+        */
+        public function getProgramPaidType($program_id) {
+            $sql = '
+                SELECT paid_type
+                FROM ' . $this->_tables['programs'] . '
+                WHERE program_id = ?
+            ';
+            $stmt = $this->prepare($sql);
+            $stmt->execute(array($program_id));
+
+            return $stmt->fetchColumn();
+        }
+
+	    /**
+		* Возвращает кол-во разделов в дисциплине
+		*
+		* @param int 
+		* @return int
+	    */
+        public function getCountSectionsInDiscipline($discipline_id) {
+			$sql = 'SELECT COUNT(section_id) as count
+			FROM ' . $this->_tables['sections'] . '
+			WHERE discipline_id = :discipline_id';
+
+            $values = array(
+				':discipline_id'  => $discipline_id
+            );
+
+            $stmt = $this->prepare($sql);
+            $stmt->execute($values);
+
+            list($count) =  $stmt->fetch(Db_Pdo::FETCH_NUM);
+            return $count;
+        }
+
+        /**
+        * Возвращает ответственнен ли преподователь за данную дисциплину
+        *
+        * @param  int $discipline_id Идентификатор дисциплины
+        * @return bool
+        */
+        public function isTeacherResponsibleForDiscipline($user_id, $discipline_id) {
+			$sql = 'SELECT 1
+			FROM ' . $this->_tables['disciplines'] . '
+            WHERE discipline_id = :discipline_id AND responsible_teacher = :user_id
+            LIMIT 1';
+
+            $values = array(
+                ':discipline_id'  => $discipline_id,
+                ':user_id'        => $user_id
+            );
+
+            $stmt = $this->prepare($sql);
+            $stmt->execute($values);
+
+            list($a) = $stmt->fetch(Db_Pdo::FETCH_NUM);
+            return $a == '1';
+        }
+
+        /**
+        * Возвращает ответственнен ли преподователь за данный раздел
+        *
+        * @param  int $section_id Идентификатор раздела
+        * @return bool
+        */
+        public function isTeacherResponsibleForSection($user_id, $section_id) {
+            $disc_id =  $this->getDisciplineNumberBySection($section_id);
+            return $this->isTeacherResponsibleForDiscipline($user_id, $disc_id);
         }
 
         /**
@@ -756,36 +816,84 @@ QUERY;
         }
 
         /**
-        * Возвращает первую дисциплину программы.
+        * Возвращает идентификатор первого раздела дисциплины.
+        *
+        * @param  int $discipline_id Идентификатор дисциплины.
+        * @return array
+        */
+        public function getFirstSectionIdOfDiscipline($discipline_id) {
+            $sql = 'SELECT section_id
+            FROM ' . $this->_tables['sections'] . ' s
+            WHERE s.discipline_id = ? AND s.number = 1';
+			//print ($sql);
+            $stmt = $this->prepare($sql);
+            $stmt->execute(array($discipline_id));
+
+            return $stmt->fetchColumn();
+        }
+
+        /**
+        * Возвращает идентификатор первой дисциплины в программе.
         *
         * @param  int $program_id Идентификатор программы.
         * @return array
         */
-        public function getFirstDisciplineOfProgram($program_id) {
-            $sql = 'SELECT *
+        public function getFirstDisciplineIdOfProgram($program_id) {
+            $sql = 'SELECT discipline_id
             FROM ' . $this->_tables['disciplines'] . ' d
             WHERE d.program_id = ? AND d.serial_number = 0';
             $stmt = $this->prepare($sql);
             $stmt->execute(array($program_id));
 
-            return $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
+            return $stmt->fetchColumn();
         }
 
         /**
-        * Возвращает первый раздел дисциплины.
+        * Возвращает следующую дисциплину программы.
         *
+        * @param  int $program_id Идентификатор программы.
         * @param  int $discipline_id Идентификатор дисциплины.
         * @return array
         */
-        public function getFirstSectionOfDiscipline($discipline_id) {
-            $sql = 'SELECT *
-            FROM ' . $this->_tables['sections'] . ' s
-            WHERE s.discipline_id = ? AND s.number = 1';
-			print ($sql);
-            $stmt = $this->prepare($sql);
-            $stmt->execute(array($discipline_id));
+        public function getNextDisciplineOfProgram($program_id, $discipline_id) {
+            $sql = 'SELECT discipline_id
+                FROM ' . $this->_tables['disciplines'] . ' s
+                CROSS JOIN (SELECT serial_number FROM ' . $this->_tables['disciplines'] . ' WHERE discipline_id = :discipline_id) js
+                WHERE s.program_id = :program_id AND s.serial_number = js.serial_number + 1';
 
-            return $stmt->fetch(Db_Pdo::FETCH_ASSOC);
+            $values = array(
+                ':program_id'  => $program_id,
+                ':discipline_id' => $discipline_id
+            );
+
+            $stmt = $this->prepare($sql);
+            $stmt->execute($values);
+
+            return $stmt->fetchColumn();
+        }
+
+        /**
+        * Возвращает следующий раздел дисциплины.
+        *
+        * @param  int $discipline_id Идентификатор дисциплины.
+        * @param  int $section_id Идентификатор раздела
+        * @return array
+        */
+        public function getNextSectionOfDiscipline($discipline_id, $section_id) {
+            $sql = 'SELECT section_id
+                FROM ' . $this->_tables['sections'] . ' s
+                CROSS JOIN (SELECT number FROM ' . $this->_tables['sections'] . ' WHERE section_id = :section_id) js
+                WHERE s.discipline_id = :discipline_id AND s.number = js.number + 1';
+
+            $values = array(
+                ':discipline_id'  => $discipline_id,
+                ':section_id' => $section_id
+            );
+
+            $stmt = $this->prepare($sql);
+            $stmt->execute($values);
+
+            return $stmt->fetchColumn();
         }
 
         /**
@@ -813,14 +921,18 @@ QUERY;
         */
         public function getStudentsByDiscipline($discipline_id) {
             $sql = 'SELECT DISTINCT u.user_id, u.name, u.surname, u.patronymic
-            FROM ' . $this->_tables['users'] . ' u
-            LEFT JOIN ' . $this->_tables['applications'] . ' a
-            ON u.user_id = a.user_id
-            LEFT JOIN ' . $this->_tables['disciplines'] . ' d
-            ON d.program_id = a.object_id
-            WHERE(a.type = \'discipline\' AND a.object_id = :discipline_id) OR(a.type = \'program\' AND d.discipline_id = :discipline_id)';
+                FROM ' . $this->_tables['users'] . ' u
+                LEFT JOIN ' . $this->_tables['applications'] . ' a
+                    ON u.user_id = a.user_id
+                LEFT JOIN ' . $this->_tables['disciplines'] . ' d
+                    ON d.program_id = a.object_id
+                WHERE ((a.type = \'discipline\' AND a.object_id = :discipline_id) OR (a.type = \'program\' AND d.discipline_id = :discipline_id))
+                    AND a.status IN (:signed, :prepaid)';
             $sql_params = array(
-                ':discipline_id' => $discipline_id
+                ':discipline_id' => $discipline_id,
+                //':accepted' => Model_Application::STATUS_ACCEPTED,
+                ':signed'   => Model_Application::STATUS_SIGNED,
+                ':prepaid'  => Model_Application::STATUS_PREPAID,
             );
             $stmt = $this->prepare($sql);
             $stmt->execute($sql_params);
@@ -832,16 +944,33 @@ QUERY;
         * Возвращает идентификатор дисциплины, к которой относится раздел.
         *
         * @param  int $section_id Идентификатор дисциплины.
-        * @return array
+        * @return int|bool
         */
         public function getDisciplineNumberBySection($section_id) {
-            $sql = 'SELECT s.discipline_id
-            FROM ' . $this->_tables['sections'] . ' s
-            WHERE s.section_id = ?';
+            $sql = 'SELECT discipline_id
+            FROM ' . $this->_tables['sections'] . '
+            WHERE section_id = ?';
             $stmt = $this->prepare($sql);
             $stmt->execute(array($section_id));
 
-            return $stmt->fetch(Db_Pdo::FETCH_ASSOC);
+            return $stmt->fetchColumn();
+        }
+
+
+        /**
+        * Возвращает идентификатор программы, к которой относится дисциплина
+        *
+        * @param  int $discipline_id Идентификатор дисциплины.
+        * @return int|bool
+        */
+        public function getProgramIdByDiscipline($discipline_id) {
+            $sql = 'SELECT program_id
+            FROM ' . $this->_tables['disciplines'] . '
+            WHERE discipline_id = ?';
+            $stmt = $this->prepare($sql);
+            $stmt->execute(array($discipline_id));
+
+            return $stmt->fetchColumn();
         }
         
         static function buildMapFromArrays($a,$b) {

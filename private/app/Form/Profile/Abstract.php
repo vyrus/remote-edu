@@ -68,7 +68,8 @@
         protected function _addNewPasswd() {
             return
             $this->addField('new_passwd')
-                 ->setValidator(self::PASSWD_REGEX_NOT_REQUIRED)
+                 //->setValidator(self::PASSWD_REGEX_NOT_REQUIRED)
+                 ->setValidator(self::PASSWD_REGEX_REQUIRED)
                  ->setError(
                      'Пароль должен состоять из латинских букв, цифр и ' .
                      'символа подчёркивания'

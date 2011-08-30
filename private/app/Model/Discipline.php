@@ -1,5 +1,7 @@
 <?php
 
+    /* $Id$ */
+
     /**
     * Класс для работы с дисциплинами.
     */
@@ -158,6 +160,27 @@
         }
 
         /**
+        * Возвращает список всех дисциплин, входящих в образовательную
+        * программу.
+        *
+        * @param  int $program_id Идентификатор программы.
+        * @return array
+        */
+        public function getDisciplinesIdByProgramId($program_id) {
+            $sql = '
+                SELECT discipline_id
+                FROM ' . $this->_tables['disciplines'] . '
+                WHERE program_id = ?
+            ';
+
+            $stmt = $this->prepare($sql);
+            $stmt->execute(array($program_id));
+
+            $discs = $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
+            return $discs;
+        }
+
+        /**
         * Выбирает из списка переданных дисциплин те, которые в соответствии с
         * их коэффициентами в рамках программы и общей суммы оплаты по заявке
         * считаются доступными для слушателя.
@@ -198,6 +221,57 @@
 
             return $allowed;
         }
+
+	    /**
+		* Открыта ли дисциплина для студента
+		*
+		* @param int $disciplineId
+		* @param int $studentId
+		* @param array $statuses Статусы заявок студента
+		* @return bool
+	    */
+        public function isDisciplineOpenForStudent($disciplineId, $studentId, $statuses = false) {
+            $result = false;
+
+            $modelApps = Model_Application::create();
+            if (!$statuses) {
+                $statuses = $modelApps->getAppsStatus($disciplineId, $studentId);
+            }
+
+            if (array_key_exists(Model_Application::STATUS_PREPAID, $statuses) || array_key_exists(Model_Application::STATUS_FINISHED, $statuses)) {
+                $result = true;
+            } elseif ($k = array_search(Model_Application::STATUS_SIGNED, $statuses) !== false) {
+
+                foreach ($statuses[$k] as $appId) {
+                    $appInfo = $modelApps->getAppInfo($appId);
+                    $modelEducationPrograms = Model_Education_Programs::create();
+
+                    if ($appInfo['type'] == 'discipline') {
+                        $programId = $modelEducationPrograms->getProgramIdByDiscipline($appInfo['object_id']);
+                    } elseif ($appInfo['type'] == 'program') {
+                        $programId = $appInfo['object_id'];
+                    }
+
+                    $programInfo = $modelEducationPrograms->getProgramInfo($programId);
+                    if ($programInfo['paid_type'] == Model_Education_Programs::PAID_TYPE_FREE) {
+                        $result = true;
+                        break;
+                    } else {
+                        $modelPayment = Model_Payment::create();
+                        $total_payment = $modelPayment->getTotal($appId);
+                        $cost_total = $program_data['cost'];
+                        $ar = $this->_getAllowed(array($disciplineId), $payment_total, $cost_total);
+                        if (!empty($ar)) {
+                            $result = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            return $result;
+        }
+
+
     }
 
 ?>

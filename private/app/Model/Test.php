@@ -3,8 +3,21 @@
     /**
     * Модель для работы с данными тестов.
     */
-    class Model_Test extends Model_Base {
+    class Model_Test extends Model_Base implements Interface_ObjectForObserve {
+
         const TIME_PER_QUESTION = 120;
+        
+        public $TEST_EVENTS = array (
+            'EVENT_SUCCESS_REMOVE_TEST' => 20,
+            'EVENT_AFTER_PASSED_TEST' => 250
+        );
+
+        protected $_observerList = array();
+
+        function __construct() {
+            parent::__construct();
+            $this->attachObserver(Model_ControlWork::create());
+        }
 
         /**
         * Создание экземпляра модели.
@@ -15,6 +28,51 @@
             return new self();
         }
 
+        public function test() {
+            $user = Model_User::create();
+            $udata = $user->getAuth();
+            $this->notifyObservers($this->TEST_EVENTS['EVENT_AFTER_PASSED_TEST'],
+                    array('testId' => 12, 'sectionId' => 2, 'userId' => $udata['user_id'], 'passed' => true));
+       }
+
+        /**
+        * Прикрепляет объект-наблюдатель
+        *
+        * @param object:Interface_Observer 
+        * @return void
+        */
+        public function attachObserver(Interface_Observer $object) {
+            array_push($this->_observerList,$object);
+        }
+
+        /**
+        * Открепляет объект-наблюдатель
+        *
+        * @param object:Interface_Observer 
+        * @return void
+        */
+        public function detachObserver(Interface_Observer $object) {
+            foreach ($this->_observerList as &$a) {
+                if ($a == $object) {
+                    unset($a);
+                }
+            }
+        }
+
+        /**
+        * Оповещает объекты-наблюдатели о событии
+        *
+        * @param $event Имя события
+        * @param $data Подробная информация о событии
+        * @return void
+        */
+        protected function notifyObservers($event, $data) {
+            foreach ($this->_observerList as $a) {
+                $a->updateObjectState(get_class($this), $this, $event, $data);
+            }
+        }
+        
+        
         public function add(
             $theme, $num_questions, /*$time_limit, */$errors_limit,
             $attempts_limit
@@ -89,6 +147,11 @@
             $stmt->execute(array($test_id));
 
             $affected = $stmt->rowCount();
+            
+            if ($affected) {
+                $this->notifyObservers($this->TEST_EVENTS['EVENT_SUCCESS_REMOVE_TEST'], array ('testId' => $test_id));
+            }
+
             return ($affected > 0);
         }
 
@@ -117,6 +180,19 @@
             $stmt->setFetchMode(Db_Pdo::FETCH_OBJ);
 
             return $stmt;
+        }
+
+        /**
+        * Возвращает имена и идентификаторы тестов 
+        *
+        * @return array|bool
+        */
+        public function getIdsAndThemesAll() {
+            $sql = 'SELECT test_id, theme FROM ' . $this->_tables['tests'];
+
+            $stmt = $this->prepare($sql);
+            $stmt->execute();
+            return $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
         }
 
         /**
@@ -285,6 +361,7 @@
             return $questions;
         }
 
+        // параметр $section_id видимо больше не требуется
         public function start($test_id, $section_id, $num_questions) {
             $questions = $this->_getExamQuestions($test_id, $num_questions);
 
@@ -374,16 +451,24 @@
 
             $results->passed = $passed;
 
+            /*
             if ($passed) {
                 $user = Model_User::create();
                 $udata = (object) $user->getAuth();
 
                 $checkpoint = Model_Checkpoint::create();
                 $checkpoint->setNextSectionPass($udata->user_id, $section_id);
+                
             }
+             */
 
             $this->_saveExamResults($test_id, $num_errors, $test->num_questions,
-                                    $results->time, $results->passed);
+                $results->time, $results->passed);
+
+            $user = Model_User::create();
+            $udata = $user->getAuth();
+            $this->notifyObservers($this->TEST_EVENTS['EVENT_AFTER_PASSED_TEST'],
+                    array('testId' => $test_id, 'sectionId' => $section_id, 'userId' => $udata['user_id'], 'passed' => $passed));
 
             return $results;
         }

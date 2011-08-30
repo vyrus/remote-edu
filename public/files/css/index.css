@@ -333,6 +333,10 @@ ul.materials li.state_non_downloaded {
     background-color: #ccf;
 }
 
+ul.materials li.test {
+    background-color: #fcc;
+}
+
 /*-----------------------------------------------
 /teacher_courses/discipline/
 -----------------------------------------------*/

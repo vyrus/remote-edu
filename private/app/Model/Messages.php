@@ -30,7 +30,7 @@
         }
 
         public function removeMessage($messageId) {
-            $sql = 'DELETE FROM `message`
+            $sql = 'DELETE FROM ' . $this->_tables['message'] . '
                 WHERE `message_id`=:message_id AND `to`=:user_id';
             $params = array(
                 'message_id' => $messageId,
@@ -45,34 +45,53 @@
             }            
         }
 
-        public function getInbox($page, &$messagesTotalNumber) {
+        public function getInboxCount() {
+            if ($this->userRole != Model_User::ROLE_ADMIN) {
+                $sql = 'SELECT COUNT(*)
+                    FROM ' . $this->_tables['message'] . ' AS `m`,`users` AS `u`
+                    WHERE `m`.`to`=:user_id AND `m`.`from`=`u`.`user_id`';
+                $params = array(
+                    ':user_id' => $this->userId,
+                );
+            }
+            else {
+                $sql = 'SELECT COUNT(*)
+                    FROM ' . $this->_tables['message'] . ' AS `m`
+                    INNER JOIN `' . $this->_tables['users'] . '` AS `u` ON `m`.`to`=`u`.`user_id` AND `u`.`role`=\'admin\'
+                    INNER JOIN `' . $this->_tables['users'] . '` AS `u1` ON `m`.`from`=`u1`.`user_id`';
+                $params = array();
+            }
+            //echo $sql; die();
+
+            $stmt = $this->prepare($sql);
+            $stmt->execute($params);
+            return $stmt->fetchColumn();
+        }
+
+        public function getInbox($page) {
             if ($this->userRole != Model_User::ROLE_ADMIN) {
                 $sql = 'SELECT `m`.`message_id`,`m`.`subject`,`m`.`read`,`m`.`time`,`u`.`surname`,`u`.`name`,`u`.`patronymic`,`u`.`role`
-                    FROM `message` AS `m`,`users` AS `u`
+                    FROM ' . $this->_tables['message'] . ' AS `m`,`users` AS `u`
                     WHERE `m`.`to`=:user_id AND `m`.`from`=`u`.`user_id`
                     ORDER BY `m`.`time` DESC';
                 $params = array(
-                    'user_id' => $this->userId,
+                    ':user_id' => $this->userId,
                 );
             }
             else {
                 $sql = 'SELECT `m`.`message_id`,`m`.`subject`,`m`.`read`,`m`.`time`,`u1`.`surname`,`u1`.`name`,`u1`.`patronymic`,`u1`.`role`
-                    FROM `message` AS `m`
-                    INNER JOIN `users` AS `u` ON `m`.`to`=`u`.`user_id` AND `u`.`role`=\'admin\'
-                    INNER JOIN `users` AS `u1` ON `m`.`from`=`u1`.`user_id`
+                    FROM ' . $this->_tables['message'] . ' AS `m`
+                    INNER JOIN `' . $this->_tables['users'] . '` AS `u` ON `m`.`to`=`u`.`user_id` AND `u`.`role`=\'admin\'
+                    INNER JOIN `' . $this->_tables['users'] . '` AS `u1` ON `m`.`from`=`u1`.`user_id`
                     ORDER BY `m`.`time` DESC';
                 $params = array();
             }
+            //echo ($sql); die();
+            $sql .= ' LIMIT ' . self::INBOX_MESSAGES_ON_PAGE  . ' OFFSET ' . intval($page) * self::INBOX_MESSAGES_ON_PAGE;
 
             $stmt = $this->prepare($sql);
             $stmt->execute($params);
             $retval = $stmt->fetchAll(Db_PdO::FETCH_ASSOC);
-
-            $messagesTotalNumber = count($retval);
-            /**
-            * @todo Take use of SQL's LIMIT clause instead of array_slice().
-            */
-            $retval = array_slice($retval, $page * self::INBOX_MESSAGES_ON_PAGE, self::INBOX_MESSAGES_ON_PAGE);
 
             foreach ($retval as $i => $message) {
                 unset($retval[$i]['name']);
@@ -83,7 +102,7 @@
                     $retval[$i]['author'] = 'Администратор';
                 }
                 else {
-                    $retval[$i]['author'] = $message['surname'] . ' ' . mb_substr($message['surname'], 0, 1, 'utf-8') . '. ' . mb_substr($message['patronymic'], 0, 1, 'utf-8') . '.';
+                    $retval[$i]['author'] = $message['surname'] . ' ' . mb_substr($message['name'], 0, 1, 'utf-8') . '. ' . mb_substr($message['patronymic'], 0, 1, 'utf-8') . '.';
                 }
             }
 
@@ -92,7 +111,7 @@
 
         public function getMessage($messageId) {
             $sql = 'SELECT `m`.`message_id`,`m`.`subject`,`m`.`message`,`m`.`from`,`m`.`read`,`m`.`time`,`u`.`surname`,`u`.`name`,`u`.`patronymic`,`u`.`role`
-                FROM `message` AS `m`, `users` AS `u`
+                FROM ' . $this->_tables['message'] . ' AS `m`, `users` AS `u`
                 WHERE `m`.`message_id`=:message_id AND `m`.`to`=:user_id AND `m`.`from`=`u`.`user_id`';
             $params = array(
                 'message_id' => $messageId,
@@ -106,7 +125,7 @@
             }
 
             if ($retval['read'] == 'unread') {
-                $sql = 'UPDATE `message` SET `read`=\'read\' WHERE `message_id`=:message_id';
+                $sql = 'UPDATE ' . $this->_tables['message'] . ' SET `read`=\'read\' WHERE `message_id`=:message_id';
                 $params = array(
                     'message_id' => $messageId,
                 );
@@ -123,7 +142,7 @@
         }
 
         public function sendMessage($to, $subject, $message) {
-            $sql = 'INSERT INTO `message`(`from`,`to`,`subject`,`message`,`read`,`time`)
+            $sql = 'INSERT INTO ' . $this->_tables['message'] . '(`from`,`to`,`subject`,`message`,`read`,`time`)
                 VALUES (:user_id,:to_id,:subject,:message,\'unread\',:time)';
             $params = array(
                 'user_id' => $this->userId,
@@ -141,7 +160,7 @@
         public function addAttachments($messageIDs, $files) {
             $storage = Resources::getInstance()->attachments_storage;
             
-            $sql = 'INSERT INTO `message_attachment`(`message`,`original_filename`,`mime_type`,`filename`)
+            $sql = 'INSERT INTO ' . $this->_tables['message_attachment'] . '(`message`,`original_filename`,`mime_type`,`filename`)
                 VALUES (:message, :original_filename, :mime_type, :filename)';
             $stmt = $this->prepare($sql);
             
@@ -174,7 +193,7 @@
         
         public function getAttachments($message) {
             $sql = 'SELECT *
-                FROM `message_attachment`
+                FROM ' . $this->_tables['message_attachment'] . '
                 WHERE `message`=:message';                
             $params = array(
                 ':message' => $message,
@@ -191,9 +210,9 @@
             $storage = Resources::getInstance()->attachments_storage;
             
             // да, надо было перепроектировать все-таки...
-            $sql = "SELECT COUNT(filename) AS file_count, filename FROM message_attachment
+            $sql = "SELECT COUNT(filename) AS file_count, filename FROM ' . $this->_tables['message_attachment'] . '
                     GROUP BY filename HAVING filename = ANY
-                    (SELECT filename FROM message_attachment WHERE message = :message_id)";
+                    (SELECT filename FROM ' . $this->_tables['message_attachment'] . ' WHERE message = :message_id)";
             $params = array(
                     ':message_id' => $messageId,
                 );
@@ -211,7 +230,7 @@
                 if ($fileCountAr[$attachment['filename']] == 1)
                     $storage->removeFile($attachment['filename']);
                     
-                $sql = 'DELETE FROM `message_attachment`
+                $sql = 'DELETE FROM ' . $this->_tables['message_attachment'] . '
                     WHERE `id`=:attachment_id';
                 $params = array(
                     ':attachment_id' => $attachment['id'],
@@ -223,7 +242,7 @@
 
         public function getAttachment($attachmentId) {
             $sql = 'SELECT `message`,`original_filename`,`filename`,`mime_type`
-                FROM `message_attachment`
+                FROM ' . $this->_tables['message_attachment'] . '
                 WHERE `id`=:attachment_id';
             $params = array(
                 ':attachment_id' => $attachmentId,
@@ -231,131 +250,93 @@
             
             $stmt = $this->prepare($sql);
             $stmt->execute($params);            
-            $attachment = $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
+            $attachment = $stmt->fetch(Db_Pdo::FETCH_ASSOC);
             
-            if (empty($attachment)) {
+            if ($attachment === FALSE) {
                 return FALSE;
             }
                         
             $sql = 'SELECT `to`
-                FROM `message`
+                FROM ' . $this->_tables['message'] . '
                 WHERE `message_id`=:message_id';                            
             $params = array(
-                ':message_id' => $attachment[0]['message'],
+                ':message_id' => $attachment['message'],
             );
                         
             $stmt = $this->prepare($sql);
             $stmt->execute($params);
-            $message = $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
+            $message = $stmt->fetchColumn();
             
             $udata = (object)Model_User::create()->getAuth();
             
-            if ($udata->user_id != $message[0]['to']) {
+            if ($udata->user_id != $message) {
                 return FALSE;
             }
             
             $storage = Resources::getInstance()->attachments_storage;
             
-            header('Content-Disposition: attachment; filename="' . $attachment[0]['original_filename']) . '"';
-            header('Content-Type: ' . $attachment[0]['mime_type']);
+            header('Content-Disposition: attachment; filename="' . $attachment['original_filename']) . '"';
+            header('Content-Type: ' . $attachment['mime_type']);
 
-            echo $storage->getFileContent($attachment[0]['filename']);
+            echo $storage->getFileContent($attachment['filename']);
             
             return TRUE;
         }
 
+	    /**
+		* Возвращает список потенциальных получателей сообщений для текущего пользователя
+		*
+		* @return |array
+	    */
         public function getRecipientsList() {
-            $retval = array();
 
-            if ($this->userRole == Model_User::ROLE_ADMIN) {
-                $sql = 'SELECT `user_id`,`name`,`surname`,`patronymic`,`role`
-                    FROM `users`
-                    WHERE `role`<>\'admin\'';
+            if ($this->userRole == Model_User::ROLE_STUDENT || $this->userRole == Model_User::ROLE_TEACHER) {
+                $admin = array();
+                $sql = 'SELECT `user_id` FROM `' . $this->_tables['users'] . '` WHERE `role`=\'admin\' LIMIT 1';
                 $stmt = $this->prepare($sql);
                 $stmt->execute();
-                $recipients = $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
-
-                foreach ($recipients as $i => $recipient) {
-                    $retval[$recipient['user_id']] = array(
-                        'recipient_name' => $recipient['surname'] . ' ' . mb_substr($recipient['name'], 0, 1, 'utf-8') . '. ' . mb_substr($recipient['patronymic'], 0, 1, 'utf-8') . '.',
-                        'recipient_description' => array(),
-                        'role' => $recipient['role'],
-                    );
-                }
-
-                return $retval;
+                $adminId = $stmt->fetchColumn();
+                $admin[$adminId] = array(
+                    'recipient_name' => 'Администратор',
+                    'recipient_description' => array('Администратор'),
+                );
             }
 
-            $sql = 'SELECT `user_id` FROM `users` WHERE `role`=\'admin\' LIMIT 1';
-            $stmt = $this->prepare($sql);
-            $stmt->execute();
-            $adminId = $stmt->fetch(Db_Pdo::FETCH_NUM);
-            $retval[$adminId[0]] = array(
-                'recipient_name' => 'Администратор',
-                'recipient_description' => array('Администратор'),
-            );
+            $user = Model_User::create();
 
             switch ($this->userRole) {
                 case Model_User::ROLE_STUDENT: {
-                    $sql = 'SELECT `curator`
-                        FROM `users`
-                        WHERE `role`=\'student\' AND `user_id`=:user_id';
-                    $params = array(
-                        'user_id' => $this->userId,
-                    );
-                    $stmt = $this->prepare($sql);
-                    $stmt->execute($params);
-                    $curatorId = $stmt->fetch(Db_Pdo::FETCH_NUM);
-
-                    $sql = 'SELECT `name`,`surname`,`patronymic`
-                        FROM `users`
-                        WHERE `role`=\'teacher\' AND `user_id`=:curator_id';
-                    $params = array(
-                        'curator_id' => $curatorId[0],
-                    );
-                    $stmt = $this->prepare($sql);
-                    $stmt->execute($params);
-                    $curator = $stmt->fetch(Db_Pdo::FETCH_ASSOC);
-
-                    $retval[$curatorId[0]] = array(
-                        'recipient_name' => 'Куратор: ' . $curator['surname'] . ' ' . mb_substr($curator['name'], 0, 1, 'utf-8') . '. ' . mb_substr($curator['patronymic'], 0, 1, 'utf-8') . '.',
-                        'recipient_description' => array('Куратор'),
-                    );
-
-                    $user = Model_User::create();
-                    $teachers = $user->getStudentResponsibleTeachers();
-
-                    foreach ($teachers as $i => $teacher) {
-                        if (isset($retval[$i])) {
-                            array_merge($retval[$i]['recipient_description'], $teacher['recipient_description']);
-                        }
-                        else {
-                            $retval[] = $teacher;
-                        }
-                    }
-
+                    $teachers = $user->getResponsibleTeacherInfoForStudent();
+                    $retval = $admin + $teachers;
                     break;
                 }
 
                 case Model_User::ROLE_TEACHER: {
-                    $sql = 'SELECT `user_id`,`name`,`surname`,`patronymic`
-                        FROM `users`
-                        WHERE `role`=\'student\' AND `curator`=:curator_id';
-                    $params = array(
-                        'curator_id' => $this->userId,
-                    );
-                    $stmt = $this->prepare($sql);
-                    $stmt->execute($params);
-                    $students = $stmt->fetchAll(Db_Pdo::FETCH_ASSOC);
-
-                    foreach ($students as $i => $student) {
-                        $retval[$student['user_id']] = array(
-                            'recipient_name' => $student['surname'] . ' ' . mb_substr($student['name'], 0, 1, 'utf-8') . '. ' . mb_substr($student['patronymic'], 0, 1, 'utf-8') . '.',
-                            'recipient_description' => array(),
-                        );
-                    }
-
+                    $students = $user->getStudentsInfoForResponsibleTeacher();
+                    $retval = $admin + $students;
                     break;
+                }
+
+                case Model_User::ROLE_ADMIN: {
+                    $teachers = $user->getAllTeachersResponsibleInfo();
+                    array_walk(
+                        $teachers, 
+                        function (&$value, $key) { 
+                            $value['role'] = Model_User::ROLE_TEACHER;
+                        }
+                    );
+                    $students = $user->getStudentsList();
+                    array_walk(
+                        $students, 
+                        function (&$value, $key) { 
+                            $value['role'] = Model_User::ROLE_STUDENT;
+                            $value['recipient_name'] =  $value['surname'] . ' ' . $value['name'] . ' ' . $value['patronymic'];
+                            //$value['recipient_name'] =  $recipient['surname'] . ' ' . mb_substr($recipient['name'], 0, 1, 'utf-8') . '. ' . mb_substr($recipient['pat    ronymic'], 0, 1, 'utf-8') . '.';
+                            unset ($value['name'], $value['surname'], $value['patronymic']);
+                        }
+                    );
+                   $retval = $teachers + $students;
+                   //print_r($retval); die();
                 }
             }
 

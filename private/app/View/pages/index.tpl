@@ -6,7 +6,6 @@
 </div>
 
 <div class="content-topic"><span>&nbsp;Дистанционное обучение. Преимущества и возможности</span></div>
-  
 
 
 <div style='padding-left:10px;'></div><p>Сегодня дистанционное обучение стало более

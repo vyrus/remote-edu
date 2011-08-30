@@ -8,7 +8,7 @@
     <?php $field = $form->new_passwd ?>
     <div class="field">
       <label for="new_passwd">Новый пароль:</label>
-      <input name="<?php echo $field->name ?>" type="text" id="new_passwd" value="<?php echo $field->value ?>" />
+      <input name="<?php echo $field->name ?>" type="password" id="new_passwd" value="<?php echo $field->value ?>" />
     </div>
     
     <?php if (isset($field->error)): ?>
@@ -19,7 +19,7 @@
     <?php $field = $form->passwd_check ?>
     <div class="field">
       <label for="passwd_check">Повторите пароль:</label>
-      <input name="<?php echo $field->name ?>" type="text" id="passwd_check" value="<?php echo $field->value ?>" />
+      <input name="<?php echo $field->name ?>" type="password" id="passwd_check" value="<?php echo $field->value ?>" />
     </div>
     
     <?php if (isset($field->error)): ?>

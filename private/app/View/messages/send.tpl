@@ -20,16 +20,27 @@
     var attachmentId = 0;
     //var recipientsCount = <?php echo count($this->recipients); ?>;
     var recipients = {
-<?php foreach ($recipients as $i => $recipient): ?>
-    '<?php echo $i; ?>':{'name':'<?php echo $recipient['recipient_name']; ?>','desc':"<?php foreach ($recipient['recipient_description'] as $i => $desc) {echo $desc . '<br />';} ?>",'role' :"<?php if ($filterExists) echo $recipient['role']; ?>"},
-<?php endforeach; ?>
+    <?php foreach ($recipients as $i => $recipient): ?>
+        '<?php echo $i; ?>':{
+            'name':'<?php if (array_key_exists('recipient_description', $recipient) && array_key_exists(0, $recipient['recipient_description']) && $recipient['recipient_description'][0] == 'Куратор') echo 'Куратор: '; echo $recipient['recipient_name']; ?>',
+            'desc':"<?php 
+                if ((array_key_exists('curator',$recipient)) && array_key_exists('role',$recipient) && $recipient['role'] == 'student' &&
+                    array_key_exists($recipient['curator'], $recipients)) 
+                        echo 'Куратор: ' . $recipients[$recipient['curator']]['recipient_name'];
+                else if (array_key_exists('recipient_description',$recipient))
+                    array_walk($recipient['recipient_description'], function ($x) { echo $x . '<br>'; });
+                ?>",
+            'role' :"<?php if ($filterExists) echo $recipient['role']; ?>"
+        },
+    <?php endforeach; ?>
     };
     
     function showRecipientDescription() {
         var recId = recipientsSelect.val();
 
         if (recId) {
-            $('#recipientDescription').html(recipients[recId].desc);
+            //$('recipientDescription').html(recipients[recId].desc);
+            recipientDescription.html(recipients[recId].desc);
             recipientDescription.dialog('open');
         }
     }
